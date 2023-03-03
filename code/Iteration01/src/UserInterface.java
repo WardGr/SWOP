@@ -7,11 +7,16 @@ public class UserInterface {
         this.sessionController = new SessionController(this);
     }
 
-    public void startInterface() {
-        login();
-        // hier komen misschien nog wat dingen? Anders doet deze methode echt niks
+    public void startSystem() {
+        while(!sessionController.isLoggedIn()) {
+            login();
+        }
     }
 
+    /**
+     * Prints the login prompt, receives the username and password from the user via the command line, and sends it over
+     * to the SessionController.
+     */
     private void login() {
         Scanner scanner = new Scanner(System.in);
 
@@ -24,13 +29,11 @@ public class UserInterface {
         sessionController.login(username, password);
     }
 
-
-    public void loginerror() {
+    public void printLoginError() {
         System.out.println("Wrong password/username combination, please try again!");
-        // login(); (kunnen we doen, als we meteen weer de prompt willen geven, maar voor de test-cases werkt da nu ni haha)
     }
 
-    public void welcome(String role) {
+    public void printWelcome(String role) {
         System.out.println("Welcome! Your assigned role is " + role);
     }
 }
