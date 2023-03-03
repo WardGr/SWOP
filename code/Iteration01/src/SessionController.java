@@ -16,10 +16,9 @@ public class SessionController {
      * @param password The password the user gave via the UI login prompt
      */
     public void login(String username, String password) {
-        Role role = userManager.login(username, password);
+        this.userRole = userManager.login(username, password);
         if (isLoggedIn()) {
-            this.userRole = role;
-            userInterface.printWelcome(roleToString(role));
+            userInterface.printWelcome(roleToString(getUserRole()));
         }
         else {
             userInterface.printLoginError();
@@ -32,6 +31,10 @@ public class SessionController {
             case PROJECTMANAGER -> "Project Manager";
             case DEVELOPER -> "Developer";
         };
+    }
+
+    private Role getUserRole() {
+        return userRole;
     }
 
     /**
