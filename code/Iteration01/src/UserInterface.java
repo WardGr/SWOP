@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class UserInterface {
-    private SessionController sessionController;
+    private final SessionController sessionController;
 
     public UserInterface() {
         this.sessionController = new SessionController(this);
