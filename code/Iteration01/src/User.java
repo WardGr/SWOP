@@ -1,7 +1,8 @@
 public class User {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
     private Role role;
+    // Kunnen mensen ooit ontslagen of gepromoveerd worden?
 
     public User(String username, String password, Role role) {
         this.username = username;
