@@ -1,7 +1,8 @@
 import java.util.LinkedList;
+import java.util.List;
 
 public class UserManager {
-    private LinkedList<User> users;
+    private List<User> users;
 
     public UserManager() {
         // Temporarily hardcode some users x

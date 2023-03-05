@@ -1,10 +1,10 @@
 import java.util.Scanner;
 
-public class UserInterface {
-    private final SessionController sessionController;
+public class UserInterface<prviate> {
+    private final Controller controller;
 
     public UserInterface() {
-        this.sessionController = new SessionController(this);
+        this.controller = new Controller(this);
     }
 
     /**
@@ -27,9 +27,10 @@ public class UserInterface {
      */
     private void handleCommand(String command) {
         switch (command) {
+            case "help" -> printHelp();
             case "login" -> login();
             case "logout" -> logout();
-            case "help" -> printHelp();
+            case "showprojects" -> showProjects();
             default -> System.out.println("Unknown command, please try again!");
         }
     }
@@ -40,9 +41,10 @@ public class UserInterface {
     public void printHelp() {
         System.out.println("Available commands:");
         System.out.println("help: Prints this message");
-        System.out.println("logout: Logs you out");
+        System.out.println("login: Shows the login prompt");
+        System.out.println("logout: Logs out");
         System.out.println("shutdown: Exits the system");
-        System.out.println("login: Logs you in");
+        System.out.println("showprojects: Shows a list of all current projects");
     }
 
     /**
@@ -54,11 +56,10 @@ public class UserInterface {
 
         System.out.println("Enter username:");
         String username = scanner.nextLine();
-
         System.out.println("Enter password:");
         String password = scanner.nextLine();
 
-        sessionController.login(username, password);
+        controller.login(username, password);
     }
 
     /**
@@ -71,11 +72,80 @@ public class UserInterface {
         String answer = scanner.nextLine();
 
         if (answer.equals("y")) {
-            if (sessionController.logout()) {
+            if (controller.logout()) {
                 System.out.println("Logged out!");
             } else {
                 System.out.println("Error: you are not logged in!");
             }
+        }
+    }
+
+    private void showProjects() {
+        if(controller.getRole() != Role.PROJECTMANAGER) {
+            System.out.println("You must be logged in as Project Manager to show all projects");
+            return;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        showAllProjects();
+        System.out.println("Type a projects name to see its details, including a list of its tasks.");
+
+        String selectedProject = scanner.nextLine();
+        showSpecificProject(selectedProject);
+    }
+
+    private void showAllProjects() {
+        System.out.println("***************** PROJECTS *****************");
+        System.out.println(controller.getProjectNames());
+    }
+
+    private void showSpecificProject(String selectedProject) {
+        Scanner scanner = new Scanner(System.in);
+
+        String projectString = controller.getProjectDetails(selectedProject);
+
+        while(projectString == null) {
+            System.out.println("Sorry, that project doesn't exist, please try again.");
+            selectedProject = scanner.nextLine();
+            projectString = controller.getProjectDetails(selectedProject);
+        }
+
+        System.out.println("*************** PROJECT DETAILS ***************");
+        System.out.println(projectString);
+
+        System.out.println("Select a task by typing its name, or type BACK to select another project");
+        String response = scanner.nextLine();
+
+        if (response.equals("BACK")) {
+            showProjects();
+        }
+        else {
+            selectTask(selectedProject, response);
+        }
+    }
+
+    private void selectTask(String selectedProject, String selectedTask) {
+        Scanner scanner = new Scanner(System.in);
+
+        String taskString = controller.getTaskDetails(selectedProject, selectedTask);
+
+        while(taskString == null) {
+            System.out.println("Sorry, that task doesn't exist, please try again.");
+            selectedProject = scanner.nextLine();
+            taskString = controller.getTaskDetails(selectedProject, selectedTask);
+        }
+
+        System.out.println("*************** TASK DETAILS ***************");
+        System.out.println(taskString);
+
+        System.out.println("Select another task by typing its name, or type BACK to select another project");
+        String response = scanner.nextLine();
+
+        if (response.equals("BACK")) {
+            showProjects();
+        }
+        else {
+            selectTask(selectedProject, response);
         }
     }
 
@@ -86,5 +156,4 @@ public class UserInterface {
     public void printWelcome(String role) {
         System.out.println("Welcome! Your assigned role is " + role);
     }
-
 }
