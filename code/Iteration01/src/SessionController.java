@@ -1,6 +1,6 @@
 public class SessionController {
     private final UserInterface userInterface;
-    private UserManager userManager;
+    private final UserManager userManager;
     private Role userRole;
 
     public SessionController(UserInterface userInterface) {
