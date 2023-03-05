@@ -7,10 +7,42 @@ public class UserInterface {
         this.sessionController = new SessionController(this);
     }
 
+    /**
+     * Starts the system by sequentially handling commands input by the user
+     */
     public void startSystem() {
-        while(!sessionController.isLoggedIn()) {
-            login();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("At your order! Enter 'help' for a list of commands.");
+
+        String nextCommand = scanner.nextLine();
+        while(!nextCommand.equals("shutdown")) {
+            handleCommand(nextCommand);
+            nextCommand = scanner.nextLine();
         }
+    }
+
+    /**
+     * Calls the appropriate function depending on the user input command
+     * @param command String representation of the command given by the user via CLI
+     */
+    private void handleCommand(String command) {
+        switch (command) {
+            case "login" -> login();
+            case "logout" -> logout();
+            case "help" -> printHelp();
+            default -> System.out.println("Unknown command, please try again!");
+        }
+    }
+
+    /**
+     * Prints all available commands
+     */
+    public void printHelp() {
+        System.out.println("Available commands:");
+        System.out.println("help: Prints this message");
+        System.out.println("logout: Logs you out");
+        System.out.println("shutdown: Exits the system");
+        System.out.println("login: Logs you in");
     }
 
     /**
@@ -29,6 +61,9 @@ public class UserInterface {
         sessionController.login(username, password);
     }
 
+    /**
+     * Removes the current session
+     */
     private void logout() {
         Scanner scanner = new Scanner(System.in);
 
@@ -52,29 +87,4 @@ public class UserInterface {
         System.out.println("Welcome! Your assigned role is " + role);
     }
 
-    public void idle() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("At your order! Enter 'Help' for a list of commands.");
-        String answer = scanner.nextLine();
-        handleCmd(answer, scanner);
-    }
-
-    public void printHelp() {
-        System.out.println("Available commands:");
-        System.out.println("Help: Prints this message");
-        System.out.println("Logout: Logs you out");
-        System.out.println("Exit: Exits the system");
-        System.out.println("Login: Logs you in");
-    }
-
-    public void handleCmd(String cmd, Scanner scanner) {
-        switch (cmd) {
-            case "Help" -> printHelp();
-            case "Logout" -> logout();
-            case "Login" -> login();
-            default -> System.out.println("Unknown command, please try again!");
-        }
-        cmd = scanner.nextLine();
-        handleCmd(cmd, scanner);
-    }
 }

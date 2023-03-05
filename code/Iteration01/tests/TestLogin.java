@@ -1,6 +1,6 @@
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class TestLogin {
     @Test
@@ -8,12 +8,12 @@ public class TestLogin {
         UserInterface userInterface = new UserInterface();
         SessionController sessionController = new SessionController(userInterface);
 
-        assertEquals(sessionController.isLoggedIn(), false);
+        assertFalse(sessionController.isLoggedIn());
 
         System.out.println("Trying username Ward with password 123");
         sessionController.login("Ward", "123");
 
-        assertEquals(sessionController.isLoggedIn(), true);
+        assertTrue(sessionController.isLoggedIn());
 
         System.out.println("Trying username Sam with password vijf5");
         sessionController.login("Sam", "vijf5");

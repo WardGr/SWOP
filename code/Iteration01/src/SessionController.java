@@ -39,11 +39,14 @@ public class SessionController {
             return false;
         }
         this.userRole = null;
-        this.userManager = new UserManager();
         return true;
     }
 
-
+    /**
+     * Translates the role enum to its corresponding string
+     * @param role Role enum returned by userManager
+     * @return String that denotes the users role
+     */
     public String roleToString(Role role) {
         return switch (role) {
             case PROJECTMANAGER -> "Project Manager";
