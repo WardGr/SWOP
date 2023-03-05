@@ -16,11 +16,12 @@ public class ProjectManager {
         this.projects = projects;
     }
 
-    // TODO: MOET DIT MISSCHIEN IN DE CONTROLLER? IS EIGENLIJK VERTALING...
 
-
-
-    // TODO: FOR THIS TO WORK ALL PROJECTS MUST HAVE A DIFFERENT NAME, CHECK THIS ON PROJECT CREATION?
+    /**
+     * Returns the project corresponding to the given project name, if no project matches, returns null.
+     * @param selectedProjectName user input that may correspond to an existing project
+     * @return if the given project name corresponds to a project, this project, else null
+     */
     public Project getProject(String selectedProjectName) {
         for (Project project : projects) {
             if (project.getName().equals(selectedProjectName)) {
@@ -28,9 +29,23 @@ public class ProjectManager {
             }
         }
         return null;
+        /* TODO: FOR THIS TO WORK ALL PROJECTS MUST HAVE A DIFFERENT NAME, OTHERWISE SOME PROJECTS MAY NEVER BE SELECTED,
+         *  CHECK THIS ON PROJECT CREATION?
+         */
     }
 
+    /**
+     * @return A copy of all projects.
+     */
     public List<Project> getProjects() {
         return List.copyOf(projects); // copy want reference exposure x
+    }
+
+    /**
+     * Adds a project to the project linked list.
+     * @param project The project to be added
+     */
+    public void addProject(Project project) {
+        projects.add(project);
     }
 }

@@ -23,7 +23,6 @@ public class UserManager {
 
     /**
      * Checks to see if the given username and password correspond to a valid user, and returns their role
-     *
      * @param username The username the user gave via the UI login prompt
      * @param password The password the user gave via the UI login prompt
      * @return If the user exists, returns the appropriate role of the user, else returns null.
@@ -34,9 +33,10 @@ public class UserManager {
                 return user.getRole();
             }
         }
-        // Ik heb voor nu een null gereturned, custom exceptions zijn kut om in java te maken, daar moet ge een eigen klasse voor maken
-        // anders kunnen we ook een RuntimeException gooien, ma ik vind da ni zo logisch? Da lijkt mij eerder iets voor
-        // nullpointerdereference enzo..
+        /* TODO: Ik heb voor nu een null gereturned, custom exceptions zijn kut om in java te maken, daar moet ge een eigen klasse voor maken
+         *  anders kunnen we ook een RuntimeException gooien, ma ik vind da ni zo logisch? Da lijkt mij eerder iets voor
+         *  nullpointerdereference enzo..
+         */
         return null;
     }
 }

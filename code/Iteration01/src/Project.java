@@ -40,6 +40,11 @@ public class Project {
         return name;
     }
 
+    /**
+     * Passes the user input taskname on to the taskManager to fetch the corresponding task
+     * @param selectedTaskName User input, may correspond to a task name
+     * @return The (unique) task corresponding with selectedTaskName, or null
+     */
     public Task getTask(String selectedTaskName) {
         return taskManager.getTask(selectedTaskName);
     }

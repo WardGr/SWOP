@@ -16,12 +16,18 @@ public class TaskManager {
         this.tasks = tasks;
     }
 
-
+    /**
+     * @return A copy of the current tasks
+     */
     public List<Task> getTasks() {
         return List.copyOf(tasks);
     }
 
-
+    /**
+     * Returns the task corresponding to the given name
+     * @param selectedTaskName User input, may correspond to a task name
+     * @return The (unique) task corresponding with selectedTaskName, or null
+     */
     public Task getTask(String selectedTaskName) {
         for (Task task : tasks) {
             if (task.getName().equals(selectedTaskName)) {
