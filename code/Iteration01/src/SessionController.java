@@ -1,6 +1,6 @@
 public class SessionController {
     private final UserInterface userInterface;
-    private final UserManager userManager;
+    private UserManager userManager;
     private Role userRole;
 
     public SessionController(UserInterface userInterface) {
@@ -16,6 +16,10 @@ public class SessionController {
      * @param password The password the user gave via the UI login prompt
      */
     public void login(String username, String password) {
+        /*if (isLoggedIn()) {
+            System.out.println("You are already logged in!");
+            return;
+        }*/ // Todo dit niet nemen??
         this.userRole = userManager.login(username, password);
         if (isLoggedIn()) {
             userInterface.printWelcome(roleToString(getUserRole()));
@@ -23,6 +27,20 @@ public class SessionController {
         else {
             userInterface.printLoginError();
         }
+    }
+
+    /**
+     * Logs the user out by setting the role to null, and initialising a new UserManager.
+     *
+     * @return True if the user was logged in, false otherwise
+     */
+    public boolean logout() {
+        if (!isLoggedIn()) {
+            return false;
+        }
+        this.userRole = null;
+        this.userManager = new UserManager();
+        return true;
     }
 
 
@@ -38,8 +56,9 @@ public class SessionController {
     }
 
     /**
-     * Lijkt misschien raar, maar maakt de code wel leesbaarder, en als we beslissen geen role bij te houden kunnen
-     * we dat eenvoudig hier aanpassen
+     * Checks if the user is logged in by checking if the role is set.
+     *
+     * @return True if the user is logged in, false otherwise
      */
     public boolean isLoggedIn() {
         return userRole != null;

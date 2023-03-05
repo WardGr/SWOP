@@ -29,6 +29,22 @@ public class UserInterface {
         sessionController.login(username, password);
     }
 
+    private void logout() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Are you sure you want to log out? (y/n)");
+        String answer = scanner.nextLine();
+
+        if (answer.equals("y")) {
+            if (sessionController.logout()) {
+                System.out.println("Logged out!");
+            } else {
+                System.out.println("Error: you are not logged in!");
+            }
+
+        }
+    }
+
     public void printLoginError() {
         System.out.println("Wrong password/username combination, please try again!");
     }
