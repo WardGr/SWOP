@@ -41,7 +41,6 @@ public class UserInterface {
             } else {
                 System.out.println("Error: you are not logged in!");
             }
-
         }
     }
 
@@ -51,5 +50,31 @@ public class UserInterface {
 
     public void printWelcome(String role) {
         System.out.println("Welcome! Your assigned role is " + role);
+    }
+
+    public void idle() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("At your order! Enter 'Help' for a list of commands.");
+        String answer = scanner.nextLine();
+        handleCmd(answer, scanner);
+    }
+
+    public void printHelp() {
+        System.out.println("Available commands:");
+        System.out.println("Help: Prints this message");
+        System.out.println("Logout: Logs you out");
+        System.out.println("Exit: Exits the system");
+        System.out.println("Login: Logs you in");
+    }
+
+    public void handleCmd(String cmd, Scanner scanner) {
+        switch (cmd) {
+            case "Help" -> printHelp();
+            case "Logout" -> logout();
+            case "Login" -> login();
+            default -> System.out.println("Unknown command, please try again!");
+        }
+        cmd = scanner.nextLine();
+        handleCmd(cmd, scanner);
     }
 }
