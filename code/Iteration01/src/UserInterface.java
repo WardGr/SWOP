@@ -13,10 +13,12 @@ public class UserInterface {
     public void startSystem() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("At your order! Enter 'help' for a list of commands.");
+        System.out.print(">");
 
         String nextCommand = scanner.nextLine();
         while(!nextCommand.equals("shutdown")) {
             handleCommand(nextCommand);
+            System.out.print(">");
             nextCommand = scanner.nextLine();
         }
     }
@@ -31,6 +33,7 @@ public class UserInterface {
             case "login" -> login();
             case "logout" -> logout();
             case "showprojects" -> showProjects();
+            case "createproject" -> createProject();
             default -> System.out.println("Unknown command, type help to see available commands");
         }
     }
@@ -40,11 +43,12 @@ public class UserInterface {
      */
     public void printHelp() {
         System.out.println("Available commands:");
-        System.out.println("help:         Prints this message");
-        System.out.println("login:        Shows the login prompt");
-        System.out.println("logout:       Logs out");
-        System.out.println("shutdown:     Exits the system");
-        System.out.println("showprojects: Shows a list of all current projects");
+        System.out.println("help:          Prints this message");
+        System.out.println("login:         Shows the login prompt");
+        System.out.println("logout:        Logs out");
+        System.out.println("shutdown:      Exits the system");
+        System.out.println("showprojects:  Shows a list of all current projects");
+        System.out.println("createproject: Shows the project creation prompt and creates a project");
     }
 
     /**
@@ -83,7 +87,7 @@ public class UserInterface {
         showAllProjects();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Type a projects name to see its details, including a list of its tasks, type BACK to exit.");
+        System.out.println("Type a projects name to see its details, including a list of its tasks, type BACK to exit:");
 
         String response = scanner.nextLine();
         if (!response.equals("BACK")) {
@@ -108,7 +112,7 @@ public class UserInterface {
 
         String projectString = controller.getProjectDetails(selectedProject);
         while(projectString == null) {
-            System.out.println("Sorry, that project doesn't exist, please try again or type BACK to exit");
+            System.out.println("Sorry, that project doesn't exist, please try again or type BACK to exit:");
             selectedProject = scanner.nextLine();
             if(selectedProject.equals("BACK")) {
                 return;
@@ -134,7 +138,7 @@ public class UserInterface {
         String taskString = controller.getTaskDetails(selectedProject, selectedTask);
 
         while(taskString == null) {
-            System.out.println("Sorry, that task doesn't exist, please try again or type BACK to select another project");
+            System.out.println("Sorry, that task doesn't exist, please try again or type BACK to select another project:");
             selectedTask = scanner.nextLine();
             if (selectedTask.equals("BACK")) {
                 showProjects();
@@ -155,7 +159,7 @@ public class UserInterface {
      */
     public void nextTask(String selectedProject) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Select another task by typing its name, or type BACK to select another project");
+        System.out.println("Select another task by typing its name, or type BACK to select another project:");
         String response = scanner.nextLine();
 
         if (response.equals("BACK")) {
@@ -166,6 +170,39 @@ public class UserInterface {
         }
     }
 
+    public void createProject() {
+        // TODO: deze check kan beter ergens anders, is ni echt UI-verantwoordelijkheid
+        if(controller.getRole() != Role.PROJECTMANAGER) {
+            System.out.println("You must be logged in as Project Manager to show all projects");
+            return;
+        }
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Type BACK to cancel project creation at any time");
+        System.out.println("*********** PROJECT CREATION FORM ***********");
+
+        System.out.print("Project Name: ");
+        String projectName = scanner.nextLine();
+        if (projectName.equals("BACK")) {
+            return;
+        }
+
+        System.out.print("Project Description: ");
+        String projectDescription = scanner.nextLine();
+        if (projectDescription.equals("BACK")) {
+            return; //TODO: code duplication, is this an issue? It's pretty readable.
+        }
+
+        System.out.print("Project due time: ");
+        String dueTime = scanner.nextLine();
+        if (dueTime.equals("BACK")) {
+            return;
+        }
+
+        controller.createProject(projectName, projectDescription, dueTime);
+
+    }
 
     public void printLoginError() {
         System.out.println("Wrong password/username combination, please try again!");
@@ -173,5 +210,9 @@ public class UserInterface {
 
     public void printWelcome(String role) {
         System.out.println("Welcome! Your assigned role is " + role);
+    }
+
+    public void printProjectFormError() {
+        System.out.println("The given project data is invalid, please try again\n");
     }
 }

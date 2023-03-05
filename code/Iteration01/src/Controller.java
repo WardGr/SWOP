@@ -4,13 +4,15 @@ public class Controller {
     private final UserInterface userInterface;
     private final UserManager userManager;
     private final ProjectManager projectManager;
-    private Role userRole;
+    private Role userRole; // TODO: Do we make a separate class for this?
+    private int systemTime; // TODO: Make an actual class out of this, just temporary for now.
 
     public Controller(UserInterface userInterface) {
         this.userInterface = userInterface;
         this.projectManager = new ProjectManager();
         this.userManager = new UserManager();
         this.userRole = null;
+        this.systemTime = 0;
     }
 
     /**
@@ -116,5 +118,17 @@ public class Controller {
             return null;
         }
         return selectedTask.toString();
+    }
+
+    // TODO: this function works with exceptions, maybe change every "== null" with a RuntimeException?
+    public void createProject(String projectName, String projectDescription, String dueTimeString) {
+        try {
+            int dueTime = Integer.parseInt(dueTimeString); // This can throw a "NumberFormatException"
+            projectManager.addProject(projectName, projectDescription, dueTime, systemTime); // This can throw a "RuntimeException"
+        }
+        catch (Exception e) {
+            userInterface.printProjectFormError();
+            userInterface.createProject();
+        }
     }
 }

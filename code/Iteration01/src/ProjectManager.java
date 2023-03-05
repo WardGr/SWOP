@@ -16,6 +16,15 @@ public class ProjectManager {
         this.projects = projects;
     }
 
+    public void addProject(String projectName, String projectDescription, int dueTime, int systemTime) {
+        if(dueTime <= systemTime) {
+            throw new RuntimeException();
+        }
+        Project newProject = new Project(projectName, projectDescription, systemTime, dueTime);
+        projects.add(newProject);
+
+    }
+
 
     /**
      * Returns the project corresponding to the given project name, if no project matches, returns null.
