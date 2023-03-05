@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class UserInterface<prviate> {
+public class UserInterface {
     private final Controller controller;
 
     public UserInterface() {
