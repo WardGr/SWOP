@@ -52,4 +52,13 @@ public class Project {
     public List<Task> getTasks() {
         return taskManager.getTasks();
     }
+
+    public boolean addTask(String taskName, String description, long duration, int deviation) {
+        try {
+            taskManager.addTask(taskName, description, duration, deviation);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

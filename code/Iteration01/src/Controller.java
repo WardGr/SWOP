@@ -131,4 +131,20 @@ public class Controller {
             userInterface.createProject();
         }
     }
+
+    public void createTask(String projectName, String taskName, String Description, long duration, int deviation) {
+        if (getRole() != Role.PROJECTMANAGER) {
+            System.out.println("You must be logged in as Project Manager to create a task");
+            return;
+        }
+        try {
+            Time time = new Time(duration);
+            projectManager.addTaskToProject(projectName, taskName, Description, duration, deviation);
+            UserInterface.messageNewTask(taskName, projectName);
+        }
+        catch (Exception e) {
+            userInterface.printTaskFormError();
+            userInterface.createTask();
+        }
+    }
 }

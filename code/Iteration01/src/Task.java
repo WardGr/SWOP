@@ -1,10 +1,10 @@
 public class Task {
     private final String name;
     private final String description;
-    private final int estimatedDuration;
+    private final long estimatedDuration;
     private final int acceptableDeviation;
 
-    public Task(String name, String description, int estimatedDuration, int acceptableDeviation) {
+    public Task(String name, String description, long estimatedDuration, int acceptableDeviation) {
         this.name = name;
         this.description = description;
         this.estimatedDuration = estimatedDuration;

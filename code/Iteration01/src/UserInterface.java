@@ -204,6 +204,54 @@ public class UserInterface {
 
     }
 
+    public void createTask() {
+    Scanner scanner = new Scanner(System.in);
+
+    System.out.println("*********** TASK CREATION FORM ***********");
+    System.out.println("Project name:");
+    String pName = scanner.nextLine();
+    if (isCancel(pName)) {
+        System.out.println("Cancelled task creation");
+        return;
+    }
+
+    String tName = scanner.nextLine();
+    if (isCancel(tName)) {
+        System.out.println("Cancelled task creation");
+        return;
+    }
+
+    System.out.println("Task description:");
+    String descr = scanner.nextLine();
+    if (isCancel(descr)) {
+        System.out.println("Cancelled task creation");
+        return;
+    }
+
+    System.out.println("Task duration:");
+    String durationString = scanner.nextLine();
+    if (isCancel(durationString)) {
+        System.out.println("Cancelled task creation");
+        return;
+    }
+    int duration = Integer.parseInt(durationString);
+
+    System.out.println("Task deviation:");
+    String deviationString = scanner.nextLine();
+    if (isCancel(deviationString)) {
+        System.out.println("Cancelled task creation");
+        return;
+    }
+    int deviation = Integer.parseInt(deviationString);
+
+    controller.createTask(pName, tName, descr, duration, deviation);
+
+
+
+
+
+    }
+
     public void printLoginError() {
         System.out.println("Wrong password/username combination, please try again!");
     }
@@ -214,5 +262,19 @@ public class UserInterface {
 
     public void printProjectFormError() {
         System.out.println("The given project data is invalid, please try again\n");
+    }
+
+    private boolean isCancel(String input) {
+        return input.equals("q");
+    }
+
+
+
+    public void printTaskFormError() {
+        System.out.println("The given task data is invalid, please try again\n");
+    }
+
+    public static void messageNewTask(String taskName, String projectName) {
+        System.out.println("Task " + taskName + " has been added to project " + projectName + " successfully\n");
     }
 }

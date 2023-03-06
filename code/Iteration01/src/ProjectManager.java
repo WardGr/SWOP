@@ -57,4 +57,17 @@ public class ProjectManager {
     public void addProject(Project project) {
         projects.add(project);
     }
+
+    public boolean addTaskToProject(String projectName, String taskName, String description, long duration, int deviation) {
+        Project project = getProject(projectName);
+        if (project == null) {
+            throw new RuntimeException();
+        }
+        try {
+            project.addTask(taskName, description, duration, deviation);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(); // todo kunnen ook boolean returnen ma dan wordt het moeilijk te vinden wat d efout is, ni?
+        }
+    }
 }
