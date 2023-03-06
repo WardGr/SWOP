@@ -34,6 +34,7 @@ public class UserInterface {
             case "logout" -> logout();
             case "showprojects" -> showProjects();
             case "createproject" -> createProject();
+            case "createtask" -> createTask();
             default -> System.out.println("Unknown command, type help to see available commands");
         }
     }
@@ -49,6 +50,7 @@ public class UserInterface {
         System.out.println("shutdown:      Exits the system");
         System.out.println("showprojects:  Shows a list of all current projects");
         System.out.println("createproject: Shows the project creation prompt and creates a project");
+        System.out.println("createtask:    Shows the task creation prompt to add a task to a project");
     }
 
     /**
@@ -80,11 +82,15 @@ public class UserInterface {
      */
     private void showProjects() {
         // TODO: deze check kan beter ergens anders, is ni echt UI-verantwoordelijkheid
-        if(controller.getRole() != Role.PROJECTMANAGER) {
-            System.out.println("You must be logged in as Project Manager to show all projects");
+
+        try {
+            String projects = controller.getProjectNames();
+            System.out.println("********* PROJECTS *********");
+            System.out.println(projects);
+        } catch (RuntimeException e) { // Make this an "InvalidRoleError" or something.
+            printAccessError(Role.PROJECTMANAGER);
             return;
         }
-        showAllProjects();
 
         Scanner scanner = new Scanner(System.in);
         System.out.println("Type a projects name to see its details, including a list of its tasks, type BACK to exit:");
@@ -93,14 +99,6 @@ public class UserInterface {
         if (!response.equals("BACK")) {
             showSpecificProject(response);
         }
-    }
-
-    /**
-     * Shows all current project names, numbered starting from 1.
-     */
-    private void showAllProjects() {
-        System.out.println("***************** PROJECTS *****************");
-        System.out.println(controller.getProjectNames());
     }
 
     /**
@@ -131,7 +129,7 @@ public class UserInterface {
      * @param selectedProject User input corresponding to the name of an existing project
      * @param selectedTask User input corresponding to the name of an existing task attached to selectedProject project,
      *                     if it doesn't exist, another is prompted
-     * @pre selectedProject consists of a valid project name // TODO: maybe it's not good to force this precondition, and we should instead decouple it by checking defensively
+     * @pre selectedTask consists of a valid project name // TODO: maybe it's not good to force this precondition, and we should instead decouple it by checking defensively
      */
     private void showTask(String selectedProject, String selectedTask) {
         Scanner scanner = new Scanner(System.in);
@@ -171,12 +169,6 @@ public class UserInterface {
     }
 
     public void createProject() {
-        // TODO: deze check kan beter ergens anders, is ni echt UI-verantwoordelijkheid
-        if(controller.getRole() != Role.PROJECTMANAGER) {
-            System.out.println("You must be logged in as Project Manager to show all projects");
-            return;
-        }
-
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Type BACK to cancel project creation at any time");
@@ -205,50 +197,47 @@ public class UserInterface {
     }
 
     public void createTask() {
-    Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-    System.out.println("*********** TASK CREATION FORM ***********");
-    System.out.println("Project name:");
-    String pName = scanner.nextLine();
-    if (isCancel(pName)) {
-        System.out.println("Cancelled task creation");
-        return;
-    }
+        System.out.println("Type BACK to cancel task creation at any time");
 
-    String tName = scanner.nextLine();
-    if (isCancel(tName)) {
-        System.out.println("Cancelled task creation");
-        return;
-    }
+        System.out.println("*********** TASK CREATION FORM ***********");
+        System.out.println("Project name of which to add the task to:");
+        String projectName = scanner.nextLine();
+        if (projectName.equals("BACK")) {
+            System.out.println("Cancelled task creation");
+            return;
+        }
 
-    System.out.println("Task description:");
-    String descr = scanner.nextLine();
-    if (isCancel(descr)) {
-        System.out.println("Cancelled task creation");
-        return;
-    }
+        System.out.println("Task name:");
+        String taskName = scanner.nextLine();
+        if (taskName.equals("BACK")) {
+            System.out.println("Cancelled task creation");
+            return;
+        }
 
-    System.out.println("Task duration:");
-    String durationString = scanner.nextLine();
-    if (isCancel(durationString)) {
-        System.out.println("Cancelled task creation");
-        return;
-    }
-    int duration = Integer.parseInt(durationString);
+        System.out.println("Task description:");
+        String description = scanner.nextLine();
+        if (description.equals("BACK")) {
+            System.out.println("Cancelled task creation");
+            return;
+        }
 
-    System.out.println("Task deviation:");
-    String deviationString = scanner.nextLine();
-    if (isCancel(deviationString)) {
-        System.out.println("Cancelled task creation");
-        return;
-    }
-    int deviation = Integer.parseInt(deviationString);
+        System.out.println("Task duration:");
+        String duration = scanner.nextLine();
+        if (duration.equals("BACK")) {
+            System.out.println("Cancelled task creation");
+            return;
+        }
 
-    controller.createTask(pName, tName, descr, duration, deviation);
+        System.out.println("Task deviation:");
+        String deviation = scanner.nextLine();
+        if (deviation.equals("BACK")) {
+            System.out.println("Cancelled task creation");
+            return;
+        }
 
-
-
-
+        controller.createTask(projectName, taskName, description, duration, deviation);
 
     }
 
@@ -260,21 +249,27 @@ public class UserInterface {
         System.out.println("Welcome! Your assigned role is " + role);
     }
 
-    public void printProjectFormError() {
-        System.out.println("The given project data is invalid, please try again\n");
+    public void printParseError() {
+        System.out.println("A given integer field could not be parsed, please ensure you wrote a valid integer in these fields.\n");
     }
-
-    private boolean isCancel(String input) {
-        return input.equals("q");
-    }
-
-
 
     public void printTaskFormError() {
         System.out.println("The given task data is invalid, please try again\n");
     }
 
-    public static void messageNewTask(String taskName, String projectName) {
+    public static void printTaskCreationComplete(String taskName, String projectName) {
         System.out.println("Task " + taskName + " has been added to project " + projectName + " successfully\n");
+    }
+
+    public void printAccessError(Role role) {
+        System.out.println("You must be logged in as " + role.toString() + " to access this function." );
+    }
+
+    public void printInvalidProjectDataError() {
+        System.out.println("The given data does not constitute a valid project, please check the given details.\n");
+    }
+
+    public void printInvalidTaskDataError() {
+        System.out.println("The given data does not constitute a valid task, please check the given details.\n");
     }
 }

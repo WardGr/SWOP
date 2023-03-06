@@ -37,13 +37,8 @@ public class TaskManager {
         return null;
     }
 
-    public boolean addTask(String taskName, String description, long duration, int deviation) {
-        try {
-            Task newTask = new Task(taskName, description, duration, deviation);
-            tasks.add(newTask);
-            return true;
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
+    public void addTask(String taskName, String description, int duration, int deviation) {
+        Task newTask = new Task(taskName, description, duration, deviation);
+        tasks.add(newTask);
     }
 }

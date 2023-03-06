@@ -58,16 +58,12 @@ public class ProjectManager {
         projects.add(project);
     }
 
-    public boolean addTaskToProject(String projectName, String taskName, String description, long duration, int deviation) {
+    public void addTaskToProject(String projectName, String taskName, String description, int duration, int deviation) {
         Project project = getProject(projectName);
-        if (project == null) {
+        if (project == null) { // TODO: we zijn door elkaar met exceptions en null-checks aan het werken, we zouden best 1 van de twee beslissen (mijn voorkeur gaat naar custom exceptions, bijvoorbeeld een "InvalidProjectName" exception enzo, die dan gehandelt wordt door de UI)
             throw new RuntimeException();
         }
-        try {
-            project.addTask(taskName, description, duration, deviation);
-            return true;
-        } catch (Exception e) {
-            throw new RuntimeException(); // todo kunnen ook boolean returnen ma dan wordt het moeilijk te vinden wat d efout is, ni?
-        }
+        project.addTask(taskName, description, duration, deviation);
+        // Ge hoeft ni te catchen en dan weer te throwen, ge kunt die error gewoon laten gebeuren aangezien de controller toch al een try - catch heeft wanneer die deze functie oproept
     }
 }
