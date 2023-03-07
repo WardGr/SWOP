@@ -73,6 +73,10 @@ public class Controller {
      * @return A formatted string of all project names, numbered from 1
      */
     public String getProjectNames() {
+        if (getRole() != Role.PROJECTMANAGER) {
+            throw new RuntimeException();
+        }
+
         StringBuilder projectString = new StringBuilder();
 
         List<Project> projects = projectManager.getProjects();
@@ -120,15 +124,43 @@ public class Controller {
         return selectedTask.toString();
     }
 
-    // TODO: this function works with exceptions, maybe change every "== null" with a RuntimeException?
     public void createProject(String projectName, String projectDescription, String dueTimeString) {
+        if (getRole() != Role.PROJECTMANAGER) {
+            userInterface.printAccessError(Role.PROJECTMANAGER);
+            return;
+        }
         try {
             int dueTime = Integer.parseInt(dueTimeString); // This can throw a "NumberFormatException"
             projectManager.addProject(projectName, projectDescription, dueTime, systemTime); // This can throw a "RuntimeException"
-        }
-        catch (Exception e) {
-            userInterface.printProjectFormError();
+        }// TODO: this in user interface or nah (integer parsing)?
+        catch (NumberFormatException e) {
+            userInterface.printParseError();
             userInterface.createProject();
+        }
+        catch (RuntimeException e) {
+            userInterface.printInvalidProjectDataError();
+            userInterface.createProject();
+        }
+    }
+
+    public void createTask(String projectName, String taskName, String Description, String durationString, String deviationString) {
+        if (getRole() != Role.PROJECTMANAGER) {
+            userInterface.printAccessError(Role.PROJECTMANAGER);
+            return;
+        }
+        try {
+            int duration = Integer.parseInt(durationString);
+            int deviation = Integer.parseInt(deviationString);
+            projectManager.addTaskToProject(projectName, taskName, Description, duration, deviation);
+            UserInterface.printTaskCreationComplete(taskName, projectName);
+        } // TODO: this in user interface or nah (integer parsing)?
+        catch (NumberFormatException e) {
+            userInterface.printParseError();
+            userInterface.createTask();
+        }
+        catch (RuntimeException e) {
+            userInterface.printInvalidTaskDataError();
+            userInterface.createTask(); // TODO: Will recursive calls be an issue?
         }
     }
 }

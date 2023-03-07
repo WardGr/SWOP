@@ -52,4 +52,8 @@ public class Project {
     public List<Task> getTasks() {
         return taskManager.getTasks();
     }
+
+    public void addTask(String taskName, String description, int duration, int deviation) {
+        taskManager.addTask(taskName, description, duration, deviation);
+    }
 }
