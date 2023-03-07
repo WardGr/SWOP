@@ -4,23 +4,23 @@ public class TestCreateTask {
     @Test
     public void test() {
         UserInterface userInterface = new UserInterface();
-        Controller sessionController = new Controller(userInterface);
+        Controller controller = new Controller(userInterface);
 
         // Login with valid project manager credentials
-        sessionController.login("Ward", "123");
-        assertTrue(sessionController.isLoggedIn());
+        controller.login("Ward", "123");
+        assertTrue(controller.isLoggedIn());
 
         // Create a new task
-        sessionController.createTask("Project x", "Task 3", "Description 3", "3", "3");
-        System.out.println(sessionController.getProjectDetails("Project x"));
-        assertEquals(sessionController.getTaskDetails("Project x", "Task 3"), """
+        controller.createTask("Project x", "Task 3", "Description 3", "3", "3");
+        System.out.println(controller.getProjectDetails("Project x"));
+        assertEquals(controller.getTaskDetails("Project x", "Task 3"), """
                 Task Name:          Task 3
                 Description:        Description 3
                 Estimated Duration: 3
                 Accepted Deviation: 3
                 """);
 
-        assertEquals(sessionController.getProjectDetails("Project x"), """
+        assertEquals(controller.getProjectDetails("Project x"), """
                 Project Name:  Project x
                 Description:   Cool project
                 Creation Time: 0
