@@ -1,10 +1,11 @@
 import java.util.Scanner;
 
 public class UserInterface {
+    private final SessionUI sessionUI;
     private final Controller controller;
 
     public UserInterface() {
-        this.controller = new Controller(this);
+        this.sessionUI = new SessionUI();
     }
 
     /**
@@ -58,22 +59,11 @@ public class UserInterface {
      * to the SessionController.
      */
     private void login() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Enter username:");
-        String username = scanner.nextLine();
-        System.out.println("Enter password:");
-        String password = scanner.nextLine();
-
-        controller.login(username, password);
+        sessionUI.login();
     }
 
     private void logout() {
-        if (controller.logout()) {
-            System.out.println("Logged out!");
-        } else {
-            System.out.println("Error: you are not logged in!");
-        }
+        sessionUI.logout();
     }
 
     /**
@@ -251,10 +241,6 @@ public class UserInterface {
 
     public void printParseError() {
         System.out.println("A given integer field could not be parsed, please ensure you wrote a valid integer in these fields.\n");
-    }
-
-    public void printTaskFormError() {
-        System.out.println("The given task data is invalid, please try again\n");
     }
 
     public static void printTaskCreationComplete(String taskName, String projectName) {

@@ -22,21 +22,22 @@ public class UserManager {
     }
 
     /**
-     * Checks to see if the given username and password correspond to a valid user, and returns their role
+     * Checks to see if the given username and password correspond to a valid user, and returns it's user object
      * @param username The username the user gave via the UI login prompt
      * @param password The password the user gave via the UI login prompt
-     * @return If the user exists, returns the appropriate role of the user, else returns null.
+     * @throws IncorrentLoginException if the given username and password dont correspond to a user in the db
+     * @return returns the user that matches the username and password
      */
-    public Role login(String username, String password) {
-        for (User user : users) {
+    public User getUser(String username, String password) throws IncorrentLoginException {
+        for (User user : getUsers()) {
             if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
-                return user.getRole();
+                return user;
             }
         }
-        /* TODO: Ik heb voor nu een null gereturned, custom exceptions zijn kut om in java te maken, daar moet ge een eigen klasse voor maken
-         *  anders kunnen we ook een RuntimeException gooien, ma ik vind da ni zo logisch? Da lijkt mij eerder iets voor
-         *  nullpointerdereference enzo..
-         */
-        return null;
+        throw new IncorrentLoginException();
+    }
+
+    private List<User> getUsers() {
+        return List.copyOf(users);
     }
 }
