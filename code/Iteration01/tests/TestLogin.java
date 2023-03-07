@@ -6,7 +6,7 @@ public class TestLogin {
     @Test
     public void test() {
         UserInterface userInterface = new UserInterface();
-        SessionController sessionController = new SessionController(userInterface);
+        Controller sessionController = new Controller(userInterface);
 
         assertFalse(sessionController.isLoggedIn());
 
