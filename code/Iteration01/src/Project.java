@@ -1,14 +1,15 @@
+import java.util.LinkedList;
 import java.util.List;
 
 public class Project {
-    private final TaskManager taskManager;
-    private final String name;
-    private final String description;
-    private final int creationTime;
-    private final int dueTime;
+    private List<Task> tasks;
+    private String name;
+    private String description;
+    private int creationTime;
+    private int dueTime;
 
     Project(String name, String description, int creationTime, int dueTime) {
-        taskManager = new TaskManager();
+        this.tasks = new LinkedList<>();
         this.name = name;
         this.description = description;
         this.creationTime = creationTime;
@@ -19,25 +20,37 @@ public class Project {
     public String toString() {
         StringBuilder projectString = new StringBuilder();
 
-        projectString.append(   "Project Name:  " + name         + '\n' +
-                                "Description:   " + description  + '\n' +
-                                "Creation Time: " + creationTime + '\n' +
-                                "Due time:      " + dueTime      + '\n');
-
+        projectString.append(   "Project Name:  " + getName()         + '\n' +
+                                "Description:   " + getDescription()  + '\n' +
+                                "Creation Time: " + getCreationTime() + '\n' +
+                                "Due time:      " + getDueTime()      + '\n');
         projectString.append("\nTasks:\n");
-        List<Task> tasks = getTasks();
         int index = 1;
-        for (Task task : tasks) {
+        for (Task task : getTasks()) {
             projectString.append(index++ + "." + task.getName() + '\n');
         }
 
         return projectString.toString();
-
     }
 
+    public String getDescription() {
+        return description;
+    }
 
     public String getName() {
         return name;
+    }
+
+    public int getCreationTime() {
+        return creationTime;
+    }
+
+    public int getDueTime() {
+        return dueTime;
+    }
+
+    public List<Task> getTasks() {
+        return List.copyOf(tasks);
     }
 
     /**
@@ -46,14 +59,17 @@ public class Project {
      * @return The (unique) task corresponding with selectedTaskName, or null
      */
     public Task getTask(String selectedTaskName) {
-        return taskManager.getTask(selectedTaskName);
+        for (Task task : getTasks()) {
+            if (task.getName().equals(selectedTaskName)) {
+                return task;
+            }
+        }
+        return null;
     }
 
-    public List<Task> getTasks() {
-        return taskManager.getTasks();
-    }
 
     public void addTask(String taskName, String description, int duration, int deviation) {
-        taskManager.addTask(taskName, description, duration, deviation);
+        // Eerst nog check zeker
+        tasks.add(new Task(taskName, description, duration, deviation));
     }
 }
