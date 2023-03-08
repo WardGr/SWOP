@@ -5,10 +5,13 @@ public class Project {
     private List<Task> tasks;
     private String name;
     private String description;
-    private int creationTime;
-    private int dueTime;
+    private Time creationTime;
+    private Time dueTime;
 
-    Project(String name, String description, int creationTime, int dueTime) {
+    Project(String name, String description, Time creationTime, Time dueTime) throws DueBeforeSystemTimeException {
+        if (dueTime.before(creationTime)) {
+            throw new DueBeforeSystemTimeException();
+        }
         this.tasks = new LinkedList<>();
         this.name = name;
         this.description = description;
@@ -41,16 +44,25 @@ public class Project {
         return name;
     }
 
-    public int getCreationTime() {
+    public Time getCreationTime() {
         return creationTime;
     }
 
-    public int getDueTime() {
+    public Time getDueTime() {
         return dueTime;
     }
 
     public List<Task> getTasks() {
         return List.copyOf(tasks);
+    }
+
+    public String getStatus() {
+        for (Task task : tasks) {
+            if (!task.isFinished()) {
+                return "ongoing";
+            }
+        }
+        return "finished";
     }
 
     /**

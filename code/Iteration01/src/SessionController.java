@@ -1,7 +1,14 @@
 public class SessionController {
-    public Session session;
-    public UserManager userManager;
-    public SessionUI sessionUI;
+    private Session session;
+    private UserManager userManager;
+    private SessionUI sessionUI;
+
+    public SessionController(Session session, SessionUI sessionUI) {
+        this.session = session;
+        this.userManager = new UserManager();
+        this.sessionUI = sessionUI;
+    }
+
 
     /**
      * Passes the username and password on to the UserManager, initialises the current session by setting the
@@ -19,7 +26,7 @@ public class SessionController {
             session.login(newUser);
             sessionUI.printWelcome(username, newUser.getRole().toString()); // Dependency to Role enum, shouldnt be an issue.
         }
-        catch (IncorrentLoginException e) {
+        catch (IncorrentLoginException e) { // TODO: change use of exceptions here, this shouldn't be an exception.
             sessionUI.handleLoginError();
         }
     }
@@ -29,5 +36,6 @@ public class SessionController {
             sessionUI.printLogoutError();
         }
         session.logout();
+        sessionUI.printLogout();
     }
 }

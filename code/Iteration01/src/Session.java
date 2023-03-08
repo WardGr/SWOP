@@ -6,23 +6,24 @@ public class Session {
         this.currentUser = newUser;
     }
 
-    public User getCurrentUser() throws NotLoggedInException {
-        if(getCurrentUser() == null) {
-            throw new NotLoggedInException();
-        }
+    public Session() {
+        this.currentUser = null;
+    }
+
+    public User getCurrentUser() {
         return currentUser;
     }
 
-    public String getUserName() throws NotLoggedInException {
+    public String getUserName() {
         if(getCurrentUser() == null) {
-            throw new NotLoggedInException();
+            return null;
         }
         return currentUser.getUsername();
     }
 
-    public Role getRole() throws NotLoggedInException {
+    public Role getRole() {
         if(getCurrentUser() == null) {
-            throw new NotLoggedInException();
+            return null;
         }
         return currentUser.getRole();
     }

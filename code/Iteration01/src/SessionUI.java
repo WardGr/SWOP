@@ -3,11 +3,11 @@ import java.util.Scanner;
 public class SessionUI { // Verantwoordelijkheid: Handle I/O from session-centric use-cases
     public SessionController sessionController;
 
-    public SessionUI() {
-        this.sessionController = new SessionController();
+    public SessionUI(Session session) {
+        this.sessionController = new SessionController(session, this);
     }
 
-    public void login() {
+    public void loginPrompt() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Enter username:");
@@ -28,15 +28,15 @@ public class SessionUI { // Verantwoordelijkheid: Handle I/O from session-centri
 
     public void handleLoginError() {
         System.out.println("Incorrent username/password combination, please try again");
-        login();
+        loginPrompt();
     }
 
     public void printAlreadyLoggedInError() {
         System.out.println("You are already logged in!");
     }
 
-    public void printLogout(String name) {
-        System.out.println("User" + name + "logged out.");
+    public void printLogout() {
+        System.out.println("Logged out.");
     }
 
     public void printLogoutError() {
