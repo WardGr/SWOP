@@ -1,6 +1,6 @@
 public class User {
-    private final String username;
-    private final String password;
+    private String username;
+    private String password;
     private Role role;
     // Kunnen mensen ooit ontslagen of gepromoveerd worden?
 
