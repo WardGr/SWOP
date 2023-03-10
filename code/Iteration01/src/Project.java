@@ -37,6 +37,10 @@ public class Project {
         return projectString.toString();
     }
 
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
+
     public String getDescription() {
         return description;
     }
@@ -81,14 +85,14 @@ public class Project {
     }
 
 
-    public void addTask(String taskName, String description, Time duration, float deviation, List<String> previousTaskNames, List <String> nextTaskNames, String replacesTaskName) {
+    public void addTask(String taskName, String description, Time duration, float deviation, List<String> previousTaskNames) {
         // Eerst nog check zeker -> gaan we zeker doen!
 
         if (getTask(taskName) != null) {
             return;
         }
 
-        List<Task> previousTasks = new ArrayList<Task>();
+        List<Task> previousTasks = new ArrayList<>();
         for (String previousTaskName : previousTaskNames) {
             Task task = getTask(previousTaskName);
             if (task == null) {
@@ -97,21 +101,7 @@ public class Project {
             previousTasks.add(task);
         }
 
-        List<Task> nextTasks = new ArrayList<Task>();
-        for (String nextTaskName : nextTaskNames) {
-            Task task = getTask(nextTaskName);
-            if (task == null) {
-                return;
-            }
-            nextTasks.add(task);
-        }
-
-        Task replacesTask = getTask(replacesTaskName);
-        if (replacesTask == null){
-            return;
-        }
-
-        tasks.add(new Task(taskName, description, duration, deviation, previousTasks, nextTasks, replacesTask));
+        tasks.add(new Task(taskName, description, duration, deviation, previousTasks));
 
     }
 }

@@ -9,6 +9,17 @@ public class TaskManSystem {
 
         Project project1 = new Project("Project x", "Cool project", new Time(0), new Time(1000));
         Project project2 = new Project("Project y", "Even cooler project", new Time(200), new Time(5000));
+
+        Task task1 = new Task("Cool task", "Do stuff", new Time(100), (float) 0.1);
+        Task task2 = new Task("Cooler task", "Do more stuff", new Time(1000), (float) 0.1);
+
+        project1.addTask(task1);
+        project1.addTask(task2);
+
+        project2.addTask(task1);
+        project2.addTask(task2);
+
+
         LinkedList<Project> projects = new LinkedList<>();
         projects.add(project1);
         projects.add(project2);
@@ -42,6 +53,7 @@ public class TaskManSystem {
     }
 
     //TODO: moet dit hier?? Nu doet de TaskManSystem de vertaling van project naar string?
+    //        - Ik denk het ni, verander dit!
     public String showProject(String projectName) {
         Project project = getProject(projectName);
         if (project == null) {
@@ -64,18 +76,36 @@ public class TaskManSystem {
     }
 
     public void createProject(String projectName, String projectDescription, Time systemTime, String dueTimeString) throws DueBeforeSystemTimeException {
+        // TODO: doe deze parsing in UI zodat duetime al een integer is!
         Time dueTime = new Time(Integer.parseInt(dueTimeString));
         Project newProject = new Project(projectName, projectDescription, systemTime, dueTime);
         projects.add(newProject);
     }
 
-    public void addTaskToProject(String projectName, String taskName, String description, Time duration, float deviation, List<String> previousTasks, List<String> nextTasks, String replacesTask){
+    public void addTaskToProject(String projectName, String taskName, String description, Time duration, float deviation, List<String> previousTasks){
         Project project = getProject(projectName);
-
-        if (project != null) {
-            project.addTask(taskName, description, duration, deviation, previousTasks, nextTasks, replacesTask);
-        } else {
+        if (project == null) {
             return;// TODO
         }
+        project.addTask(taskName, description, duration, deviation, previousTasks);
+    }
+
+    public Task getTask(String projectName, String taskName) {
+        Project project = getProject(projectName);
+        if (project == null) {
+            return null; // TODO
+        }
+        else {
+            return project.getTask(taskName);
+        }
+    }
+
+
+    public void addAlternativeTask(String projectName, String taskName, String description, Time duration, float deviation, String replaces) {
+        Task task = getTask(projectName, replaces);
+        if (task == null) {
+            return; // TODO
+        }
+        task.addReplacementTask(taskName, description, duration, deviation);
     }
 }

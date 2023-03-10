@@ -93,41 +93,6 @@ public class CreateProjectUI {
             return;
         }
 
-        System.out.println("Previous Tasks:");
-        System.out.println("Enter '.' to stop adding new tasks");
-        boolean stop = false;
-        List<String> previousTasks = new ArrayList<String>();
-        while (!stop) {
-            String previousTask = scanner.nextLine();
-            if (previousTask.equals(".")){
-                stop = true;
-            } else {
-                previousTasks.add(previousTask);
-            }
-        }
-
-        System.out.println("Next Tasks:");
-        System.out.println("Enter '.' to stop adding new tasks");
-        stop = false;
-        List<String> nextTasks = new ArrayList<String>();
-        while (!stop) {
-            String nextTask = scanner.nextLine();
-            if (nextTask.equals(".")) {
-                stop = true;
-            } else {
-                nextTasks.add(nextTask);
-            }
-        }
-
-        System.out.println("This task is a replacement for task:");
-        System.out.println("Type '.' if this isn't a replacement for another task");
-        String replaces = scanner.nextLine();
-
-        // TODO deze ook toevoegen?
-        //System.out.println("When this task fails it is replaced by task:");
-        //System.out.println("Type '.' if there isn't a replacement task");
-        //String replacedBy = scanner.nextLine();
-
         Time durationTime;
         float deviationFloat;
         try{
@@ -138,7 +103,29 @@ public class CreateProjectUI {
             return;
         }
 
-        createProjectController.createTask(projectName, taskName, description, durationTime, deviationFloat, previousTasks, nextTasks, replaces);
+        System.out.println("Is this a replacement task? (y/n)");
+        String answer = scanner.nextLine();
 
+        while(!answer.equals("y") && !answer.equals("n")) {
+            System.out.println("Is this a replacement task? (y/n)");
+            answer = scanner.nextLine();
+        }
+
+        if (answer.equals("y")) {
+            System.out.println("This task is a replacement for task:");
+            String replaces = scanner.nextLine();
+            createProjectController.replaceTask(projectName, taskName, description, durationTime, deviationFloat, replaces);
+        }
+        else {
+            System.out.println("Tasks that should be completed before this task:");
+            System.out.println("Enter '.' to stop adding new tasks");
+            String previousTask = scanner.nextLine();
+            List<String> previousTasks = new ArrayList<String>();
+            while (!previousTask.equals(".")) {
+                previousTasks.add(previousTask);
+                previousTask = scanner.nextLine();
+            }
+            createProjectController.createTask(projectName, taskName, description, durationTime, deviationFloat, previousTasks);
+        }
     }
 }
