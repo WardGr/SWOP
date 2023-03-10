@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class Project {
     private List<Task> tasks;
@@ -86,18 +85,18 @@ public class Project {
     }
 
 
-    public void addTask(String taskName, String description, Time duration, float deviation, List<String> previousTaskNames) {
+    public void addTask(String taskName, String description, Time duration, double deviation, List<String> previousTaskNames) throws TaskNotFoundException {
         // Eerst nog check zeker -> gaan we zeker doen!
 
         if (getTask(taskName) != null) {
-            return;
+            return; // TODO: dit checkt of dezelfde task al bestaat? da doen we eigenlijk echt nergens, mss overal doen... ook voor projects
         }
 
         List<Task> previousTasks = new ArrayList<>();
         for (String previousTaskName : previousTaskNames) {
             Task task = getTask(previousTaskName);
             if (task == null) {
-                return; // TODO
+                throw new TaskNotFoundException();
             }
             previousTasks.add(task);
         }
@@ -106,15 +105,17 @@ public class Project {
 
     }
 
-    public void addAlternativeTask(String taskName, String description, Time duration, float deviation, String replaces){
+    public void addAlternativeTask(String taskName, String description, Time duration, double deviation, String replaces) throws ReplacedTaskNotFailedException, TaskNotFoundException {
         if (getTask(taskName) != null) {
-            return;
+            return; // TODO: dit checkt of dezelfde task al bestaat? da doen we eigenlijk echt nergens, mss overal doen... ook voor projects
         }
+
         Task replacesTask = getTask(replaces);
         if (replacesTask == null) {
-            return; // TODO
+            throw new TaskNotFoundException();
         }
         Task task = new Task(taskName, description, duration, deviation, replacesTask);
+        tasks.add(task);
     }
 
     public List<String> showAvailableTasks() {
@@ -135,5 +136,13 @@ public class Project {
             }
         }
         return executingTasks;
+    }
+
+    public String showTask(String taskName) throws TaskNotFoundException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        return task.toString();
     }
 }

@@ -9,7 +9,8 @@ public class ShowProjectsUI {
         this.showProjectsController = new ShowProjectsController(session, this, taskManSystem);
     }
 
-    public static void printProjects(List<String> names, List<String> statuses) {
+    public void printProjects(List<String> names, List<String> statuses) {
+        System.out.println("********* PROJECTS *********");
         int i = 0;
         for (String name : names) {
             System.out.print(i+1);
@@ -17,44 +18,65 @@ public class ShowProjectsUI {
             System.out.println(name + ", status: " + statuses.get(i));
             i++;
         }
+        showProject();
     }
 
-    public static void printProjectDetails(String projectString) {
+    public void printProjectDetails(String projectString, String projectName) {
         if (projectString == null) {
             System.out.println("Project not found");
         }
         System.out.println("******** PROJECT DETAILS ********");
         System.out.println(projectString);
+
+        showTask(projectName);
     }
 
-    public static void printTaskDetails(String taskString) {
+    public void printTaskDetails(String taskString, String projectString) {
         System.out.println("******** TASK DETAILS ********");
         System.out.println(taskString);
+
+        showTask(projectString);
     }
 
     public void showProjects() {
-        System.out.println("********* PROJECTS *********");
         showProjectsController.showProjects();
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Type a projects name to see its details, including a list of its tasks, type BACK to exit:");
-        String projectString = scanner.nextLine();
-
-        if (projectString.equals("BACK")) {
-            return;
-        } // todo: ik kan nimeer nadenken, dit is heel cursed wanneer ge een verkeerde naam ingeeft, maar het werkt anders wel
-        showProjectsController.showProject(projectString);
-        System.out.println("Type a tasks name to see its details or type BACK to choose another project:");
-        String taskString = scanner.nextLine();
-        while(!taskString.equals("BACK")) {
-            showProjectsController.showTask(projectString, taskString);
-            System.out.println("Type another tasks name to see its details or type BACK to choose another project:");
-            taskString = scanner.nextLine();
-        }
-        showProjects();
     }
 
     public void printAccessError(Role role) {
         System.out.println("You must be logged in with the " + role.toString() + " role to call this function");
+    }
+
+    public void projectNotFoundError() {
+        System.out.println("Project not found\n");
+        showProjects();
+    }
+
+    public void taskNotFoundError(String projectName) {
+        System.out.println("Task not found\n");
+        showTask(projectName);
+    }
+
+    private void showTask(String projectString) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Type a tasks name to see its details or type BACK to choose another project:");
+        String taskString = scanner.nextLine();
+        if (taskString.equals("BACK")) {
+            showProjects();
+        }
+        else {
+            showProjectsController.showTask(projectString, taskString);
+        }
+    }
+
+    private void showProject() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Type a projects name to see its details, including a list of its tasks, type BACK to exit:");
+        String projectString = scanner.nextLine();
+        if (projectString.equals("BACK")) {
+            return;
+        }
+        showProjectsController.showProject(projectString);
     }
 }

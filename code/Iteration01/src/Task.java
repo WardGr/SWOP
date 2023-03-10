@@ -5,8 +5,8 @@ public class Task {
     private String name;
     private String description;
     private Time estimatedDuration;
-    private float acceptableDeviation;
-    private Status status;
+    private double acceptableDeviation;
+    public Status status; // TODO: HAAL DIT ALSJEBLIEFT WEG (DIE PUBLIC)
 
     private Task replacementTask;
     private Task replacesTask;
@@ -16,7 +16,7 @@ public class Task {
 
     private TimeSpan timeSpan;
 
-    public Task(String name, String description, Time estimatedDuration, float acceptableDeviation, List<Task> previousTasks) {
+    public Task(String name, String description, Time estimatedDuration, double acceptableDeviation, List<Task> previousTasks) {
         this.name = name;
         this.description = description;
 
@@ -45,10 +45,11 @@ public class Task {
         }
     }
 
-    public Task(String taskName, String description, Time duration, float deviation, Task replacesTask) {
+    public Task(String taskName, String description, Time duration, double deviation, Task replacesTask) throws ReplacedTaskNotFailedException {
         if (replacesTask.getStatus() != Status.FAILED) {
-            // TODO exception
+            throw new ReplacedTaskNotFailedException();
         }
+
         this.name = taskName;
         this.description = description;
         this.estimatedDuration = duration;
@@ -69,11 +70,11 @@ public class Task {
                       "Description:        " + description                   + '\n' +
                       "Estimated Duration: " + estimatedDuration.getTime()   + '\n' +
                       "Accepted Deviation: " + acceptableDeviation           + '\n' +
-                      "Status:             " + status.toString()             + '\n' +
+                      "Status:             " + status.toString()             + "\n\n" +
                       "Replacement Task:   " + showReplacementTaskName()     + '\n' +
-                      "Replaces Task:      " + showReplacesTaskName()        + '\n' +
-                      "Start Time:         " + getStartTime().getTime()      + '\n' +
-                      "End Time:           " + getEndTime().getTime()        + '\n';
+                      "Replaces Task:      " + showReplacesTaskName()        + "\n\n" +
+                      "Start Time:         " + showStartTime()               + '\n' +
+                      "End Time:           " + showEndTime()                 + "\n\n";
 
         stringBuilder.append(info);
         stringBuilder.append("Next tasks:\n");
@@ -102,7 +103,7 @@ public class Task {
         if (replacesTask == null) {
             return "Replaces no tasks";
         }
-        return replacementTask.getName();
+        return replacesTask.getName();
     }
 
 
@@ -122,6 +123,22 @@ public class Task {
         return timeSpan.getEndTime();
     }
 
+    private String showStartTime() {
+        if (timeSpan == null) {
+            return "No start time set";
+        }
+        return timeSpan.getStartTime().toString();
+    }
+
+    private String showEndTime() {
+        if (timeSpan == null) {
+            return "No end time set";
+        }
+        return timeSpan.getEndTime().toString();
+    }
+
+
+
     private void addNextTask(Task task) {
         nextTasks.add(task);
     }
@@ -139,10 +156,10 @@ public class Task {
     }
 
     private List<Task> getPreviousTasks() {
-        return previousTasks; // TODO clone?
+        return List.copyOf(previousTasks);
     }
 
     public List<Task> getNextTasks() {
-        return nextTasks; // TODO clone?
+        return List.copyOf(nextTasks);
     }
 }

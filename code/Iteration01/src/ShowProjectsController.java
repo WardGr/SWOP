@@ -18,16 +18,39 @@ public class ShowProjectsController {
         }
         List<String> names = taskManSystem.getProjectNames();
         List<String> statuses = taskManSystem.getStatuses();
-        ShowProjectsUI.printProjects(names, statuses);
+        showProjectsUI.printProjects(names, statuses);
     }
 
     public void showProject(String projectName) {
-        String projectString = taskManSystem.showProject(projectName);
-        ShowProjectsUI.printProjectDetails(projectString);
+        if (session.getRole() != Role.PROJECTMANAGER) {
+            showProjectsUI.printAccessError(Role.PROJECTMANAGER);
+            return;
+        }
+        try {
+            String projectString = taskManSystem.showProject(projectName);
+            showProjectsUI.printProjectDetails(projectString, projectName);
+        }
+        catch (ProjectNotFoundException e) {
+            showProjectsUI.projectNotFoundError();
+        }
+
     }
 
     public void showTask(String projectName, String taskName) {
-        String taskString = taskManSystem.showTask(projectName, taskName);
-        ShowProjectsUI.printTaskDetails(taskString);
+        if (session.getRole() != Role.PROJECTMANAGER) {
+            showProjectsUI.printAccessError(Role.PROJECTMANAGER);
+            return;
+        }
+        try {
+            String taskString = taskManSystem.showTask(projectName, taskName);
+            showProjectsUI.printTaskDetails(taskString, projectName);
+        }
+        catch (ProjectNotFoundException e) {
+            showProjectsUI.projectNotFoundError();
+        }
+        catch (TaskNotFoundException e) {
+            showProjectsUI.taskNotFoundError(projectName);
+        }
+
     }
 }

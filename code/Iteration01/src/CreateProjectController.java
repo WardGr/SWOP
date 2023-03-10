@@ -13,7 +13,7 @@ public class CreateProjectController {
         this.systemTime = new Time(0);
     }
 
-    public void createProject(String projectName, String projectDescription, String dueTime) {
+    public void createProject(String projectName, String projectDescription, int dueTime) {
         if (session.getRole() != Role.PROJECTMANAGER) { /* TODO: deze check moet eigenlijk in de UI gebeuren?
                                                             anders vult de user heel die prompt in en dan pas aan het
                                                             einde krijgt em te weten dat hij geen PM is -_- */
@@ -21,7 +21,7 @@ public class CreateProjectController {
             return;
         }
         try {
-            taskManSystem.createProject(projectName, projectDescription, getSystemTime(), dueTime);
+            taskManSystem.createProject(projectName, projectDescription, getSystemTime(), new Time(dueTime));
         }
         catch (NumberFormatException e){
             createProjectUI.dueTimeFormatError();
@@ -35,23 +35,39 @@ public class CreateProjectController {
         return systemTime;
     }
 
-    public void createTask(String projectName, String taskName, String description, Time duration, float deviation, List<String> previousTasks) {
+    public void createTask(String projectName, String taskName, String description, int duration, double deviation, List<String> previousTasks) {
         if (session.getRole() != Role.PROJECTMANAGER) { /* TODO: deze check moet eigenlijk in de UI gebeuren?
                                                             anders vult de user heel die prompt in en dan pas aan het
                                                             einde krijgt em te weten dat hij geen PM is -_- */
             createProjectUI.printAccessError(Role.PROJECTMANAGER);
             return;
         }
-        taskManSystem.addTaskToProject(projectName,taskName,description,duration,deviation,previousTasks);
+        try {
+            taskManSystem.addTaskToProject(projectName, taskName, description, new Time(duration), deviation, previousTasks);
+        }
+        catch (ProjectNotFoundException e) {
+            createProjectUI.printProjectNotFound();
+        }
+        catch (TaskNotFoundException e) {
+            createProjectUI.printTaskNotFound();
+        }
     }
 
-    public void replaceTask(String projectName, String taskName, String description, Time durationTime, float deviationFloat, String replaces) {
+    public void replaceTask(String projectName, String taskName, String description, int duration, double deviation, String replaces) {
         if (session.getRole() != Role.PROJECTMANAGER) { /* TODO: deze check moet eigenlijk in de UI gebeuren?
                                                             anders vult de user heel die prompt in en dan pas aan het
                                                             einde krijgt em te weten dat hij geen PM is -_- */
             createProjectUI.printAccessError(Role.PROJECTMANAGER);
             return;
         }
-        taskManSystem.addAlternativeTaskToProject(projectName, taskName, description, durationTime, deviationFloat, replaces);
+        try {
+            taskManSystem.addAlternativeTaskToProject(projectName, taskName, description, new Time(duration), deviation, replaces);
+        } catch (ReplacedTaskNotFailedException e) {
+            createProjectUI.printTaskNotFailedError();
+        } catch (ProjectNotFoundException e) {
+            createProjectUI.printProjectNotFound();
+        } catch (TaskNotFoundException e) {
+            createProjectUI.printTaskNotFound();
+        }
     }
 }

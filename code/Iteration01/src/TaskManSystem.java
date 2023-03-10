@@ -12,6 +12,8 @@ public class TaskManSystem {
         Task task1 = new Task("Cool task", "Do stuff", new Time(100), (float) 0.1, new ArrayList<>());
         Task task2 = new Task("Cooler task", "Do more stuff", new Time(1000), (float) 0.1, new ArrayList<>());
 
+        task2.status = Status.FAILED;
+
         project1.addTask(task1);
         project1.addTask(task2);
 
@@ -48,62 +50,43 @@ public class TaskManSystem {
                 return project;
             }
         }
-        return null; //TODO is het niet beter met exception?
+        return null; //TODO is het niet beter met exception? JA!!!!!!!!!!!!!!!!!!!!!
     }
 
-    //TODO: moet dit hier?? Nu doet de TaskManSystem de vertaling van project naar string?
-    //        - Ik denk het ni, verander dit!
-    public String showProject(String projectName) {
+    public String showProject(String projectName) throws ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
-            return "Project not found"; // Beter gewoon zoiets teruggeven dan een hele exception te throwen lijkt mij
+            throw new ProjectNotFoundException();
         }
         return project.toString();
     }
 
-    public String showTask(String projectName, String taskName) {
+    public String showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
-            return "Project not found";
+            throw new ProjectNotFoundException();
         }
-
-        Task task = project.getTask(taskName);
-        if (task == null) {
-            return "Task not found";
-        }
-        return task.toString(); // TODO best geen dependency maken van TaskManSystem naar Task!
+        return project.showTask(taskName);
     }
 
-    public void createProject(String projectName, String projectDescription, Time systemTime, String dueTimeString) throws DueBeforeSystemTimeException {
-        // TODO: doe deze parsing in UI zodat duetime al een integer is!
-        Time dueTime = new Time(Integer.parseInt(dueTimeString));
+    public void createProject(String projectName, String projectDescription, Time systemTime, Time dueTime) throws DueBeforeSystemTimeException {
         Project newProject = new Project(projectName, projectDescription, systemTime, dueTime);
         projects.add(newProject);
     }
 
-    public void addTaskToProject(String projectName, String taskName, String description, Time duration, float deviation, List<String> previousTasks){
+    public void addTaskToProject(String projectName, String taskName, String description, Time duration, double deviation, List<String> previousTasks) throws ProjectNotFoundException, TaskNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
-            return;// TODO
+            throw new ProjectNotFoundException();
         }
         project.addTask(taskName, description, duration, deviation, previousTasks);
     }
 
-    public Task getTask(String projectName, String taskName) {
+
+    public void addAlternativeTaskToProject(String projectName, String taskName, String description, Time duration, double deviation, String replaces) throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
-            return null; // TODO
-        }
-        else {
-            return project.getTask(taskName);
-        }
-    }
-
-
-    public void addAlternativeTaskToProject(String projectName, String taskName, String description, Time duration, float deviation, String replaces) {
-        Project project = getProject(projectName);
-        if (project == null) {
-            return; // TODO
+            throw new ProjectNotFoundException();
         }
         project.addAlternativeTask(taskName, description, duration, deviation, replaces);
     }
