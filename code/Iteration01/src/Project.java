@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class Project {
     private List<Task> tasks;
@@ -96,12 +97,43 @@ public class Project {
         for (String previousTaskName : previousTaskNames) {
             Task task = getTask(previousTaskName);
             if (task == null) {
-                return;
+                return; // TODO
             }
             previousTasks.add(task);
         }
 
         tasks.add(new Task(taskName, description, duration, deviation, previousTasks));
 
+    }
+
+    public void addAlternativeTask(String taskName, String description, Time duration, float deviation, String replaces){
+        if (getTask(taskName) != null) {
+            return;
+        }
+        Task replacesTask = getTask(replaces);
+        if (replacesTask == null) {
+            return; // TODO
+        }
+        Task task = new Task(taskName, description, duration, deviation, replacesTask);
+    }
+
+    public List<String> showAvailableTasks() {
+        List<String> availableTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getStatus() == Status.AVAILABLE) {
+                availableTasks.add(task.getName());
+            }
+        }
+        return availableTasks;
+    }
+
+    public List<String> showExecutingTasks() {
+        List<String> executingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getStatus() == Status.EXECUTING) {
+                executingTasks.add(task.getName());
+            }
+        }
+        return executingTasks;
     }
 }

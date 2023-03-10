@@ -43,39 +43,23 @@ public class Task {
         else {
             status = Status.UNAVAILABLE;
         }
-
-        /*
-        if (replacesTask != null) {
-            replacesTask.setReplacementTask(this);
-            if (replacesTask.getStatus() == Status.FAILED){
-                boolean allPreviousFinished = true;
-                for (Task previousTask : previousTasks) {
-                    if (previousTask.getStatus() != Status.FINISHED) {
-                        allPreviousFinished = false;
-                        break; //goed?
-                    }
-                }
-                if (allPreviousFinished) {
-                    this.status = Status.EXECUTING;
-                }
-
-                this.status = Status.AVAILABLE;
-                this.timeSpan = new TimeSpan(replacesTask.getStartTime());
-            } else {
-                this.status = Status.UNAVAILABLE;
-            }
-        } else {
-            this.status =
-        }
-        */
-
     }
 
-    public Task(String taskName, String description, Time duration, float deviation) {
+    public Task(String taskName, String description, Time duration, float deviation, Task replacesTask) {
+        if (replacesTask.getStatus() != Status.FAILED) {
+            // TODO exception
+        }
         this.name = taskName;
         this.description = description;
         this.estimatedDuration = duration;
         this.acceptableDeviation = deviation;
+        this.replacesTask = replacesTask;
+        this.status = Status.AVAILABLE;
+
+        this.previousTasks = replacesTask.getPreviousTasks();
+        this.nextTasks = replacesTask.getNextTasks();
+
+        replacesTask.setReplacementTask(this);
     }
 
     @Override
@@ -126,7 +110,7 @@ public class Task {
         return name;
     }
 
-    private Status getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -154,9 +138,11 @@ public class Task {
         this.replacesTask = task;
     }
 
-    public void addReplacementTask(String taskName, String description, Time duration, float deviation) {
-        Task replacementTask = new Task(taskName, description, duration, deviation);
-        this.setReplacementTask(replacementTask);
-        replacementTask.setReplacesTask(this);
+    private List<Task> getPreviousTasks() {
+        return previousTasks; // TODO clone?
+    }
+
+    public List<Task> getNextTasks() {
+        return nextTasks; // TODO clone?
     }
 }

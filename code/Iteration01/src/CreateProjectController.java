@@ -52,6 +52,6 @@ public class CreateProjectController {
             createProjectUI.printAccessError(Role.PROJECTMANAGER);
             return;
         }
-        taskManSystem.addAlternativeTask(projectName, taskName, description, durationTime, deviationFloat, replaces);
+        taskManSystem.addAlternativeTaskToProject(projectName, taskName, description, durationTime, deviationFloat, replaces);
     }
 }

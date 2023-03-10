@@ -1,5 +1,4 @@
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TaskManSystem {
     private List<Project> projects;
@@ -10,13 +9,13 @@ public class TaskManSystem {
         Project project1 = new Project("Project x", "Cool project", new Time(0), new Time(1000));
         Project project2 = new Project("Project y", "Even cooler project", new Time(200), new Time(5000));
 
-        Task task1 = new Task("Cool task", "Do stuff", new Time(100), (float) 0.1);
-        Task task2 = new Task("Cooler task", "Do more stuff", new Time(1000), (float) 0.1);
+        Task task1 = new Task("Cool task", "Do stuff", new Time(100), (float) 0.1, new ArrayList<>());
+        Task task2 = new Task("Cooler task", "Do more stuff", new Time(1000), (float) 0.1, new ArrayList<>());
 
         project1.addTask(task1);
         project1.addTask(task2);
 
-        project2.addTask(task1);
+        project2.addTask(task1); // TODO nu zijn die tasks van verschillende projecten verbonden hahah, mss ff een clone doen
         project2.addTask(task2);
 
 
@@ -72,7 +71,7 @@ public class TaskManSystem {
         if (task == null) {
             return "Task not found";
         }
-        return task.toString();
+        return task.toString(); // TODO best geen dependency maken van TaskManSystem naar Task!
     }
 
     public void createProject(String projectName, String projectDescription, Time systemTime, String dueTimeString) throws DueBeforeSystemTimeException {
@@ -101,11 +100,35 @@ public class TaskManSystem {
     }
 
 
-    public void addAlternativeTask(String projectName, String taskName, String description, Time duration, float deviation, String replaces) {
-        Task task = getTask(projectName, replaces);
-        if (task == null) {
+    public void addAlternativeTaskToProject(String projectName, String taskName, String description, Time duration, float deviation, String replaces) {
+        Project project = getProject(projectName);
+        if (project == null) {
             return; // TODO
         }
-        task.addReplacementTask(taskName, description, duration, deviation);
+        project.addAlternativeTask(taskName, description, duration, deviation, replaces);
+    }
+
+    public List<Map.Entry<String,String>> showAvailableTasks(){
+        List<Map.Entry<String,String>> availableTasks = new ArrayList<>();
+        for (Project project : projects){
+            List<String> tasks = project.showAvailableTasks();
+            String projectName = project.getName();
+            for (String task : tasks){
+                availableTasks.add(new AbstractMap.SimpleEntry<>(projectName,task));
+            }
+        }
+        return availableTasks;
+    }
+
+    public List<Map.Entry<String,String>> showExecutingTasks(){
+        List<Map.Entry<String,String>> executingTasks = new ArrayList<>();
+        for (Project project : projects){
+            List<String> tasks = project.showExecutingTasks();
+            String projectName = project.getName();
+            for (String task : tasks){
+                executingTasks.add(new AbstractMap.SimpleEntry<>(projectName,task));
+            }
+        }
+        return executingTasks;
     }
 }
