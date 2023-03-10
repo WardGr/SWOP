@@ -38,7 +38,7 @@ public class TaskManSystem {
                 return project;
             }
         }
-        return null;
+        return null; //TODO is het niet beter met exception?
     }
 
     //TODO: moet dit hier?? Nu doet de TaskManSystem de vertaling van project naar string?
@@ -67,5 +67,15 @@ public class TaskManSystem {
         Time dueTime = new Time(Integer.parseInt(dueTimeString));
         Project newProject = new Project(projectName, projectDescription, systemTime, dueTime);
         projects.add(newProject);
+    }
+
+    public void addTaskToProject(String projectName, String taskName, String description, Time duration, float deviation, List<String> previousTasks, List<String> nextTasks, String replacesTask){
+        Project project = getProject(projectName);
+
+        if (project != null) {
+            project.addTask(taskName, description, duration, deviation, previousTasks, nextTasks, replacesTask);
+        } else {
+            return;// TODO
+        }
     }
 }

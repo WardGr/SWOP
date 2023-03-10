@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class CreateProjectController {
     private Session session;
     private TaskManSystem taskManSystem;
@@ -31,7 +33,13 @@ public class CreateProjectController {
         return systemTime;
     }
 
-    public void createTask(String projectName, String taskName, String description, String duration, String deviation) {
-        return;
+    public void createTask(String projectName, String taskName, String description, Time duration, float deviation, List<String> previousTasks, List<String> nextTasks, String replacesTask) {
+        if (session.getRole() != Role.PROJECTMANAGER) {
+            createProjectUI.printAccessError(Role.PROJECTMANAGER);
+            return;
+        }
+        User currentUser = session.getCurrentUser();
+
+        taskManSystem.addTaskToProject(projectName,taskName,description,duration,deviation,previousTasks,nextTasks,replacesTask);
     }
 }

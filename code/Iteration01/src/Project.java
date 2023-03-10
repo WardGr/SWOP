@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -80,8 +81,37 @@ public class Project {
     }
 
 
-    public void addTask(String taskName, String description, int duration, int deviation) {
-        // Eerst nog check zeker
-        tasks.add(new Task(taskName, description, duration, deviation));
+    public void addTask(String taskName, String description, Time duration, float deviation, List<String> previousTaskNames, List <String> nextTaskNames, String replacesTaskName) {
+        // Eerst nog check zeker -> gaan we zeker doen!
+
+        if (getTask(taskName) != null) {
+            return;
+        }
+
+        List<Task> previousTasks = new ArrayList<Task>();
+        for (String previousTaskName : previousTaskNames) {
+            Task task = getTask(previousTaskName);
+            if (task == null) {
+                return;
+            }
+            previousTasks.add(task);
+        }
+
+        List<Task> nextTasks = new ArrayList<Task>();
+        for (String nextTaskName : nextTaskNames) {
+            Task task = getTask(nextTaskName);
+            if (task == null) {
+                return;
+            }
+            nextTasks.add(task);
+        }
+
+        Task replacesTask = getTask(replacesTaskName);
+        if (replacesTask == null){
+            return;
+        }
+
+        tasks.add(new Task(taskName, description, duration, deviation, previousTasks, nextTasks, replacesTask));
+
     }
 }

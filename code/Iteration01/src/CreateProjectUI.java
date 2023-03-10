@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class CreateProjectUI {
@@ -91,7 +93,52 @@ public class CreateProjectUI {
             return;
         }
 
-        createProjectController.createTask(projectName, taskName, description, duration, deviation);
+        System.out.println("Previous Tasks:");
+        System.out.println("Enter '.' to stop adding new tasks");
+        boolean stop = false;
+        List<String> previousTasks = new ArrayList<String>();
+        while (!stop) {
+            String previousTask = scanner.nextLine();
+            if (previousTask.equals(".")){
+                stop = true;
+            } else {
+                previousTasks.add(previousTask);
+            }
+        }
+
+        System.out.println("Next Tasks:");
+        System.out.println("Enter '.' to stop adding new tasks");
+        stop = false;
+        List<String> nextTasks = new ArrayList<String>();
+        while (!stop) {
+            String nextTask = scanner.nextLine();
+            if (nextTask.equals(".")) {
+                stop = true;
+            } else {
+                nextTasks.add(nextTask);
+            }
+        }
+
+        System.out.println("This task is a replacement for task:");
+        System.out.println("Type '.' if this isn't a replacement for another task");
+        String replaces = scanner.nextLine();
+
+        // TODO deze ook toevoegen?
+        //System.out.println("When this task fails it is replaced by task:");
+        //System.out.println("Type '.' if there isn't a replacement task");
+        //String replacedBy = scanner.nextLine();
+
+        Time durationTime;
+        float deviationFloat;
+        try{
+            durationTime = new Time(Integer.parseInt(duration));
+            deviationFloat = Float.parseFloat(deviation);
+        } catch (Exception e){
+            System.out.println("Invalid input");
+            return;
+        }
+
+        createProjectController.createTask(projectName, taskName, description, durationTime, deviationFloat, previousTasks, nextTasks, replaces);
 
     }
 }
