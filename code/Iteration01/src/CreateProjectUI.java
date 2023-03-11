@@ -93,6 +93,7 @@ public class CreateProjectUI {
         }
 
         System.out.println("Task duration:");
+        // TODO de estimated duration halen uit de duration van een andere task?
 
         String durationString = scanner.nextLine();
         if (durationString.equals("BACK")) {

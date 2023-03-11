@@ -33,6 +33,7 @@ public class Project {
         for (Task task : getTasks()) {
             projectString.append(index++ + "." + task.getName() + '\n');
         }
+        // TODO geef de totale uitvoeringstijd
 
         return projectString.toString();
     }
@@ -85,7 +86,7 @@ public class Project {
     }
 
 
-    public void addTask(String taskName, String description, Time duration, double deviation, List<String> previousTaskNames) throws TaskNotFoundException {
+    public void addTask(String taskName, String description, Time duration, double deviation, List<String> previousTaskNames, User user) throws TaskNotFoundException {
         // Eerst nog check zeker -> gaan we zeker doen!
 
         if (getTask(taskName) != null) {
@@ -101,11 +102,11 @@ public class Project {
             previousTasks.add(task);
         }
 
-        tasks.add(new Task(taskName, description, duration, deviation, previousTasks));
+        tasks.add(new Task(taskName, description, duration, deviation, previousTasks, user));
 
     }
 
-    public void addAlternativeTask(String taskName, String description, Time duration, double deviation, String replaces) throws ReplacedTaskNotFailedException, TaskNotFoundException {
+    public void addAlternativeTask(String taskName, String description, Time duration, double deviation, String replaces, User currentUser) throws ReplacedTaskNotFailedException, TaskNotFoundException {
         if (getTask(taskName) != null) {
             return; // TODO: dit checkt of dezelfde task al bestaat? da doen we eigenlijk echt nergens, mss overal doen... ook voor projects
         }
@@ -114,7 +115,7 @@ public class Project {
         if (replacesTask == null) {
             throw new TaskNotFoundException();
         }
-        Task task = new Task(taskName, description, duration, deviation, replacesTask);
+        Task task = new Task(taskName, description, duration, deviation, replacesTask, currentUser);
         tasks.add(task);
     }
 
@@ -144,5 +145,51 @@ public class Project {
             throw new TaskNotFoundException();
         }
         return task.toString();
+    }
+
+    public List <Status> getNextStatuses(String taskName) throws TaskNotFoundException {
+        Task task = getTask(taskName);
+        if (task == null){
+            throw new TaskNotFoundException();
+        }
+        return task.getNextStatuses();
+    }
+
+    public Status getStatus(String taskName) throws TaskNotFoundException {
+        Task task = getTask(taskName);
+        if (task == null){
+            throw new TaskNotFoundException();
+        }
+        return task.getStatus();
+    }
+
+    public void failTask(String taskName) throws TaskNotFoundException {
+        Task task = getTask(taskName);
+        if (task == null){
+            throw new TaskNotFoundException();
+        }
+        task.fail();
+    }
+
+    public void startTask(String taskName, Time startTime, Time systemTime, User currentUser) throws TaskNotFoundException {
+        Task task = getTask(taskName);
+        if (task == null){
+            throw new TaskNotFoundException();
+        }
+        task.start(startTime,systemTime, currentUser);
+    }
+
+    public void endTask(String taskName, Status newStatus, Time endTime, Time systemTime, User currentUser) throws TaskNotFoundException {
+        Task task = getTask(taskName);
+        if (task == null){
+            throw new TaskNotFoundException();
+        }
+        task.end(newStatus, endTime, systemTime, currentUser);
+    }
+
+    public void advanceTime(Time newTime){
+        for (Task task : tasks){
+            task.advanceTime(newTime);
+        }
     }
 }

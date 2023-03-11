@@ -4,8 +4,9 @@ public class Main {
     public static void main(String[] args) throws DueBeforeSystemTimeException {
         Session newSession = new Session();
         TaskManSystem taskManSystem = new TaskManSystem();
+        Time systemTime = new Time(5);
 
-        UserInterface UI = new UserInterface(newSession, taskManSystem);
+        UserInterface UI = new UserInterface(newSession, taskManSystem, systemTime);
         UI.startSystem();
     }
 }

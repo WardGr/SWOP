@@ -6,9 +6,15 @@ public class TimeSpan {
         this.startTime = startTime;
     }
 
+    public void setStartTime(Time startTime) {
+        this.startTime = startTime;
+    }
+
     public void setEndTime(Time endTime) {
         this.endTime = endTime;
     }
+
+
 
     public Time getEndTime() {
         return endTime;
@@ -16,5 +22,21 @@ public class TimeSpan {
 
     public Time getStartTime() {
         return startTime;
+    }
+
+    public String showStartTime(){
+        Time startTime = getStartTime();
+        if (startTime == null) {
+            return "No start time set";
+        }
+        return startTime.toString();
+    }
+
+    public String showEndTime(){
+        Time endTime = getEndTime();
+        if (endTime == null){
+            return "No end time set";
+        }
+        return endTime.toString();
     }
 }

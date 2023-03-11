@@ -4,11 +4,15 @@ public class UserInterface {
     private final SessionUI sessionUI;
     private final ShowProjectsUI showProjectsUI;
     private final CreateProjectUI createProjectUI;
+    private final UpdateTaskUI updateTaskUI;
+    private final AdvanceTimeUI advanceTimeUI;
 
-    public UserInterface(Session session, TaskManSystem taskManSystem) {
+    public UserInterface(Session session, TaskManSystem taskManSystem, Time systemTime) {
         this.sessionUI = new SessionUI(session);
         this.showProjectsUI = new ShowProjectsUI(session, taskManSystem);
         this.createProjectUI = new CreateProjectUI(session, taskManSystem);
+        this.updateTaskUI = new UpdateTaskUI(session, taskManSystem, systemTime);
+        this.advanceTimeUI = new AdvanceTimeUI(session, taskManSystem, systemTime);
     }
 
     /**
@@ -39,6 +43,8 @@ public class UserInterface {
             case "showprojects" -> showProjectsUI.showProjects();
             case "createproject" -> createProjectUI.createProject();
             case "createtask" -> createProjectUI.createTask();
+            case "updatetask" -> updateTaskUI.updateTaskStatus();
+            case "modifytime" -> advanceTimeUI.advanceTime();
             default -> System.out.println("Unknown command, type help to see available commands");
         }
     }
@@ -55,5 +61,7 @@ public class UserInterface {
         System.out.println("showprojects:  Shows a list of all current projects");
         System.out.println("createproject: Shows the project creation prompt and creates a project");
         System.out.println("createtask:    Shows the task creation prompt to add a task to a project");
+        System.out.println("updatetask"); // TODO
+        System.out.println("modifytime"); // TODO
     }
 }

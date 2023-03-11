@@ -4,7 +4,8 @@ public class TaskManSystem {
     private List<Project> projects;
 
     public TaskManSystem() throws DueBeforeSystemTimeException {
-        // Test Tasks for now :)
+        // TODO deze werken niet meer door de user !!!
+        /* Test Tasks for now :)
 
         Project project1 = new Project("Project x", "Cool project", new Time(0), new Time(1000));
         Project project2 = new Project("Project y", "Even cooler project", new Time(200), new Time(5000));
@@ -12,20 +13,25 @@ public class TaskManSystem {
         Task task1 = new Task("Cool task", "Do stuff", new Time(100), (float) 0.1, new ArrayList<>());
         Task task2 = new Task("Cooler task", "Do more stuff", new Time(1000), (float) 0.1, new ArrayList<>());
 
-        task2.status = Status.FAILED;
+        //task2.status = Status.FAILED;
+        task2.status = Status.EXECUTING;
+        task2.timeSpan = new TimeSpan(new Time(0));
+        task1.status = Status.AVAILABLE;
 
         project1.addTask(task1);
         project1.addTask(task2);
 
         project2.addTask(task1); // TODO nu zijn die tasks van verschillende projecten verbonden hahah, mss ff een clone doen
         project2.addTask(task2);
+        */
 
 
-        LinkedList<Project> projects = new LinkedList<>();
-        projects.add(project1);
+        projects = new LinkedList<>();
+        /*projects.add(project1);
         projects.add(project2);
 
         this.projects = projects;
+        */
     }
 
     public List<String> getProjectNames() {
@@ -74,21 +80,21 @@ public class TaskManSystem {
         projects.add(newProject);
     }
 
-    public void addTaskToProject(String projectName, String taskName, String description, Time duration, double deviation, List<String> previousTasks) throws ProjectNotFoundException, TaskNotFoundException {
+    public void addTaskToProject(String projectName, String taskName, String description, Time duration, double deviation, List<String> previousTasks, User currentUser) throws ProjectNotFoundException, TaskNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
-        project.addTask(taskName, description, duration, deviation, previousTasks);
+        project.addTask(taskName, description, duration, deviation, previousTasks, currentUser);
     }
 
 
-    public void addAlternativeTaskToProject(String projectName, String taskName, String description, Time duration, double deviation, String replaces) throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException {
+    public void addAlternativeTaskToProject(String projectName, String taskName, String description, Time duration, double deviation, String replaces, User currentUser) throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
-        project.addAlternativeTask(taskName, description, duration, deviation, replaces);
+        project.addAlternativeTask(taskName, description, duration, deviation, replaces, currentUser);
     }
 
     public List<Map.Entry<String,String>> showAvailableTasks(){
@@ -113,5 +119,51 @@ public class TaskManSystem {
             }
         }
         return executingTasks;
+    }
+
+    public List<Status> getNextStatuses(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        return project.getNextStatuses(taskName);
+    }
+
+    public Status getStatus(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        return project.getStatus(taskName);
+    }
+
+    public void failTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        project.failTask(taskName);
+    }
+
+    public void startTask(String projectName, String taskName, Time startTime, Time systemTime, User currentUser) throws ProjectNotFoundException, TaskNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        project.startTask(taskName, startTime, systemTime, currentUser);
+    }
+
+    public void endTask(String projectName, String taskName, Status newStatus, Time endTime, Time systemTime, User currentUser) throws ProjectNotFoundException, TaskNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        project.endTask(taskName, newStatus, endTime, systemTime, currentUser);
+    }
+
+    public void advanceTime(Time newTime){
+        for (Project project : projects){
+            project.advanceTime(newTime);
+        }
     }
 }

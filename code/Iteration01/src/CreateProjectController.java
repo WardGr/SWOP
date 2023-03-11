@@ -43,7 +43,7 @@ public class CreateProjectController {
             return;
         }
         try {
-            taskManSystem.addTaskToProject(projectName, taskName, description, new Time(duration), deviation, previousTasks);
+            taskManSystem.addTaskToProject(projectName, taskName, description, new Time(duration), deviation, previousTasks, session.getCurrentUser());
         }
         catch (ProjectNotFoundException e) {
             createProjectUI.printProjectNotFound();
@@ -61,7 +61,7 @@ public class CreateProjectController {
             return;
         }
         try {
-            taskManSystem.addAlternativeTaskToProject(projectName, taskName, description, new Time(duration), deviation, replaces);
+            taskManSystem.addAlternativeTaskToProject(projectName, taskName, description, new Time(duration), deviation, replaces, session.getCurrentUser());
         } catch (ReplacedTaskNotFailedException e) {
             createProjectUI.printTaskNotFailedError();
         } catch (ProjectNotFoundException e) {
