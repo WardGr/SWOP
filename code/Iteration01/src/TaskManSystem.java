@@ -1,13 +1,14 @@
 import java.util.*;
 
 public class TaskManSystem {
-    private List<Project> projects;
-    private Time systemTime;
 
-    public TaskManSystem(Time systemTime) {
-        this.systemTime = systemTime;
-        // TODO deze werken niet meer door het toevoegen van user in task !!!
-        /* Test Tasks for now :)
+  private List<Project> projects;
+  private Time systemTime;
+
+  public TaskManSystem(Time systemTime) {
+    this.systemTime = systemTime;
+    // TODO deze werken niet meer door het toevoegen van user in task !!!
+    /* Test Tasks for now :)
 
         Project project1 = new Project("Project x", "Cool project", new Time(0), new Time(1000));
         Project project2 = new Project("Project y", "Even cooler project", new Time(200), new Time(5000));
@@ -27,159 +28,231 @@ public class TaskManSystem {
         project2.addTask(task2);
         */
 
-
-        projects = new LinkedList<>();
-        /* h
+    projects = new LinkedList<>();
+    /* h
         projects.add(project1);
         projects.add(project2);
 
         this.projects = projects;
         */
-    }
+  }
 
-    private Project getProject(String projectName) {
-        for (Project project : projects) {
-            if (project.getName().equals(projectName)) {
-                return project;
-            }
-        }
-        return null;
+  private Project getProject(String projectName) {
+    for (Project project : projects) {
+      if (project.getName().equals(projectName)) {
+        return project;
+      }
     }
+    return null;
+  }
 
-    public int getSystemHour(){
-        return getSystemTime().getHour();
+  public int getSystemHour() {
+    return getSystemTime().getHour();
+  }
+
+  public int getSystemMinute() {
+    return getSystemTime().getMinute();
+  }
+
+  private Time getSystemTime() {
+    return systemTime;
+  }
+
+  public List<String> getProjectNames() {
+    List<String> names = new LinkedList<>();
+    for (Project project : projects) {
+      names.add(project.getName());
     }
+    return names;
+  }
 
-    public int getSystemMinute(){
-        return getSystemTime().getMinute();
+  public List<String> getStatuses() {
+    List<String> statuses = new LinkedList<>();
+    for (Project project : projects) {
+      statuses.add(project.getStatus());
     }
+    return statuses;
+  }
 
-    private Time getSystemTime(){
-        return systemTime;
+  public String showProject(String projectName)
+    throws ProjectNotFoundException {
+    Project project = getProject(projectName);
+    if (project == null) {
+      throw new ProjectNotFoundException();
     }
+    return project.toString();
+  }
 
-    public List<String> getProjectNames() {
-        List<String> names = new LinkedList<>();
-        for (Project project : projects) {
-            names.add(project.getName());
-        }
-        return names;
+  public String showTask(String projectName, String taskName)
+    throws ProjectNotFoundException, TaskNotFoundException {
+    Project project = getProject(projectName);
+    if (project == null) {
+      throw new ProjectNotFoundException();
     }
+    return project.showTask(taskName);
+  }
 
-    public List<String> getStatuses() {
-        List<String> statuses = new LinkedList<>();
-        for (Project project : projects) {
-            statuses.add(project.getStatus());
-        }
-        return statuses;
+  public void createProject(
+    String projectName,
+    String projectDescription,
+    int dueHour,
+    int dueMinute
+  )
+    throws DueBeforeSystemTimeException, NotValidTimeException, ProjectNameAlreadyInUseException {
+    if (getProject(projectName) == null) {
+      Project newProject = new Project(
+        projectName,
+        projectDescription,
+        getSystemTime(),
+        new Time(dueHour, dueMinute)
+      );
+      projects.add(newProject);
+    } else {
+      throw new ProjectNameAlreadyInUseException();
     }
+  }
 
-    public String showProject(String projectName) throws ProjectNotFoundException {
-        Project project = getProject(projectName);
-        if (project == null){
-            throw new ProjectNotFoundException();
-        }
-        return project.toString();
+  public void addTaskToProject(
+    String projectName,
+    String taskName,
+    String description,
+    int durationHour,
+    int durationMinute,
+    double deviation,
+    List<String> previousTasks,
+    User currentUser
+  )
+    throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, TaskNameAlreadyInUseException {
+    Project project = getProject(projectName);
+    if (project == null) {
+      throw new ProjectNotFoundException();
     }
+    project.addTask(
+      taskName,
+      description,
+      new Time(durationHour, durationMinute),
+      deviation,
+      previousTasks,
+      currentUser
+    );
+  }
 
-    public String showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
-        Project project = getProject(projectName);
-        if (project == null){
-            throw new ProjectNotFoundException();
-        }
-        return project.showTask(taskName);
+  public void addAlternativeTaskToProject(
+    String projectName,
+    String taskName,
+    String description,
+    int durationHour,
+    int durationMinute,
+    double deviation,
+    String replaces
+  )
+    throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, TaskNameAlreadyInUseException {
+    Project project = getProject(projectName);
+    if (project == null) {
+      throw new ProjectNotFoundException();
     }
+    project.addAlternativeTask(
+      taskName,
+      description,
+      new Time(durationHour, durationMinute),
+      deviation,
+      replaces
+    );
+  }
 
-    public void createProject(String projectName, String projectDescription, int dueHour, int dueMinute) throws DueBeforeSystemTimeException, NotValidTimeException, ProjectNameAlreadyInUseException {
-        if (getProject(projectName) == null) {
-            Project newProject = new Project(projectName, projectDescription, getSystemTime(), new Time(dueHour, dueMinute));
-            projects.add(newProject);
-        } else {
-            throw new ProjectNameAlreadyInUseException();
-        }
+  public List<Map.Entry<String, String>> showAvailableTasks() {
+    List<Map.Entry<String, String>> availableTasks = new ArrayList<>();
+    for (Project project : projects) {
+      List<String> tasks = project.showAvailableTasks();
+      String projectName = project.getName();
+      for (String task : tasks) {
+        availableTasks.add(new AbstractMap.SimpleEntry<>(projectName, task));
+      }
     }
+    return availableTasks;
+  }
 
-    public void addTaskToProject(String projectName, String taskName, String description, int durationHour, int durationMinute, double deviation, List<String> previousTasks, User currentUser) throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, TaskNameAlreadyInUseException {
-        Project project = getProject(projectName);
-        if (project == null){
-            throw new ProjectNotFoundException();
-        }
-        project.addTask(taskName, description, new Time(durationHour, durationMinute), deviation, previousTasks, currentUser);
+  public List<Map.Entry<String, String>> showExecutingTasks() {
+    List<Map.Entry<String, String>> executingTasks = new ArrayList<>();
+    for (Project project : projects) {
+      List<String> tasks = project.showExecutingTasks();
+      String projectName = project.getName();
+      for (String task : tasks) {
+        executingTasks.add(new AbstractMap.SimpleEntry<>(projectName, task));
+      }
     }
+    return executingTasks;
+  }
 
-
-    public void addAlternativeTaskToProject(String projectName, String taskName, String description, int durationHour, int durationMinute, double deviation, String replaces) throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, TaskNameAlreadyInUseException {
-        Project project = getProject(projectName);
-        if (project == null) {
-            throw new ProjectNotFoundException();
-        }
-        project.addAlternativeTask(taskName, description, new Time(durationHour, durationMinute), deviation, replaces);
+  public List<Status> getNextStatuses(String projectName, String taskName)
+    throws ProjectNotFoundException, TaskNotFoundException {
+    Project project = getProject(projectName);
+    if (project == null) {
+      throw new ProjectNotFoundException();
     }
+    return project.getNextStatuses(taskName);
+  }
 
-    public List<Map.Entry<String,String>> showAvailableTasks(){
-        List<Map.Entry<String,String>> availableTasks = new ArrayList<>();
-        for (Project project : projects){
-            List<String> tasks = project.showAvailableTasks();
-            String projectName = project.getName();
-            for (String task : tasks){
-                availableTasks.add(new AbstractMap.SimpleEntry<>(projectName,task));
-            }
-        }
-        return availableTasks;
+  public Status getStatus(String projectName, String taskName)
+    throws ProjectNotFoundException, TaskNotFoundException {
+    Project project = getProject(projectName);
+    if (project == null) {
+      throw new ProjectNotFoundException();
     }
+    return project.getStatus(taskName);
+  }
 
-    public List<Map.Entry<String,String>> showExecutingTasks(){
-        List<Map.Entry<String,String>> executingTasks = new ArrayList<>();
-        for (Project project : projects){
-            List<String> tasks = project.showExecutingTasks();
-            String projectName = project.getName();
-            for (String task : tasks){
-                executingTasks.add(new AbstractMap.SimpleEntry<>(projectName,task));
-            }
-        }
-        return executingTasks;
+  public void startTask(
+    String projectName,
+    String taskName,
+    int startHour,
+    int startMinute,
+    User currentUser
+  )
+    throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
+    Project project = getProject(projectName);
+    if (project == null) {
+      throw new ProjectNotFoundException();
     }
+    project.startTask(
+      taskName,
+      new Time(startHour, startMinute),
+      getSystemTime(),
+      currentUser
+    );
+  }
 
-    public List<Status> getNextStatuses(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
-        Project project = getProject(projectName);
-        if (project == null){
-            throw new ProjectNotFoundException();
-        }
-        return project.getNextStatuses(taskName);
+  public void endTask(
+    String projectName,
+    String taskName,
+    Status newStatus,
+    int endHour,
+    int endMinute,
+    User currentUser
+  )
+    throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
+    Project project = getProject(projectName);
+    if (project == null) {
+      throw new ProjectNotFoundException();
     }
+    project.endTask(
+      taskName,
+      newStatus,
+      new Time(endHour, endMinute),
+      getSystemTime(),
+      currentUser
+    );
+  }
 
-    public Status getStatus(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
-        Project project = getProject(projectName);
-        if (project == null){
-            throw new ProjectNotFoundException();
-        }
-        return project.getStatus(taskName);
+  public void advanceTime(int newHour, int newMinute)
+    throws NewTimeBeforeSystemTimeException, NotValidTimeException {
+    Time newTime = new Time(newHour, newMinute);
+    if (newTime.before(systemTime)) {
+      throw new NewTimeBeforeSystemTimeException();
     }
-
-    public void startTask(String projectName, String taskName, int startHour, int startMinute, User currentUser) throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
-        Project project = getProject(projectName);
-        if (project == null){
-            throw new ProjectNotFoundException();
-        }
-        project.startTask(taskName, new Time(startHour, startMinute), getSystemTime(), currentUser);
+    for (Project project : projects) {
+      project.advanceTime(newTime);
     }
-
-    public void endTask(String projectName, String taskName, Status newStatus, int endHour, int endMinute, User currentUser) throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
-        Project project = getProject(projectName);
-        if (project == null){
-            throw new ProjectNotFoundException();
-        }
-        project.endTask(taskName, newStatus, new Time(endHour, endMinute), getSystemTime(), currentUser);
-    }
-
-    public void advanceTime(int newHour, int newMinute) throws NewTimeBeforeSystemTimeException, NotValidTimeException {
-        Time newTime = new Time(newHour, newMinute);
-        if (newTime.before(systemTime)){
-            throw new NewTimeBeforeSystemTimeException();
-        }
-        for (Project project : projects){
-            project.advanceTime(newTime);
-        }
-        systemTime = newTime;
-    }
+    systemTime = newTime;
+  }
 }

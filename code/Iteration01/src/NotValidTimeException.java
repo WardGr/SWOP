@@ -1,5 +1,6 @@
-public class NotValidTimeException extends Exception{
-    public NotValidTimeException() {
-        super();
-    }
+public class NotValidTimeException extends Exception {
+
+  public NotValidTimeException() {
+    super();
+  }
 }

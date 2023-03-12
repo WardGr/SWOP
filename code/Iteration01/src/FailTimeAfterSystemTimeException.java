@@ -1,3 +1,6 @@
-public class FailTimeAfterSystemTimeException extends Exception{
-    public FailTimeAfterSystemTimeException(){super();}
+public class FailTimeAfterSystemTimeException extends Exception {
+
+  public FailTimeAfterSystemTimeException() {
+    super();
+  }
 }

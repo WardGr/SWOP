@@ -1,5 +1,6 @@
 public class DueBeforeSystemTimeException extends Exception {
-    public DueBeforeSystemTimeException() {
-        super();
-    }
+
+  public DueBeforeSystemTimeException() {
+    super();
+  }
 }

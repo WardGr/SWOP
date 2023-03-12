@@ -1,3 +1,6 @@
-public class UserNotAllowedToChangeTaskException extends Exception{
-    public UserNotAllowedToChangeTaskException() {super();}
+public class UserNotAllowedToChangeTaskException extends Exception {
+
+  public UserNotAllowedToChangeTaskException() {
+    super();
+  }
 }
