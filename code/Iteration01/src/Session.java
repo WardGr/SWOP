@@ -10,29 +10,26 @@ public class Session {
         return currentUser;
     }
 
-    public String getUserName() {
-        if(getCurrentUser() == null) {
-            return null;
-        }
-        return currentUser.getUsername();
+    private void setCurrentUser(User user){
+        this.currentUser = user;
     }
 
     public Role getRole() {
         if (getCurrentUser() == null) {
             return null;
         }
-        return currentUser.getRole();
+        return getCurrentUser().getRole();
     }
 
     public void login(User user) {
-        this.currentUser = user;
+        setCurrentUser(user);
     }
 
     public void logout() {
-        this.currentUser = null;
+        setCurrentUser(null);
     }
 
     public boolean isLoggedIn() {
-        return currentUser != null;
+        return getCurrentUser() != null;
     }
 }
