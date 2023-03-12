@@ -4,17 +4,15 @@ import java.util.Map;
 public class UpdateTaskController {
     private TaskManSystem taskManSystem;
     private Session session;
-    private Time systemTime;
     private UpdateTaskUI ui;
 
-    public UpdateTaskController(UpdateTaskUI ui, Session session, TaskManSystem taskManSystem, Time systemTime) {
+    public UpdateTaskController(UpdateTaskUI ui, Session session, TaskManSystem taskManSystem) {
         this.ui = ui;
         this.session = session;
         this.taskManSystem = taskManSystem;
-        this.systemTime = systemTime;
     }
 
-    private Session getSession(){ return session; }
+    private Session getSession(){ return session; } //TODO overal zo het veld aanspreken ??
 
     public void showAvailableAndExecuting(){
         if (session.getRole() != Role.DEVELOPER) {
@@ -39,7 +37,7 @@ public class UpdateTaskController {
             ui.showTask(taskString, statuses);
 
             Status status = taskManSystem.getStatus(projectName,taskName);
-            ui.updateForm(projectName, taskName, status, systemTime.getTime());
+            ui.updateForm(projectName, taskName, status, taskManSystem.getSystemHour(), taskManSystem.getSystemMinute());
         }
         catch (ProjectNotFoundException | TaskNotFoundException e) {
             ui.taskNotFoundError();
@@ -47,45 +45,41 @@ public class UpdateTaskController {
 
     }
 
-    public void failTask(String projectName, String taskName){
+    public void startTask(String projectName, String taskName, int startHourInput, int startMinuteInput){
         if (session.getRole() != Role.DEVELOPER) {
             ui.printAccessError(Role.DEVELOPER);
             return;
         }
         try {
-            taskManSystem.failTask(projectName, taskName);
+            taskManSystem.startTask(projectName, taskName, startHourInput, startMinuteInput, getSession().getCurrentUser());
         } catch (ProjectNotFoundException | TaskNotFoundException e) {
             ui.taskNotFoundError();
+        } catch (NotValidTimeException e) {
+            ui.printNotValidTimeError(projectName, taskName);
+        } catch (UserNotAllowedToChangeTaskException e) {
+            ui.userNotAllowedToUpdateTaskError();
+        } catch (WrongTaskStatusException e) {
+            ui.wrongTaskStatusException(projectName, taskName);
         }
     }
 
-    public void startTask(String projectName, String taskName, int startTimeInput){
+    public void endTask(String projectName, String taskName, Status newStatus, int endHourInput, int endMinuteInput) {
         if (session.getRole() != Role.DEVELOPER) {
             ui.printAccessError(Role.DEVELOPER);
             return;
         }
         try {
-            Time startTime = new Time(startTimeInput);
-            taskManSystem.startTask(projectName, taskName, startTime, getSystemTime(), getSession().getCurrentUser());
+            taskManSystem.endTask(projectName, taskName, newStatus, endHourInput, endMinuteInput, getSession().getCurrentUser());
         } catch (ProjectNotFoundException | TaskNotFoundException e) {
             ui.taskNotFoundError();
+        } catch (NotValidTimeException e) {
+            ui.printNotValidTimeError(projectName, taskName);
+        } catch (FailTimeAfterSystemTimeException e) {
+            ui.failTimeAfterSystemTime(projectName, taskName);
+        } catch (UserNotAllowedToChangeTaskException e) {
+            ui.userNotAllowedToUpdateTaskError();
+        } catch (WrongTaskStatusException e) {
+            ui.wrongTaskStatusException(projectName, taskName);
         }
-    }
-
-    public void endTask(String projectName, String taskName, Status newStatus, int endTimeInput){
-        if (session.getRole() != Role.DEVELOPER) {
-            ui.printAccessError(Role.DEVELOPER);
-            return;
-        }
-        try{
-            Time endTime = new Time(endTimeInput);
-            taskManSystem.endTask(projectName, taskName, newStatus, endTime, getSystemTime(), getSession().getCurrentUser());
-        } catch (ProjectNotFoundException | TaskNotFoundException e) {
-            ui.taskNotFoundError();
-        }
-    }
-
-    private Time getSystemTime(){
-        return systemTime;
     }
 }

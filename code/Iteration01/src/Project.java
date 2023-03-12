@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Project {
     private List<Task> tasks;
+    private List<Task> replacedTasks;
     private String name;
     private String description;
     private Time creationTime;
@@ -14,6 +15,7 @@ public class Project {
             throw new DueBeforeSystemTimeException();
         }
         this.tasks = new LinkedList<>();
+        this.replacedTasks = new LinkedList<>();
         this.name = name;
         this.description = description;
         this.creationTime = creationTime;
@@ -33,13 +35,10 @@ public class Project {
         for (Task task : getTasks()) {
             projectString.append(index++ + "." + task.getName() + '\n');
         }
-        // TODO geef de totale uitvoeringstijd
+        // TODO geef de totale uitvoeringstijd !!! en de status toch ook?
+        // TODO en de gereplacete tasks door andere?
 
         return projectString.toString();
-    }
-
-    public void addTask(Task task) {
-        tasks.add(task);
     }
 
     public String getDescription() {
@@ -63,8 +62,9 @@ public class Project {
     }
 
     public String getStatus() {
+        if (tasks.size() == 0) { return "ongoing"; }
         for (Task task : tasks) {
-            if (!task.isFinished()) {
+            if (task.getStatus() != Status.FINISHED) {
                 return "ongoing";
             }
         }
@@ -86,11 +86,9 @@ public class Project {
     }
 
 
-    public void addTask(String taskName, String description, Time duration, double deviation, List<String> previousTaskNames, User user) throws TaskNotFoundException {
-        // Eerst nog check zeker -> gaan we zeker doen!
-
+    public void addTask(String taskName, String description, Time duration, double deviation, List<String> previousTaskNames, User user) throws TaskNotFoundException, TaskNameAlreadyInUseException {
         if (getTask(taskName) != null) {
-            return; // TODO: dit checkt of dezelfde task al bestaat? da doen we eigenlijk echt nergens, mss overal doen... ook voor projects
+            throw new TaskNameAlreadyInUseException();
         }
 
         List<Task> previousTasks = new ArrayList<>();
@@ -106,17 +104,19 @@ public class Project {
 
     }
 
-    public void addAlternativeTask(String taskName, String description, Time duration, double deviation, String replaces, User currentUser) throws ReplacedTaskNotFailedException, TaskNotFoundException {
+    public void addAlternativeTask(String taskName, String description, Time duration, double deviation, String replaces) throws ReplacedTaskNotFailedException, TaskNotFoundException, TaskNameAlreadyInUseException {
         if (getTask(taskName) != null) {
-            return; // TODO: dit checkt of dezelfde task al bestaat? da doen we eigenlijk echt nergens, mss overal doen... ook voor projects
+            throw new TaskNameAlreadyInUseException();
         }
 
         Task replacesTask = getTask(replaces);
         if (replacesTask == null) {
             throw new TaskNotFoundException();
         }
-        Task task = new Task(taskName, description, duration, deviation, replacesTask, currentUser);
-        tasks.add(task);
+        Task replacementTask = new Task(taskName, description, duration, deviation, replacesTask);
+        tasks.remove(replacesTask);
+        replacedTasks.add(replacesTask);
+        tasks.add(replacementTask);
     }
 
     public List<String> showAvailableTasks() {
@@ -163,15 +163,7 @@ public class Project {
         return task.getStatus();
     }
 
-    public void failTask(String taskName) throws TaskNotFoundException {
-        Task task = getTask(taskName);
-        if (task == null){
-            throw new TaskNotFoundException();
-        }
-        task.fail();
-    }
-
-    public void startTask(String taskName, Time startTime, Time systemTime, User currentUser) throws TaskNotFoundException {
+    public void startTask(String taskName, Time startTime, Time systemTime, User currentUser) throws TaskNotFoundException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
         Task task = getTask(taskName);
         if (task == null){
             throw new TaskNotFoundException();
@@ -179,7 +171,7 @@ public class Project {
         task.start(startTime,systemTime, currentUser);
     }
 
-    public void endTask(String taskName, Status newStatus, Time endTime, Time systemTime, User currentUser) throws TaskNotFoundException {
+    public void endTask(String taskName, Status newStatus, Time endTime, Time systemTime, User currentUser) throws TaskNotFoundException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
         Task task = getTask(taskName);
         if (task == null){
             throw new TaskNotFoundException();

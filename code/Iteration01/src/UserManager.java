@@ -25,16 +25,25 @@ public class UserManager {
      * Checks to see if the given username and password correspond to a valid user, and returns it's user object
      * @param username The username the user gave via the UI login prompt
      * @param password The password the user gave via the UI login prompt
-     * @throws IncorrentLoginException if the given username and password dont correspond to a user in the db
+     * @throws UserNotFoundException if the given username and password dont correspond to a user in the db
      * @return returns the user that matches the username and password
      */
-    public User getUser(String username, String password) throws IncorrentLoginException {
+    public User getUser(String username, String password) throws UserNotFoundException {
         for (User user : getUsers()) {
             if (username.equals(user.getUsername()) && password.equals(user.getPassword())) {
                 return user;
             }
         }
-        throw new IncorrentLoginException();
+        throw new UserNotFoundException();
+    }
+
+    public User getDeveloper(String userName) throws UserNotFoundException {
+        for (User user : getUsers()){
+            if (user.getUsername().equals(userName) && user.getRole().equals(Role.DEVELOPER)){
+                return user;
+            }
+        }
+        throw new UserNotFoundException();
     }
 
     private List<User> getUsers() {

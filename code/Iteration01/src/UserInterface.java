@@ -4,15 +4,17 @@ public class UserInterface {
     private final SessionUI sessionUI;
     private final ShowProjectsUI showProjectsUI;
     private final CreateProjectUI createProjectUI;
+    private final CreateTaskUI createTaskUI;
     private final UpdateTaskUI updateTaskUI;
     private final AdvanceTimeUI advanceTimeUI;
 
-    public UserInterface(Session session, TaskManSystem taskManSystem, Time systemTime) {
-        this.sessionUI = new SessionUI(session);
+    public UserInterface(Session session, TaskManSystem taskManSystem, UserManager userManager) {
+        this.sessionUI = new SessionUI(session, userManager);
         this.showProjectsUI = new ShowProjectsUI(session, taskManSystem);
         this.createProjectUI = new CreateProjectUI(session, taskManSystem);
-        this.updateTaskUI = new UpdateTaskUI(session, taskManSystem, systemTime);
-        this.advanceTimeUI = new AdvanceTimeUI(session, taskManSystem, systemTime);
+        this.createTaskUI = new CreateTaskUI(session, taskManSystem, userManager);
+        this.updateTaskUI = new UpdateTaskUI(session, taskManSystem);
+        this.advanceTimeUI = new AdvanceTimeUI(session, taskManSystem);
     }
 
     /**
@@ -38,11 +40,11 @@ public class UserInterface {
     private void handleCommand(String command) {
         switch (command) {
             case "help" -> printHelp();
-            case "login" -> sessionUI.loginPrompt();
+            case "login" -> sessionUI.loginRequest();
             case "logout" -> sessionUI.logout();
             case "showprojects" -> showProjectsUI.showProjects();
             case "createproject" -> createProjectUI.createProject();
-            case "createtask" -> createProjectUI.createTask();
+            case "createtask" -> createTaskUI.createTask();
             case "updatetask" -> updateTaskUI.updateTaskStatus();
             case "modifytime" -> advanceTimeUI.advanceTime();
             default -> System.out.println("Unknown command, type help to see available commands");

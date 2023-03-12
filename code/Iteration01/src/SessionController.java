@@ -1,12 +1,20 @@
 public class SessionController {
-    private Session session;
-    private UserManager userManager;
-    private SessionUI sessionUI;
+    private final Session session;
+    private final UserManager userManager;
+    private final SessionUI sessionUI;
 
-    public SessionController(Session session, SessionUI sessionUI) {
+    public SessionController(Session session, SessionUI sessionUI, UserManager userManager) {
         this.session = session;
-        this.userManager = new UserManager();
         this.sessionUI = sessionUI;
+        this.userManager = userManager;
+    }
+
+    public void loginRequest(){
+        if (session.isLoggedIn()) {
+            sessionUI.printAlreadyLoggedInError();
+            return;
+        }
+        sessionUI.loginPrompt();
     }
 
 
@@ -24,9 +32,9 @@ public class SessionController {
         try {
             User newUser = userManager.getUser(username, password);
             session.login(newUser);
-            sessionUI.printWelcome(username, newUser.getRole().toString()); // Dependency to Role enum, shouldnt be an issue.
+            sessionUI.printWelcome(username, newUser.getRole().toString());
         }
-        catch (IncorrentLoginException e) { // TODO: change use of exceptions here, this shouldn't be an exception.
+        catch (UserNotFoundException e) {
             sessionUI.handleLoginError();
         }
     }
@@ -34,6 +42,7 @@ public class SessionController {
     public void logout() {
         if (!session.isLoggedIn()) {
             sessionUI.printLogoutError();
+            return;
         }
         session.logout();
         sessionUI.printLogout();

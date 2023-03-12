@@ -10,7 +10,11 @@ public class CreateProjectUI {
         this.createProjectController = new CreateProjectController(session, this, taskManSystem);
     }
 
-    public void createProject() {
+    public void createProject(){
+        createProjectController.createProjectForm();
+    }
+
+    public void createProjectForm() {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Type BACK to cancel project creation at any time");
@@ -28,26 +32,46 @@ public class CreateProjectUI {
             return;
         }
 
-        System.out.print("Project due time: ");
-        String dueTimeString = scanner.nextLine();
+        System.out.print("Project due hour: ");
+        String dueHourString = scanner.nextLine();
 
-        if (dueTimeString.equals("BACK")) {
-            return;
-        }
-
-        int dueTime;
+        int dueHour;
         while (true) {
             try {
-                dueTime = Integer.parseInt(dueTimeString);
+                if (dueHourString.equals("BACK")) {
+                    return;
+                }
+                dueHour = Integer.parseInt(dueHourString);
                 break;
             }
             catch (NumberFormatException e) {
-                System.out.println("Given due time is not an integer, please input an integer and try again");
-                dueTimeString = scanner.nextLine();
+                System.out.println("Given due hour is not an integer, please input an integer and try again");
+                dueHourString = scanner.nextLine();
             }
         }
 
-        createProjectController.createProject(projectName, projectDescription, dueTime);
+        System.out.print("Project due minute: ");
+        String dueMinuteString = scanner.nextLine();
+
+        int dueMinute;
+        while (true) {
+            try {
+                if (dueMinuteString.equals("BACK")) {
+                    return;
+                }
+                dueMinute = Integer.parseInt(dueMinuteString);
+                break;
+            }
+            catch (NumberFormatException e) {
+                System.out.println("Given due minute is not an integer, please input an integer and try again");
+                dueMinuteString = scanner.nextLine();
+            }
+        }
+
+        createProjectController.createProject(projectName, projectDescription, dueHour, dueMinute);
+    }
+
+    public void messageProjectCreation(String projectName){
         System.out.println("Project with name " + projectName + " created!");
     }
 
@@ -55,8 +79,8 @@ public class CreateProjectUI {
         System.out.println("You must be logged in with the " + role.toString() + " role to call this function");
     }
 
-    public void dueTimeFormatError() {
-        System.out.println("The given due time is not a valid time, please try again");
+    public void notValidTimeError() {
+        System.out.println("The given time is not a valid time, please try again");
         createProject();
     }
 
@@ -65,120 +89,8 @@ public class CreateProjectUI {
         createProject();
     }
 
-    public void createTask() {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Type BACK to cancel task creation at any time");
-
-        System.out.println("*********** TASK CREATION FORM ***********");
-        System.out.println("Project name of which to add the task to:");
-        String projectName = scanner.nextLine();
-        if (projectName.equals("BACK")) {
-            System.out.println("Cancelled task creation");
-            return;
-        }
-
-        System.out.println("Task name:");
-        String taskName = scanner.nextLine();
-        if (taskName.equals("BACK")) {
-            System.out.println("Cancelled task creation");
-            return;
-        }
-
-        System.out.println("Task description:");
-        String description = scanner.nextLine();
-        if (description.equals("BACK")) {
-            System.out.println("Cancelled task creation");
-            return;
-        }
-
-        System.out.println("Task duration:");
-        // TODO de estimated duration halen uit de duration van een andere task?
-
-        String durationString = scanner.nextLine();
-        if (durationString.equals("BACK")) {
-            System.out.println("Cancelled task creation");
-            return;
-        }
-
-        int duration;
-        while (true) {
-            try {
-                duration = Integer.parseInt(durationString);
-                break;
-            }
-            catch (NumberFormatException e) {
-                System.out.println("Given task duration is not an integer, please input an integer and try again");
-                durationString = scanner.nextLine();
-                if (durationString.equals("BACK")) {
-                    System.out.println("Cancelled task creation");
-                    return;
-                }
-            }
-        }
-
-        System.out.println("Task deviation:");
-        String deviationString = scanner.nextLine();
-        if (deviationString.equals("BACK")) {
-            System.out.println("Cancelled task creation");
-            return;
-        }
-
-        double deviation;
-        while (true) {
-            try {
-                deviation = Double.parseDouble(deviationString);
-                break;
-            }
-            catch (NumberFormatException e) {
-                System.out.println("Given task deviation is not a double, please input an integer and try again");
-                deviationString = scanner.nextLine();
-                if (deviationString.equals("BACK")) {
-                    System.out.println("Cancelled task creation");
-                    return;
-                }
-            }
-        }
-
-        System.out.println("Is this a replacement task? (y/n)");
-        String answer = scanner.nextLine();
-
-        while(!answer.equals("y") && !answer.equals("n")) {
-            System.out.println("Is this a replacement task? (y/n)");
-            answer = scanner.nextLine();
-        }
-
-        if (answer.equals("y")) {
-            System.out.println("This task is a replacement for task:");
-            String replaces = scanner.nextLine();
-            createProjectController.replaceTask(projectName, taskName, description, duration, deviation, replaces);
-        }
-        else {
-            System.out.println("Tasks that should be completed before this task:");
-            System.out.println("Enter '.' to stop adding new tasks"); // te veel cn gedaan zeker?
-            String previousTask = scanner.nextLine();
-            List<String> previousTasks = new ArrayList<>();
-            while (!previousTask.equals(".")) {
-                previousTasks.add(previousTask);
-                previousTask = scanner.nextLine();
-            }
-            createProjectController.createTask(projectName, taskName, description, duration, deviation, previousTasks);
-        }
-    }
-
-
-    public void printTaskNotFailedError() {
-        System.out.println("ERROR: the replaced task has not failed, please try again\n");
-        createTask();
-    }
-
-    public void printProjectNotFound() {
-        System.out.println("ERROR: the given project could not be found");
-        // TODO: WTF doen we hierna?
-    }
-
-    public void printTaskNotFound() {
-        System.out.println("ERROR: the given task could not be found");
-        // TODO: WTF doen we hierna?
+    public void projectAlreadyInUseError(){
+        System.out.println("The project name is already in use");
+        createProject();
     }
 }

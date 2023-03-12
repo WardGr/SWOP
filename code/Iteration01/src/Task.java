@@ -37,7 +37,7 @@ public class Task {
         boolean available = true;
         for (Task task : previousTasks) {
             task.addNextTask(this);
-            if (!task.isFinished()) {
+            if (task.getStatus() != Status.FINISHED) {
                 available = false;
             }
         }
@@ -50,12 +50,9 @@ public class Task {
         }
     }
 
-    public Task(String taskName, String description, Time duration, double deviation, Task replacesTask, User currentUser) throws ReplacedTaskNotFailedException {
+    public Task(String taskName, String description, Time duration, double deviation, Task replacesTask) throws ReplacedTaskNotFailedException {
         if (replacesTask.getStatus() != Status.FAILED) {
             throw new ReplacedTaskNotFailedException();
-        }
-        if (replacesTask.getUser() != currentUser){
-            // TODO exception
         }
 
         this.name = taskName;
@@ -93,7 +90,7 @@ public class Task {
         StringBuilder stringBuilder = new StringBuilder();
         String info = "Task Name:          " + name                          + '\n' +
                       "Description:        " + description                   + '\n' +
-                      "Estimated Duration: " + estimatedDuration.getTime()   + '\n' +
+                      "Estimated Duration: " + estimatedDuration.toString()   + '\n' +
                       "Accepted Deviation: " + acceptableDeviation           + '\n' +
                       "Status:             " + status.toString()             + "\n\n" +
                       "Replacement Task:   " + showReplacementTaskName()     + '\n' +
@@ -144,10 +141,12 @@ public class Task {
     }
 
     private Time getStartTime(){
+        if (getTimeSpan() == null) { return null;}
         return timeSpan.getStartTime();
     }
 
     private Time getEndTime() {
+        if (getTimeSpan() == null) { return null;}
         return timeSpan.getEndTime();
     }
 
@@ -167,14 +166,8 @@ public class Task {
         return timeSpan.showEndTime();
     }
 
-
-
     private void addNextTask(Task task) {
         nextTasks.add(task);
-    }
-
-    public boolean isFinished() {
-        return status.equals(Status.FINISHED);
     }
 
     private void setReplacementTask(Task replacementTask) {
@@ -201,7 +194,6 @@ public class Task {
                 statuses.add(Status.FAILED);
                 return statuses;
             }
-            default -> {}
         }
         return statuses;
 
@@ -214,17 +206,17 @@ public class Task {
     private void setStartTime(Time startTime){
         TimeSpan timeSpan = getTimeSpan();
         if (timeSpan == null) {
-            setTimeSpan(new TimeSpan(startTime));
+            setTimeSpan(startTime);
         } else {
             timeSpan.setStartTime(startTime);
         }
     }
 
-    private void setEndTime(Time endTime){
+    private void setEndTime(Time endTime) throws WrongTaskStatusException {
         TimeSpan timeSpan = getTimeSpan();
         // als het systeem al Executing is moet er eigenlijk al een starttime zijn en dus een TimeSpan
         if (timeSpan == null) {
-            return; // TODO
+            throw new WrongTaskStatusException();
         }
         timeSpan.setEndTime(endTime);
     }
@@ -233,20 +225,16 @@ public class Task {
         return this.timeSpan;
     }
 
-    private void setTimeSpan(TimeSpan timeSpan){
-        this.timeSpan = timeSpan;
+    private void setTimeSpan(Time startTime){
+        this.timeSpan = new TimeSpan(startTime);
     }
 
-    public void fail(){
-        this.setStatus(Status.FAILED);
-    }
-
-    public void start(Time startTime, Time systemTime, User currentUser){
+    public void start(Time startTime, Time systemTime, User currentUser) throws UserNotAllowedToChangeTaskException, WrongTaskStatusException {
         if (getUser() != currentUser){
-            // TODO exception
+            throw new UserNotAllowedToChangeTaskException();
         }
         if (getStatus() != Status.AVAILABLE){
-            // TODO exception
+            throw new WrongTaskStatusException();
         }
         setStartTime(startTime);
         if (!systemTime.before(startTime)){
@@ -254,16 +242,16 @@ public class Task {
         }
     }
 
-    public void end(Status newStatus, Time endTime, Time systemTime, User currentUser){
+    public void end(Status newStatus, Time endTime, Time systemTime, User currentUser) throws UserNotAllowedToChangeTaskException, WrongTaskStatusException, FailTimeAfterSystemTimeException {
         if (getUser() != currentUser){
-            // TODO exception
+            throw new UserNotAllowedToChangeTaskException();
         }
         if (getStatus() != Status.EXECUTING){
-            // TODO exception
+            throw new WrongTaskStatusException();
         }
         if (newStatus == Status.FAILED){
             if (systemTime.before(endTime)){
-                // TODO exception
+                throw new FailTimeAfterSystemTimeException();
             }
             setStatus(Status.FAILED);
         } else if (newStatus == Status.FINISHED){
@@ -281,7 +269,7 @@ public class Task {
         Status status = getStatus();
         switch (status){
             case EXECUTING -> {
-                if (!newTime.before(getEndTime())){
+                if (getEndTime() != null && !newTime.before(getEndTime())){
                     setStatus(Status.FINISHED);
                     for (Task nextTask : getNextTasks()){
                         nextTask.checkAvailable();
@@ -289,7 +277,7 @@ public class Task {
                 }
             }
             case AVAILABLE -> {
-                if (!newTime.before(getStartTime())) {
+                if (getStartTime() != null && !newTime.before(getStartTime())) {
                     setStatus(Status.EXECUTING);
                 }
             }

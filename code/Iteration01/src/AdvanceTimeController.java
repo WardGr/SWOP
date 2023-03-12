@@ -2,30 +2,33 @@ public class AdvanceTimeController {
     private Session session;
     private TaskManSystem taskManSystem;
     private AdvanceTimeUI ui;
-    private Time systemTime;
-    public AdvanceTimeController(Session session, TaskManSystem taskManSystem, AdvanceTimeUI ui, Time systemTime){
+    public AdvanceTimeController(Session session, TaskManSystem taskManSystem, AdvanceTimeUI ui){
         this.session = session;
         this.taskManSystem = taskManSystem;
         this.ui = ui;
-        this.systemTime = systemTime;
     }
 
     public void advanceTime(){
-        ui.chooseNewTime();
+        if (session.getRole() != Role.PROJECTMANAGER) {
+            ui.printAccessError(Role.PROJECTMANAGER);
+            return;
+        }
+        ui.chooseNewTime(taskManSystem.getSystemHour(), taskManSystem.getSystemMinute());
     }
 
-    public void setNewTime(int newTimeInt){
+    public void setNewTime(int newHour, int newMinute){
         if (session.getRole() != Role.PROJECTMANAGER) {
             ui.printAccessError(Role.PROJECTMANAGER);
             return;
         }
 
-        Time newTime = new Time(newTimeInt);
-
-        if (newTime.before(systemTime)){
+        try {
+            taskManSystem.advanceTime(newHour,newMinute);
+        } catch (NotValidTimeException e) {
+            ui.printNotValidTimeError();
+        } catch (NewTimeBeforeSystemTimeException e) {
             ui.printNewBeforeSystemTimeError();
         }
 
-        taskManSystem.advanceTime(newTime);
     }
 }

@@ -13,7 +13,7 @@ public class ShowProjectsController {
 
     public void showProjects() {
         if (session.getRole() != Role.PROJECTMANAGER) {
-            showProjectsUI.printAccessError(Role.PROJECTMANAGER);
+            showProjectsUI.printAccessError(Role.PROJECTMANAGER); // TODO die functie als super zetten in de ui?
             return;
         }
         List<String> names = taskManSystem.getProjectNames();

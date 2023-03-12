@@ -2,10 +2,6 @@ public class Session {
     private User currentUser;
 
 
-    public Session(User newUser) {
-        this.currentUser = newUser;
-    }
-
     public Session() {
         this.currentUser = null;
     }
@@ -22,14 +18,14 @@ public class Session {
     }
 
     public Role getRole() {
-        if(getCurrentUser() == null) {
+        if (getCurrentUser() == null) {
             return null;
         }
         return currentUser.getRole();
     }
 
-    public void login(User newUser) {
-        this.currentUser = newUser;
+    public void login(User user) {
+        this.currentUser = user;
     }
 
     public void logout() {
