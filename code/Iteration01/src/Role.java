@@ -10,5 +10,5 @@ public enum Role {
         public String toString() {
             return "project manager";
         }
-    } // java is toch zo mooi he, toString() voor enums
+    }
 }

@@ -1,24 +1,37 @@
 import java.util.LinkedList;
 import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class UserManager {
     private List<User> users;
 
     public UserManager() {
-        // Temporarily hardcode some users x
-        LinkedList<User> users = new LinkedList<>();
-
-        User user1 = new User("Ward", "123", Role.PROJECTMANAGER);
-        User user2 = new User("Sam", "vijf5", Role.DEVELOPER);
-        User user3 = new User("Dieter", "123", Role.PROJECTMANAGER);
-        User user4 = new User("Olav", "123", Role.DEVELOPER);
-
-        users.add(user1);
-        users.add(user2);
-        users.add(user3);
-        users.add(user4);
-
-        this.users = users;
+        try {
+            LinkedList<User> users = new LinkedList<>();
+            File usersFile = new File("code/Iteration01/src/users.txt");
+            Scanner myReader = new Scanner(usersFile);
+            while (myReader.hasNextLine()) {
+                String[] data = myReader.nextLine().split(" ");
+                String username = data[0];
+                String password = data[1];
+                Role role = null;
+                if (data[2].equals("developer")){
+                    role = Role.DEVELOPER;
+                }
+                else if (data[2].equals("manager")){
+                    role = Role.PROJECTMANAGER;
+                }
+                User user = new User(username, password, role);
+                users.add(user);
+            }
+            myReader.close();
+            this.users = users;
+        } catch (FileNotFoundException e) {
+            System.out.println("Error reading file.");
+            e.printStackTrace();
+        }
     }
 
     /**
