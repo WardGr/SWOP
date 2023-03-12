@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class SessionController {
     private final Session session;
     private final UserManager userManager;
@@ -9,12 +11,12 @@ public class SessionController {
         this.userManager = userManager;
     }
 
-    public void loginRequest(){
+    public void loginRequest(Scanner scanner){
         if (session.isLoggedIn()) {
             sessionUI.printAlreadyLoggedInError();
             return;
         }
-        sessionUI.loginPrompt();
+        sessionUI.loginPrompt(scanner);
     }
 
 
@@ -24,7 +26,7 @@ public class SessionController {
      * @param username The username the user gave via the UI login prompt
      * @param password The password the user gave via the UI login prompt
      */
-    public void login(String username, String password) {
+    public void login(String username, String password, Scanner scanner) {
         if (session.isLoggedIn()) {
             sessionUI.printAlreadyLoggedInError();
             return;
@@ -35,7 +37,7 @@ public class SessionController {
             sessionUI.printWelcome(username, newUser.getRole().toString());
         }
         catch (UserNotFoundException e) {
-            sessionUI.handleLoginError();
+            sessionUI.handleLoginError(scanner);
         }
     }
 

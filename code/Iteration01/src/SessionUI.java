@@ -7,13 +7,11 @@ public class SessionUI { // Responsibility: Handle I/O from session-centric use-
         this.sessionController = new SessionController(session, this, userManager);
     }
 
-    public void loginRequest(){
-        sessionController.loginRequest();
+    public void loginRequest(Scanner scanner){
+        sessionController.loginRequest(scanner);
     }
 
-    public void loginPrompt() {
-        Scanner scanner = new Scanner(System.in);
-
+    public void loginPrompt(Scanner scanner) {
         System.out.println("Type 'BACK' to cancel login");
         System.out.println("Enter username:");
         String username = scanner.nextLine();
@@ -26,7 +24,7 @@ public class SessionUI { // Responsibility: Handle I/O from session-centric use-
             return;
         }
 
-        sessionController.login(username, password);
+        sessionController.login(username, password, scanner);
     }
 
     public void logout() {
@@ -37,9 +35,9 @@ public class SessionUI { // Responsibility: Handle I/O from session-centric use-
         System.out.println("Welcome " + name + "! Your assigned role is " + role);
     }
 
-    public void handleLoginError() {
+    public void handleLoginError(Scanner scanner) {
         System.out.println("Incorrect username/password combination, please try again");
-        loginPrompt();
+        loginPrompt(scanner);
     }
 
     public void printAlreadyLoggedInError() {
