@@ -3,19 +3,28 @@ import java.util.Scanner;
 
 public class ShowProjectsUI {
 
-  private final ShowProjectsController showProjectsController;
+  private final ShowProjectsController controller;
 
   private ShowProjectsController getController() {
-    return showProjectsController;
+    return controller;
   }
 
 
   public ShowProjectsUI(Session session, TaskManSystem taskManSystem) {
-    this.showProjectsController =
+    this.controller =
       new ShowProjectsController(session, taskManSystem);
   }
 
   public void showProjects() {
+    if (controller.createProjectPreconditions()){
+      showProjectsForm();
+    } else {
+      printPermissionError();
+    }
+  }
+
+
+  public void showProjectsForm() {
     Scanner scanner = new Scanner(System.in);
     try {
       while (true) {
