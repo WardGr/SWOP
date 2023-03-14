@@ -22,17 +22,17 @@ public class SessionUI { // Responsibility: Handle I/O from session-centric use-
       System.out.println("Enter username:");
       String username = scanner.nextLine();
       if (username.equals("BACK")) {
-        break;
+        return;
       }
       System.out.println("Enter password:");
       String password = scanner.nextLine();
       if (password.equals("BACK")) {
-        break;
+        return;
       }
       try {
         Role newRole = controller.login(username, password);
         welcomeMessage(username, newRole);
-        break;
+        return;
       } catch (IncorrectPermissionException e){
         alreadyLoggedInError();
       } catch (UserNotFoundException e) {

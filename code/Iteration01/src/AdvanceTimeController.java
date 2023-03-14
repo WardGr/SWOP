@@ -1,42 +1,40 @@
 public class AdvanceTimeController {
 
-  private Session session;
-  private TaskManSystem taskManSystem;
-  private AdvanceTimeUI ui;
+  private final Session session;
+  private final TaskManSystem taskManSystem;
 
   public AdvanceTimeController(
     Session session,
-    TaskManSystem taskManSystem,
-    AdvanceTimeUI ui
+    TaskManSystem taskManSystem
   ) {
     this.session = session;
     this.taskManSystem = taskManSystem;
-    this.ui = ui;
   }
 
-  public void advanceTime() {
-    if (session.getRole() != Role.PROJECTMANAGER) {
-      ui.printAccessError(Role.PROJECTMANAGER);
-      return;
-    }
-    ui.chooseNewTime(
-      taskManSystem.getSystemHour(),
-      taskManSystem.getSystemMinute()
-    );
+  private Session getSession() {
+    return session;
   }
 
-  public void setNewTime(int newHour, int newMinute) {
-    if (session.getRole() != Role.PROJECTMANAGER) {
-      ui.printAccessError(Role.PROJECTMANAGER);
-      return;
-    }
+  private TaskManSystem getTaskManSystem() {
+    return taskManSystem;
+  }
 
-    try {
-      taskManSystem.advanceTime(newHour, newMinute);
-    } catch (NotValidTimeException e) {
-      ui.printNotValidTimeError();
-    } catch (NewTimeBeforeSystemTimeException e) {
-      ui.printNewBeforeSystemTimeError();
+  public boolean advanceTimePreconditions() {
+    return getSession().getRole() == Role.PROJECTMANAGER;
+  }
+
+  public int getSystemHour(){
+    return getTaskManSystem().getSystemHour();
+  }
+
+  public int getSystemMinute(){
+    return getTaskManSystem().getSystemMinute();
+  }
+
+  public void setNewTime(int newHour, int newMinute) throws IncorrectPermissionException, NotValidTimeException, NewTimeBeforeSystemTimeException {
+    if (getSession().getRole() != Role.PROJECTMANAGER) {
+      throw new IncorrectPermissionException();
     }
+    getTaskManSystem().advanceTime(newHour, newMinute);
   }
 }

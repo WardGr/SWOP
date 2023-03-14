@@ -51,7 +51,7 @@ public class UserInterface {
       case "createproject" -> createProjectUI.createProject();
       case "createtask" -> createTaskUI.createTask();
       case "updatetask" -> updateTaskUI.updateTaskStatus();
-      case "modifytime" -> advanceTimeUI.advanceTime();
+      case "advancetime" -> advanceTimeUI.advanceTime();
       default -> System.out.println(
         "Unknown command, type help to see available commands"
       );
