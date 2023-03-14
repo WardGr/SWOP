@@ -4,24 +4,21 @@ public class SessionController {
 
   private final Session session;
   private final UserManager userManager;
-  private final SessionUI sessionUI;
 
   public SessionController(
     Session session,
-    SessionUI sessionUI,
     UserManager userManager
   ) {
     this.session = session;
-    this.sessionUI = sessionUI;
     this.userManager = userManager;
   }
 
-  public void loginRequest(Scanner scanner) {
-    if (session.isLoggedIn()) {
-      sessionUI.printAlreadyLoggedInError();
-      return;
-    }
-    sessionUI.loginPrompt(scanner);
+  public boolean loginRequest() {
+    return !getSession().isLoggedIn();
+  }
+
+  private Session getSession() {
+    return session;
   }
 
   /**

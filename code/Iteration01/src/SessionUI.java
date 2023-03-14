@@ -9,23 +9,35 @@ public class SessionUI { // Responsibility: Handle I/O from session-centric use-
   }
 
   public void loginRequest(Scanner scanner) {
-    sessionController.loginRequest(scanner);
+    if (sessionController.loginRequest()) {
+      loginPrompt(scanner);
+    } else {
+
+    }
   }
 
   public void loginPrompt(Scanner scanner) {
-    System.out.println("Type 'BACK' to cancel login");
-    System.out.println("Enter username:");
-    String username = scanner.nextLine();
-    if (username.equals("BACK")) {
-      return;
-    }
-    System.out.println("Enter password:");
-    String password = scanner.nextLine();
-    if (password.equals("BACK")) {
-      return;
+    while (true) {
+      System.out.println("Type 'BACK' to cancel login");
+      System.out.println("Enter username:");
+      String username = scanner.nextLine();
+      if (username.equals("BACK")) {
+        break;
+      }
+      System.out.println("Enter password:");
+      String password = scanner.nextLine();
+      if (password.equals("BACK")) {
+        break;
+      }
+      try {
+        sessionController.login(username, password, scanner);
+        break;
+      } catch (Exception e){
+        handleLoginError(scanner);
+      }
     }
 
-    sessionController.login(username, password, scanner);
+
   }
 
   public void logout() {
