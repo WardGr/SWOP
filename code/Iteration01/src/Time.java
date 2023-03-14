@@ -11,6 +11,16 @@ public class Time implements Comparable<Time> {
     this.minute = minute;
   }
 
+  public int getTotalMinutes() {
+    return getHour() * 60 + getMinute();
+  }
+
+  public Time(int totalMinutes) {
+    this.hour = totalMinutes / 60;
+    this.minute = totalMinutes % 60;
+  }
+
+
   public int getHour() {
     return hour;
   }
@@ -29,7 +39,7 @@ public class Time implements Comparable<Time> {
 
   @Override
   public String toString() {
-    return getHour() + ":" + getMinute();
+    return String.format("%02d", getHour()) + ":" + String.format("%02d", getMinute());
   }
 
   @Override
@@ -46,6 +56,10 @@ public class Time implements Comparable<Time> {
       return -1;
     }
     return 1;
+  }
+
+  public Time subtract(Time startTime) {
+    return new Time(this.getTotalMinutes() - startTime.getTotalMinutes());
   }
   /*public static Time difference(Time time1, Time time2){
         if (time1.compareTo(time2) < 0){
