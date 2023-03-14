@@ -171,10 +171,10 @@ public class UpdateTaskUI {
             controller.startTask(projectName, taskName, startHour, startMinute);
             System.out.println("Task " + taskName + " successfully updated");
             return;
-          } catch (NotValidTimeException e) {
-            notValidTimeError();
-          } catch (WrongTaskStatusException e) {
-            wrongTaskStatusError();
+          } catch (InvalidTimeException e) {
+            invalidTimeError();
+          } catch (IncorrectTaskStatusException e) {
+            incorrectTaskStatusError();
           }
         }
         case EXECUTING -> {
@@ -285,10 +285,10 @@ public class UpdateTaskUI {
             return;
           } catch (FailTimeAfterSystemTimeException e) {
             failTimeAfterSystemTimeError();
-          } catch (NotValidTimeException e) {
-            notValidTimeError();
-          } catch (WrongTaskStatusException e) {
-            wrongTaskStatusError();
+          } catch (InvalidTimeException e) {
+            invalidTimeError();
+          } catch (IncorrectTaskStatusException e) {
+            incorrectTaskStatusError();
           }
         }
       }
@@ -307,7 +307,7 @@ public class UpdateTaskUI {
     System.out.println("ERROR: the given task could not be found");
   }
 
-  public void notValidTimeError() {
+  public void invalidTimeError() {
     System.out.println("ERROR: the given time is not valid");
   }
 
@@ -319,7 +319,7 @@ public class UpdateTaskUI {
     System.out.println("ERROR: the fail time is after the system time");
   }
 
-  public void wrongTaskStatusError() {
+  public void incorrectTaskStatusError() {
     System.out.println("ERROR: the task has the wrong status for this update");
   }
 }

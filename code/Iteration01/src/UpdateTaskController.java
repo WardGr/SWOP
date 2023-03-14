@@ -75,14 +75,14 @@ public class UpdateTaskController {
     return getTaskManSystem().getSystemMinute();
   }
 
-  public void startTask(String projectName, String taskName, int startHourInput, int startMinuteInput) throws IncorrectPermissionException, ProjectNotFoundException, NotValidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, WrongTaskStatusException {
+  public void startTask(String projectName, String taskName, int startHourInput, int startMinuteInput) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException();
     }
     getTaskManSystem().startTask(projectName, taskName, startHourInput, startMinuteInput, getSession().getCurrentUser());
   }
 
-  public void endTask(String projectName, String taskName, Status newStatus, int endHourInput, int endMinuteInput) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, NotValidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, WrongTaskStatusException {
+  public void endTask(String projectName, String taskName, Status newStatus, int endHourInput, int endMinuteInput) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException();
     }
