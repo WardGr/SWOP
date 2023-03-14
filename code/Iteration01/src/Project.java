@@ -204,7 +204,7 @@ public class Project {
     Time systemTime,
     User currentUser
   )
-    throws TaskNotFoundException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
+    throws TaskNotFoundException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
     Task task = getTask(taskName);
     if (task == null) {
       throw new TaskNotFoundException();
@@ -219,7 +219,7 @@ public class Project {
     Time systemTime,
     User currentUser
   )
-    throws TaskNotFoundException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
+    throws TaskNotFoundException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
     Task task = getTask(taskName);
     if (task == null) {
       throw new TaskNotFoundException();
@@ -228,7 +228,7 @@ public class Project {
   }
 
   public void advanceTime(Time newTime) {
-    for (Task task : tasks) {
+    for (Task task : getTasks()) {
       task.advanceTime(newTime);
     }
   }

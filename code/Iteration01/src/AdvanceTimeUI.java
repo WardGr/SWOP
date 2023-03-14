@@ -76,7 +76,7 @@ public class AdvanceTimeUI {
         return;
       } catch (IncorrectPermissionException e) {
         permissionError();
-      } catch (NotValidTimeException e) {
+      } catch (InvalidTimeException e) {
         notValidTimeError();
       } catch (NewTimeBeforeSystemTimeException e) {
         newBeforeSystemTimeError();

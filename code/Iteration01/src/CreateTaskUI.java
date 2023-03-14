@@ -15,8 +15,25 @@ public class CreateTaskUI {
       new CreateTaskController(session, this, taskManSystem, user);
   }
 
+  private CreateTaskController getController() {
+    return controller;
+  }
+
+
+  private void printPermissionError() {
+    System.out.println(
+            "You must be logged in with the " +
+                    Role.PROJECTMANAGER +
+                    " role to call this function"
+    );
+  }
+
   public void createTask() {
-    controller.createTaskForm();
+    if (!getController().createTaskPreconditions()) {
+      printPermissionError();
+      return;
+    }
+    createTaskForm();
   }
 
   public void createTaskForm() {
@@ -131,15 +148,32 @@ public class CreateTaskUI {
         System.out.println("Cancelled task creation");
         return;
       }
-      controller.replaceTask(
-        projectName,
-        taskName,
-        description,
-        durationHour,
-        durationMinutes,
-        deviation,
-        replaces
-      );
+      try {
+        controller.replaceTask(
+                projectName,
+                taskName,
+                description,
+                durationHour,
+                durationMinutes,
+                deviation,
+                replaces
+        );
+        printTaskReplacementSuccess(projectName, replaces, taskName);
+      } catch (ReplacedTaskNotFailedException e) {
+        System.out.println(
+                "ERROR: the task to replace has not failed, please try again\n"
+        );
+      } catch (ProjectNotFoundException e) {
+        System.out.println("ERROR: the given project does not exist");
+      } catch (InvalidTimeException e) {
+        System.out.println("ERROR: The given minutes are not of a valid format (0-59)");
+      } catch (TaskNotFoundException e) {
+        System.out.println("ERROR: (one of) the given task(s) does not exist");
+      } catch (TaskNameAlreadyInUseException e) {
+        System.out.println("ERROR: the given task name is already in use");
+      } catch (IncorrectPermissionException e) {
+        printPermissionError();
+      }
     } else {
       System.out.println("Give developer performing this task: ");
       String developer = scanner.nextLine();
@@ -165,66 +199,45 @@ public class CreateTaskUI {
           return;
         }
       }
-      controller.createTask(
-        projectName,
-        taskName,
-        description,
-        durationHour,
-        durationMinutes,
-        deviation,
-        developer,
-        previousTasks
-      );
+
+
+      try {
+        controller.createTask(
+                projectName,
+                taskName,
+                description,
+                durationHour,
+                durationMinutes,
+                deviation,
+                developer,
+                previousTasks
+        );
+        printTaskCreationSuccess(projectName, taskName);
+      } catch (UserNotFoundException e) {
+        System.out.println("ERROR: Given user does not exist or is not a developer");
+      } catch (ProjectNotFoundException e) {
+        System.out.println("ERROR: Given project does not exist");
+      } catch (InvalidTimeException e) {
+        System.out.println("ERROR: The given minutes are not of a valid format (0-59)");
+      } catch (TaskNotFoundException e) {
+        System.out.println("Given task does not exist");
+      } catch (TaskNameAlreadyInUseException e) {
+        System.out.println("ERROR: the given task name is already in use");
+      } catch (IncorrectPermissionException e) {
+        printPermissionError();
+      }
     }
   }
 
-  public void messageTaskCreation(String projectName, String taskName) {
+  public void printTaskCreationSuccess(String projectName, String taskName) {
     System.out.println(
-      "Task " + taskName + " is successfully created in Project " + projectName
+      "Task " + taskName + " successfully added to Project " + projectName
     );
   }
 
-  public void printAccessError(Role role) {
+  public void printTaskReplacementSuccess(String projectName, String originalTask, String replacementTask) {
     System.out.println(
-      "You must be logged in with the " +
-      role.toString() +
-      " role to call this function"
+            "Task " + replacementTask + " successfully added to Project " + projectName + "as a replacement for task " + originalTask
     );
-  }
-
-  public void printTaskNotFailedError() {
-    System.out.println(
-      "ERROR: the replaced task has not failed, please try again\n"
-    );
-    createTask();
-  }
-
-  public void printProjectNotFound() {
-    System.out.println("ERROR: the given project could not be found");
-    createTask();
-  }
-
-  public void printTaskNotFound() {
-    System.out.println("ERROR: (one of) the given task(s) could not be found");
-    createTask();
-  }
-
-  public void printNotValidTimeError() {
-    System.out.println("ERROR: the given time is not valid");
-    createTask();
-  }
-
-  public void taskNameAlreadyUsedError() {
-    System.out.println("ERROR: the given task name is already used");
-    createTask();
-  }
-
-  public void userNotAllowedToUpdate() {
-    System.out.println("ERROR: user is not allowed to update the failed task");
-  }
-
-  public void UserNotDeveloperError() {
-    System.out.println("Given user is not found or not a developer");
-    createTask();
   }
 }

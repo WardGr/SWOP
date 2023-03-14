@@ -5,7 +5,6 @@ public class CreateTaskController {
   private final Session session;
   private final TaskManSystem taskManSystem;
   private final UserManager userManager;
-  private final CreateTaskUI ui;
 
   public CreateTaskController(
     Session session,
@@ -14,18 +13,18 @@ public class CreateTaskController {
     UserManager userManager
   ) {
     this.session = session;
-    this.ui = ui;
     this.taskManSystem = taskManSystem;
     this.userManager = userManager;
   }
 
-  public void createTaskForm() {
-    if (session.getRole() != Role.PROJECTMANAGER) {
-      ui.printAccessError(Role.PROJECTMANAGER);
-      return;
-    }
-    ui.createTaskForm();
+  public boolean createTaskPreconditions() {
+    return getSession().getRole() == Role.PROJECTMANAGER;
   }
+
+  private Session getSession() {
+    return session;
+  }
+
 
   public void createTask(
     String projectName,
@@ -36,14 +35,12 @@ public class CreateTaskController {
     double deviation,
     String user,
     List<String> previousTasks
-  ) {
-    if (session.getRole() != Role.PROJECTMANAGER) {
-      ui.printAccessError(Role.PROJECTMANAGER);
-      return;
+  ) throws ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException {
+    if (!createTaskPreconditions()) {
+      throw new IncorrectPermissionException();
     }
-    try {
-      User developer = userManager.getDeveloper(user);
-      taskManSystem.addTaskToProject(
+    User developer = userManager.getDeveloper(user);
+    taskManSystem.addTaskToProject(
         projectName,
         taskName,
         description,
@@ -53,19 +50,6 @@ public class CreateTaskController {
         previousTasks,
         developer
       );
-      ui.messageTaskCreation(projectName, taskName);
-    } catch (ProjectNotFoundException e) {
-      ui.printProjectNotFound();
-    } catch (TaskNotFoundException e) {
-      ui.printTaskNotFound();
-    } catch (NotValidTimeException e) {
-      ui.printNotValidTimeError();
-    } catch (TaskNameAlreadyInUseException e) {
-      ui.taskNameAlreadyUsedError();
-    } catch (UserNotFoundException e) {
-      ui.UserNotDeveloperError();
-    }
-    // TODO vervangen door gewoon een invalid input exception?
   }
 
   public void replaceTask(
@@ -76,13 +60,11 @@ public class CreateTaskController {
     int durationMinute,
     double deviation,
     String replaces
-  ) {
+  ) throws IncorrectPermissionException, ReplacedTaskNotFailedException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException {
     if (session.getRole() != Role.PROJECTMANAGER) {
-      ui.printAccessError(Role.PROJECTMANAGER);
-      return;
+      throw new IncorrectPermissionException();
     }
-    try {
-      taskManSystem.addAlternativeTaskToProject(
+    taskManSystem.addAlternativeTaskToProject(
         projectName,
         taskName,
         description,
@@ -90,19 +72,7 @@ public class CreateTaskController {
         durationMinute,
         deviation,
         replaces
-      );
-      ui.messageTaskCreation(projectName, taskName);
-    } catch (ReplacedTaskNotFailedException e) {
-      ui.printTaskNotFailedError();
-    } catch (ProjectNotFoundException e) {
-      ui.printProjectNotFound();
-    } catch (TaskNotFoundException e) {
-      ui.printTaskNotFound();
-    } catch (NotValidTimeException e) {
-      ui.printNotValidTimeError();
-    } catch (TaskNameAlreadyInUseException e) {
-      ui.taskNameAlreadyUsedError();
-    }
+    );
     // TODO vervangen door gewoon een invalid input exception?
   }
 }
