@@ -3,123 +3,89 @@ import java.util.Map;
 
 public class UpdateTaskController {
 
-  private TaskManSystem taskManSystem;
-  private Session session;
-  private UpdateTaskUI ui;
+  private final TaskManSystem taskManSystem;
+  private final Session session;
 
   public UpdateTaskController(
-    UpdateTaskUI ui,
     Session session,
     TaskManSystem taskManSystem
   ) {
-    this.ui = ui;
     this.session = session;
     this.taskManSystem = taskManSystem;
   }
 
   private Session getSession() {
     return session;
-  } //TODO overal zo het veld aanspreken ??
-
-  public void showAvailableAndExecuting() {
-    if (session.getRole() != Role.DEVELOPER) {
-      ui.printAccessError(Role.DEVELOPER);
-      return;
-    }
-
-    List<Map.Entry<String, String>> availableTasks =
-      taskManSystem.showAvailableTasks();
-    List<Map.Entry<String, String>> executingTasks =
-      taskManSystem.showExecutingTasks();
-
-    ui.printAvailableAndExecuting(availableTasks, executingTasks);
   }
 
-  public void updateTaskForm(String projectName, String taskName) {
-    if (session.getRole() != Role.DEVELOPER) {
-      ui.printAccessError(Role.DEVELOPER);
-      return;
-    }
-    try {
-      String taskString = taskManSystem.showTask(projectName, taskName);
-      List<Status> statuses = taskManSystem.getNextStatuses(
-        projectName,
-        taskName
-      );
-      ui.showTask(taskString, statuses);
-
-      Status status = taskManSystem.getStatus(projectName, taskName);
-      ui.updateForm(
-        projectName,
-        taskName,
-        status,
-        taskManSystem.getSystemHour(),
-        taskManSystem.getSystemMinute()
-      );
-    } catch (ProjectNotFoundException | TaskNotFoundException e) {
-      ui.taskNotFoundError();
-    }
+  private TaskManSystem getTaskManSystem() {
+    return taskManSystem;
   }
 
-  public void startTask(
-    String projectName,
-    String taskName,
-    int startHourInput,
-    int startMinuteInput
-  ) {
-    if (session.getRole() != Role.DEVELOPER) {
-      ui.printAccessError(Role.DEVELOPER);
-      return;
-    }
-    try {
-      taskManSystem.startTask(
-        projectName,
-        taskName,
-        startHourInput,
-        startMinuteInput,
-        getSession().getCurrentUser()
-      );
-    } catch (ProjectNotFoundException | TaskNotFoundException e) {
-      ui.taskNotFoundError();
-    } catch (NotValidTimeException e) {
-      ui.printNotValidTimeError(projectName, taskName);
-    } catch (UserNotAllowedToChangeTaskException e) {
-      ui.userNotAllowedToUpdateTaskError();
-    } catch (WrongTaskStatusException e) {
-      ui.wrongTaskStatusException(projectName, taskName);
-    }
+  public boolean updateTaskPreconditions() {
+    return getSession().getRole() == Role.DEVELOPER;
   }
 
-  public void endTask(
-    String projectName,
-    String taskName,
-    Status newStatus,
-    int endHourInput,
-    int endMinuteInput
-  ) {
-    if (session.getRole() != Role.DEVELOPER) {
-      ui.printAccessError(Role.DEVELOPER);
-      return;
+  public List<Map.Entry<String, String>> availableTasksNames() throws IncorrectPermissionException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
     }
-    try {
-      taskManSystem.endTask(
-        projectName,
-        taskName,
-        newStatus,
-        endHourInput,
-        endMinuteInput,
-        getSession().getCurrentUser()
-      );
-    } catch (ProjectNotFoundException | TaskNotFoundException e) {
-      ui.taskNotFoundError();
-    } catch (NotValidTimeException e) {
-      ui.printNotValidTimeError(projectName, taskName);
-    } catch (FailTimeAfterSystemTimeException e) {
-      ui.failTimeAfterSystemTime(projectName, taskName);
-    } catch (UserNotAllowedToChangeTaskException e) {
-      ui.userNotAllowedToUpdateTaskError();
-    } catch (WrongTaskStatusException e) {
-      ui.wrongTaskStatusException(projectName, taskName);
+    return getTaskManSystem().showAvailableTasks();
+  }
+
+  public List<Map.Entry<String, String>> executingTasksNames() throws IncorrectPermissionException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
     }
+    return getTaskManSystem().showExecutingTasks();
+  }
+
+  public String showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
+    }
+    return getTaskManSystem().showTask(projectName,taskName);
+  }
+
+  public List<Status> getNextStatuses(String projectName, String taskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
+    }
+    return getTaskManSystem().getNextStatuses(projectName, taskName);
+  }
+
+  public Status getStatus(String projectName, String taskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
+    }
+    return getTaskManSystem().getStatus(projectName, taskName);
+  }
+
+  public int getSystemHour() throws IncorrectPermissionException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
+    }
+    return getTaskManSystem().getSystemHour();
+  }
+
+  public int getSystemMinute() throws IncorrectPermissionException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
+    }
+    return getTaskManSystem().getSystemMinute();
+  }
+
+  public void startTask(String projectName, String taskName, int startHourInput, int startMinuteInput) throws IncorrectPermissionException, ProjectNotFoundException, NotValidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, WrongTaskStatusException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
+    }
+    getTaskManSystem().startTask(projectName, taskName, startHourInput, startMinuteInput, getSession().getCurrentUser());
+  }
+
+  public void endTask(String projectName, String taskName, Status newStatus, int endHourInput, int endMinuteInput) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, NotValidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, WrongTaskStatusException {
+    if (getSession().getRole() != Role.DEVELOPER) {
+      throw new IncorrectPermissionException();
+    }
+    getTaskManSystem().endTask(projectName, taskName, newStatus, endHourInput, endMinuteInput, getSession().getCurrentUser());
   }
 }
