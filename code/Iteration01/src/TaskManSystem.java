@@ -98,7 +98,7 @@ public class TaskManSystem {
     int dueHour,
     int dueMinute
   )
-    throws DueBeforeSystemTimeException, NotValidTimeException, ProjectNameAlreadyInUseException {
+    throws DueBeforeSystemTimeException, InvalidTimeException, ProjectNameAlreadyInUseException {
     if (getProject(projectName) == null) {
       Project newProject = new Project(
         projectName,
@@ -122,7 +122,7 @@ public class TaskManSystem {
     List<String> previousTasks,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, TaskNameAlreadyInUseException {
+    throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -146,7 +146,7 @@ public class TaskManSystem {
     double deviation,
     String replaces
   )
-    throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, TaskNameAlreadyInUseException {
+    throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -209,7 +209,7 @@ public class TaskManSystem {
     int startMinute,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
+    throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -230,7 +230,7 @@ public class TaskManSystem {
     int endMinute,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, NotValidTimeException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, WrongTaskStatusException {
+    throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -245,7 +245,7 @@ public class TaskManSystem {
   }
 
   public void advanceTime(int newHour, int newMinute)
-    throws NewTimeBeforeSystemTimeException, NotValidTimeException {
+    throws NewTimeBeforeSystemTimeException, InvalidTimeException {
     Time newTime = new Time(newHour, newMinute);
     if (newTime.before(systemTime)) {
       throw new NewTimeBeforeSystemTimeException();

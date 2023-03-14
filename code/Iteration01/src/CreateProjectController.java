@@ -23,7 +23,7 @@ public class CreateProjectController {
     return getSession().getRole() == Role.PROJECTMANAGER;
   }
 
-  public void createProject(String projectName, String projectDescription, int dueHour, int dueMinute) throws IncorrectPermissionException, ProjectNameAlreadyInUseException, NotValidTimeException, DueBeforeSystemTimeException {
+  public void createProject(String projectName, String projectDescription, int dueHour, int dueMinute) throws IncorrectPermissionException, ProjectNameAlreadyInUseException, InvalidTimeException, DueBeforeSystemTimeException {
     if (getSession().getRole() != Role.PROJECTMANAGER) {
       throw new IncorrectPermissionException();
     }

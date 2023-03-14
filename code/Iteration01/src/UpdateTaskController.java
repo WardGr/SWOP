@@ -81,11 +81,11 @@ public class UpdateTaskController {
       );
     } catch (ProjectNotFoundException | TaskNotFoundException e) {
       ui.taskNotFoundError();
-    } catch (NotValidTimeException e) {
+    } catch (InvalidTimeException e) {
       ui.printNotValidTimeError(projectName, taskName);
     } catch (UserNotAllowedToChangeTaskException e) {
       ui.userNotAllowedToUpdateTaskError();
-    } catch (WrongTaskStatusException e) {
+    } catch (IncorrectTaskStatusException e) {
       ui.wrongTaskStatusException(projectName, taskName);
     }
   }
@@ -112,13 +112,13 @@ public class UpdateTaskController {
       );
     } catch (ProjectNotFoundException | TaskNotFoundException e) {
       ui.taskNotFoundError();
-    } catch (NotValidTimeException e) {
+    } catch (InvalidTimeException e) {
       ui.printNotValidTimeError(projectName, taskName);
     } catch (FailTimeAfterSystemTimeException e) {
       ui.failTimeAfterSystemTime(projectName, taskName);
     } catch (UserNotAllowedToChangeTaskException e) {
       ui.userNotAllowedToUpdateTaskError();
-    } catch (WrongTaskStatusException e) {
+    } catch (IncorrectTaskStatusException e) {
       ui.wrongTaskStatusException(projectName, taskName);
     }
   }

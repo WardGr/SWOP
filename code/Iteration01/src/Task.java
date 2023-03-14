@@ -250,11 +250,11 @@ public class Task {
     }
   }
 
-  private void setEndTime(Time endTime) throws WrongTaskStatusException {
+  private void setEndTime(Time endTime) throws IncorrectTaskStatusException {
     TimeSpan timeSpan = getTimeSpan();
     // als het systeem al Executing is moet er eigenlijk al een starttime zijn en dus een TimeSpan
     if (timeSpan == null) {
-      throw new WrongTaskStatusException();
+      throw new IncorrectTaskStatusException();
     }
     timeSpan.setEndTime(endTime);
   }
@@ -268,12 +268,12 @@ public class Task {
   }
 
   public void start(Time startTime, Time systemTime, User currentUser)
-    throws UserNotAllowedToChangeTaskException, WrongTaskStatusException {
+    throws UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
     if (getUser() != currentUser) {
       throw new UserNotAllowedToChangeTaskException();
     }
     if (getStatus() != Status.AVAILABLE) {
-      throw new WrongTaskStatusException();
+      throw new IncorrectTaskStatusException();
     }
     setStartTime(startTime);
     if (!systemTime.before(startTime)) {
@@ -287,12 +287,12 @@ public class Task {
     Time systemTime,
     User currentUser
   )
-    throws UserNotAllowedToChangeTaskException, WrongTaskStatusException, FailTimeAfterSystemTimeException {
+    throws UserNotAllowedToChangeTaskException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException {
     if (getUser() != currentUser) {
       throw new UserNotAllowedToChangeTaskException();
     }
     if (getStatus() != Status.EXECUTING) {
-      throw new WrongTaskStatusException();
+      throw new IncorrectTaskStatusException();
     }
     if (newStatus == Status.FAILED) {
       if (systemTime.before(endTime)) {

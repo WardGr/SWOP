@@ -80,7 +80,7 @@ public class CreateProjectUI {
         return;
       } catch (ProjectNameAlreadyInUseException e) {
         projectAlreadyInUseError();
-      } catch (NotValidTimeException e) {
+      } catch (InvalidTimeException e) {
         notValidTimeError();
       } catch (DueBeforeSystemTimeException e) {
         dueBeforeSystemTimeError();

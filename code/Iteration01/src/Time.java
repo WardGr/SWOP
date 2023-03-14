@@ -3,9 +3,9 @@ public class Time implements Comparable<Time> {
   private final int hour;
   private final int minute;
 
-  public Time(int hour, int minute) throws NotValidTimeException {
-    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-      throw new NotValidTimeException();
+  public Time(int hour, int minute) throws InvalidTimeException {
+    if (minute < 0 || minute > 59) {
+      throw new InvalidTimeException();
     }
     this.hour = hour;
     this.minute = minute;
@@ -29,7 +29,7 @@ public class Time implements Comparable<Time> {
 
   @Override
   public String toString() {
-    return hour + ":" + minute;
+    return getHour() + ":" + getMinute();
   }
 
   @Override

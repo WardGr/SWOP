@@ -58,7 +58,7 @@ public class CreateTaskController {
       ui.printProjectNotFound();
     } catch (TaskNotFoundException e) {
       ui.printTaskNotFound();
-    } catch (NotValidTimeException e) {
+    } catch (InvalidTimeException e) {
       ui.printNotValidTimeError();
     } catch (TaskNameAlreadyInUseException e) {
       ui.taskNameAlreadyUsedError();
@@ -98,7 +98,7 @@ public class CreateTaskController {
       ui.printProjectNotFound();
     } catch (TaskNotFoundException e) {
       ui.printTaskNotFound();
-    } catch (NotValidTimeException e) {
+    } catch (InvalidTimeException e) {
       ui.printNotValidTimeError();
     } catch (TaskNameAlreadyInUseException e) {
       ui.taskNameAlreadyUsedError();

@@ -5,17 +5,87 @@ public class ShowProjectsUI {
 
   private final ShowProjectsController showProjectsController;
 
+  private ShowProjectsController getController() {
+    return showProjectsController;
+  }
+
+
   public ShowProjectsUI(Session session, TaskManSystem taskManSystem) {
     this.showProjectsController =
-      new ShowProjectsController(session, this, taskManSystem);
+      new ShowProjectsController(session, taskManSystem);
   }
 
   public void showProjects() {
-    showProjectsController.showProjects();
+    Scanner scanner = new Scanner(System.in);
+    try {
+      while (true) {
+        System.out.println("Type \"BACK\" to cancel");
+        System.out.println("********* PROJECTS *********");
+        printProjects(getController().getProjectNames(), getController().getStatuses());
+
+        System.out.println("Type the name of a project to see more details:");
+        String response = scanner.nextLine();
+        if (response.equals("BACK")) {
+          return;
+        }
+        try {
+          chooseProject(response);
+        }
+        catch (ProjectNotFoundException e) {
+          printProjectNotFoundError();
+        }
+      }
+    }
+    catch (IncorrectPermissionException e) {
+      printPermissionError();
+    }
   }
 
+  private void chooseProject(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
+    Scanner scanner = new Scanner(System.in);
+
+    printProjectDetails(getController().showProject(projectName));
+
+    System.out.println("Type the name of a task to see more details, or type \"BACK\" to choose another project:");
+    String response = scanner.nextLine();
+
+    if (response.equals("BACK")) {
+      return;
+    }
+
+    while (true) {
+      try {
+        showTask(getController().showTask(projectName, response));
+        System.out.println("Type the name of another task to see more details, or type \"BACK\" to choose another project:");
+        response = scanner.nextLine();
+        if (response.equals("BACK")) {
+          return;
+        }
+      }
+      catch (TaskNotFoundException e) {
+        printTaskNotFoundError();
+      }
+    }
+  }
+
+  private void printTaskNotFoundError() {
+    System.out.println("Task not found");
+  }
+
+  private void printProjectNotFoundError() {
+    System.out.println("Project not found");
+  }
+
+  private void printPermissionError() {
+    System.out.println(
+            "You must be logged in with the " +
+                    Role.PROJECTMANAGER +
+                    " role to call this function"
+    );
+  }
+
+
   public void printProjects(List<String> names, List<String> statuses) {
-    System.out.println("********* PROJECTS *********");
     int i = 0;
     for (String name : names) {
       System.out.print(i + 1);
@@ -23,62 +93,15 @@ public class ShowProjectsUI {
       System.out.println(name + ", status: " + statuses.get(i));
       i++;
     }
-
-    Scanner scanner = new Scanner(System.in);
-
-    System.out.println(
-      "Type a projects name to see its details, including a list of its tasks, type BACK to exit:"
-    );
-    String projectName = scanner.nextLine();
-    if (projectName.equals("BACK")) {
-      return;
-    }
-    showProjectsController.showProject(projectName);
   }
 
-  public void printProjectDetails(String projectString, String projectName) {
+  public void printProjectDetails(String projectString) {
     System.out.println("******** PROJECT DETAILS ********");
     System.out.println(projectString);
-
-    showTask(projectName);
   }
 
-  private void showTask(String projectString) {
-    Scanner scanner = new Scanner(System.in);
-
-    System.out.println(
-      "Type a tasks name to see its details or type BACK to choose another project:"
-    );
-    String taskString = scanner.nextLine();
-    if (taskString.equals("BACK")) {
-      showProjects();
-    } else {
-      showProjectsController.showTask(projectString, taskString);
-    }
-  }
-
-  public void printTaskDetails(String taskString, String projectString) {
+  private void showTask(String taskString) {
     System.out.println("******** TASK DETAILS ********");
     System.out.println(taskString);
-
-    showTask(projectString);
-  }
-
-  public void printAccessError(Role role) {
-    System.out.println(
-      "You must be logged in with the " +
-      role.toString() +
-      " role to call this function"
-    );
-  }
-
-  public void projectNotFoundError() {
-    System.out.println("Project not found\n");
-    showProjects();
-  }
-
-  public void taskNotFoundError(String projectName) {
-    System.out.println("Task not found\n");
-    showTask(projectName);
   }
 }
