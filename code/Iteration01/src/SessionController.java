@@ -13,7 +13,7 @@ public class SessionController {
     this.userManager = userManager;
   }
 
-  public boolean loginRequest() {
+  public boolean loginPrecondition() {
     return !getSession().isLoggedIn();
   }
 
@@ -27,26 +27,19 @@ public class SessionController {
    * @param username The username the user gave via the UI login prompt
    * @param password The password the user gave via the UI login prompt
    */
-  public void login(String username, String password, Scanner scanner) {
+  public Role login(String username, String password) throws IncorrectPermissionException, UserNotFoundException {
     if (session.isLoggedIn()) {
-      sessionUI.printAlreadyLoggedInError();
-      return;
+      throw new IncorrectPermissionException();
     }
-    try {
-      User newUser = userManager.getUser(username, password);
-      session.login(newUser);
-      sessionUI.printWelcome(username, newUser.getRole().toString());
-    } catch (UserNotFoundException e) {
-      sessionUI.handleLoginError(scanner);
-    }
+    User newUser = userManager.getUser(username, password);
+    return session.login(newUser);
   }
 
-  public void logout() {
+  public boolean logout() {
     if (!session.isLoggedIn()) {
-      sessionUI.printLogoutError();
-      return;
+      return false;
     }
     session.logout();
-    sessionUI.printLogout();
+    return true;
   }
 }

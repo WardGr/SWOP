@@ -21,8 +21,9 @@ public class Session {
     return getCurrentUser().getRole();
   }
 
-  public void login(User user) {
+  public Role login(User user) {
     setCurrentUser(user);
+    return getRole();
   }
 
   public void logout() {

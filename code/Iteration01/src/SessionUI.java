@@ -2,17 +2,17 @@ import java.util.Scanner;
 
 public class SessionUI { // Responsibility: Handle I/O from session-centric use-cases
 
-  public SessionController sessionController;
+  public SessionController controller;
 
   public SessionUI(Session session, UserManager userManager) {
-    this.sessionController = new SessionController(session, this, userManager);
+    this.controller = new SessionController(session, userManager);
   }
 
   public void loginRequest(Scanner scanner) {
-    if (sessionController.loginRequest()) {
+    if (controller.loginPrecondition()) {
       loginPrompt(scanner);
     } else {
-
+      alreadyLoggedInError();
     }
   }
 
@@ -30,40 +30,44 @@ public class SessionUI { // Responsibility: Handle I/O from session-centric use-
         break;
       }
       try {
-        sessionController.login(username, password, scanner);
+        Role newRole = controller.login(username, password);
+        welcomeMessage(username, newRole);
         break;
-      } catch (Exception e){
-        handleLoginError(scanner);
+      } catch (IncorrectPermissionException e){
+        alreadyLoggedInError();
+      } catch (UserNotFoundException e) {
+        handleLoginError();
       }
     }
-
-
   }
 
   public void logout() {
-    sessionController.logout();
+    if (controller.logout()) {
+      logoutMessage();
+    } else {
+      alreadyLoggedOutError();
+    }
   }
 
-  public void printWelcome(String name, String role) {
-    System.out.println("Welcome " + name + "! Your assigned role is " + role);
+  private void welcomeMessage(String name, Role role) {
+    System.out.println("Welcome " + name + "! Your assigned role is " + role.toString());
   }
 
-  public void handleLoginError(Scanner scanner) {
+  private void handleLoginError() {
     System.out.println(
       "Incorrect username/password combination, please try again"
     );
-    loginPrompt(scanner);
   }
 
-  public void printAlreadyLoggedInError() {
+  private void alreadyLoggedInError() {
     System.out.println("You are already logged in!");
   }
 
-  public void printLogout() {
+  private void logoutMessage() {
     System.out.println("Logged out.");
   }
 
-  public void printLogoutError() {
+  private void alreadyLoggedOutError() {
     System.out.println("Already logged out.");
   }
 }
