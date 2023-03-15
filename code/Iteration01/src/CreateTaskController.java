@@ -25,6 +25,13 @@ public class CreateTaskController {
     return session;
   }
 
+  private TaskManSystem getTaskManSystem() {
+    return taskManSystem;
+  }
+
+  private UserManager getUserManager() {
+    return userManager;
+  }
 
   public void createTask(
     String projectName,
@@ -36,11 +43,11 @@ public class CreateTaskController {
     String user,
     List<String> previousTasks
   ) throws ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException {
-    if (!createTaskPreconditions()) {
-      throw new IncorrectPermissionException();
+    if (getSession().getRole() != Role.PROJECTMANAGER) {
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
-    User developer = userManager.getDeveloper(user);
-    taskManSystem.addTaskToProject(
+    User developer = getUserManager().getDeveloper(user);
+    getTaskManSystem().addTaskToProject(
         projectName,
         taskName,
         description,
@@ -61,10 +68,10 @@ public class CreateTaskController {
     double deviation,
     String replaces
   ) throws IncorrectPermissionException, ReplacedTaskNotFailedException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException {
-    if (session.getRole() != Role.PROJECTMANAGER) {
-      throw new IncorrectPermissionException();
+    if (getSession().getRole() != Role.PROJECTMANAGER) {
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
-    taskManSystem.addAlternativeTaskToProject(
+    getTaskManSystem().addAlternativeTaskToProject(
         projectName,
         taskName,
         description,

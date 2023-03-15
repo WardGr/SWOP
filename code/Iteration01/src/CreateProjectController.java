@@ -25,7 +25,7 @@ public class CreateProjectController {
 
   public void createProject(String projectName, String projectDescription, int dueHour, int dueMinute) throws IncorrectPermissionException, ProjectNameAlreadyInUseException, InvalidTimeException, DueBeforeSystemTimeException {
     if (!createProjectPreconditions()) {
-      throw new IncorrectPermissionException();
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
     getTaskManSystem().createProject(projectName, projectDescription, dueHour, dueMinute);
   }

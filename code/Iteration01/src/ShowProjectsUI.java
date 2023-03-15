@@ -17,37 +17,33 @@ public class ShowProjectsUI {
   }
 
   public void showProjects() {
-    if (getController().showProjectsPreconditions()){
+    try {
+      getController().showProjectsPreconditions();
       showProjectsForm();
-    } else {
-      printPermissionError();
+    } catch (Exception e){
+      System.out.println(e.getMessage());
     }
   }
 
 
-  public void showProjectsForm() {
+  public void showProjectsForm() throws IncorrectPermissionException {
     Scanner scanner = new Scanner(System.in);
-    try {
-      while (true) {
-        System.out.println("Type \"BACK\" to cancel");
-        System.out.println("********* PROJECTS *********");
-        printProjects(getController().getProjectNamesWithStatus());
+    while (true) {
+      System.out.println("Type \"BACK\" to cancel");
+      System.out.println("********* PROJECTS *********");
+      showProjectsWithStatuses();
 
-        System.out.println("Type the name of a project to see more details:");
-        String response = scanner.nextLine();
-        if (response.equals("BACK")) {
-          return;
-        }
-        try {
-          chooseProject(response);
-        }
-        catch (ProjectNotFoundException e) {
-          printProjectNotFoundError();
-        }
+      System.out.println("Type the name of a project to see more details:");
+      String response = scanner.nextLine();
+      if (response.equals("BACK")) {
+        return;
       }
-    }
-    catch (IncorrectPermissionException e) {
-      printPermissionError();
+      try {
+        chooseProject(response);
+      }
+      catch (ProjectNotFoundException e) {
+        printProjectNotFoundError();
+      }
     }
   }
 
@@ -95,7 +91,8 @@ public class ShowProjectsUI {
   }
 
 
-  public void printProjects(List<Map.Entry<String, String>> statuses) {
+  public void showProjectsWithStatuses() throws IncorrectPermissionException {
+    List<Map.Entry<String, String>> statuses = getController().getProjectNamesWithStatus();
     int i = 0;
     for (Map.Entry<String, String> entry : statuses) {
       System.out.print(i + 1);

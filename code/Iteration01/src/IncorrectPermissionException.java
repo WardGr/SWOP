@@ -1,3 +1,3 @@
 public class IncorrectPermissionException extends Exception{
-    public IncorrectPermissionException() {super();}
+    public IncorrectPermissionException(String message) {super(message);}
 }
