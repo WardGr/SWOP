@@ -84,7 +84,7 @@ public class LoadSystemController {
         int startMinute = (int) (long) project.get("startMinute");
         int endHour = (int) (long) project.get("endHour");
         int endMinute = (int) (long) project.get("endMinute");
-        taskManSystem.createProject(name, description, startHour, startMinute, endHour, endMinute);
+        taskManSystem.createProject(name, description, new Time(startHour, startMinute), new Time (endHour, endMinute));
         //load the tasks
         JSONArray tasks = (JSONArray) project.get("tasks");
         for(Object t : tasks){

@@ -99,16 +99,15 @@ public class TaskManSystem {
   public void createProject(
     String projectName,
     String projectDescription,
-    int dueHour,
-    int dueMinute
+    Time dueTime
   )
-    throws DueBeforeSystemTimeException, InvalidTimeException, ProjectNameAlreadyInUseException {
+    throws DueBeforeSystemTimeException, ProjectNameAlreadyInUseException {
     if (getProject(projectName) == null) {
       Project newProject = new Project(
         projectName,
         projectDescription,
         getSystemTime(),
-        new Time(dueHour, dueMinute)
+        dueTime
       );
       projects.add(newProject);
     } else {
@@ -119,18 +118,16 @@ public class TaskManSystem {
   public void createProject(
           String projectName,
           String projectDescription,
-          int starHour,
-          int startMinute,
-          int dueHour,
-          int dueMinute
+          Time startTime,
+          Time dueTime
   )
           throws DueBeforeSystemTimeException, InvalidTimeException, ProjectNameAlreadyInUseException {
     if (getProject(projectName) == null) {
       Project newProject = new Project(
               projectName,
               projectDescription,
-              new Time(starHour, startMinute),
-              new Time(dueHour, dueMinute)
+              startTime,
+              dueTime
       );
       projects.add(newProject);
     } else {
