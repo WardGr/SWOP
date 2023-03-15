@@ -11,7 +11,7 @@ public class LogoutTest {
     Session session = new Session();
     UserManager userManager = new UserManager();
     SessionUI sessionUi = new SessionUI(session, userManager);
-    SessionController sessionController = new SessionController(session, sessionUi, userManager);
+    SessionController sessionController = new SessionController(session, userManager);
     @Test
     public void testLogout() {
         // Set all System.out (so prints and such) output to go into this stream, so we can assert its contents.

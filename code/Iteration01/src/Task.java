@@ -120,8 +120,6 @@ public class Task {
       stringBuilder.append(i++).append(".").append(task.getName()).append('\n');
     }
 
-    // TODO de early, on time, of delay berekenen en laten zien
-
     return stringBuilder.toString();
   }
 
@@ -161,14 +159,14 @@ public class Task {
     if (getTimeSpan() == null) {
       return null;
     }
-    return timeSpan.getStartTime();
+    return getTimeSpan().getStartTime();
   }
 
   private Time getEndTime() {
     if (getTimeSpan() == null) {
       return null;
     }
-    return timeSpan.getEndTime();
+    return getTimeSpan().getEndTime();
   }
 
   private User getUser() {
@@ -188,17 +186,17 @@ public class Task {
   }
 
   private String showStartTime() {
-    if (timeSpan == null) {
-      return "No start time set";
+    if (getTimeSpan() == null) {
+      return "Task has not started yet";
     }
-    return timeSpan.showStartTime();
+    return getTimeSpan().showStartTime();
   }
 
   private String showEndTime() {
-    if (timeSpan == null) {
-      return "No end time set";
+    if (getTimeSpan() == null) {
+      return "Task has not ended yet";
     }
-    return timeSpan.showEndTime();
+    return getTimeSpan().showEndTime();
   }
 
   private void addNextTask(Task task) {
@@ -314,12 +312,10 @@ public class Task {
         throw new FailTimeAfterSystemTimeException();
       }
       setStatus(Status.FAILED);
-    } else if (newStatus == Status.FINISHED) {
-      if (!systemTime.before(endTime)) {
-        setStatus(Status.FINISHED);
-        for (Task nextTask : getNextTasks()) {
-          nextTask.checkAvailable();
-        }
+    } else if (newStatus == Status.FINISHED && !systemTime.before(endTime)) {
+      setStatus(Status.FINISHED);
+      for (Task nextTask : getNextTasks()) {
+        nextTask.checkAvailable();
       }
     }
     setEndTime(endTime);
