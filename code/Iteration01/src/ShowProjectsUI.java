@@ -17,11 +17,14 @@ public class ShowProjectsUI {
   }
 
   public void showProjects() {
-    try {
-      getController().showProjectsPreconditions();
-      showProjectsForm();
-    } catch (IncorrectPermissionException e){
-      System.out.println(e.getMessage());
+    if (getController().showProjectsPreconditions()){
+      try {
+        showProjectsForm();
+      } catch (IncorrectPermissionException e) {
+        System.out.println(e.getMessage());
+      }
+    } else {
+      System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
   }
 

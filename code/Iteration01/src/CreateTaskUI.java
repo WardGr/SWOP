@@ -20,11 +20,14 @@ public class CreateTaskUI {
   }
 
   public void createTask() {
-    try {
-      getController().createTaskPreconditions();
-      createTaskForm();
-    } catch (IncorrectPermissionException e) {
-      System.out.println(e.getMessage());
+    if (getController().createTaskPreconditions()){
+      try{
+        createTaskForm();
+      } catch (IncorrectPermissionException e) {
+        System.out.println(e.getMessage());
+      }
+    } else {
+      System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
   }
 
