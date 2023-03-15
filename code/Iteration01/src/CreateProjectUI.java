@@ -8,9 +8,13 @@ public class CreateProjectUI {
     this.controller = new CreateProjectController(session, taskManSystem);
   }
 
+  private CreateProjectController getController() {
+    return controller;
+  }
+
   public void createProject() {
     try {
-      controller.createProjectPreconditions();
+      getController().createProjectPreconditions();
       createProjectForm();
     } catch (IncorrectPermissionException e){
       System.out.println(e.getMessage());
@@ -76,7 +80,7 @@ public class CreateProjectUI {
       }
 
       try {
-        controller.createProject(projectName, projectDescription, dueHour, dueMinute);
+        getController().createProject(projectName, projectDescription, dueHour, dueMinute);
         System.out.println("Project with name " + projectName + " created!");
         return;
       } catch (ProjectNameAlreadyInUseException e) {
