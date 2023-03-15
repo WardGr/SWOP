@@ -39,22 +39,22 @@ public class UpdateTaskUI {
    * @throws IncorrectPermissionException if the user is not logged in as a developer
    */
   public void chooseUpdateTask() throws IncorrectPermissionException {
-    Map<String, String> availableTasks = getController().availableTasksNames();
-    Map<String, String> executingTasks = getController().executingTasksNames();
-
-    System.out.println("*** AVAILABLE TASKS ***");
-    availableTasks.forEach(
-              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
-    );
-    System.out.println();
-    System.out.println("*** EXECUTING TASKS ***");
-    executingTasks.forEach(
-              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
-    );
-
-    Scanner scanner = new Scanner(System.in);
-
     while(true) {
+
+      Map<String, String> availableTasks = getController().availableTasksNames();
+      Map<String, String> executingTasks = getController().executingTasksNames();
+
+      System.out.println("*** AVAILABLE TASKS ***");
+      availableTasks.forEach(
+              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
+      );
+      System.out.println();
+      System.out.println("*** EXECUTING TASKS ***");
+      executingTasks.forEach(
+              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
+      );
+
+      Scanner scanner = new Scanner(System.in);
 
       System.out.println("Type BACK to cancel updating the task any time");
       System.out.println("Name of the project you want to update:");
