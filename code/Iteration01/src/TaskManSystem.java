@@ -37,6 +37,10 @@ public class TaskManSystem {
         */
   }
 
+  private List<Project> getProjects() {
+    return projects;
+  }
+
   private Project getProject(String projectName) {
     for (Project project : projects) {
       if (project.getName().equals(projectName)) {
@@ -58,7 +62,7 @@ public class TaskManSystem {
     return systemTime;
   }
 
-  public List<String> getProjectNames() {
+  public List<String> getProjectNames() { // todo: momenteel niet gebruikt
     List<String> names = new LinkedList<>();
     for (Project project : projects) {
       names.add(project.getName());
@@ -66,10 +70,10 @@ public class TaskManSystem {
     return names;
   }
 
-  public List<String> getStatuses() {
-    List<String> statuses = new LinkedList<>();
-    for (Project project : projects) {
-      statuses.add(project.getStatus());
+  public List<Map.Entry<String, String>> getProjectNamesWithStatus() {
+    List<Map.Entry<String, String>> statuses = new LinkedList<>();
+    for (Project project : getProjects()) {
+      statuses.add(new AbstractMap.SimpleEntry<>(project.getName(), project.getStatus()));
     }
     return statuses;
   }

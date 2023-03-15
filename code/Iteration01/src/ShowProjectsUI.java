@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class ShowProjectsUI {
@@ -16,7 +17,7 @@ public class ShowProjectsUI {
   }
 
   public void showProjects() {
-    if (controller.createProjectPreconditions()){
+    if (getController().showProjectsPreconditions()){
       showProjectsForm();
     } else {
       printPermissionError();
@@ -30,7 +31,7 @@ public class ShowProjectsUI {
       while (true) {
         System.out.println("Type \"BACK\" to cancel");
         System.out.println("********* PROJECTS *********");
-        printProjects(getController().getProjectNames(), getController().getStatuses());
+        printProjects(getController().getProjectNamesWithStatus());
 
         System.out.println("Type the name of a project to see more details:");
         String response = scanner.nextLine();
@@ -94,12 +95,12 @@ public class ShowProjectsUI {
   }
 
 
-  public void printProjects(List<String> names, List<String> statuses) {
+  public void printProjects(List<Map.Entry<String, String>> statuses) {
     int i = 0;
-    for (String name : names) {
+    for (Map.Entry<String, String> entry : statuses) {
       System.out.print(i + 1);
       System.out.print(".");
-      System.out.println(name + ", status: " + statuses.get(i));
+      System.out.println(entry.getKey() + ", status: " + entry.getValue());
       i++;
     }
   }

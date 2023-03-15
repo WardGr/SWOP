@@ -61,18 +61,4 @@ public class Time implements Comparable<Time> {
   public Time subtract(Time startTime) {
     return new Time(this.getTotalMinutes() - startTime.getTotalMinutes());
   }
-  /*public static Time difference(Time time1, Time time2){
-        if (time1.compareTo(time2) < 0){
-            return new Time(0,0);
-        }
-        int hours = time1.getHour() - time2.getHour();
-        int minutes;
-        if (time1.getMinute() < time2.getMinute()){
-            hours -= 1;
-            minutes = 60 - (time1.getMinute() - time2.getMinute());
-        } else {
-            minutes = time1.getMinute() - time2.getMinute();
-        }
-        return new Time(hours,minutes);
-    }*/
 }
