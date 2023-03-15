@@ -142,13 +142,12 @@ public class TaskManSystem {
     String projectName,
     String taskName,
     String description,
-    int durationHour,
-    int durationMinute,
+    Time durationTime,
     double deviation,
     List<String> previousTasks,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException {
+    throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -156,7 +155,7 @@ public class TaskManSystem {
     project.addTask(
       taskName,
       description,
-      new Time(durationHour, durationMinute),
+      durationTime,
       deviation,
       previousTasks,
       currentUser
@@ -167,12 +166,11 @@ public class TaskManSystem {
     String projectName,
     String taskName,
     String description,
-    int durationHour,
-    int durationMinute,
+    Time durationTime,
     double deviation,
     String replaces
   )
-    throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException {
+    throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -180,7 +178,7 @@ public class TaskManSystem {
     project.addAlternativeTask(
       taskName,
       description,
-      new Time(durationHour, durationMinute),
+      durationTime,
       deviation,
       replaces
     );

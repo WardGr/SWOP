@@ -105,10 +105,10 @@ public class LoadSystemController {
         User user = userManager.getDeveloper((String) task.get("user"));
         String replacesTask = (String) task.get("replaces");
         if(replacesTask != null){
-            taskManSystem.addAlternativeTaskToProject(projectName, name, description, dueHour, dueMinute, acceptableDeviation, replacesTask);
+            taskManSystem.addAlternativeTaskToProject(projectName, name, description, new Time(dueHour,dueMinute), acceptableDeviation, replacesTask);
         }else {
             List<String> prevTasks = (List<String>) task.get("previousTasks");
-            taskManSystem.addTaskToProject(projectName, name, description, dueHour, dueMinute, acceptableDeviation, prevTasks, user);
+            taskManSystem.addTaskToProject(projectName, name, description, new Time(dueHour,dueMinute), acceptableDeviation, prevTasks, user);
         }
 
         //handling the status

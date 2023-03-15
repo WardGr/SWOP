@@ -50,8 +50,7 @@ public class CreateTaskController {
         projectName,
         taskName,
         description,
-        durationHour,
-        durationMinute,
+        new Time(durationHour, durationMinute),
         deviation,
         previousTasks,
         developer
@@ -74,8 +73,7 @@ public class CreateTaskController {
         projectName,
         taskName,
         description,
-        durationHour,
-        durationMinute,
+        new Time(durationHour, durationMinute),
         deviation,
         replaces
     );
