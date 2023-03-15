@@ -88,7 +88,7 @@ public class LoadSystemController {
         int startMinute = (int) (long) project.get("startMinute");
         int endHour = (int) (long) project.get("endHour");
         int endMinute = (int) (long) project.get("endMinute");
-        taskManSystem.createProject(name, description, startHour, startMinute, endHour, endMinute);
+        taskManSystem.createProject(name, description, new Time(startHour, startMinute), new Time (endHour, endMinute));
         //load the tasks
         JSONArray tasks = (JSONArray) project.get("tasks");
         for(Object t : tasks){
@@ -109,10 +109,10 @@ public class LoadSystemController {
         User user = userManager.getDeveloper((String) task.get("user"));
         String replacesTask = (String) task.get("replaces");
         if(replacesTask != null){
-            taskManSystem.addAlternativeTaskToProject(projectName, name, description, dueHour, dueMinute, acceptableDeviation, replacesTask);
+            taskManSystem.addAlternativeTaskToProject(projectName, name, description, new Time(dueHour,dueMinute), acceptableDeviation, replacesTask);
         }else {
             List<String> prevTasks = (List<String>) task.get("previousTasks");
-            taskManSystem.addTaskToProject(projectName, name, description, dueHour, dueMinute, acceptableDeviation, prevTasks, user);
+            taskManSystem.addTaskToProject(projectName, name, description, new Time(dueHour,dueMinute), acceptableDeviation, prevTasks, user);
         }
 
         //handling the status

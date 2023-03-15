@@ -44,6 +44,6 @@ public class CreateProjectController {
     if (getSession().getRole() != Role.PROJECTMANAGER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
-    getTaskManSystem().createProject(projectName, projectDescription, dueHour, dueMinute);
+    getTaskManSystem().createProject(projectName, projectDescription, new Time(dueHour,dueMinute));
   }
 }

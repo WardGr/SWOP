@@ -99,16 +99,15 @@ public class TaskManSystem {
   public void createProject(
     String projectName,
     String projectDescription,
-    int dueHour,
-    int dueMinute
+    Time dueTime
   )
-    throws DueBeforeSystemTimeException, InvalidTimeException, ProjectNameAlreadyInUseException {
+    throws DueBeforeSystemTimeException, ProjectNameAlreadyInUseException {
     if (getProject(projectName) == null) {
       Project newProject = new Project(
         projectName,
         projectDescription,
         getSystemTime(),
-        new Time(dueHour, dueMinute)
+        dueTime
       );
       projects.add(newProject);
     } else {
@@ -119,18 +118,16 @@ public class TaskManSystem {
   public void createProject(
           String projectName,
           String projectDescription,
-          int starHour,
-          int startMinute,
-          int dueHour,
-          int dueMinute
+          Time startTime,
+          Time dueTime
   )
           throws DueBeforeSystemTimeException, InvalidTimeException, ProjectNameAlreadyInUseException {
     if (getProject(projectName) == null) {
       Project newProject = new Project(
               projectName,
               projectDescription,
-              new Time(starHour, startMinute),
-              new Time(dueHour, dueMinute)
+              startTime,
+              dueTime
       );
       projects.add(newProject);
     } else {
@@ -142,13 +139,12 @@ public class TaskManSystem {
     String projectName,
     String taskName,
     String description,
-    int durationHour,
-    int durationMinute,
+    Time durationTime,
     double deviation,
     List<String> previousTasks,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException {
+    throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -156,7 +152,7 @@ public class TaskManSystem {
     project.addTask(
       taskName,
       description,
-      new Time(durationHour, durationMinute),
+      durationTime,
       deviation,
       previousTasks,
       currentUser
@@ -167,12 +163,11 @@ public class TaskManSystem {
     String projectName,
     String taskName,
     String description,
-    int durationHour,
-    int durationMinute,
+    Time durationTime,
     double deviation,
     String replaces
   )
-    throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException {
+    throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -180,7 +175,7 @@ public class TaskManSystem {
     project.addAlternativeTask(
       taskName,
       description,
-      new Time(durationHour, durationMinute),
+      durationTime,
       deviation,
       replaces
     );
