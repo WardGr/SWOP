@@ -22,6 +22,10 @@ public class LoadSystemController {
         this.session = session;
         this.loadSystemUI = loadSystemUI;
     }
+
+    /**
+     * Creates the initial
+     */
     public void loadSystemForm(){
         if (session.getRole() != Role.PROJECTMANAGER) {
             loadSystemUI.printAccessError(Role.PROJECTMANAGER);

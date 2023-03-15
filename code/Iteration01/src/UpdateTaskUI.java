@@ -2,6 +2,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Handles user input for the updatetask use-case, requests necessary domain-level information from the UpdateTaskController
+ */
 public class UpdateTaskUI {
 
   private final UpdateTaskController controller;
@@ -14,6 +17,9 @@ public class UpdateTaskUI {
     return controller;
   }
 
+  /**
+   * Handles initial request to updatetask, checks if permission is correct
+   */
   public void updateTaskStatus() {
     if (controller.updateTaskPreconditions()){
       try{
@@ -26,6 +32,13 @@ public class UpdateTaskUI {
     }
   }
 
+  /**
+   * Shows all available and executing tasks (these can be updated by the user)
+   */
+  public void showAvailableAndExecuting() {
+    try {
+      Map<String, String> availableTasks = getController().availableTasksNames();
+      Map<String, String> executingTasks = getController().executingTasksNames();
   public void chooseUpdateTask() throws IncorrectPermissionException {
     Map<String, String> availableTasks = getController().availableTasksNames();
     Map<String, String> executingTasks = getController().executingTasksNames();
@@ -40,6 +53,14 @@ public class UpdateTaskUI {
               (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
     );
 
+  }
+
+  /**
+   * Allows the user to choose a task to update, and updates this task to the given status
+   *
+   * @throws IncorrectPermissionException if the user is not logged in as a developer
+   */
+  public void chooseUpdateTask() throws IncorrectPermissionException{
     Scanner scanner = new Scanner(System.in);
 
     while(true) {
@@ -68,6 +89,15 @@ public class UpdateTaskUI {
     }
   }
 
+  /**
+   * Shows the task with name taskName, related to the project with name projectName
+   *
+   * @param projectName Name of the project to which the task is attached
+   * @param taskName Name of the task which should be showed
+   * @throws ProjectNotFoundException if given projectName does not correspond to an existing project
+   * @throws TaskNotFoundException if given taskName does not correspond to an existing task
+   * @throws IncorrectPermissionException if user is not logged in as a developer
+   */
   public void showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
     String taskDetails = controller.showTask(projectName, taskName);
     List<Status> nextStatuses = controller.getNextStatuses(projectName, taskName);
@@ -79,6 +109,16 @@ public class UpdateTaskUI {
     }
   }
 
+  /**
+   * Prompts the user to update the selected task and updates the task status and information
+   *
+   * @param projectName name of the project given
+   * @param taskName name of the task given
+   * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
+   * @throws TaskNotFoundException if the given task name does not correspond to an existing task
+   * @throws IncorrectPermissionException if the user is not logged in as a developer
+   * @throws UserNotAllowedToChangeTaskException if the user is not assigned to this task
+   */
   public void updateForm(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException, UserNotAllowedToChangeTaskException {
     Status status = controller.getStatus(projectName, taskName);
     int systemHour = controller.getSystemHour();

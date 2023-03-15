@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+/**
+ * Handles user input for the createproject use-case, requests necessary domain-level information from the CreateProjectController
+ */
 public class CreateProjectUI {
 
   private final CreateProjectController controller;
@@ -12,6 +15,9 @@ public class CreateProjectUI {
     return controller;
   }
 
+  /**
+   * Does the initial project creation request, checks if the useer has the projectmanager role
+   */
   public void createProject() {
     if (getController().createProjectPreconditions()){
       try{
@@ -24,6 +30,12 @@ public class CreateProjectUI {
     }
   }
 
+  /**
+   * Shows the project creation form and creates the project if the given information is valid according to system
+   * specifications
+   *
+   * @throws IncorrectPermissionException if the user is not logged in as a projectmanager
+   */
   public void createProjectForm() throws IncorrectPermissionException {
     Scanner scanner = new Scanner(System.in);
 

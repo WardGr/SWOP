@@ -148,7 +148,7 @@ public class Project {
       deviation,
       replacesTask
     );
-    tasks.remove(replacesTask);
+    tasks.remove(replacesTask); // TODO: SETTERS VAN MAKEN
     replacedTasks.add(replacesTask);
     tasks.add(replacementTask);
   }
