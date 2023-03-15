@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+// TODO: DOE DIT ASJEBLIEFT MET POLYMORFISME, SUPER VEEL STATUS CHECKS EN DE CLASS IS GIGANTISCH
 public class Task {
 
   private String name;
@@ -88,50 +89,23 @@ public class Task {
     replacesTask.setReplacementTask(this);
   }
 
-  private void replaceNextTask(Task oldTask, Task newTask) {
-    nextTasks.remove(oldTask);
-    nextTasks.add(newTask);
-  }
-
-  private void replacePreviousTask(Task oldTask, Task newTask) {
-    previousTasks.remove(oldTask);
-    previousTasks.add(newTask);
-  }
-
   @Override
   public String toString() {
     StringBuilder stringBuilder = new StringBuilder();
     String info =
-      "Task Name:          " +
-      name +
-      '\n' +
-      "Description:        " +
-      description +
-      '\n' +
-      "Estimated Duration: " +
-      estimatedDuration.toString() +
-      '\n' +
-      "Accepted Deviation: " +
-      acceptableDeviation +
-      '\n' +
-      "Status:             " +
-      status.toString() +
-      "\n\n" +
-      "Replacement Task:   " +
-      showReplacementTaskName() +
-      '\n' +
-      "Replaces Task:      " +
-      showReplacesTaskName() +
-      "\n\n" +
-      "Start Time:         " +
-      showStartTime() +
-      '\n' +
-      "End Time:           " +
-      showEndTime() +
-      "\n\n" +
-      "User:               " +
-      user.getUsername() +
-      "\n\n";
+                    "Task Name:          " + getName() + '\n' +
+                    "Description:        " + getDescription() + '\n' +
+                    "Estimated Duration: " + getEstimatedDuration().toString() + '\n' +
+                    "Accepted Deviation: " + getAcceptableDeviation() + '\n' +
+                    "Status:             " + getStatus().toString() + (getStatus() == Status.FINISHED ? (", " + getFinishedStatus()) : "") + "\n\n" +
+
+                    "Replacement Task:   " + showReplacementTaskName() + '\n' +
+                    "Replaces Task:      " + showReplacesTaskName() + "\n\n" +
+
+                    "Start Time:         " + showStartTime() + '\n' +
+                    "End Time:           " + showEndTime() + "\n\n" +
+
+                    "User:               " + user.getUsername() + "\n\n";
 
     stringBuilder.append(info);
     stringBuilder.append("Next tasks:\n");
@@ -146,9 +120,17 @@ public class Task {
       stringBuilder.append(i++).append(".").append(task.getName()).append('\n');
     }
 
-    // TODO de early, on time, of delay berekenen en laten zien
-
     return stringBuilder.toString();
+  }
+
+  private void replaceNextTask(Task oldTask, Task newTask) {
+    nextTasks.remove(oldTask);
+    nextTasks.add(newTask);
+  }
+
+  private void replacePreviousTask(Task oldTask, Task newTask) {
+    previousTasks.remove(oldTask);
+    previousTasks.add(newTask);
   }
 
   private String showReplacementTaskName() {
@@ -177,32 +159,44 @@ public class Task {
     if (getTimeSpan() == null) {
       return null;
     }
-    return timeSpan.getStartTime();
+    return getTimeSpan().getStartTime();
   }
 
   private Time getEndTime() {
     if (getTimeSpan() == null) {
       return null;
     }
-    return timeSpan.getEndTime();
+    return getTimeSpan().getEndTime();
   }
 
   private User getUser() {
     return user;
   }
 
+
+  private String getDescription() {
+    return description;
+  }
+  private Time getEstimatedDuration() {
+    return estimatedDuration;
+  }
+
+  private double getAcceptableDeviation() {
+    return acceptableDeviation;
+  }
+
   private String showStartTime() {
-    if (timeSpan == null) {
-      return "No start time set";
+    if (getTimeSpan() == null) {
+      return "Task has not started yet";
     }
-    return timeSpan.showStartTime();
+    return getTimeSpan().showStartTime();
   }
 
   private String showEndTime() {
-    if (timeSpan == null) {
-      return "No end time set";
+    if (getTimeSpan() == null) {
+      return "Task has not ended yet";
     }
-    return timeSpan.showEndTime();
+    return getTimeSpan().showEndTime();
   }
 
   private void addNextTask(Task task) {
@@ -260,7 +254,26 @@ public class Task {
   }
 
   private TimeSpan getTimeSpan() {
-    return this.timeSpan;
+    return timeSpan;
+  }
+
+  private FinishedStatus getFinishedStatus() {
+    if (getStatus() != Status.FINISHED) {
+      return null;
+    }
+
+    int differenceMinutes = getTimeSpan().getTimeElapsed().getTotalMinutes();
+    int durationMinutes = getEstimatedDuration().getTotalMinutes();
+
+    if (differenceMinutes < (1 - getAcceptableDeviation()) * durationMinutes) {
+      return FinishedStatus.EARLY;
+    }
+    else if (differenceMinutes < (1 + getAcceptableDeviation()) * durationMinutes) {
+      return FinishedStatus.ON_TIME;
+    }
+    else {
+      return FinishedStatus.DELAYED;
+    }
   }
 
   private void setTimeSpan(Time startTime) {
@@ -299,12 +312,10 @@ public class Task {
         throw new FailTimeAfterSystemTimeException();
       }
       setStatus(Status.FAILED);
-    } else if (newStatus == Status.FINISHED) {
-      if (!systemTime.before(endTime)) {
-        setStatus(Status.FINISHED);
-        for (Task nextTask : getNextTasks()) {
-          nextTask.checkAvailable();
-        }
+    } else if (newStatus == Status.FINISHED && !systemTime.before(endTime)) {
+      setStatus(Status.FINISHED);
+      for (Task nextTask : getNextTasks()) {
+        nextTask.checkAvailable();
       }
     }
     setEndTime(endTime);

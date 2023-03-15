@@ -15,6 +15,10 @@ public class TimeSpan {
     this.endTime = endTime;
   }
 
+  public Time getTimeElapsed() {
+    return getEndTime().subtract(getStartTime());
+  }
+
   public Time getEndTime() {
     return endTime;
   }

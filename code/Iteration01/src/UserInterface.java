@@ -68,13 +68,9 @@ public class UserInterface {
     System.out.println("logout:        Logs out");
     System.out.println("shutdown:      Exits the system");
     System.out.println("showprojects:  Shows a list of all current projects");
-    System.out.println(
-      "createproject: Shows the project creation prompt and creates a project"
-    );
-    System.out.println(
-      "createtask:    Shows the task creation prompt to add a task to a project"
-    );
-    System.out.println("updatetask"); // TODO
-    System.out.println("modifytime"); // TODO
+    System.out.println("createproject: Shows the project creation prompt and creates a project");
+    System.out.println("createtask:    Shows the task creation prompt to add a task to a project");
+    System.out.println("updatetask:    Shows the update task prompt to update a tasks' information/status");
+    System.out.println("modifytime:    Allows the user to modify the system time");
   }
 }
