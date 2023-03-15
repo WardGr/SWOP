@@ -20,7 +20,7 @@ public class ShowProjectsUI {
     try {
       getController().showProjectsPreconditions();
       showProjectsForm();
-    } catch (Exception e){
+    } catch (IncorrectPermissionException e){
       System.out.println(e.getMessage());
     }
   }
@@ -42,7 +42,7 @@ public class ShowProjectsUI {
         chooseProject(response);
       }
       catch (ProjectNotFoundException e) {
-        printProjectNotFoundError();
+        System.out.println("The given project could not be found.");
       }
     }
   }
@@ -50,7 +50,7 @@ public class ShowProjectsUI {
   private void chooseProject(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
     Scanner scanner = new Scanner(System.in);
 
-    printProjectDetails(getController().showProject(projectName));
+    showProject(getController().showProject(projectName));
 
     System.out.println("Type the name of a task to see more details, or type \"BACK\" to choose another project:");
     String response = scanner.nextLine();
@@ -69,27 +69,10 @@ public class ShowProjectsUI {
         }
       }
       catch (TaskNotFoundException e) {
-        printTaskNotFoundError();
+        System.out.println("The given task could not be found.");
       }
     }
   }
-
-  private void printTaskNotFoundError() {
-    System.out.println("Task not found");
-  }
-
-  private void printProjectNotFoundError() {
-    System.out.println("Project not found");
-  }
-
-  private void printPermissionError() {
-    System.out.println(
-            "You must be logged in with the " +
-                    Role.PROJECTMANAGER +
-                    " role to call this function"
-    );
-  }
-
 
   public void showProjectsWithStatuses() throws IncorrectPermissionException {
     List<Map.Entry<String, String>> statuses = getController().getProjectNamesWithStatus();
@@ -102,7 +85,7 @@ public class ShowProjectsUI {
     }
   }
 
-  public void printProjectDetails(String projectString) {
+  public void showProject(String projectString) {
     System.out.println("******** PROJECT DETAILS ********");
     System.out.println(projectString);
   }
