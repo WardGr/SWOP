@@ -16,10 +16,8 @@ public class CreateTaskController {
     this.userManager = userManager;
   }
 
-  public void createTaskPreconditions() throws IncorrectPermissionException {
-    if (getSession().getRole() != Role.PROJECTMANAGER){
-      throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
-    }
+  public boolean createTaskPreconditions() {
+    return getSession().getRole() == Role.PROJECTMANAGER;
   }
 
   private Session getSession() {
