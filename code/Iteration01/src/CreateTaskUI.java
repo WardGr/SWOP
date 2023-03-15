@@ -165,6 +165,7 @@ public class CreateTaskUI {
                   replaces
           );
           System.out.println("Task " + taskName + " successfully added to Project " + projectName + "as a replacement for task " + replaces);
+          return;
         } catch (ReplacedTaskNotFailedException e) {
           System.out.println(
                   "ERROR: the task to replace has not failed, please try again\n"
@@ -217,6 +218,7 @@ public class CreateTaskUI {
                   previousTasks
           );
           System.out.println("Task " + taskName + " successfully added to Project " + projectName);
+          return;
         } catch (UserNotFoundException e) {
           System.out.println("ERROR: Given user does not exist or is not a developer");
         } catch (ProjectNotFoundException e) {
