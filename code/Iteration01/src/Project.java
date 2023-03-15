@@ -13,7 +13,7 @@ public class Project {
 
   Project(String name, String description, Time creationTime, Time dueTime)
     throws DueBeforeSystemTimeException {
-    if (dueTime.before(creationTime)) {
+    if (!dueTime.after(creationTime)) {
       throw new DueBeforeSystemTimeException();
     }
     this.tasks = new LinkedList<>();
@@ -38,7 +38,7 @@ public class Project {
       "Creation Time: " +
       getCreationTime() +
       '\n' +
-      "Due time:      " +
+      "Due Time:      " +
       getDueTime() +
       '\n'
     );
