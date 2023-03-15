@@ -156,7 +156,12 @@ public class ProjectTest {
             car.startTask("Install windows", new Time(0, 0), new Time(0, 0), mechanic);
         });
         assertEquals(car.showExecutingTasks().size(), 1);
+        assertEquals(1, car.getNextStatuses("Install engine").size());
+        assertEquals(car.getNextStatuses("Install engine").get(0), Status.EXECUTING);
         car.startTask("Install engine", new Time(0, 0), new Time(0, 0), engineer);
+        assertEquals(2, car.getNextStatuses("Install engine").size());
+        assertEquals(car.getNextStatuses("Install engine").get(0), Status.FINISHED);
+        assertEquals(car.getNextStatuses("Install engine").get(1), Status.FAILED);
         assertEquals(car.showExecutingTasks().size(), 2);
         assertEquals(car.showAvailableTasks().size(), 0);
         car.endTask("Build chasis", Status.FINISHED, new Time(1, 0), new Time(2, 0), mechanic);
@@ -168,9 +173,19 @@ public class ProjectTest {
         car.endTask("install navsat", Status.FINISHED, new Time(3, 0), new Time(4, 0), engineer);
         assertEquals(car.showExecutingTasks().size(), 0);
         assertEquals(car.showAvailableTasks().size(), 2);
+        assertEquals(car.getNextStatuses("Brake fluid").size(), 1);
         car.startTask("Brake fluid", new Time(4, 0), new Time(4, 0), engineer);
+        assertEquals(car.getNextStatuses("Brake fluid").size(), 2);
+        assertEquals(2, car.getNextStatuses("Brake fluid").size());
+        assertEquals(car.getNextStatuses("Brake fluid").get(0), Status.FINISHED);
+        assertEquals(car.getNextStatuses("Brake fluid").get(1), Status.FAILED);
         car.endTask("Brake fluid", Status.FINISHED, new Time(4, 0), new Time(5, 0), engineer);
+        assertEquals(1, car.getNextStatuses("Install windows").size());
+        assertEquals(car.getNextStatuses("Install windows").get(0), Status.EXECUTING);
         car.startTask("Install windows", new Time(5, 0), new Time(5, 0), mechanic);
+        assertEquals(2, car.getNextStatuses("Install windows").size());
+        assertEquals(car.getNextStatuses("Install windows").get(0), Status.FINISHED);
+        assertEquals(car.getNextStatuses("Install windows").get(1), Status.FAILED);
         car.endTask("Install windows", Status.FINISHED, new Time(5, 0), new Time(6, 0), mechanic);
         assertEquals(car.getStatus(), "finished");
 
