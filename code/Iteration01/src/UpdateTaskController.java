@@ -115,7 +115,7 @@ public class UpdateTaskController {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
-    return getTaskManSystem().getSystemHour();
+    return getTaskManSystem().getSystemTime().getHour();
   }
 
   /**
@@ -128,7 +128,7 @@ public class UpdateTaskController {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
-    return getTaskManSystem().getSystemMinute();
+    return getTaskManSystem().getSystemTime().getMinute();
   }
 
   /**

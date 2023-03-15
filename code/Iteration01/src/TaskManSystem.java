@@ -14,15 +14,7 @@ public class TaskManSystem {
     projects = new LinkedList<>();
   }
 
-  public int getSystemHour() {
-    return getSystemTime().getHour();
-  }
-
-  public int getSystemMinute() {
-    return getSystemTime().getMinute();
-  }
-
-  private Time getSystemTime() {
+  public Time getSystemTime() {
     return systemTime;
   }
 
