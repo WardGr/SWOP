@@ -74,10 +74,10 @@ public class Project {
    * @return Status of the current project, finished if all tasks are finished, ongoing otherwise
    */
   public String getStatus() {
-    if (tasks.size() == 0) {
+    if (getTasks().size() == 0) {
       return "ongoing";
     }
-    for (Task task : tasks) {
+    for (Task task : getTasks()) {
       if (task.getStatus() != Status.FINISHED) {
         return "ongoing";
       }
@@ -182,7 +182,7 @@ public class Project {
    */
   public List<String> showAvailableTasks() {
     List<String> availableTasks = new LinkedList<>();
-    for (Task task : tasks) {
+    for (Task task : getTasks()) {
       if (task.getStatus() == Status.AVAILABLE) {
         availableTasks.add(task.getName());
       }
