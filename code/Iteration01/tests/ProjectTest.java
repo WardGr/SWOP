@@ -98,20 +98,82 @@ public class ProjectTest {
         for (Task task : next) {
             assertEquals(task.getName(), "Make Mobs");
         }
-        System.out.println(minecraft.getTask("Purchase Render").getNextTasks());
-/*
-        // start puchrase render en make mobs
-        minecraft.getTask("Purchase Render").start(new Time(0, 2), new Time(0, 2), ward);
-        minecraft.getTask("Make Mobs").start(new Time(0, 2), new Time(0, 2), manager);
 
-        // beeindig ze
+        assertEquals(0, minecraft.showExecutingTasks().size());
+        assertEquals(1, minecraft.showAvailableTasks().size());
+        minecraft.getTask("Purchase Render").start(new Time(0, 2), new Time(0, 2), ward);
+        assertEquals(1, minecraft.showExecutingTasks().size());
+        assertEquals(0, minecraft.showAvailableTasks().size());
         minecraft.getTask("Purchase Render").end(Status.FINISHED, new Time(0, 15), new Time(0, 15), ward);
+        assertEquals(0, minecraft.showExecutingTasks().size());
+        assertEquals(1, minecraft.showAvailableTasks().size());
         assertEquals(minecraft.getStatus(), "ongoing");
+        minecraft.getTask("Make Mobs").start(new Time(0, 2), new Time(0, 2), manager);
+        assertEquals(1, minecraft.showExecutingTasks().size());
+        assertEquals(0, minecraft.showAvailableTasks().size());
         minecraft.getTask("Make Mobs").end(Status.FINISHED, new Time(0, 15), new Time(0, 15), manager);
+        assertEquals(0, minecraft.showExecutingTasks().size());
+        assertEquals(0, minecraft.showAvailableTasks().size());
         assertEquals(minecraft.getStatus(), "finished");
 
         assertEquals(0, car.getTasks().size());
-        assertEquals(0, house.getTasks().size()); */
+        assertEquals(0, car.showAvailableTasks().size());
+        assertEquals(0, house.getTasks().size());
+        assertEquals(0, house.showAvailableTasks().size());
+
+        // TODO getNExtStatuses testen
+
+        User mechanic = new User("Mechanic", "carMechanic123", Role.DEVELOPER);
+        User engineer = new User("Engineer", "carEngineer123", Role.DEVELOPER);
+        LinkedList<String> prevMech = new LinkedList<>();
+        LinkedList<String> prevEng = new LinkedList<>();
+        car.addTask("Build chasis", "Build the chasis of the car", new Time(500), 20.58, new LinkedList<>(), mechanic);
+        prevMech.add("Build chasis");
+        car.addTask("Install windows", "Install the windows of the car", new Time(20), 5, prevMech, mechanic);
+        car.addTask("Install engine", "Install the engine of the car", new Time(100), 10, new LinkedList<>(), engineer);
+        prevEng.add("Install engine");
+        car.addTask("install navsat", "Install the navsat of the car", new Time(10), 5, prevEng, engineer);
+        prevEng.add("install navsat");
+        car.addTask("Brake fluid", "Regulate the brake fluid of the car", new Time(10), 5, prevEng, engineer);
+        assertEquals(car.showAvailableTasks().size(), 2);
+        car.startTask("Build chasis", new Time(0, 0), new Time(0, 0), mechanic);
+        exception = assertThrows(UserNotAllowedToChangeTaskException.class, () -> {
+            car.startTask("Build chasis", new Time(0, 0), new Time(0, 0), engineer);
+        });
+        exception = assertThrows(UserNotAllowedToChangeTaskException.class, () -> {
+            car.startTask("Install windows", new Time(0, 0), new Time(0, 0), engineer);
+        });
+        exception = assertThrows(TaskNotFoundException.class, () -> {
+            car.startTask("Rearrange windows", new Time(0, 0), new Time(0, 0), mechanic);
+        });
+        exception = assertThrows(TaskNotFoundException.class, () -> {
+            car.startTask("Honda engine", new Time(0, 0), new Time(0, 0), engineer);
+        });
+        exception = assertThrows(IncorrectTaskStatusException.class, () -> {
+            car.startTask("Build chasis", new Time(0, 0), new Time(0, 0), mechanic);
+        });
+        exception = assertThrows(IncorrectTaskStatusException.class, () -> {
+            car.startTask("Install windows", new Time(0, 0), new Time(0, 0), mechanic);
+        });
+        assertEquals(car.showExecutingTasks().size(), 1);
+        car.startTask("Install engine", new Time(0, 0), new Time(0, 0), engineer);
+        assertEquals(car.showExecutingTasks().size(), 2);
+        assertEquals(car.showAvailableTasks().size(), 0);
+        car.endTask("Build chasis", Status.FINISHED, new Time(1, 0), new Time(2, 0), mechanic);
+        assertEquals(car.showExecutingTasks().size(), 1);
+        assertEquals(car.showAvailableTasks().size(), 1);
+        car.endTask("Install engine", Status.FINISHED, new Time(2, 0), new Time(3, 0), engineer);
+        car.startTask("install navsat", new Time(3, 0), new Time(3, 0), engineer);
+        assertEquals(car.showExecutingTasks().size(), 1);
+        car.endTask("install navsat", Status.FINISHED, new Time(3, 0), new Time(4, 0), engineer);
+        assertEquals(car.showExecutingTasks().size(), 0);
+        assertEquals(car.showAvailableTasks().size(), 2);
+        car.startTask("Brake fluid", new Time(4, 0), new Time(4, 0), engineer);
+        car.endTask("Brake fluid", Status.FINISHED, new Time(4, 0), new Time(5, 0), engineer);
+        car.startTask("Install windows", new Time(5, 0), new Time(5, 0), mechanic);
+        car.endTask("Install windows", Status.FINISHED, new Time(5, 0), new Time(6, 0), mechanic);
+        assertEquals(car.getStatus(), "finished");
+
 
 
     }
