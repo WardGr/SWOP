@@ -47,7 +47,7 @@ public class UpdateTaskController {
    */
   public Map<String, String> executingTasksNames() throws IncorrectPermissionException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("");
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
     return getTaskManSystem().showExecutingTasks();
   }
@@ -65,7 +65,7 @@ public class UpdateTaskController {
    */
   public String showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("");
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
     return getTaskManSystem().showTask(projectName,taskName);
   }
@@ -83,7 +83,7 @@ public class UpdateTaskController {
    */
   public List<Status> getNextStatuses(String projectName, String taskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("");
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
     return getTaskManSystem().getNextStatuses(projectName, taskName);
   }
@@ -100,7 +100,7 @@ public class UpdateTaskController {
    */
   public Status getStatus(String projectName, String taskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("");
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
     return getTaskManSystem().getStatus(projectName, taskName);
   }
@@ -113,7 +113,7 @@ public class UpdateTaskController {
    */
   public int getSystemHour() throws IncorrectPermissionException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("");
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
     return getTaskManSystem().getSystemHour();
   }
@@ -126,7 +126,7 @@ public class UpdateTaskController {
    */
   public int getSystemMinute() throws IncorrectPermissionException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("");
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
     return getTaskManSystem().getSystemMinute();
   }
@@ -148,7 +148,7 @@ public class UpdateTaskController {
    */
   public void startTask(String projectName, String taskName, int startHourInput, int startMinuteInput) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("");
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
     getTaskManSystem().startTask(projectName, taskName, startHourInput, startMinuteInput, getSession().getCurrentUser());
   }
@@ -171,7 +171,7 @@ public class UpdateTaskController {
    */
   public void endTask(String projectName, String taskName, Status newStatus, int endHourInput, int endMinuteInput) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("");
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
     getTaskManSystem().endTask(projectName, taskName, newStatus, endHourInput, endMinuteInput, getSession().getCurrentUser());
   }
