@@ -34,11 +34,10 @@ public class UpdateTaskUI {
 
   /**
    * Shows all available and executing tasks (these can be updated by the user)
+   * Then allows the user to choose a task to update, and updates this task to the given status
+   *
+   * @throws IncorrectPermissionException if the user is not logged in as a developer
    */
-  public void showAvailableAndExecuting() {
-    try {
-      Map<String, String> availableTasks = getController().availableTasksNames();
-      Map<String, String> executingTasks = getController().executingTasksNames();
   public void chooseUpdateTask() throws IncorrectPermissionException {
     Map<String, String> availableTasks = getController().availableTasksNames();
     Map<String, String> executingTasks = getController().executingTasksNames();
@@ -53,14 +52,6 @@ public class UpdateTaskUI {
               (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
     );
 
-  }
-
-  /**
-   * Allows the user to choose a task to update, and updates this task to the given status
-   *
-   * @throws IncorrectPermissionException if the user is not logged in as a developer
-   */
-  public void chooseUpdateTask() throws IncorrectPermissionException{
     Scanner scanner = new Scanner(System.in);
 
     while(true) {
@@ -82,9 +73,9 @@ public class UpdateTaskUI {
         updateForm(projectName, taskName);
         return;
       } catch (ProjectNotFoundException | TaskNotFoundException e) {
-        taskNotFoundError();
+        System.out.println("ERROR: the given task could not be found");
       } catch (UserNotAllowedToChangeTaskException e) {
-        userNotAllowedToUpdateTaskError();
+        System.out.println("ERROR: you are not allowed to change this task");
       }
     }
   }
@@ -208,9 +199,9 @@ public class UpdateTaskUI {
             System.out.println("Task " + taskName + " successfully updated");
             return;
           } catch (InvalidTimeException e) {
-            invalidTimeError();
+            System.out.println("ERROR: the given time is not valid");
           } catch (IncorrectTaskStatusException e) {
-            incorrectTaskStatusError();
+            System.out.println("ERROR: the task has the wrong status for this update");
           }
         }
         case EXECUTING -> {
@@ -320,38 +311,14 @@ public class UpdateTaskUI {
             System.out.println("Task " + taskName + " successfully updated");
             return;
           } catch (FailTimeAfterSystemTimeException e) {
-            failTimeAfterSystemTimeError();
+            System.out.println("ERROR: the fail time is after the system time");
           } catch (InvalidTimeException e) {
-            invalidTimeError();
+            System.out.println("ERROR: the given time is not valid");
           } catch (IncorrectTaskStatusException e) {
-            incorrectTaskStatusError();
+            System.out.println("ERROR: the task has the wrong status for this update");
           }
         }
       }
     }
-  }
-
-  public void permissionError() {
-
-  }
-
-  public void taskNotFoundError() {
-    System.out.println("ERROR: the given task could not be found");
-  }
-
-  public void invalidTimeError() {
-    System.out.println("ERROR: the given time is not valid");
-  }
-
-  public void userNotAllowedToUpdateTaskError() {
-    System.out.println("ERROR: you are not allowed to change this task");
-  }
-
-  public void failTimeAfterSystemTimeError() {
-    System.out.println("ERROR: the fail time is after the system time");
-  }
-
-  public void incorrectTaskStatusError() {
-    System.out.println("ERROR: the task has the wrong status for this update");
   }
 }
