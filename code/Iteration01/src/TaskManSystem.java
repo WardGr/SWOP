@@ -116,6 +116,28 @@ public class TaskManSystem {
     }
   }
 
+  public void createProject(
+          String projectName,
+          String projectDescription,
+          int starHour,
+          int startMinute,
+          int dueHour,
+          int dueMinute
+  )
+          throws DueBeforeSystemTimeException, InvalidTimeException, ProjectNameAlreadyInUseException {
+    if (getProject(projectName) == null) {
+      Project newProject = new Project(
+              projectName,
+              projectDescription,
+              new Time(starHour, startMinute),
+              new Time(dueHour, dueMinute)
+      );
+      projects.add(newProject);
+    } else {
+      throw new ProjectNameAlreadyInUseException();
+    }
+  }
+
   public void addTaskToProject(
     String projectName,
     String taskName,

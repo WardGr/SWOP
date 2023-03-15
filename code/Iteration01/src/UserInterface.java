@@ -8,6 +8,7 @@ public class UserInterface {
   private final CreateTaskUI createTaskUI;
   private final UpdateTaskUI updateTaskUI;
   private final AdvanceTimeUI advanceTimeUI;
+  private final LoadSystemUI loadSystemUI;
 
   public UserInterface(
     Session session,
@@ -20,6 +21,7 @@ public class UserInterface {
     this.createTaskUI = new CreateTaskUI(session, taskManSystem, userManager);
     this.updateTaskUI = new UpdateTaskUI(session, taskManSystem);
     this.advanceTimeUI = new AdvanceTimeUI(session, taskManSystem);
+    this.loadSystemUI = new LoadSystemUI(userManager, taskManSystem, session);
   }
 
   /**
@@ -52,6 +54,7 @@ public class UserInterface {
       case "createtask" -> createTaskUI.createTask();
       case "updatetask" -> updateTaskUI.updateTaskStatus();
       case "advancetime" -> advanceTimeUI.advanceTime();
+      case "loadsystem" -> loadSystemUI.loadSystem();
       default -> System.out.println(
         "Unknown command, type help to see available commands"
       );
@@ -72,5 +75,6 @@ public class UserInterface {
     System.out.println("createtask:    Shows the task creation prompt to add a task to a project");
     System.out.println("updatetask:    Shows the update task prompt to update a tasks' information/status");
     System.out.println("modifytime:    Allows the user to modify the system time");
+    System.out.println("loadsystem:    Allows the user to load projects and tasks into the system");
   }
 }
