@@ -28,19 +28,10 @@ public class Project {
   public String toString() {
     StringBuilder projectString = new StringBuilder();
 
-    projectString.append(
-      "Project Name:  " +
-      getName() +
-      '\n' +
-      "Description:   " +
-      getDescription() +
-      '\n' +
-      "Creation Time: " +
-      getCreationTime() +
-      '\n' +
-      "Due time:      " +
-      getDueTime() +
-      '\n'
+    projectString.append("Project Name:  " + getName() + '\n' +
+                         "Description:   " + getDescription() + '\n' +
+                         "Creation Time: " + getCreationTime() + '\n' +
+                         "Due time:      " + getDueTime() + '\n'
     );
     projectString.append("\nTasks:\n");
     int index = 1;
@@ -125,7 +116,7 @@ public class Project {
     );
   }
 
-  public void addAlternativeTask(
+  public void replaceTask(
     String taskName,
     String description,
     Time duration,

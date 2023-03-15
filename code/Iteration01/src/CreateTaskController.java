@@ -109,7 +109,7 @@ public class CreateTaskController {
     if (getSession().getRole() != Role.PROJECTMANAGER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
-    getTaskManSystem().addAlternativeTaskToProject(
+    getTaskManSystem().replaceTaskInProject(
         projectName,
         taskName,
         description,
