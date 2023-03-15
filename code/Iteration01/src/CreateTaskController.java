@@ -8,7 +8,6 @@ public class CreateTaskController {
 
   public CreateTaskController(
     Session session,
-    CreateTaskUI ui,
     TaskManSystem taskManSystem,
     UserManager userManager
   ) {
@@ -17,8 +16,10 @@ public class CreateTaskController {
     this.userManager = userManager;
   }
 
-  public boolean createTaskPreconditions() {
-    return getSession().getRole() == Role.PROJECTMANAGER;
+  public void createTaskPreconditions() throws IncorrectPermissionException {
+    if (getSession().getRole() != Role.PROJECTMANAGER){
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+    }
   }
 
   private Session getSession() {
@@ -80,6 +81,5 @@ public class CreateTaskController {
         deviation,
         replaces
     );
-    // TODO vervangen door gewoon een invalid input exception?
   }
 }

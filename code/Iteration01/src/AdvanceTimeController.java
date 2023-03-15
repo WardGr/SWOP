@@ -33,7 +33,7 @@ public class AdvanceTimeController {
 
   public void setNewTime(int newHour, int newMinute) throws IncorrectPermissionException, InvalidTimeException, NewTimeBeforeSystemTimeException {
     if (getSession().getRole() != Role.PROJECTMANAGER) {
-      throw new IncorrectPermissionException();
+      throw new IncorrectPermissionException("");
     }
     getTaskManSystem().advanceTime(newHour, newMinute);
   }
