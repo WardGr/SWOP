@@ -7,34 +7,7 @@ public class TaskManSystem {
 
   public TaskManSystem(Time systemTime) {
     this.systemTime = systemTime;
-    // TODO deze werken niet meer door het toevoegen van user in task !!!
-    /* Test Tasks for now :)
-
-        Project project1 = new Project("Project x", "Cool project", new Time(0), new Time(1000));
-        Project project2 = new Project("Project y", "Even cooler project", new Time(200), new Time(5000));
-
-        Task task1 = new Task("Cool task", "Do stuff", new Time(100), (float) 0.1, new ArrayList<>());
-        Task task2 = new Task("Cooler task", "Do more stuff", new Time(1000), (float) 0.1, new ArrayList<>());
-
-        //task2.status = Status.FAILED;
-        task2.status = Status.EXECUTING;
-        task2.timeSpan = new TimeSpan(new Time(0));
-        task1.status = Status.AVAILABLE;
-
-        project1.addTask(task1);
-        project1.addTask(task2);
-
-        project2.addTask(task1);
-        project2.addTask(task2);
-        */
-
     projects = new LinkedList<>();
-    /* h
-        projects.add(project1);
-        projects.add(project2);
-
-        this.projects = projects;
-        */
   }
 
   private List<Project> getProjects() {
