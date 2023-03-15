@@ -16,34 +16,30 @@ public class UpdateTaskUI {
 
   public void updateTaskStatus() {
     if (controller.updateTaskPreconditions()){
-      showAvailableAndExecuting();
+      try{
+        chooseUpdateTask();
+      } catch (IncorrectPermissionException e) {
+        System.out.println(e.getMessage());
+      }
     } else {
-      permissionError();
+      System.out.println("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
   }
 
-  public void showAvailableAndExecuting() {
-    try {
-      Map<String, String> availableTasks = getController().availableTasksNames();
-      Map<String, String> executingTasks = getController().executingTasksNames();
+  public void chooseUpdateTask() throws IncorrectPermissionException {
+    Map<String, String> availableTasks = getController().availableTasksNames();
+    Map<String, String> executingTasks = getController().executingTasksNames();
 
-      System.out.println("*** AVAILABLE TASKS ***");
-      availableTasks.forEach(
+    System.out.println("*** AVAILABLE TASKS ***");
+    availableTasks.forEach(
               (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
-      );
-      System.out.println();
-      System.out.println("*** EXECUTING TASKS ***");
-      executingTasks.forEach(
+    );
+    System.out.println();
+    System.out.println("*** EXECUTING TASKS ***");
+    executingTasks.forEach(
               (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
-      );
-      chooseUpdateTask();
-    } catch (IncorrectPermissionException e) {
-      permissionError();
-    }
+    );
 
-  }
-
-  public void chooseUpdateTask() throws IncorrectPermissionException{
     Scanner scanner = new Scanner(System.in);
 
     while(true) {
@@ -296,11 +292,7 @@ public class UpdateTaskUI {
   }
 
   public void permissionError() {
-    System.out.println(
-      "You must be logged in with the " +
-      Role.DEVELOPER +
-      " role to call this function"
-    );
+
   }
 
   public void taskNotFoundError() {
