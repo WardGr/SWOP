@@ -12,7 +12,7 @@ public class SessionUI { // Responsibility: Handle I/O from session-centric use-
     if (controller.loginPrecondition()) {
       loginPrompt(scanner);
     } else {
-      alreadyLoggedInError();
+      System.out.println("You are already logged in!");
     }
   }
 
@@ -31,43 +31,19 @@ public class SessionUI { // Responsibility: Handle I/O from session-centric use-
       }
       try {
         Role newRole = controller.login(username, password);
-        welcomeMessage(username, newRole);
+        System.out.println("Welcome " + username + "! Your assigned role is " + newRole.toString());
         return;
-      } catch (IncorrectPermissionException e){
-        alreadyLoggedInError();
-      } catch (UserNotFoundException e) {
-        handleLoginError();
+      } catch (LoginException e) {
+        System.out.println(e.getMessage());
       }
     }
   }
 
   public void logout() {
     if (controller.logout()) {
-      logoutMessage();
+      System.out.println("Logged out.");
     } else {
-      alreadyLoggedOutError();
+      System.out.println("Already logged out.");
     }
-  }
-
-  private void welcomeMessage(String name, Role role) {
-    System.out.println("Welcome " + name + "! Your assigned role is " + role.toString());
-  }
-
-  private void handleLoginError() {
-    System.out.println(
-      "Incorrect username/password combination, please try again"
-    );
-  }
-
-  private void alreadyLoggedInError() {
-    System.out.println("You are already logged in!");
-  }
-
-  private void logoutMessage() {
-    System.out.println("Logged out.");
-  }
-
-  private void alreadyLoggedOutError() {
-    System.out.println("Already logged out.");
   }
 }

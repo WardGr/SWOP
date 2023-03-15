@@ -42,7 +42,7 @@ public class UserManager {
    * @return returns the user that matches the username and password
    */
   public User getUser(String username, String password)
-    throws UserNotFoundException {
+          throws LoginException {
     for (User user : getUsers()) {
       if (
         username.equals(user.getUsername()) &&
@@ -51,7 +51,7 @@ public class UserManager {
         return user;
       }
     }
-    throw new UserNotFoundException();
+    throw new LoginException("Username/password combination is incorrect");
   }
 
   public User getDeveloper(String userName) throws UserNotFoundException {

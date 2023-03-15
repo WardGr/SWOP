@@ -13,12 +13,16 @@ public class SessionController {
     this.userManager = userManager;
   }
 
-  public boolean loginPrecondition() {
-    return !getSession().isLoggedIn();
-  }
-
   private Session getSession() {
     return session;
+  }
+
+  private UserManager getUserManager(){
+    return userManager;
+  }
+
+  public boolean loginPrecondition() {
+    return !getSession().isLoggedIn();
   }
 
   /**
@@ -27,19 +31,19 @@ public class SessionController {
    * @param username The username the user gave via the UI login prompt
    * @param password The password the user gave via the UI login prompt
    */
-  public Role login(String username, String password) throws IncorrectPermissionException, UserNotFoundException {
-    if (session.isLoggedIn()) {
-      throw new IncorrectPermissionException();
+  public Role login(String username, String password) throws LoginException {
+    if (getSession().isLoggedIn()) {
+      throw new LoginException("Incorrect permission: User already logged in");
     }
-    User newUser = userManager.getUser(username, password);
-    return session.login(newUser);
+    User newUser = getUserManager().getUser(username, password);
+    return getSession().login(newUser);
   }
 
   public boolean logout() {
-    if (!session.isLoggedIn()) {
+    if (!getSession().isLoggedIn()) {
       return false;
     }
-    session.logout();
+    getSession().logout();
     return true;
   }
 }
