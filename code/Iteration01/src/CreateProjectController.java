@@ -19,12 +19,14 @@ public class CreateProjectController {
     return taskManSystem;
   }
 
-  public boolean createProjectPreconditions() {
-    return getSession().getRole() == Role.PROJECTMANAGER;
+  public void createProjectPreconditions() throws IncorrectPermissionException {
+    if (getSession().getRole() != Role.PROJECTMANAGER){
+      throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+    }
   }
 
   public void createProject(String projectName, String projectDescription, int dueHour, int dueMinute) throws IncorrectPermissionException, ProjectNameAlreadyInUseException, InvalidTimeException, DueBeforeSystemTimeException {
-    if (!createProjectPreconditions()) {
+    if (getSession().getRole() != Role.PROJECTMANAGER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
     getTaskManSystem().createProject(projectName, projectDescription, dueHour, dueMinute);

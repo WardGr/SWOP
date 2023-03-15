@@ -9,14 +9,15 @@ public class CreateProjectUI {
   }
 
   public void createProject() {
-    if (controller.createProjectPreconditions()){
+    try {
+      controller.createProjectPreconditions();
       createProjectForm();
-    } else {
-      permissionError();
+    } catch (IncorrectPermissionException e){
+      System.out.println(e.getMessage());
     }
   }
 
-  public void createProjectForm() {
+  public void createProjectForm() throws IncorrectPermissionException {
     Scanner scanner = new Scanner(System.in);
 
     while(true) {
@@ -76,43 +77,15 @@ public class CreateProjectUI {
 
       try {
         controller.createProject(projectName, projectDescription, dueHour, dueMinute);
-        messageProjectCreation(projectName);
+        System.out.println("Project with name " + projectName + " created!");
         return;
       } catch (ProjectNameAlreadyInUseException e) {
-        projectAlreadyInUseError();
+        System.out.println("The given project name is already in use.");
       } catch (InvalidTimeException e) {
-        notValidTimeError();
+        System.out.println("The given time is not a valid time, please try again");
       } catch (DueBeforeSystemTimeException e) {
-        dueBeforeSystemTimeError();
-      } catch (IncorrectPermissionException e) {
-        permissionError();
+        System.out.println("The given due time is before the current system time, please try again");
       }
     }
-  }
-
-  private void messageProjectCreation(String projectName) {
-    System.out.println("Project with name " + projectName + " created!");
-  }
-
-  private void permissionError() {
-    System.out.println(
-      "You must be logged in with the " +
-      Role.PROJECTMANAGER +
-      " role to call this function"
-    );
-  }
-
-  public void notValidTimeError() {
-    System.out.println("The given time is not a valid time, please try again");
-  }
-
-  private void dueBeforeSystemTimeError() {
-    System.out.println(
-      "The given due time is before the current system time, please try again"
-    );
-  }
-
-  private void projectAlreadyInUseError() {
-    System.out.println("The project name is already in use");
   }
 }
