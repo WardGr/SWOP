@@ -13,11 +13,14 @@ public class CreateProjectUI {
   }
 
   public void createProject() {
-    try {
-      getController().createProjectPreconditions();
-      createProjectForm();
-    } catch (IncorrectPermissionException e){
-      System.out.println(e.getMessage());
+    if (getController().createProjectPreconditions()){
+      try{
+        createProjectForm();
+      } catch (IncorrectPermissionException e) {
+        System.out.println(e.getMessage());
+      }
+    } else {
+      System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
   }
 
