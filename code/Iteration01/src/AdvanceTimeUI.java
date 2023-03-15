@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+/**
+ * Handles user input for the advancetime use-case, requests necessary domain-level information from the AdvanceTimeController
+ */
 public class AdvanceTimeUI {
 
   private final AdvanceTimeController controller;
@@ -8,6 +11,9 @@ public class AdvanceTimeUI {
     controller = new AdvanceTimeController(session, taskManSystem);
   }
 
+  /**
+   * Creates the initial advancetime request, checks if the user is logged in as a project manager
+   */
   public void advanceTime() {
     if (controller.advanceTimePreconditions()) {
       chooseNewTime();
@@ -16,6 +22,9 @@ public class AdvanceTimeUI {
     }
   }
 
+  /**
+   * Advances the system time by the given input and updates all necessary domain-objects
+   */
   public void chooseNewTime() {
     Scanner scanner = new Scanner(System.in);
 

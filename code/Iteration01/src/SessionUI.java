@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 /**
- * Handles I/O for the login and logout use-cases, requests necessary domain-level information from the SessionController
+ * Handles user input for the login and logout use-cases, requests necessary domain-level information from the SessionController
  */
 public class SessionUI {
 

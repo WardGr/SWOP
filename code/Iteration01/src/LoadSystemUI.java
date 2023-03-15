@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+/**
+ * Handles user input for the loadsystem use-case, requests necessary domain-level information from the LoadSystemController
+ */
 public class LoadSystemUI {
     private LoadSystemController loadSystemController;
 

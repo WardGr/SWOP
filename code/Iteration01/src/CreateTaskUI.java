@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Handles user input for the createtask use-case, requests necessary domain-level information from the CreateTaskController
+ */
 public class CreateTaskUI {
 
   private final CreateTaskController controller;
@@ -19,6 +22,9 @@ public class CreateTaskUI {
     return controller;
   }
 
+  /**
+   * Initial task creation request, checks the user's role before giving the prompt
+   */
   public void createTask() {
     if (getController().createTaskPreconditions()){
       try{
@@ -31,6 +37,10 @@ public class CreateTaskUI {
     }
   }
 
+  /**
+   * Shows the task creation prompt, creates the task if the given information is correct
+   * @throws IncorrectPermissionException if the user is not logged in as a project manager
+   */
   public void createTaskForm() throws IncorrectPermissionException{
     Scanner scanner = new Scanner(System.in);
 

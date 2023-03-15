@@ -3,7 +3,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * Handles I/O for the showprojects use-case, requests necessary domain-level information from the ShowProjectsController
+ * Handles user input for the showprojects use-case, requests necessary domain-level information from the ShowProjectsController
  */
 public class ShowProjectsUI {
 
