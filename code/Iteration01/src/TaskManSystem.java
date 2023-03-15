@@ -70,10 +70,10 @@ public class TaskManSystem {
     return names;
   }
 
-  public List<Map.Entry<String, String>> getProjectNamesWithStatus() {
-    List<Map.Entry<String, String>> statuses = new LinkedList<>();
+  public Map<String, String> getProjectNamesWithStatus() {
+    Map<String, String> statuses = new HashMap<>();
     for (Project project : getProjects()) {
-      statuses.add(new AbstractMap.SimpleEntry<>(project.getName(), project.getStatus()));
+      statuses.put(project.getName(), project.getStatus());
     }
     return statuses;
   }
@@ -164,25 +164,25 @@ public class TaskManSystem {
     );
   }
 
-  public List<Map.Entry<String, String>> showAvailableTasks() {
-    List<Map.Entry<String, String>> availableTasks = new ArrayList<>();
+  public Map<String, String> showAvailableTasks() {
+    Map<String, String> availableTasks = new HashMap<>();
     for (Project project : projects) {
       List<String> tasks = project.showAvailableTasks();
       String projectName = project.getName();
       for (String task : tasks) {
-        availableTasks.add(new AbstractMap.SimpleEntry<>(projectName, task));
+        availableTasks.put(projectName, task);
       }
     }
     return availableTasks;
   }
 
-  public List<Map.Entry<String, String>> showExecutingTasks() {
-    List<Map.Entry<String, String>> executingTasks = new ArrayList<>();
+  public Map<String, String> showExecutingTasks() {
+    Map<String, String> executingTasks = new HashMap<>();
     for (Project project : projects) {
       List<String> tasks = project.showExecutingTasks();
       String projectName = project.getName();
       for (String task : tasks) {
-        executingTasks.add(new AbstractMap.SimpleEntry<>(projectName, task));
+        executingTasks.put(projectName, task);
       }
     }
     return executingTasks;

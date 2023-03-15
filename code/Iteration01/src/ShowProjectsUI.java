@@ -2,6 +2,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Handles I/O for the showprojects use-case, requests necessary domain-level information from the ShowProjectsController
+ */
 public class ShowProjectsUI {
 
   private final ShowProjectsController controller;
@@ -16,6 +19,9 @@ public class ShowProjectsUI {
       new ShowProjectsController(session, taskManSystem);
   }
 
+  /**
+   * Initial showprojects request: shows all projects if user is logged in as a project manager
+   */
   public void showProjects() {
     try {
       getController().showProjectsPreconditions();
@@ -25,7 +31,10 @@ public class ShowProjectsUI {
     }
   }
 
-
+  /**
+   * Shows all projects, displays detailed information about a given project if the user requests it, and allows the
+   * user to request information about said projects tasks. User can exit by typing "BACK" at any prompt.
+   */
   public void showProjectsForm() throws IncorrectPermissionException {
     Scanner scanner = new Scanner(System.in);
     while (true) {
@@ -47,6 +56,13 @@ public class ShowProjectsUI {
     }
   }
 
+  /**
+   * Shows detailed information about a given project, and allows the user to request details about any of its tasks
+   * @param projectName name of project the user wants to see more details of
+   *
+   * @throws ProjectNotFoundException if projectName does not correspond to an existing projects' name
+   * @throws IncorrectPermissionException if user is not a project manager
+   */
   private void chooseProject(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
     Scanner scanner = new Scanner(System.in);
 
@@ -74,22 +90,29 @@ public class ShowProjectsUI {
     }
   }
 
-  public void showProjectsWithStatuses() throws IncorrectPermissionException {
-    List<Map.Entry<String, String>> statuses = getController().getProjectNamesWithStatus();
-    int i = 0;
-    for (Map.Entry<String, String> entry : statuses) {
-      System.out.print(i + 1);
-      System.out.print(".");
-      System.out.println(entry.getKey() + ", status: " + entry.getValue());
-      i++;
-    }
+  /**
+   * Pretty-prints projects with their given statuses
+   *
+   * @throws IncorrectPermissionException if current session is not held by a project manager
+   */
+  private void showProjectsWithStatuses() throws IncorrectPermissionException {
+    Map<String, String> statuses = getController().getProjectNamesWithStatus();
+    statuses.forEach((project, status) -> System.out.println(project + ", status: " + status));
   }
 
-  public void showProject(String projectString) {
+  /**
+   * Pretty-prints given project string
+   * @param projectString String containing project details
+   */
+  private void showProject(String projectString) {
     System.out.println("******** PROJECT DETAILS ********");
     System.out.println(projectString);
   }
 
+  /**
+   * Pretty-prints given task string
+   * @param taskString String containing task details
+   */
   private void showTask(String taskString) {
     System.out.println("******** TASK DETAILS ********");
     System.out.println(taskString);

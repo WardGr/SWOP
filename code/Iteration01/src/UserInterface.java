@@ -1,5 +1,9 @@
 import java.util.Scanner;
 
+/**
+ * First point of interaction with the user, separates use-case specific UI-logic from the user by delegating the work
+ * to the respective use-case UI class based on user commands.
+ */
 public class UserInterface {
 
   private final SessionUI sessionUI;
@@ -24,6 +28,7 @@ public class UserInterface {
 
   /**
    * Starts the system by sequentially handling commands input by the user
+   * System quits if user gives "shutdown" command
    */
   public void startSystem() {
     Scanner scanner = new Scanner(System.in);
@@ -59,7 +64,7 @@ public class UserInterface {
   }
 
   /**
-   * Prints all available commands
+   * Prints all available commands with information for the user
    */
   public void printHelp() {
     System.out.println("Available commands:");

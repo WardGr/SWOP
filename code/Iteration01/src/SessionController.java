@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+/**
+ * Separates domain from UI for the login and logout use-cases
+ */
 public class SessionController {
 
   private final Session session;
@@ -27,9 +30,13 @@ public class SessionController {
 
   /**
    * Passes the username and password on to the UserManager, initialises the current session by setting the
-   * appropriate role, and tells the UI to print a welcome message, or error if the given user does not exist.
+   * appropriate user.
+   *
    * @param username The username the user gave via the UI login prompt
    * @param password The password the user gave via the UI login prompt
+   *
+   * @throws LoginException if username and password do not match or user is already logged in.
+   * @post User is set in session
    */
   public Role login(String username, String password) throws LoginException {
     if (getSession().isLoggedIn()) {
@@ -39,6 +46,12 @@ public class SessionController {
     return getSession().login(newUser);
   }
 
+  /**
+   * Logs out of the current session
+   *
+   * @post getSession().getUser() == null
+   * @return true if user was logged in before call, false otherwise
+   */
   public boolean logout() {
     if (!getSession().isLoggedIn()) {
       return false;

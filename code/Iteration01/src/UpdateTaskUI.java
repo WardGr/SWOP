@@ -10,6 +10,10 @@ public class UpdateTaskUI {
     controller = new UpdateTaskController(session, taskManSystem);
   }
 
+  private UpdateTaskController getController() {
+    return controller;
+  }
+
   public void updateTaskStatus() {
     if (controller.updateTaskPreconditions()){
       showAvailableAndExecuting();
@@ -20,22 +24,18 @@ public class UpdateTaskUI {
 
   public void showAvailableAndExecuting() {
     try {
-      List<Map.Entry<String, String>> availableTasks = controller.availableTasksNames();
-      List<Map.Entry<String, String>> executingTasks = controller.executingTasksNames();
+      Map<String, String> availableTasks = getController().availableTasksNames();
+      Map<String, String> executingTasks = getController().executingTasksNames();
 
       System.out.println("*** AVAILABLE TASKS ***");
-      for (Map.Entry<String, String> entry : availableTasks) {
-        System.out.println(
-                "Project: " + entry.getKey() + " --- Task: " + entry.getValue()
-        );
-      }
+      availableTasks.forEach(
+              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
+      );
       System.out.println();
       System.out.println("*** EXECUTING TASKS ***");
-      for (Map.Entry<String, String> entry : executingTasks) {
-        System.out.println(
-                "Project: " + entry.getKey() + "  ---  Task: " + entry.getValue()
-        );
-      }
+      executingTasks.forEach(
+              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
+      );
       chooseUpdateTask();
     } catch (IncorrectPermissionException e) {
       permissionError();
