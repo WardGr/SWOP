@@ -44,25 +44,28 @@ public class CreateProjectUI {
       System.out.println("Type BACK to cancel project creation at any time");
       System.out.println("*********** PROJECT CREATION FORM ***********");
 
-      System.out.print("Project Name: ");
+      System.out.println("Project Name: ");
       String projectName = scanner.nextLine();
       if (projectName.equals("BACK")) {
+        System.out.println("Project creation cancelled");
         return;
       }
 
-      System.out.print("Project Description: ");
+      System.out.println("Project Description: ");
       String projectDescription = scanner.nextLine();
       if (projectDescription.equals("BACK")) {
+        System.out.println("Project creation cancelled");
         return;
       }
 
-      System.out.print("Project due hour: ");
+      System.out.println("Project due hour: ");
       String dueHourString = scanner.nextLine();
 
       int dueHour;
       while (true) {
         try {
           if (dueHourString.equals("BACK")) {
+            System.out.println("Project creation cancelled");
             return;
           }
           dueHour = Integer.parseInt(dueHourString);
@@ -75,13 +78,14 @@ public class CreateProjectUI {
         }
       }
 
-      System.out.print("Project due minute: ");
+      System.out.println("Project due minute: ");
       String dueMinuteString = scanner.nextLine();
 
       int dueMinute;
       while (true) {
         try {
           if (dueMinuteString.equals("BACK")) {
+            System.out.println("Project creation cancelled");
             return;
           }
           dueMinute = Integer.parseInt(dueMinuteString);
@@ -99,11 +103,11 @@ public class CreateProjectUI {
         System.out.println("Project with name " + projectName + " created!");
         return;
       } catch (ProjectNameAlreadyInUseException e) {
-        System.out.println("The given project name is already in use.");
+        System.out.println("The given project name is already in use, please try again\n");
       } catch (InvalidTimeException e) {
-        System.out.println("The given time is not a valid time, please try again");
+        System.out.println("The given due minutes are not of the correct format (0-59)\n");
       } catch (DueBeforeSystemTimeException e) {
-        System.out.println("The given due time is before the current system time, please try again");
+        System.out.println("The given due time is before the current system time, please try again\n");
       }
     }
   }
