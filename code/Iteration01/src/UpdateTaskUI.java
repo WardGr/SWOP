@@ -318,6 +318,8 @@ public class UpdateTaskUI {
             System.out.println("ERROR: the task has the wrong status for this update");
           }
         }
+        default ->
+          System.out.println("ERROR: Task status doesn't allow an update.");
       }
     }
   }
