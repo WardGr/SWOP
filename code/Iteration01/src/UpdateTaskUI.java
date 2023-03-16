@@ -74,7 +74,7 @@ public class UpdateTaskUI {
         return;
       } catch (ProjectNotFoundException | TaskNotFoundException e) {
         System.out.println("ERROR: the given task could not be found");
-      } catch (UserNotAllowedToChangeTaskException e) {
+      } catch (IncorrectUserException e) {
         System.out.println("ERROR: you are not allowed to change this task");
       }
     }
@@ -108,9 +108,9 @@ public class UpdateTaskUI {
    * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task
    * @throws IncorrectPermissionException if the user is not logged in as a developer
-   * @throws UserNotAllowedToChangeTaskException if the user is not assigned to this task
+   * @throws IncorrectUserException if the user is not assigned to this task
    */
-  public void updateForm(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException, UserNotAllowedToChangeTaskException {
+  public void updateForm(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException, IncorrectUserException {
     Status status = controller.getStatus(projectName, taskName);
     int systemHour = controller.getSystemHour();
     int systemMinute = controller.getSystemMinute();

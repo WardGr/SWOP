@@ -165,16 +165,11 @@ public class Project {
     if (replacesTask == null) {
       throw new TaskNotFoundException();
     }
-    Task replacementTask = new Task(
-      taskName,
-      description,
-      duration,
-      deviation,
-      replacesTask
-    );
+    replacesTask.replaceTask(taskName, description, duration, deviation);
+
     tasks.remove(replacesTask); // TODO: SETTERS VAN MAKEN
     replacedTasks.add(replacesTask);
-    tasks.add(replacementTask);
+    tasks.add(replacesTask.getReplacementTask());
   }
 
   /**
@@ -257,7 +252,7 @@ public class Project {
    * @param systemTime Current system-time
    * @param currentUser User currently logged in
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task within this project
-   * @throws UserNotAllowedToChangeTaskException if currentUser is not assigned to the given task
+   * @throws IncorrectUserException if currentUser is not assigned to the given task
    * @throws IncorrectTaskStatusException if the given task status is not currently AVAILABLE
    */
   public void startTask(
@@ -266,7 +261,7 @@ public class Project {
     Time systemTime,
     User currentUser
   )
-    throws TaskNotFoundException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    throws TaskNotFoundException, IncorrectUserException, IncorrectTaskStatusException {
     Task task = getTask(taskName);
     if (task == null) {
       throw new TaskNotFoundException();
@@ -284,7 +279,7 @@ public class Project {
    * @param currentUser User currently logged in
    * @throws TaskNotFoundException if taskName does not correspond to an existing task
    * @throws FailTimeAfterSystemTimeException if newStatus == FAILED and endTime > systemTime
-   * @throws UserNotAllowedToChangeTaskException if currentUser is not the user assigned to this task
+   * @throws IncorrectUserException if currentUser is not the user assigned to this task
    * @throws IncorrectTaskStatusException if the given task status is not EXECUTING
    */
   public void endTask(
@@ -294,7 +289,7 @@ public class Project {
     Time systemTime,
     User currentUser
   )
-    throws TaskNotFoundException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    throws TaskNotFoundException, FailTimeAfterSystemTimeException, IncorrectUserException, IncorrectTaskStatusException {
     Task task = getTask(taskName);
     if (task == null) {
       throw new TaskNotFoundException();

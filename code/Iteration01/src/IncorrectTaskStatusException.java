@@ -1,6 +1,6 @@
 public class IncorrectTaskStatusException extends Exception {
 
-  public IncorrectTaskStatusException() {
+  public IncorrectTaskStatusException(String d) {
     super();
   }
 }

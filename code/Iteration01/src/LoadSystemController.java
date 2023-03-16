@@ -50,7 +50,7 @@ public class LoadSystemController {
         }catch (FileNotFoundException e){
             return; // nog correct afhandelen
         }catch (IOException e){
-            return; // nog correct afhandelen
+            return; // TODO nog correct afhandelen
         }catch (ParseException e) {
             return; // nog correct afhandelen
         } catch (NewTimeBeforeSystemTimeException e) {
@@ -65,7 +65,7 @@ public class LoadSystemController {
             throw new RuntimeException(e);
         } catch (ProjectNotFoundException e) {
             throw new RuntimeException(e);
-        } catch (UserNotAllowedToChangeTaskException e) {
+        } catch (IncorrectUserException e) {
             throw new RuntimeException(e);
         } catch (TaskNotFoundException e) {
             throw new RuntimeException(e);
@@ -80,7 +80,7 @@ public class LoadSystemController {
         }
     }
 
-    private void loadProject(JSONObject project, UserManager userManager, TaskManSystem taskManSystem) throws UserNotFoundException, ReplacedTaskNotFailedException, DueBeforeSystemTimeException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, InvalidTimeException, IncorrectTaskStatusException {
+    private void loadProject(JSONObject project, UserManager userManager, TaskManSystem taskManSystem) throws UserNotFoundException, ReplacedTaskNotFailedException, DueBeforeSystemTimeException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectUserException, InvalidTimeException, IncorrectTaskStatusException {
         //create the project
         String name = (String) project.get("name");
         String description = (String) project.get("description");
@@ -97,7 +97,7 @@ public class LoadSystemController {
 
     }
 
-    private void loadTask(JSONObject task, UserManager userManager, TaskManSystem taskManSystem, String projectName) throws UserNotFoundException, ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, UserNotAllowedToChangeTaskException, FailTimeAfterSystemTimeException, InvalidTimeException, IncorrectTaskStatusException {
+    private void loadTask(JSONObject task, UserManager userManager, TaskManSystem taskManSystem, String projectName) throws UserNotFoundException, ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectUserException, FailTimeAfterSystemTimeException, InvalidTimeException, IncorrectTaskStatusException {
         //standard task fields
         String name = (String) task.get("name");
         String description = (String) task.get("description");

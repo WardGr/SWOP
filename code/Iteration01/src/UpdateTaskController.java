@@ -142,11 +142,11 @@ public class UpdateTaskController {
    * @throws IncorrectPermissionException if the user is not logged in as a developer
    * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
    * @throws InvalidTimeException if startMinuteInput < 0 or startMinuteInput > 59
-   * @throws UserNotAllowedToChangeTaskException if the current user is not assigned to the given task
+   * @throws IncorrectUserException if the current user is not assigned to the given task
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task
    * @throws IncorrectTaskStatusException if the given task is not available
    */
-  public void startTask(String projectName, String taskName, int startHour, int startMinute) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
+  public void startTask(String projectName, String taskName, int startHour, int startMinute) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, IncorrectUserException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
     }
@@ -165,11 +165,11 @@ public class UpdateTaskController {
    * @throws FailTimeAfterSystemTimeException if the given end time is after the system time and the given status is failed
    * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
    * @throws InvalidTimeException if endMinuteInput > 59 or endMinuteInput < 0
-   * @throws UserNotAllowedToChangeTaskException if the current user is not assigned to the given task
+   * @throws IncorrectUserException if the current user is not assigned to the given task
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task
    * @throws IncorrectTaskStatusException if the given task is not executing
    */
-  public void endTask(String projectName, String taskName, Status newStatus, int endHour, int endMinute) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
+  public void endTask(String projectName, String taskName, Status newStatus, int endHour, int endMinute) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, IncorrectUserException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
     }

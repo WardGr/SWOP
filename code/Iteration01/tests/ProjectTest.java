@@ -77,12 +77,12 @@ public class ProjectTest {
         assertEquals(minecraft.getStatus(), "ongoing");
         minecraft.getTask("Make Render").start(new Time(0, 15), new Time(0, 15), ward);
         minecraft.getTask("Make Render").end(Status.FAILED, new Time(0, 15), new Time(0, 15), ward);
-        minecraft.addAlternativeTask("Purchase Render", "Purchase a render of the game", renderDuration, 300, "Make Render");
+        minecraft.replaceTask("Purchase Render", "Purchase a render of the game", renderDuration, 300, "Make Render");
         exception = assertThrows(TaskNameAlreadyInUseException.class, () -> {
-            minecraft.addAlternativeTask("Purchase Render", "Purchase a render of the game", renderDuration, 300, "Make Render");
+            minecraft.replaceTask("Purchase Render", "Purchase a render of the game", renderDuration, 300, "Make Render");
         });
         exception = assertThrows(TaskNotFoundException.class, () -> {
-            minecraft.addAlternativeTask("Make Mobs", "Adds creepers and skeletons to the game", renderDuration, 300, "Add Mobs");
+            minecraft.replaceTask("Make Mobs", "Adds creepers and skeletons to the game", renderDuration, 300, "Make Render");
         });
         assertNull(minecraft.getTask("Make Mobs"));
         assertNull(minecraft.getTask("Make Render"));
