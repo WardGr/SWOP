@@ -81,7 +81,5 @@ public class AdvanceTimeUITest {
                 "Give new system hour:\n" +
                 "Give new system minute:\n" +
                 "Time successfully updated\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
-
-
     }
 }
