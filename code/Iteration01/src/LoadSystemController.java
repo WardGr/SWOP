@@ -37,7 +37,7 @@ public class LoadSystemController {
     }
 
     /**
-     * Creates the initial
+     * Loads the file into the system
      */
     public void LoadSystem(String filepath) throws IncorrectPermissionException {
         if (getSession().getRole() != Role.PROJECTMANAGER) {
