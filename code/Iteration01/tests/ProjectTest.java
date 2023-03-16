@@ -44,7 +44,7 @@ public class ProjectTest {
         assertEquals(minecraft.getStatus(), "ongoing");
         assertNull(minecraft.getTask("Make render"));
         assertEquals("Project Name:  Minecraft\nDescription:   Build a game\nCreation Time: " + minecraft_begin.toString()
-                + "\nDue Time:      " + minecraft_end.toString() + "\n\nTasks:\n", minecraft.toString());
+                + "\nDue Time:      " + minecraft_end.toString() + "\nStatus:        ongoing\n", minecraft.toString());
 
         assertEquals("Car", car.getName());
         assertEquals("Build a car", car.getDescription());
@@ -54,7 +54,7 @@ public class ProjectTest {
         assertEquals(car.getStatus(), "ongoing");
         assertNull(car.getTask("Design engine with Honda"));
         assertEquals("Project Name:  Car\nDescription:   Build a car\nCreation Time: " + car_begin.toString()
-                + "\nDue Time:      " + car_end.toString() + "\n\nTasks:\n", car.toString());
+                + "\nDue Time:      " + car_end.toString() + "\nStatus:        ongoing\n", car.toString());
 
         assertEquals("House", house.getName());
         assertEquals("Build a house", house.getDescription());
@@ -64,7 +64,7 @@ public class ProjectTest {
         assertEquals(house.getStatus(), "ongoing");
         assertNull(house.getTask("Talk with architect"));
         assertEquals("Project Name:  House\nDescription:   Build a house\nCreation Time: " + house_begin.toString()
-                + "\nDue Time:      " + house_end2.toString() + "\n\nTasks:\n", house.toString());
+                + "\nDue Time:      " + house_end2.toString() + "\nStatus:        ongoing\n", house.toString());
 
         User ward = new User("Ward", "minecraftDev123", Role.DEVELOPER);
         User manager = new User("Manager", "minecraftManager123", Role.PROJECTMANAGER);

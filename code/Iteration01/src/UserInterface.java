@@ -69,7 +69,7 @@ public class UserInterface {
   /**
    * Prints all available commands with information for the user
    */
-  public void printHelp() {
+  private void printHelp() {
     System.out.println("Available commands:");
     System.out.println("help:          Prints this message");
     System.out.println("login:         Shows the login prompt");

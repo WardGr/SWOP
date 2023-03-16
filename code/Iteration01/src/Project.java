@@ -1,9 +1,6 @@
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Keeps all the information regarding an existing project, including its tasks
- */
 public class Project {
 
   private List<Task> tasks;
@@ -91,7 +88,6 @@ public class Project {
   private List<Task> getReplacedTasks() {
     return List.copyOf(replacedTasks);
   }
-
 
   /**
    * @return Status of the current project, finished if all tasks are finished, ongoing otherwise
