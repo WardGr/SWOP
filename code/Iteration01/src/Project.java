@@ -142,7 +142,7 @@ public class Project {
     tasks.remove(task);
   }
 
-  private void addReplacementTask(Task task) {
+  private void addReplacedTask(Task task) {
     replacedTasks.add(task);
   }
 
@@ -177,7 +177,7 @@ public class Project {
     replacesTask.replaceTask(taskName, description, duration, deviation);
 
     removeTask(replacesTask);
-    addReplacementTask(replacesTask);
+    addReplacedTask(replacesTask);
     addTask(replacesTask.getReplacementTask());
   }
 
