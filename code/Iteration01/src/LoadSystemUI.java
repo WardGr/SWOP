@@ -1,3 +1,6 @@
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -37,7 +40,20 @@ public class LoadSystemUI {
             System.out.println("Cancelled system load");
             return;
         }
-        getController().LoadSystem(path);
-        System.out.println("system succesfully loaded");
+        try{
+            getController().LoadSystem(path);
+            System.out.println("system succesfully loaded");
+        }catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException | ProjectNameAlreadyInUseException | InvalidTimeException | FailTimeAfterSystemTimeException | IncorrectUserException | ReplacedTaskNotFailedException | IncorrectTaskStatusException | DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException e) {
+            invalidFileLogic();
+        }   catch (IOException e) {
+            invalidFilePath();
+        }
+    }
+
+    private void invalidFileLogic(){
+        System.out.println("ERROR: invalid file logic");
+    }
+    private void invalidFilePath(){
+        System.out.println("ERROR: file not found");
     }
 }

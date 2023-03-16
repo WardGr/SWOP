@@ -30,7 +30,7 @@ public class CreateTaskController {
   }
 
   /**
-   * @return whether the preconditions are met
+   * @return whether the preconditions for the createtask use-case are met
    */
   public boolean createTaskPreconditions() {
     return getSession().getRole() == Role.PROJECTMANAGER;

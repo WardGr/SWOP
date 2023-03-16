@@ -1,4 +1,4 @@
-import java.io.FileNotFoundException;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -39,54 +39,23 @@ public class LoadSystemController {
     /**
      * Loads the file into the system
      */
-    public void LoadSystem(String filepath) throws IncorrectPermissionException {
+    public void LoadSystem(String filepath) throws IncorrectPermissionException, IOException, InvalidTimeException, ParseException, UserNotFoundException, ProjectNameAlreadyInUseException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, DueBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException {
         if (getSession().getRole() != Role.PROJECTMANAGER) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
         JSONParser jsonParser = new JSONParser();
-        try (FileReader reader = new FileReader(filepath)){
-            JSONObject doc = (JSONObject) jsonParser.parse(reader);
-            //set system time
-            int systemHour = (int) (long) doc.get("systemHour");
-            int systemMinute = (int) (long) doc.get("systemMinute");
-            getTaskManSystem().advanceTime(new Time(systemHour, systemMinute));
-            //load projects
-            JSONArray projects = (JSONArray) doc.get("projects");
-            for(Object p : projects){
-                loadProject((JSONObject) p, getUserManager(), taskManSystem);
-            }
-
-        }catch (FileNotFoundException e){
-            return; // nog correct afhandelen
-        }catch (IOException e){
-            return; // TODO nog correct afhandelen
-        }catch (ParseException e) {
-            return; // nog correct afhandelen
-        } catch (NewTimeBeforeSystemTimeException e) {
-            throw new RuntimeException(e);
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (ProjectNameAlreadyInUseException e) {
-            throw new RuntimeException(e);
-        } catch (ReplacedTaskNotFailedException e) {
-            throw new RuntimeException(e);
-        } catch (FailTimeAfterSystemTimeException e) {
-            throw new RuntimeException(e);
-        } catch (ProjectNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IncorrectUserException e) {
-            throw new RuntimeException(e);
-        } catch (TaskNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (TaskNameAlreadyInUseException e) {
-            throw new RuntimeException(e);
-        } catch (DueBeforeSystemTimeException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidTimeException e) {
-            throw new RuntimeException(e);
-        } catch (IncorrectTaskStatusException e) {
-            throw new RuntimeException(e);
+        FileReader reader = new FileReader(filepath);
+        JSONObject doc = (JSONObject) jsonParser.parse(reader);
+        //set system time
+        int systemHour = (int) (long) doc.get("systemHour");
+        int systemMinute = (int) (long) doc.get("systemMinute");
+        getTaskManSystem().advanceTime(new Time(systemHour, systemMinute));
+        //load projects
+        JSONArray projects = (JSONArray) doc.get("projects");
+        for(Object p : projects){
+            loadProject((JSONObject) p, getUserManager(), taskManSystem);
         }
+
     }
 
     private void loadProject(JSONObject project, UserManager userManager, TaskManSystem taskManSystem) throws UserNotFoundException, ReplacedTaskNotFailedException, DueBeforeSystemTimeException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectUserException, InvalidTimeException, IncorrectTaskStatusException {
