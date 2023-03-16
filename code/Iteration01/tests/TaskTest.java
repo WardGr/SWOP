@@ -1,7 +1,4 @@
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +6,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class TaskTest {
+    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException {
+        testTask();
+    }
     @Test
     public void testTask() throws IncorrectUserException, IncorrectTaskStatusException {
         Time estimatedDuration1 = new Time(10);

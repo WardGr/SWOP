@@ -220,31 +220,23 @@ public class TaskManSystem {
   }
 
   /**
-   * @return A map with tuples (project, task) mapping all available tasks to their projects by their names
+   * @return A map with tuples (project, tasks) mapping all projects to a list of all its available tasks
    */
-  public Map<String, String> showAvailableTasks() {
-    Map<String, String> availableTasks = new HashMap<>();
+  public Map<String, List<String>> showAvailableTasks() {
+    Map<String, List<String>> availableTasks = new HashMap<>();
     for (Project project : getProjects()) {
-      List<String> tasks = project.showAvailableTasks();
-      String projectName = project.getName();
-      for (String task : tasks) {
-        availableTasks.put(projectName, task);
-      }
+      availableTasks.put(project.getName(), project.showAvailableTasks());
     }
     return availableTasks;
   }
 
   /**
-   * @return A map with tuples (project, task) mapping all executing tasks to their projects by their names
+   * @return A map with tuples (project, tasks) mapping all projects to a list of all its executing tasks
    */
-  public Map<String, String> showExecutingTasks() {
-    Map<String, String> executingTasks = new HashMap<>();
+  public Map<String, List<String>> showExecutingTasks() {
+    Map<String, List<String>> executingTasks = new HashMap<>();
     for (Project project : getProjects()) {
-      List<String> tasks = project.showExecutingTasks();
-      String projectName = project.getName();
-      for (String task : tasks) {
-        executingTasks.put(projectName, task);
-      }
+      executingTasks.put(project.getName(), project.showExecutingTasks());
     }
     return executingTasks;
   }

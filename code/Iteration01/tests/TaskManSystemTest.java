@@ -1,9 +1,6 @@
 import org.junit.Test;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
@@ -15,7 +12,7 @@ public class TaskManSystemTest {
         TaskManSystem taskManSystem = new TaskManSystem(time);
         assertEquals(5, taskManSystem.getSystemTime().getHour());
         assertEquals(20, taskManSystem.getSystemTime().getMinute());
-        assertEquals(taskManSystem.getProjectNamesWithStatus(), new LinkedList<>());
+        assertEquals(taskManSystem.getProjectNamesWithStatus(), new HashMap<>());
         Exception exception = assertThrows(ProjectNotFoundException.class, () -> {
             taskManSystem.showProject("car");
         });
@@ -33,8 +30,7 @@ public class TaskManSystemTest {
         });
         taskManSystem.createProject("car", "Make a Honda Civic 2020", new Time(63, 20));
         assertEquals(taskManSystem.getProjectNamesWithStatus().size(), 1);
-        //assertEquals(taskManSystem.getProjectNamesWithStatus().get(0).getKey(), "car");
-        //assertEquals(taskManSystem.getProjectNamesWithStatus().get(0).getValue(), "ongoing");
+        assertEquals(taskManSystem.getProjectNamesWithStatus().get("car"), "ongoing");
         assertEquals(taskManSystem.showProject("car"), "Project Name:  car\n" +
                 "Description:   Make a Honda Civic 2020\n" +
                 "Creation Time: 5 hours, 20 minutes\n" +
@@ -46,8 +42,7 @@ public class TaskManSystemTest {
 
         taskManSystem.createProject("house", "Make a house", new Time(50, 43));
         assertEquals(taskManSystem.getProjectNamesWithStatus().size(), 2);
-        //assertEquals(taskManSystem.getProjectNamesWithStatus().get(1).getKey(), "house");
-        //assertEquals(taskManSystem.getProjectNamesWithStatus().get(1).getValue(), "ongoing");
+        assertEquals(taskManSystem.getProjectNamesWithStatus().get("house"), "ongoing");
         exception = assertThrows(ProjectNameAlreadyInUseException.class, () -> {
             taskManSystem.createProject("car", "Make a Honda Civic 2020", new Time(50, 20));
         });
@@ -97,14 +92,13 @@ public class TaskManSystemTest {
         List tasks = new ArrayList();
 
 
-        assertEquals(taskManSystem.showAvailableTasks().get(0), new AbstractMap.SimpleEntry<>("car", "Engine"));
-        assertEquals(taskManSystem.showAvailableTasks().get(1), new AbstractMap.SimpleEntry<>("car", "Wheels"));
-        assertTrue(taskManSystem.showAvailableTasks().size() == 3);
+        assertEquals(taskManSystem.showAvailableTasks().get("car").get(0), "Engine");
+        assertEquals(taskManSystem.showAvailableTasks().get("car").get(1), "Wheels");
+        assertEquals(2, taskManSystem.showAvailableTasks().get("car").size());
+        assertEquals(1, taskManSystem.showAvailableTasks().get("house").size());
+        assertEquals(0, taskManSystem.showExecutingTasks().get("car").size());
+        assertEquals(0, taskManSystem.showExecutingTasks().get("house").size());
 
-
-
-        assertEquals(3, taskManSystem.showAvailableTasks().size());
-        assertEquals(0, taskManSystem.showExecutingTasks().size());
         assertEquals(Status.AVAILABLE, taskManSystem.getStatus("car", "Engine"));
         assertEquals(Status.AVAILABLE, taskManSystem.getStatus("car", "Wheels"));
         assertEquals(Status.AVAILABLE, taskManSystem.getStatus("house", "Walls"));
@@ -114,11 +108,11 @@ public class TaskManSystemTest {
         assertEquals(1, taskManSystem.getNextStatuses("house", "Walls").size());
 
         taskManSystem.startTask("car", "Engine", new Time(4, 34), mechanic);
-        assertEquals(1, taskManSystem.showExecutingTasks().size());
+        assertEquals(1, taskManSystem.showExecutingTasks().get("car").size());
         taskManSystem.startTask("car", "Wheels", new Time(4, 34), mechanic);
-        assertEquals(2, taskManSystem.showExecutingTasks().size());
+        assertEquals(2, taskManSystem.showExecutingTasks().get("car").size());
         taskManSystem.startTask("house", "Walls", new Time(4, 35), builder);
-        assertEquals(3, taskManSystem.showExecutingTasks().size());
+        assertEquals(1, taskManSystem.showExecutingTasks().get("house").size());
 
         assertEquals(2, taskManSystem.getNextStatuses("car", "Engine").size());
         assertEquals(2, taskManSystem.getNextStatuses("car", "Wheels").size());
@@ -148,15 +142,9 @@ public class TaskManSystemTest {
         assertEquals(0, taskManSystem.getNextStatuses("car", "Wheels").size());
         assertEquals(0, taskManSystem.getNextStatuses("house", "Walls").size());
 
-        exception = assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
-            taskManSystem.advanceTime(new Time(7, 33));
+        assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
+            taskManSystem.advanceTime(new Time(0, 33));
         });
-        exception = assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
-            taskManSystem.advanceTime(new Time(7, 33));
-        });
-        /*exception = assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
-            taskManSystem.advanceTime(7, 33);
-        });*/ // TODO dit zou moeten werken, niet?
 
         assertEquals(Status.AVAILABLE, taskManSystem.getStatus("car", "Body"));
         assertEquals(Status.UNAVAILABLE, taskManSystem.getStatus("car", "Paint"));
@@ -165,22 +153,29 @@ public class TaskManSystemTest {
         assertEquals(Status.FINISHED, taskManSystem.getStatus("house", "Walls"));
         assertEquals(1, taskManSystem.getNextStatuses("car", "Body").size());
         assertEquals(0, taskManSystem.getNextStatuses("car", "Paint").size());
-        assertEquals(1, taskManSystem.showAvailableTasks().size());
-        assertEquals(1, taskManSystem.showAvailableTasks().size());
-        assertEquals(0, taskManSystem.showExecutingTasks().size());
+        assertEquals(1, taskManSystem.showAvailableTasks().get("car").size());
+        assertEquals(0, taskManSystem.showAvailableTasks().get("house").size());
+        assertEquals(0, taskManSystem.showExecutingTasks().get("car").size());
+        assertEquals(0, taskManSystem.showExecutingTasks().get("house").size());
         taskManSystem.startTask("car", "Body", new Time(8,34), mechanic);
         taskManSystem.advanceTime(new Time(8, 40));
         assertEquals(2, taskManSystem.getNextStatuses("car", "Body").size());
-        assertEquals(0, taskManSystem.showAvailableTasks().size());
-        assertEquals(1, taskManSystem.showExecutingTasks().size());
+        assertEquals(0, taskManSystem.showAvailableTasks().get("car").size());
+        assertEquals(0, taskManSystem.showAvailableTasks().get("house").size());
+        assertEquals(1, taskManSystem.showExecutingTasks().get("car").size());
+        assertEquals(0, taskManSystem.showExecutingTasks().get("house").size());
         taskManSystem.endTask("car", "Body", Status.FINISHED, new Time(12, 35), mechanic);
         taskManSystem.advanceTime(new Time(14, 33));
-        assertEquals(0, taskManSystem.showExecutingTasks().size());
-        assertEquals(1, taskManSystem.showAvailableTasks().size());
+        assertEquals(0, taskManSystem.showExecutingTasks().get("car").size());
+        assertEquals(0, taskManSystem.showExecutingTasks().get("house").size());
+        assertEquals(1, taskManSystem.showAvailableTasks().get("car").size());
+        assertEquals(0, taskManSystem.showAvailableTasks().get("house").size());
         taskManSystem.startTask("car", "Paint", new Time(15, 34), mechanic);
         taskManSystem.advanceTime(new Time(15, 40));
-        assertEquals(0, taskManSystem.showAvailableTasks().size());
-        assertEquals(1, taskManSystem.showExecutingTasks().size());
+        assertEquals(0, taskManSystem.showAvailableTasks().get("car").size());
+        assertEquals(0, taskManSystem.showAvailableTasks().get("house").size());
+        assertEquals(1, taskManSystem.showExecutingTasks().get("car").size());
+        assertEquals(0, taskManSystem.showExecutingTasks().get("house").size());
         exception = assertThrows(FailTimeAfterSystemTimeException.class, () -> {
             taskManSystem.endTask("car", "Paint", Status.FAILED, new Time(568, 3),  mechanic);
         });

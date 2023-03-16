@@ -41,18 +41,19 @@ public class UpdateTaskUI {
   public void chooseUpdateTask() throws IncorrectPermissionException {
     while(true) {
 
-      Map<String, String> availableTasks = getController().availableTasksNames();
-      Map<String, String> executingTasks = getController().executingTasksNames();
+      Map<String, List<String>> availableTasks = getController().availableTasksNames();
+      Map<String, List<String>> executingTasks = getController().executingTasksNames();
 
       System.out.println("*** AVAILABLE TASKS ***");
       availableTasks.forEach(
-              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
+              (project, tasks) -> tasks.forEach( (task) -> System.out.println("Project: " + project + "---" + task))
       );
       System.out.println();
       System.out.println("*** EXECUTING TASKS ***");
       executingTasks.forEach(
-              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
+              (project, tasks) -> tasks.forEach( (task) -> System.out.println("Project: " + project + "---" + task))
       );
+      System.out.println();
 
       Scanner scanner = new Scanner(System.in);
 

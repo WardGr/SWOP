@@ -31,7 +31,7 @@ public class UpdateTaskController {
     return getSession().getRole() == Role.DEVELOPER;
   }
 
-  public Map<String, String> availableTasksNames() throws IncorrectPermissionException {
+  public Map<String, List<String>> availableTasksNames() throws IncorrectPermissionException {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
@@ -45,7 +45,7 @@ public class UpdateTaskController {
    * "task" the name of the task
    * @throws IncorrectPermissionException if the user is not logged in as a developer
    */
-  public Map<String, String> executingTasksNames() throws IncorrectPermissionException {
+  public Map<String, List<String>> executingTasksNames() throws IncorrectPermissionException {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }

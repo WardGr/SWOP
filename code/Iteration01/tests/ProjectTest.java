@@ -69,9 +69,9 @@ public class ProjectTest {
         User ward = new User("Ward", "minecraftDev123", Role.DEVELOPER);
         User manager = new User("Manager", "minecraftManager123", Role.PROJECTMANAGER);
         Time renderDuration = new Time(0, 30);
-        minecraft.addTask("Make Render", "Make a render of the game", renderDuration, 300, new LinkedList<>(), ward);
+        minecraft.addNewTask("Make Render", "Make a render of the game", renderDuration, 300, new LinkedList<>(), ward);
         exception = assertThrows(TaskNameAlreadyInUseException.class, () -> {
-            minecraft.addTask("Make Render", "Make a render of the game", renderDuration, 300, new LinkedList<>(), ward);
+            minecraft.addNewTask("Make Render", "Make a render of the game", renderDuration, 300, new LinkedList<>(), ward);
         });
         assertEquals(1, minecraft.getTasks().size());
         assertEquals(minecraft.getStatus(), "ongoing");
@@ -89,7 +89,7 @@ public class ProjectTest {
         assertTrue(minecraft.getTasks().contains(minecraft.getTask("Purchase Render")));
         List<String> previousTasksMinecraft = new LinkedList<String>();
         previousTasksMinecraft.add("Purchase Render");
-        minecraft.addTask("Make Mobs", "Adds creepers and skeletons to the game", renderDuration, 300, previousTasksMinecraft, manager);
+        minecraft.addNewTask("Make Mobs", "Adds creepers and skeletons to the game", renderDuration, 300, previousTasksMinecraft, manager);
         //minecraft.addTask("Make Mobs", "Adds creepers and skeletons to the game", renderDuration, 300, previousTasksMinecraft, ward);
         assertEquals(2, minecraft.getTasks().size());
         assertEquals(minecraft.getStatus(), "ongoing");
@@ -128,14 +128,14 @@ public class ProjectTest {
         User engineer = new User("Engineer", "carEngineer123", Role.DEVELOPER);
         LinkedList<String> prevMech = new LinkedList<>();
         LinkedList<String> prevEng = new LinkedList<>();
-        car.addTask("Build chasis", "Build the chasis of the car", new Time(500), 20.58, new LinkedList<>(), mechanic);
+        car.addNewTask("Build chasis", "Build the chasis of the car", new Time(500), 20.58, new LinkedList<>(), mechanic);
         prevMech.add("Build chasis");
-        car.addTask("Install windows", "Install the windows of the car", new Time(20), 5, prevMech, mechanic);
-        car.addTask("Install engine", "Install the engine of the car", new Time(100), 10, new LinkedList<>(), engineer);
+        car.addNewTask("Install windows", "Install the windows of the car", new Time(20), 5, prevMech, mechanic);
+        car.addNewTask("Install engine", "Install the engine of the car", new Time(100), 10, new LinkedList<>(), engineer);
         prevEng.add("Install engine");
-        car.addTask("install navsat", "Install the navsat of the car", new Time(10), 5, prevEng, engineer);
+        car.addNewTask("install navsat", "Install the navsat of the car", new Time(10), 5, prevEng, engineer);
         prevEng.add("install navsat");
-        car.addTask("Brake fluid", "Regulate the brake fluid of the car", new Time(10), 5, prevEng, engineer);
+        car.addNewTask("Brake fluid", "Regulate the brake fluid of the car", new Time(10), 5, prevEng, engineer);
         assertEquals(car.showAvailableTasks().size(), 2);
         car.startTask("Build chasis", new Time(0, 0), new Time(0, 0), mechanic);
         exception = assertThrows(IncorrectUserException.class, () -> {
