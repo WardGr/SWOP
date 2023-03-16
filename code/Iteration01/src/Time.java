@@ -11,15 +11,14 @@ public class Time implements Comparable<Time> {
     this.minute = minute;
   }
 
-  public int getTotalMinutes() {
-    return getHour() * 60 + getMinute();
-  }
-
   public Time(int totalMinutes) {
     this.hour = totalMinutes / 60;
     this.minute = totalMinutes % 60;
   }
 
+  public int getTotalMinutes() {
+    return getHour() * 60 + getMinute();
+  }
 
   public int getHour() {
     return hour;

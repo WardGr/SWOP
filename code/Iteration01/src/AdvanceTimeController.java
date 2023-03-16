@@ -19,8 +19,6 @@ public class AdvanceTimeController {
     return taskManSystem;
   }
 
-
-
   public int getSystemHour(){
     return getTaskManSystem().getSystemTime().getHour();
   }

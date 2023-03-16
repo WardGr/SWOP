@@ -90,8 +90,8 @@ public class UpdateTaskUI {
    * @throws IncorrectPermissionException if user is not logged in as a developer
    */
   public void showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
-    String taskDetails = controller.showTask(projectName, taskName);
-    List<Status> nextStatuses = controller.getNextStatuses(projectName, taskName);
+    String taskDetails = getController().showTask(projectName, taskName);
+    List<Status> nextStatuses = getController().getNextStatuses(projectName, taskName);
 
     System.out.println(taskDetails);
     System.out.println("-- Possible Next Statuses --");
@@ -111,9 +111,9 @@ public class UpdateTaskUI {
    * @throws IncorrectUserException if the user is not assigned to this task
    */
   public void updateForm(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException, IncorrectUserException {
-    Status status = controller.getStatus(projectName, taskName);
-    int systemHour = controller.getSystemHour();
-    int systemMinute = controller.getSystemMinute();
+    Status status = getController().getStatus(projectName, taskName);
+    int systemHour = getController().getSystemHour();
+    int systemMinute = getController().getSystemMinute();
 
     Scanner scanner = new Scanner(System.in);
 
@@ -195,7 +195,7 @@ public class UpdateTaskUI {
             }
           }
           try{
-            controller.startTask(projectName, taskName, startHour, startMinute);
+            getController().startTask(projectName, taskName, startHour, startMinute);
             System.out.println("Task " + taskName + " successfully updated");
             return;
           } catch (InvalidTimeException e) {
@@ -307,7 +307,7 @@ public class UpdateTaskUI {
           }
 
           try{
-            controller.endTask(projectName, taskName, newStatus, endHour, endMinute);
+            getController().endTask(projectName, taskName, newStatus, endHour, endMinute);
             System.out.println("Task " + taskName + " successfully updated");
             return;
           } catch (FailTimeAfterSystemTimeException e) {

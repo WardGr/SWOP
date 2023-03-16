@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -111,7 +110,7 @@ public class Project {
    * @throws TaskNotFoundException if one of the given tasks to be completed before the new task does not exist
    * @throws TaskNameAlreadyInUseException if the given task name is already in use for this project
    */
-  public void addTask(
+  public void addNewTask(
     String taskName,
     String description,
     Time duration,
@@ -123,7 +122,7 @@ public class Project {
       throw new TaskNameAlreadyInUseException();
     }
 
-    List<Task> previousTasks = new ArrayList<>();
+    List<Task> previousTasks = new LinkedList<>();
     for (String previousTaskName : previousTaskNames) {
       Task task = getTask(previousTaskName);
       if (task == null) {
@@ -132,9 +131,19 @@ public class Project {
       previousTasks.add(task);
     }
 
-    tasks.add(
-      new Task(taskName, description, duration, deviation, previousTasks, user)
-    );
+    addTask(new Task(taskName, description, duration, deviation, previousTasks, user));
+  }
+
+  private void addTask(Task task) {
+    tasks.add(task);
+  }
+
+  private void removeTask(Task task) {
+    tasks.remove(task);
+  }
+
+  private void addReplacementTask(Task task) {
+    replacedTasks.add(task);
   }
 
   /**
@@ -167,9 +176,9 @@ public class Project {
     }
     replacesTask.replaceTask(taskName, description, duration, deviation);
 
-    tasks.remove(replacesTask); // TODO: SETTERS VAN MAKEN
-    replacedTasks.add(replacesTask);
-    tasks.add(replacesTask.getReplacementTask());
+    removeTask(replacesTask);
+    addReplacementTask(replacesTask);
+    addTask(replacesTask.getReplacementTask());
   }
 
   /**
@@ -190,7 +199,7 @@ public class Project {
    */
   public List<String> showExecutingTasks() {
     List<String> executingTasks = new LinkedList<>();
-    for (Task task : tasks) {
+    for (Task task : getTasks()) {
       if (task.getStatus() == Status.EXECUTING) {
         executingTasks.add(task.getName());
       }

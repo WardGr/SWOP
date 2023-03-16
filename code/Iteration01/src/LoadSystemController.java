@@ -16,6 +16,22 @@ public class LoadSystemController {
 
     private LoadSystemUI loadSystemUI;
 
+    private UserManager getUserManager() {
+        return userManager;
+    }
+
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private Session getSession() {
+        return session;
+    }
+
+    private LoadSystemUI getUI() {
+        return loadSystemUI;
+    }
+
     LoadSystemController( UserManager userManager, TaskManSystem taskManSystem, Session session, LoadSystemUI loadSystemUI){
         this.userManager = userManager;
         this.taskManSystem = taskManSystem;
@@ -27,11 +43,11 @@ public class LoadSystemController {
      * Creates the initial
      */
     public void loadSystemForm(){
-        if (session.getRole() != Role.PROJECTMANAGER) {
-            loadSystemUI.printAccessError(Role.PROJECTMANAGER);
+        if (getSession().getRole() != Role.PROJECTMANAGER) {
+            getUI().printAccessError(Role.PROJECTMANAGER);
             return;
         }
-        loadSystemUI.loadSystemForm();
+        getUI().loadSystemForm();
     }
     public void LoadSystem(String filepath){
         JSONParser jsonParser = new JSONParser();
@@ -40,11 +56,11 @@ public class LoadSystemController {
             //set system time
             int systemHour = (int) (long) doc.get("systemHour");
             int systemMinute = (int) (long) doc.get("systemMinute");
-            taskManSystem.advanceTime(new Time(systemHour, systemMinute));
+            getTaskManSystem().advanceTime(new Time(systemHour, systemMinute));
             //load projects
             JSONArray projects = (JSONArray) doc.get("projects");
             for(Object p : projects){
-                loadProject((JSONObject) p, userManager, taskManSystem);
+                loadProject((JSONObject) p, getUserManager(), taskManSystem);
             }
 
         }catch (FileNotFoundException e){

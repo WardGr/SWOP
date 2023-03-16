@@ -18,8 +18,11 @@ public class TaskManSystem {
     return systemTime;
   }
 
+  /**
+   * @return IMMUTABLE list of projects
+   */
   private List<Project> getProjects() {
-    return projects;
+    return List.copyOf(projects);
   }
 
   /**
@@ -28,7 +31,7 @@ public class TaskManSystem {
    * @return Project corresponding to the given project name, null if no such project exists
    */
   private Project getProject(String projectName) {
-    for (Project project : projects) {
+    for (Project project : getProjects()) {
       if (project.getName().equals(projectName)) {
         return project;
       }
@@ -41,7 +44,7 @@ public class TaskManSystem {
    */
   public List<String> getProjectNames() { // todo: momenteel niet gebruikt
     List<String> names = new LinkedList<>();
-    for (Project project : projects) {
+    for (Project project : getProjects()) {
       names.add(project.getName());
     }
     return names;
@@ -90,6 +93,15 @@ public class TaskManSystem {
     return project.showTask(taskName);
   }
 
+  private void setSystemTime(Time newTime) {
+    this.systemTime = newTime;
+  }
+
+  private void addProject(Project newProject) {
+    projects.add(newProject);
+  }
+
+
   /**
    * Creates a project with given name, description and due time, using the system time as start time
    *
@@ -127,7 +139,7 @@ public class TaskManSystem {
               startTime,
               dueTime
       );
-      projects.add(newProject);
+      addProject(newProject);
     } else {
       throw new ProjectNameAlreadyInUseException();
     }
@@ -161,7 +173,7 @@ public class TaskManSystem {
     if (project == null) {
       throw new ProjectNotFoundException();
     }
-    project.addTask(
+    project.addNewTask(
       taskName,
       description,
       durationTime,
@@ -212,7 +224,7 @@ public class TaskManSystem {
    */
   public Map<String, String> showAvailableTasks() {
     Map<String, String> availableTasks = new HashMap<>();
-    for (Project project : projects) {
+    for (Project project : getProjects()) {
       List<String> tasks = project.showAvailableTasks();
       String projectName = project.getName();
       for (String task : tasks) {
@@ -227,7 +239,7 @@ public class TaskManSystem {
    */
   public Map<String, String> showExecutingTasks() {
     Map<String, String> executingTasks = new HashMap<>();
-    for (Project project : projects) {
+    for (Project project : getProjects()) {
       List<String> tasks = project.showExecutingTasks();
       String projectName = project.getName();
       for (String task : tasks) {
@@ -349,12 +361,12 @@ public class TaskManSystem {
    */
   public void advanceTime(Time newTime)
     throws NewTimeBeforeSystemTimeException, InvalidTimeException {
-    if (newTime.before(systemTime)) {
+    if (newTime.before(getSystemTime())) {
       throw new NewTimeBeforeSystemTimeException();
     }
-    for (Project project : projects) {
+    for (Project project : getProjects()) {
       project.advanceTime(newTime);
     }
-    systemTime = newTime;
+    setSystemTime(newTime);
   }
 }

@@ -155,7 +155,7 @@ public class CreateTaskUI {
           return;
         }
         try {
-          controller.replaceTask(
+          getController().replaceTask(
                   projectName,
                   taskName,
                   description,
@@ -207,7 +207,7 @@ public class CreateTaskUI {
 
 
         try {
-          controller.createTask(
+          getController().createTask(
                   projectName,
                   taskName,
                   description,
