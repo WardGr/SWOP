@@ -36,10 +36,10 @@ public class AdvanceTimeUI {
   public void chooseNewTime() throws IncorrectPermissionException{
     Scanner scanner = new Scanner(System.in);
 
-    int systemHour = getController().getSystemHour();
-    int systemMinute = getController().getSystemMinute();
-
     while(true) {
+
+      int systemHour = getController().getSystemHour();
+      int systemMinute = getController().getSystemMinute();
 
       System.out.println(
               "Current system time is: " + systemHour + ":" + systemMinute
@@ -90,6 +90,7 @@ public class AdvanceTimeUI {
 
       try {
         getController().setNewTime(newHour, newMinute);
+        System.out.println("Time successfully updated");
         return;
       } catch (InvalidTimeException e) {
         System.out.println("ERROR: the chosen time is not valid");
