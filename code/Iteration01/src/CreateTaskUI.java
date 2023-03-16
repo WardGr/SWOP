@@ -164,7 +164,7 @@ public class CreateTaskUI {
                   deviation,
                   replaces
           );
-          System.out.println("Task " + taskName + " successfully added to Project " + projectName + "as a replacement for task " + replaces);
+          System.out.println("Task " + taskName + " successfully added to Project " + projectName + " as a replacement for task " + replaces);
           return;
         } catch (ReplacedTaskNotFailedException e) {
           System.out.println(

@@ -16,7 +16,7 @@ public class CreateProjectUI {
   }
 
   /**
-   * Does the initial project creation request, checks if the useer has the projectmanager role
+   * Does the initial project creation request, checks if the user has the projectmanager role
    */
   public void createProject() {
     if (getController().createProjectPreconditions()){
