@@ -52,7 +52,7 @@ public class UserInterface {
   private void handleCommand(String command) {
     switch (command) {
       case "help" -> printHelp();
-      case "login" -> sessionUI.loginRequest(new Scanner(System.in));
+      case "login" -> sessionUI.loginRequest();
       case "logout" -> sessionUI.logout();
       case "showprojects" -> showProjectsUI.showProjects();
       case "createproject" -> createProjectUI.createProject();
