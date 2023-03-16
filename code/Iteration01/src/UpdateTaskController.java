@@ -83,7 +83,7 @@ public class UpdateTaskController {
    */
   public List<Status> getNextStatuses(String projectName, String taskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
+      throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
     }
     return getTaskManSystem().getNextStatuses(projectName, taskName);
   }
@@ -113,7 +113,7 @@ public class UpdateTaskController {
    */
   public int getSystemHour() throws IncorrectPermissionException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
+      throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
     }
     return getTaskManSystem().getSystemTime().getHour();
   }
@@ -126,7 +126,7 @@ public class UpdateTaskController {
    */
   public int getSystemMinute() throws IncorrectPermissionException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
+      throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
     }
     return getTaskManSystem().getSystemTime().getMinute();
   }
@@ -148,7 +148,7 @@ public class UpdateTaskController {
    */
   public void startTask(String projectName, String taskName, int startHour, int startMinute) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
+      throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
     }
     getTaskManSystem().startTask(projectName, taskName, new Time(startHour, startMinute), getSession().getCurrentUser());
   }
@@ -171,7 +171,7 @@ public class UpdateTaskController {
    */
   public void endTask(String projectName, String taskName, Status newStatus, int endHour, int endMinute) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
-      throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
+      throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
     }
     getTaskManSystem().endTask(projectName, taskName, newStatus, new Time(endHour, endMinute), getSession().getCurrentUser());
   }

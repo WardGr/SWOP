@@ -16,7 +16,7 @@ public class Project {
 
   Project(String name, String description, Time creationTime, Time dueTime)
     throws DueBeforeSystemTimeException {
-    if (dueTime.before(creationTime)) {
+    if (!dueTime.after(creationTime)) {
       throw new DueBeforeSystemTimeException();
     }
     this.tasks = new LinkedList<>();
@@ -34,7 +34,7 @@ public class Project {
     projectString.append("Project Name:  " + getName() + '\n' +
                          "Description:   " + getDescription() + '\n' +
                          "Creation Time: " + getCreationTime() + '\n' +
-                         "Due time:      " + getDueTime() + '\n'
+                         "Due Time:      " + getDueTime() + '\n'
     );
     projectString.append("\nTasks:\n");
     int index = 1;

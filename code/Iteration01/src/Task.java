@@ -212,7 +212,7 @@ public class Task {
   }
 
   public List<Task> getNextTasks() {
-    return List.copyOf(nextTasks);
+    return new LinkedList<Task>(nextTasks);
   }
 
   public List<Status> getNextStatuses() {
