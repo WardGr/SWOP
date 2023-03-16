@@ -48,7 +48,7 @@ public class CreateTaskUITest {
                         *********** TASK CREATION FORM ***********
                         Project name of which to add the task to:
                         Cancelled task creation
-                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nBACK\n".getBytes()));
@@ -60,7 +60,7 @@ public class CreateTaskUITest {
                         Project name of which to add the task to:
                         Task name:
                         Cancelled task creation
-                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nBACK\n".getBytes()));
@@ -73,7 +73,7 @@ public class CreateTaskUITest {
                 Task name:
                 Task description:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -88,7 +88,7 @@ public class CreateTaskUITest {
                 Task description:
                 Task duration hours:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -104,7 +104,7 @@ public class CreateTaskUITest {
                 Task duration hours:
                 Given task duration is not an integer, please input an integer and try again
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\nBACK".getBytes()));
@@ -119,7 +119,7 @@ public class CreateTaskUITest {
                 Task duration hours:
                 Task duration minutes:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\nnotAnInt\nBACK".getBytes()));
@@ -135,7 +135,7 @@ public class CreateTaskUITest {
                 Task duration minutes:
                 Given task duration is not an integer, please input an integer and try again
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\n20\nBACK".getBytes()));
@@ -151,7 +151,7 @@ public class CreateTaskUITest {
                 Task duration minutes:
                 Task deviation:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -169,7 +169,7 @@ public class CreateTaskUITest {
                 Task deviation:
                 Given task deviation is not a double, please input an integer and try again
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -187,7 +187,7 @@ public class CreateTaskUITest {
                 Task deviation:
                 Is this a replacement task? (y/n)
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\n20\n0.3\ny\nBACK\n".getBytes()));
@@ -205,7 +205,7 @@ public class CreateTaskUITest {
                 Is this a replacement task? (y/n)
                 This task is a replacement for task:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -224,7 +224,7 @@ public class CreateTaskUITest {
                 Is this a replacement task? (y/n)
                 Is this a replacement task? (y/n)
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -244,7 +244,7 @@ public class CreateTaskUITest {
                 Is this a replacement task? (y/n)
                 Give developer performing this task:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -265,7 +265,7 @@ public class CreateTaskUITest {
                 Give developer performing this task:
                 Tasks that should be completed before this task, enter '.' to stop adding new tasks:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -286,7 +286,7 @@ public class CreateTaskUITest {
                 Give developer performing this task:
                 Tasks that should be completed before this task, enter '.' to stop adding new tasks:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -307,7 +307,7 @@ public class CreateTaskUITest {
                 Give developer performing this task:
                 Tasks that should be completed before this task, enter '.' to stop adding new tasks:
                 Task NewTask successfully added to project SimpleProject
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -332,7 +332,7 @@ public class CreateTaskUITest {
                 Is this a replacement task? (y/n)
                 This task is a replacement for task:
                 Task ReplacementTask successfully added to project SimpleProject as a replacement for task SimpleTask
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         // Try to create replacement task for not failed task
@@ -356,7 +356,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -381,7 +381,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -406,7 +406,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         // Replace non-existent task
@@ -430,7 +430,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -454,7 +454,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -478,7 +478,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -504,7 +504,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -530,7 +530,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -556,7 +556,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -582,7 +582,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -608,7 +608,7 @@ public class CreateTaskUITest {
                 *********** TASK CREATION FORM ***********
                 Project name of which to add the task to:
                 Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
     }

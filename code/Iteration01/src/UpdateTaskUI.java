@@ -21,7 +21,7 @@ public class UpdateTaskUI {
    * Handles initial request to updatetask, checks if permission is correct
    */
   public void updateTaskStatus() {
-    if (controller.updateTaskPreconditions()){
+    if (getController().updateTaskPreconditions()){
       try{
         chooseUpdateTask();
       } catch (IncorrectPermissionException e) {
@@ -39,6 +39,7 @@ public class UpdateTaskUI {
    * @throws IncorrectPermissionException if the user is not logged in as a developer
    */
   public void chooseUpdateTask() throws IncorrectPermissionException {
+    Scanner scanner = new Scanner(System.in);
     while(true) {
 
       Map<String, List<String>> availableTasks = getController().availableTasksNames();
@@ -46,37 +47,42 @@ public class UpdateTaskUI {
 
       System.out.println("*** AVAILABLE TASKS ***");
       availableTasks.forEach(
-              (project, tasks) -> tasks.forEach( (task) -> System.out.println("Project: " + project + "---" + task))
+              (project, tasks) -> tasks.forEach( (task) -> System.out.println("Project: " + project + " --- " + task))
       );
       System.out.println();
       System.out.println("*** EXECUTING TASKS ***");
       executingTasks.forEach(
-              (project, tasks) -> tasks.forEach( (task) -> System.out.println("Project: " + project + "---" + task))
+              (project, tasks) -> tasks.forEach( (task) -> System.out.println("Project: " + project + " --- " + task))
       );
       System.out.println();
-
-      Scanner scanner = new Scanner(System.in);
 
       System.out.println("Type BACK to cancel updating the task any time");
       System.out.println("Name of the project you want to update:");
       String projectName = scanner.nextLine();
       if (projectName.equals("BACK")) {
+        System.out.println("Cancelled updating task");
         return;
       }
       System.out.println("Name of the task you want to update:");
       String taskName = scanner.nextLine();
       if (taskName.equals("BACK")) {
+        System.out.println("Cancelled updating task");
         return;
       }
 
       try {
         showTask(projectName, taskName);
-        updateForm(projectName, taskName);
+        updateForm(projectName, taskName, scanner);
         return;
-      } catch (ProjectNotFoundException | TaskNotFoundException e) {
-        System.out.println("ERROR: the given task could not be found");
+      }
+      catch (ProjectNotFoundException e)  {
+        System.out.println("ERROR: the given project does not exist, please try again\n");
+      }
+      catch (TaskNotFoundException e) {
+        System.out.println("ERROR: the given task does not exist, please try again\n");
       } catch (IncorrectUserException e) {
         System.out.println("ERROR: you are not allowed to change this task");
+        return;
       }
     }
   }
@@ -111,12 +117,10 @@ public class UpdateTaskUI {
    * @throws IncorrectPermissionException if the user is not logged in as a developer
    * @throws IncorrectUserException if the user is not assigned to this task
    */
-  public void updateForm(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException, IncorrectUserException {
+  public void updateForm(String projectName, String taskName, Scanner scanner) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException, IncorrectUserException {
     Status status = getController().getStatus(projectName, taskName);
     int systemHour = getController().getSystemHour();
     int systemMinute = getController().getSystemMinute();
-
-    Scanner scanner = new Scanner(System.in);
 
     while(true) {
       switch (status) {
@@ -124,7 +128,7 @@ public class UpdateTaskUI {
           int startHour;
           int startMinute;
 
-          System.out.println("Give the start time for the task.");
+          System.out.println("Give the start time for the task:");
           System.out.println(
                   "Do you want to use system time (" +
                           systemHour +
@@ -157,7 +161,7 @@ public class UpdateTaskUI {
             startHour = systemHour;
             startMinute = systemMinute;
           } else {
-            System.out.println("Give start hour: ");
+            System.out.println("Give start hour:");
             String startHourString = scanner.nextLine();
 
             while (true) {
@@ -170,13 +174,13 @@ public class UpdateTaskUI {
                 break;
               } catch (NumberFormatException e) {
                 System.out.println(
-                        "Given start hour is not an integer or '.', please try again"
+                        "Given start hour is not an integer, please try again"
                 );
                 startHourString = scanner.nextLine();
               }
             }
 
-            System.out.println("Give start minute: ");
+            System.out.println("Give start minute:");
             String startMinuteString = scanner.nextLine();
 
             while (true) {
@@ -189,7 +193,7 @@ public class UpdateTaskUI {
                 break;
               } catch (NumberFormatException e) {
                 System.out.println(
-                        "Given start minute is not an integer or '.', please try again"
+                        "Given start minute is not an integer, please try again"
                 );
                 startMinuteString = scanner.nextLine();
               }
@@ -200,16 +204,16 @@ public class UpdateTaskUI {
             System.out.println("Task " + taskName + " successfully updated");
             return;
           } catch (InvalidTimeException e) {
-            System.out.println("ERROR: the given time is not valid");
+            System.out.println("ERROR: the given minute is not of a valid format (0-59), please try again!\n");
           } catch (IncorrectTaskStatusException e) {
-            System.out.println("ERROR: the task has the wrong status for this update");
+            System.out.println("ERROR: the task has the wrong status for this update, please try again!\n");
           }
         }
         case EXECUTING -> {
           int endHour;
           int endMinute;
 
-          System.out.println("Give the end time for the task.");
+          System.out.println("Give the end time for the task:");
           System.out.println(
                   "Do you want to use system time (" +
                           systemHour +
@@ -242,7 +246,7 @@ public class UpdateTaskUI {
             endHour = systemHour;
             endMinute = systemMinute;
           } else {
-            System.out.println("Give end hour: ");
+            System.out.println("Give end hour:");
             String endHourString = scanner.nextLine();
 
             while (true) {
@@ -255,13 +259,13 @@ public class UpdateTaskUI {
                 break;
               } catch (NumberFormatException e) {
                 System.out.println(
-                        "Given end hour is not an integer or '.', please try again"
+                        "Given end hour is not an integer, please try again"
                 );
                 endHourString = scanner.nextLine();
               }
             }
 
-            System.out.println("Give end minute: ");
+            System.out.println("Give end minute:");
             String endMinuteString = scanner.nextLine();
 
             while (true) {
@@ -274,7 +278,7 @@ public class UpdateTaskUI {
                 break;
               } catch (NumberFormatException e) {
                 System.out.println(
-                        "Given end minute is not an integer or '.', please try again"
+                        "Given end minute is not an integer, please try again"
                 );
                 endMinuteString = scanner.nextLine();
               }
@@ -312,15 +316,17 @@ public class UpdateTaskUI {
             System.out.println("Task " + taskName + " successfully updated");
             return;
           } catch (FailTimeAfterSystemTimeException e) {
-            System.out.println("ERROR: the fail time is after the system time");
+            System.out.println("ERROR: the fail time is after the system time\n");
           } catch (InvalidTimeException e) {
-            System.out.println("ERROR: the given time is not valid");
+            System.out.println("ERROR: the given minute is not of a valid format (0-59), please try again!\n");
           } catch (IncorrectTaskStatusException e) {
             System.out.println("ERROR: the task has the wrong status for this update");
           }
         }
-        default ->
+        default -> {
           System.out.println("ERROR: Task status doesn't allow an update.");
+          return;
+        }
       }
     }
   }

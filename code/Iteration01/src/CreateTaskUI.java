@@ -169,20 +169,15 @@ public class CreateTaskUI {
           System.out.println("Task " + taskName + " successfully added to project " + projectName + " as a replacement for task " + replaces);
           return;
         } catch (ReplacedTaskNotFailedException e) {
-          System.out.println("ERROR: the task to replace has not failed, please try again");
-          System.out.println(); // Dit moet, line separators acting up.
+          System.out.println("ERROR: the task to replace has not failed, please try again\n");
         } catch (ProjectNotFoundException e) {
-          System.out.println("ERROR: the given project does not exist");
-          System.out.println();
+          System.out.println("ERROR: the given project does not exist\n");
         } catch (InvalidTimeException e) {
-          System.out.println("ERROR: The given minutes are not of a valid format (0-59)");
-          System.out.println();
+          System.out.println("ERROR: The given minutes are not of a valid format (0-59)\n");
         } catch (TaskNotFoundException e) {
-          System.out.println("ERROR: the given task to replace does not exist");
-          System.out.println();
+          System.out.println("ERROR: the given task to replace does not exist\n");
         } catch (TaskNameAlreadyInUseException e) {
-          System.out.println("ERROR: the given task name is already in use");
-          System.out.println();
+          System.out.println("ERROR: the given task name is already in use\n");
         }
       } else {
         System.out.println("Give developer performing this task:");
@@ -224,20 +219,15 @@ public class CreateTaskUI {
           System.out.println("Task " + taskName + " successfully added to project " + projectName);
           return;
         } catch (UserNotFoundException e) {
-          System.out.println("ERROR: Given user does not exist or is not a developer");
-          System.out.println();
+          System.out.println("ERROR: Given user does not exist or is not a developer\n");
         } catch (ProjectNotFoundException e) {
-          System.out.println("ERROR: Given project does not exist");
-          System.out.println();
+          System.out.println("ERROR: Given project does not exist\n");
         } catch (InvalidTimeException e) {
-          System.out.println("ERROR: The given minutes are not of a valid format (0-59)");
-          System.out.println();
+          System.out.println("ERROR: The given minutes are not of a valid format (0-59)\n");
         } catch (TaskNotFoundException e) {
-          System.out.println("ERROR: Given task does not exist");
-          System.out.println();
+          System.out.println("ERROR: Given task does not exist\n");
         } catch (TaskNameAlreadyInUseException e) {
-          System.out.println("ERROR: the given task name is already in use");
-          System.out.println();
+          System.out.println("ERROR: the given task name is already in use\n");
         }
       }
     }
