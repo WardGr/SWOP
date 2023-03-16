@@ -283,7 +283,7 @@ public class TaskManSystem {
    * @param currentUser User currently logged in
    * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task within the given project
-   * @throws UserNotAllowedToChangeTaskException if currentUser is not the user assigned to the given task
+   * @throws IncorrectUserException if currentUser is not the user assigned to the given task
    * @throws IncorrectTaskStatusException if the task status is not AVAILABLE
    */
   public void startTask(
@@ -292,7 +292,7 @@ public class TaskManSystem {
     Time startTime,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    throws ProjectNotFoundException, TaskNotFoundException, IncorrectUserException, IncorrectTaskStatusException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -316,7 +316,7 @@ public class TaskManSystem {
    * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task within the given project
    * @throws FailTimeAfterSystemTimeException if newStatus == FAILED and the given end time is after the system time
-   * @throws UserNotAllowedToChangeTaskException if currentUser is not the user assigned to the given task
+   * @throws IncorrectUserException if currentUser is not the user assigned to the given task
    * @throws IncorrectTaskStatusException if the task status is not EXECUTING
    */
   public void endTask(
@@ -326,7 +326,7 @@ public class TaskManSystem {
     Time endTime,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    throws ProjectNotFoundException, TaskNotFoundException, FailTimeAfterSystemTimeException, IncorrectUserException, IncorrectTaskStatusException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
