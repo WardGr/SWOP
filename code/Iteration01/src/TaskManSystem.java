@@ -279,30 +279,27 @@ public class TaskManSystem {
    *
    * @param projectName Name of the project to which the task to start is attached
    * @param taskName Name of the task to start
-   * @param startHour Hour at which the task should start
-   * @param startMinute Minute at which the task should start
+   * @param startTime Time at which the task should start
    * @param currentUser User currently logged in
    * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task within the given project
-   * @throws InvalidTimeException if startMinute < 0 or startMinute > 59
    * @throws UserNotAllowedToChangeTaskException if currentUser is not the user assigned to the given task
    * @throws IncorrectTaskStatusException if the task status is not AVAILABLE
    */
   public void startTask(
     String projectName,
     String taskName,
-    int startHour,
-    int startMinute,
+    Time startTime,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    throws ProjectNotFoundException, TaskNotFoundException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
     }
     project.startTask(
       taskName,
-      new Time(startHour, startMinute),
+      startTime,
       getSystemTime(),
       currentUser
     );
@@ -311,15 +308,13 @@ public class TaskManSystem {
   /**
    * Sets the end time of the given (EXECUTING) task, and changes its status to the given status
    *
-   * @param projectName Name of the project to which the task to start is attached
-   * @param taskName Name of the task to start
-   * @param endHour Hour at which the task should start
-   * @param endMinute Minute at which the task should start
+   * @param projectName Name of the project to which the task to end is attached
+   * @param taskName Name of the task to end
+   * @param endTime Time at which the task should end
    * @param newStatus Status to change the given task into
    * @param currentUser User currently logged in
    * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task within the given project
-   * @throws InvalidTimeException if startMinute < 0 or startMinute > 59
    * @throws FailTimeAfterSystemTimeException if newStatus == FAILED and the given end time is after the system time
    * @throws UserNotAllowedToChangeTaskException if currentUser is not the user assigned to the given task
    * @throws IncorrectTaskStatusException if the task status is not EXECUTING
@@ -328,11 +323,10 @@ public class TaskManSystem {
     String projectName,
     String taskName,
     Status newStatus,
-    int endHour,
-    int endMinute,
+    Time endTime,
     User currentUser
   )
-    throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    throws ProjectNotFoundException, TaskNotFoundException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
     Project project = getProject(projectName);
     if (project == null) {
       throw new ProjectNotFoundException();
@@ -340,7 +334,7 @@ public class TaskManSystem {
     project.endTask(
       taskName,
       newStatus,
-      new Time(endHour, endMinute),
+      endTime,
       getSystemTime(),
       currentUser
     );

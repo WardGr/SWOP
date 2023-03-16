@@ -12,8 +12,8 @@ public class LoadSystemTest {
     public void testLoadSystem() throws ProjectNotFoundException, TaskNotFoundException {
         LoadSystemController lsc = new LoadSystemController(userManager, taskManSystem, session, loadSystemUI);
         lsc.LoadSystem("code/Iteration01/tests/loadTest.json");
-        assertEquals(taskManSystem.getSystemHour(), 15);
-        assertTrue(taskManSystem.getSystemMinute() == 10);
+        assertEquals(taskManSystem.getSystemTime().getHour(), 15);
+        assertTrue(taskManSystem.getSystemTime().getMinute() == 10);
         assertEquals(taskManSystem.getProjectNames().get(0), "simpleProject");
         assertEquals(taskManSystem.getStatus("simpleProject", "simpleTask"), Status.EXECUTING);
 

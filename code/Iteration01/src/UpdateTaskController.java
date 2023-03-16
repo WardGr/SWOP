@@ -137,8 +137,8 @@ public class UpdateTaskController {
    *
    * @param projectName Name of the project the task is assigned to, given by the user
    * @param taskName Name of the task, given by the user
-   * @param startHourInput Hour of the starting time, given by the user
-   * @param startMinuteInput Minute of the starting time, given by the user
+   * @param startHour Hour of the starting time, given by the user
+   * @param startMinute Minute of the starting time, given by the user
    * @throws IncorrectPermissionException if the user is not logged in as a developer
    * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
    * @throws InvalidTimeException if startMinuteInput < 0 or startMinuteInput > 59
@@ -146,11 +146,11 @@ public class UpdateTaskController {
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task
    * @throws IncorrectTaskStatusException if the given task is not available
    */
-  public void startTask(String projectName, String taskName, int startHourInput, int startMinuteInput) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
+  public void startTask(String projectName, String taskName, int startHour, int startMinute) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
-    getTaskManSystem().startTask(projectName, taskName, startHourInput, startMinuteInput, getSession().getCurrentUser());
+    getTaskManSystem().startTask(projectName, taskName, new Time(startHour, startMinute), getSession().getCurrentUser());
   }
 
   /**
@@ -158,8 +158,8 @@ public class UpdateTaskController {
    *
    * @param projectName Name of the project the task is assigned to, given by the user
    * @param taskName Name of the task, given by the user
-   * @param endHourInput Hour of the end time, given by the user
-   * @param endMinuteInput Minute of the end time, given by the user
+   * @param endHour Hour of the end time, given by the user
+   * @param endMinute Minute of the end time, given by the user
    * @param newStatus The status the user wishes to change this task to (finished or failed)
    * @throws IncorrectPermissionException if the user is not logged in as developer
    * @throws FailTimeAfterSystemTimeException if the given end time is after the system time and the given status is failed
@@ -169,10 +169,10 @@ public class UpdateTaskController {
    * @throws TaskNotFoundException if the given task name does not correspond to an existing task
    * @throws IncorrectTaskStatusException if the given task is not executing
    */
-  public void endTask(String projectName, String taskName, Status newStatus, int endHourInput, int endMinuteInput) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
+  public void endTask(String projectName, String taskName, Status newStatus, int endHour, int endMinute) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, UserNotAllowedToChangeTaskException, TaskNotFoundException, IncorrectTaskStatusException {
     if (getSession().getRole() != Role.DEVELOPER) {
       throw new IncorrectPermissionException("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
-    getTaskManSystem().endTask(projectName, taskName, newStatus, endHourInput, endMinuteInput, getSession().getCurrentUser());
+    getTaskManSystem().endTask(projectName, taskName, newStatus, new Time(endHour, endMinute), getSession().getCurrentUser());
   }
 }
