@@ -34,8 +34,8 @@ public class UpdateTaskUITest {
         UpdateTaskUI wrongUI = new UpdateTaskUI(wrongSession, taskManSystem);
         UpdateTaskUI managerUI = new UpdateTaskUI(managerSession, taskManSystem);
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            System.setOut(new PrintStream(out));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
 
 
         managerUI.updateTaskStatus();
