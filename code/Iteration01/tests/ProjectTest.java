@@ -197,65 +197,73 @@ public class ProjectTest {
 
         house.addNewTask("Build walls", "Build the walls of the house", new Time(500), 20.58, new LinkedList<>(), mechanic);
         house.addNewTask("install roof", "Install the roof of the house", new Time(20), 5, new LinkedList<>(), mechanic);
-        assertEquals("Project Name:  House\n" +
-                "Description:   Build a house\n" +
-                "Creation Time: 12 hours, 55 minutes\n" +
-                "Due Time:      3058 hours, 55 minutes\n" +
-                "Status:        ongoing\n" +
-                "\n" +
-                "Tasks:\n" +
-                "1. Build walls\n" +
-                "2. install roof\n", house.toString());
+        assertEquals("""
+                Project Name:  House
+                Description:   Build a house
+                Creation Time: 12 hours, 55 minutes
+                Due Time:      3058 hours, 55 minutes
+                Status:        ongoing
+                
+                Tasks:
+                1. Build walls
+                2. install roof
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), house.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
-        assertEquals("Project Name:  Minecraft\n" +
-                "Description:   Build a game\n" +
-                "Creation Time: 0 hours, 0 minutes\n" +
-                "Due Time:      50 hours, 0 minutes\n" +
-                "Status:        finished\n" +
-                "\n" +
-                "Tasks:\n" +
-                "1. Purchase Render\n" +
-                "2. Make Mobs\n" +
-                "\n" +
-                "Tasks that have been replaced:\n" +
-                "1. Make Render, replaced by task: Purchase Render\n", minecraft.toString());
+        assertEquals("""
+                Project Name:  Minecraft
+                Description:   Build a game
+                Creation Time: 0 hours, 0 minutes
+                Due Time:      50 hours, 0 minutes
+                Status:        finished
+                
+                Tasks:
+                1. Purchase Render
+                2. Make Mobs
+                
+                Tasks that have been replaced:
+                1. Make Render, replaced by task: Purchase Render
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), minecraft.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
-        assertEquals("Task Name:          Purchase Render\n" +
-                        "Description:        Purchase a render of the game\n" +
-                        "Estimated Duration: 0 hours, 30 minutes\n" +
-                        "Accepted Deviation: 300.0\n" +
-                        "Status:             finished, on time\n" +
-                        "\n" +
-                        "Replacement Task:   No replacement task\n" +
-                        "Replaces Task:      Make Render\n" +
-                        "\n" +
-                        "Start Time:         0 hours, 2 minutes\n" +
-                        "End Time:           0 hours, 15 minutes\n" +
-                        "\n" +
-                        "User:               Ward\n" +
-                        "\n" +
-                        "Next tasks:\n" +
-                        "1.Make Mobs\n" +
-                        "Previous tasks:\n", minecraft.showTask("Purchase Render"));
+        assertEquals("""
+                        Task Name:          Purchase Render
+                        Description:        Purchase a render of the game
+                        Estimated Duration: 0 hours, 30 minutes
+                        Accepted Deviation: 300.0
+                        Status:             finished, on time
+                        
+                        Replacement Task:   No replacement task
+                        Replaces Task:      Make Render
+                        
+                        Start Time:         0 hours, 2 minutes
+                        End Time:           0 hours, 15 minutes
+                        
+                        User:               Ward
+                        
+                        Next tasks:
+                        1.Make Mobs
+                        Previous tasks:
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), minecraft.showTask("Purchase Render").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
-        assertEquals("Task Name:          Install engine\n" +
-                "Description:        Install the engine of the car\n" +
-                "Estimated Duration: 1 hours, 40 minutes\n" +
-                "Accepted Deviation: 10.0\n" +
-                "Status:             finished, on time\n" +
-                "\n" +
-                "Replacement Task:   No replacement task\n" +
-                "Replaces Task:      Replaces no tasks\n" +
-                "\n" +
-                "Start Time:         0 hours, 0 minutes\n" +
-                "End Time:           2 hours, 0 minutes\n" +
-                "\n" +
-                "User:               Engineer\n" +
-                "\n" +
-                "Next tasks:\n" +
-                "1.install navsat\n" +
-                "2.Brake fluid\n" +
-                "Previous tasks:\n", car.showTask("Install engine"));
+        assertEquals("""
+                Task Name:          Install engine
+                Description:        Install the engine of the car
+                Estimated Duration: 1 hours, 40 minutes
+                Accepted Deviation: 10.0
+                Status:             finished, on time
+                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                
+                Start Time:         0 hours, 0 minutes
+                End Time:           2 hours, 0 minutes
+                
+                User:               Engineer
+                
+                Next tasks:
+                1.install navsat
+                2.Brake fluid
+                Previous tasks:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), car.showTask("Install engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         assertEquals(Status.FINISHED, car.getStatus("Install engine"));
         assertEquals(Status.FINISHED, car.getStatus("Build chasis"));

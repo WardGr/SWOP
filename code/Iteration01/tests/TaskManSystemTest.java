@@ -31,13 +31,13 @@ public class TaskManSystemTest {
         taskManSystem.createProject("car", "Make a Honda Civic 2020", new Time(63, 20));
         assertEquals(taskManSystem.getProjectNamesWithStatus().size(), 1);
         assertEquals(taskManSystem.getProjectNamesWithStatus().get("car"), "ongoing");
-        assertEquals(taskManSystem.showProject("car"), """
+        assertEquals(taskManSystem.showProject("car").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), """
                 Project Name:  car
                 Description:   Make a Honda Civic 2020
                 Creation Time: 5 hours, 20 minutes
                 Due Time:      63 hours, 20 minutes
                 Status:        ongoing
-                """);
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         exception = assertThrows(ProjectNotFoundException.class, () -> {
             taskManSystem.showProject("house");
         });
@@ -105,22 +105,24 @@ public class TaskManSystemTest {
         assertEquals(Status.AVAILABLE, taskManSystem.getStatus("car", "Wheels"));
         assertEquals(Status.AVAILABLE, taskManSystem.getStatus("house", "Walls"));
 
-        assertEquals("Task Name:          Engine\n" +
-                "Description:        Get Honda to deliver engine\n" +
-                "Estimated Duration: 7 hours, 3 minutes\n" +
-                "Accepted Deviation: 10.0\n" +
-                "Status:             available\n" +
-                "\n" +
-                "Replacement Task:   No replacement task\n" +
-                "Replaces Task:      Replaces no tasks\n" +
-                "\n" +
-                "Start Time:         Task has not started yet\n" +
-                "End Time:           Task has not ended yet\n" +
-                "\n" +
-                "User:               mechanic\n" +
-                "\n" +
-                "Next tasks:\n" +
-                "Previous tasks:\n", taskManSystem.showTask("car", "Engine"));
+        assertEquals("""
+                Task Name:          Engine
+                Description:        Get Honda to deliver engine
+                Estimated Duration: 7 hours, 3 minutes
+                Accepted Deviation: 10.0
+                Status:             available
+                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
+                
+                User:               mechanic
+                
+                Next tasks:
+                Previous tasks:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         assertEquals(1, taskManSystem.getNextStatuses("car", "Engine").size());
         assertEquals(1, taskManSystem.getNextStatuses("car", "Wheels").size());
@@ -137,22 +139,24 @@ public class TaskManSystemTest {
         assertEquals(2, taskManSystem.getNextStatuses("car", "Wheels").size());
         assertEquals(2, taskManSystem.getNextStatuses("house", "Walls").size());
 
-        assertEquals("Task Name:          Engine\n" +
-                "Description:        Get Honda to deliver engine\n" +
-                "Estimated Duration: 7 hours, 3 minutes\n" +
-                "Accepted Deviation: 10.0\n" +
-                "Status:             executing\n" +
-                "\n" +
-                "Replacement Task:   No replacement task\n" +
-                "Replaces Task:      Replaces no tasks\n" +
-                "\n" +
-                "Start Time:         4 hours, 34 minutes\n" +
-                "End Time:           No end time set\n" +
-                "\n" +
-                "User:               mechanic\n" +
-                "\n" +
-                "Next tasks:\n" +
-                "Previous tasks:\n", taskManSystem.showTask("car", "Engine"));
+        assertEquals("""
+                Task Name:          Engine
+                Description:        Get Honda to deliver engine
+                Estimated Duration: 7 hours, 3 minutes
+                Accepted Deviation: 10.0
+                Status:             executing
+                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                
+                Start Time:         4 hours, 34 minutes
+                End Time:           No end time set
+                
+                User:               mechanic
+                
+                Next tasks:
+                Previous tasks:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
 
         assertEquals(Status.EXECUTING, taskManSystem.getStatus("car", "Engine"));
@@ -168,22 +172,24 @@ public class TaskManSystemTest {
         taskManSystem.endTask("car", "Wheels", Status.FINISHED, new Time(6, 35), mechanic);
         taskManSystem.endTask("house", "Walls", Status.FINISHED, new Time(6, 35), builder);
 
-        assertEquals("Task Name:          Engine\n" +
-                        "Description:        Get Honda to deliver engine\n" +
-                        "Estimated Duration: 7 hours, 3 minutes\n" +
-                        "Accepted Deviation: 10.0\n" +
-                        "Status:             executing\n" +
-                        "\n" +
-                        "Replacement Task:   No replacement task\n" +
-                        "Replaces Task:      Replaces no tasks\n" +
-                        "\n" +
-                        "Start Time:         4 hours, 34 minutes\n" +
-                        "End Time:           6 hours, 35 minutes\n" +
-                        "\n" +
-                        "User:               mechanic\n" +
-                        "\n" +
-                        "Next tasks:\n" +
-                        "Previous tasks:\n", taskManSystem.showTask("car", "Engine"));
+        assertEquals("""
+                        Task Name:          Engine
+                        Description:        Get Honda to deliver engine
+                        Estimated Duration: 7 hours, 3 minutes
+                        Accepted Deviation: 10.0
+                        Status:             executing
+                        
+                        Replacement Task:   No replacement task
+                        Replaces Task:      Replaces no tasks
+                        
+                        Start Time:         4 hours, 34 minutes
+                        End Time:           6 hours, 35 minutes
+                        
+                        User:               mechanic
+                        
+                        Next tasks:
+                        Previous tasks:
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         taskManSystem.advanceTime(new Time(6, 22));
         assertEquals(taskManSystem.getSystemTime().getHour(), 6);
@@ -195,22 +201,24 @@ public class TaskManSystemTest {
         assertEquals(0, taskManSystem.getNextStatuses("car", "Engine").size());
         assertEquals(0, taskManSystem.getNextStatuses("car", "Wheels").size());
         assertEquals(0, taskManSystem.getNextStatuses("house", "Walls").size());
-        assertEquals("Task Name:          Engine\n" +
-                "Description:        Get Honda to deliver engine\n" +
-                "Estimated Duration: 7 hours, 3 minutes\n" +
-                "Accepted Deviation: 10.0\n" +
-                "Status:             finished, on time\n" +
-                "\n" +
-                "Replacement Task:   No replacement task\n" +
-                "Replaces Task:      Replaces no tasks\n" +
-                "\n" +
-                "Start Time:         4 hours, 34 minutes\n" +
-                "End Time:           6 hours, 35 minutes\n" +
-                "\n" +
-                "User:               mechanic\n" +
-                "\n" +
-                "Next tasks:\n" +
-                "Previous tasks:\n", taskManSystem.showTask("car", "Engine"));
+        assertEquals("""
+                Task Name:          Engine
+                Description:        Get Honda to deliver engine
+                Estimated Duration: 7 hours, 3 minutes
+                Accepted Deviation: 10.0
+                Status:             finished, on time
+                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                
+                Start Time:         4 hours, 34 minutes
+                End Time:           6 hours, 35 minutes
+                
+                User:               mechanic
+                
+                Next tasks:
+                Previous tasks:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
             taskManSystem.advanceTime(new Time(0, 33));

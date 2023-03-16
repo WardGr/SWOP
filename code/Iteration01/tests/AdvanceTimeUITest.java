@@ -20,66 +20,79 @@ public class AdvanceTimeUITest {
 
         session.login(dev);
         atui.advanceTime();
-        assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
+                      out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
         session.logout();
         session.login(manager);
         System.setIn(new ByteArrayInputStream("2\n3".getBytes()));
         atui.advanceTime();
-        assertEquals("Current system time is: 0:0\n" +
-                "Type BACK to cancel advancing the system time any time\n" +
-                "Give new system hour:\n" +
-                "Give new system minute:\n" +
-                "Time successfully updated\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        assertEquals("""
+                Current system time is: 0:0
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Give new system minute:
+                Time successfully updated
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("5\n7".getBytes()));
         atui.advanceTime();
-        assertEquals("Current system time is: 2:3\n" +
-                "Type BACK to cancel advancing the system time any time\n" +
-                "Give new system hour:\n" +
-                "Give new system minute:\n" +
-                "Time successfully updated\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        assertEquals("""
+                Current system time is: 2:3
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Give new system minute:
+                Time successfully updated
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
         System.setIn(new ByteArrayInputStream("BACK".getBytes()));
         atui.advanceTime();
-        assertEquals("Current system time is: 5:7\n" +
-                "Type BACK to cancel advancing the system time any time\n" +
-                "Give new system hour:\n" +
-                "Cancelled advancing time\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        assertEquals("""
+                Current system time is: 5:7
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Cancelled advancing time
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
         System.setIn(new ByteArrayInputStream("100\nBACK".getBytes()));
         atui.advanceTime();
-        assertEquals("Current system time is: 5:7\n" +
-                "Type BACK to cancel advancing the system time any time\n" +
-                "Give new system hour:\n" +
-                "Give new system minute:\n" +
-                "Cancelled advancing time\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        assertEquals("""
+                Current system time is: 5:7
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Give new system minute:
+                Cancelled advancing time
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
         System.setIn(new ByteArrayInputStream("5\n60\n5\n55".getBytes()));
         atui.advanceTime();
-        assertEquals("Current system time is: 5:7\n" +
-                "Type BACK to cancel advancing the system time any time\n" +
-                "Give new system hour:\n" +
-                "Give new system minute:\n" +
-                "ERROR: the chosen time is not valid\n" +
-                "Current system time is: 5:7\n" +
-                "Type BACK to cancel advancing the system time any time\n" +
-                "Give new system hour:\n" +
-                "Give new system minute:\n" +
-                "Time successfully updated\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        assertEquals("""
+                Current system time is: 5:7
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Give new system minute:
+                ERROR: the chosen time is not valid
+                Current system time is: 5:7
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Give new system minute:
+                Time successfully updated
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
         System.setIn(new ByteArrayInputStream("5\n20\n7\n55".getBytes()));
         atui.advanceTime();
-        assertEquals("Current system time is: 5:55\n" +
-                "Type BACK to cancel advancing the system time any time\n" +
-                "Give new system hour:\n" +
-                "Give new system minute:\n" +
-                "ERROR: The chosen time is before the system time\n" +
-                "Current system time is: 5:55\n" +
-                "Type BACK to cancel advancing the system time any time\n" +
-                "Give new system hour:\n" +
-                "Give new system minute:\n" +
-                "Time successfully updated\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        assertEquals("""
+                Current system time is: 5:55
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Give new system minute:
+                ERROR: The chosen time is before the system time
+                Current system time is: 5:55
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Give new system minute:
+                Time successfully updated
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
     }
 }

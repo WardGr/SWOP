@@ -59,22 +59,24 @@ public class UpdateTaskControllerTest {
         assertEquals(equals, devUtc.executingTasksNames().get("Brewery"));
         assertEquals(equals, devUtc.executingTasksNames().get("Sell"));
 
-        assertEquals("Task Name:          Brew\n" +
-                "Description:        Brew beer\n" +
-                "Estimated Duration: 10 hours, 0 minutes\n" +
-                "Accepted Deviation: 50.0\n" +
-                "Status:             available\n" +
-                "\n" +
-                "Replacement Task:   No replacement task\n" +
-                "Replaces Task:      Replaces no tasks\n" +
-                "\n" +
-                "Start Time:         Task has not started yet\n" +
-                "End Time:           Task has not ended yet\n" +
-                "\n" +
-                "User:               OlavBl\n" +
-                "\n" +
-                "Next tasks:\n" +
-                "Previous tasks:\n", devUtc.showTask("Brewery", "Brew"));
+        assertEquals("""
+                Task Name:          Brew
+                Description:        Brew beer
+                Estimated Duration: 10 hours, 0 minutes
+                Accepted Deviation: 50.0
+                Status:             available
+                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
+                
+                User:               OlavBl
+                
+                Next tasks:
+                Previous tasks:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), devUtc.showTask("Brewery", "Brew").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         assertEquals(1, devUtc.getNextStatuses("Brewery", "Brew").size());
         assertEquals(Status.EXECUTING, devUtc.getNextStatuses("Brewery", "Brew").get(0));
         assertEquals(Status.AVAILABLE, devUtc.getStatus("Brewery", "Brew"));
@@ -98,22 +100,24 @@ public class UpdateTaskControllerTest {
         assertEquals(20, devUtc.getSystemHour());
         assertEquals(18, devUtc.getSystemMinute());
         assertEquals(new LinkedList<>(), devUtc.availableTasksNames().get("Brewery"));
-        assertEquals("Task Name:          Brew\n" +
-                "Description:        Brew beer\n" +
-                "Estimated Duration: 10 hours, 0 minutes\n" +
-                "Accepted Deviation: 50.0\n" +
-                "Status:             finished, on time\n" +
-                "\n" +
-                "Replacement Task:   No replacement task\n" +
-                "Replaces Task:      Replaces no tasks\n" +
-                "\n" +
-                "Start Time:         5 hours, 10 minutes\n" +
-                "End Time:           15 hours, 30 minutes\n" +
-                "\n" +
-                "User:               OlavBl\n" +
-                "\n" +
-                "Next tasks:\n" +
-                "Previous tasks:\n", devUtc.showTask("Brewery", "Brew"));
+        assertEquals("""
+                Task Name:          Brew
+                Description:        Brew beer
+                Estimated Duration: 10 hours, 0 minutes
+                Accepted Deviation: 50.0
+                Status:             finished, on time
+                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                
+                Start Time:         5 hours, 10 minutes
+                End Time:           15 hours, 30 minutes
+                
+                User:               OlavBl
+                
+                Next tasks:
+                Previous tasks:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), devUtc.showTask("Brewery", "Brew").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         prev = new LinkedList<>();
         prev.add("Design");
@@ -131,23 +135,25 @@ public class UpdateTaskControllerTest {
         assertEquals(Status.FAILED, devUtc.getNextStatuses("Sell", "Design").get(1));
         devUtc.endTask("Sell", "Design", Status.FAILED, 30, 15);
         assertEquals(Status.FAILED, devUtc.getStatus("Sell", "Design"));
-        assertEquals("Task Name:          Design\n" +
-                "Description:        Design shop\n" +
-                "Estimated Duration: 12 hours, 30 minutes\n" +
-                "Accepted Deviation: 50.0\n" +
-                "Status:             failed\n" +
-                "\n" +
-                "Replacement Task:   No replacement task\n" +
-                "Replaces Task:      Replaces no tasks\n" +
-                "\n" +
-                "Start Time:         30 hours, 10 minutes\n" +
-                "End Time:           30 hours, 15 minutes\n" +
-                "\n" +
-                "User:               OlavBl\n" +
-                "\n" +
-                "Next tasks:\n" +
-                "1.Build\n" +
-                "Previous tasks:\n", devUtc.showTask("Sell", "Design"));
+        assertEquals("""
+                Task Name:          Design
+                Description:        Design shop
+                Estimated Duration: 12 hours, 30 minutes
+                Accepted Deviation: 50.0
+                Status:             failed
+                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                
+                Start Time:         30 hours, 10 minutes
+                End Time:           30 hours, 15 minutes
+                
+                User:               OlavBl
+                
+                Next tasks:
+                1.Build
+                Previous tasks:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), devUtc.showTask("Sell", "Design").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         devTms.advanceTime(new Time(45, 30));
         assertEquals(Status.UNAVAILABLE, devUtc.getStatus("Sell", "Build"));
         prev = new LinkedList();
