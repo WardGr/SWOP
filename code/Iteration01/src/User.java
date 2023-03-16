@@ -5,6 +5,9 @@ public class User {
   private Role role;
 
   public User(String username, String password, Role role) {
+    if (username == null || password == null || role == null) {
+      throw new IllegalArgumentException("Username, password or role cannot be null");
+    }
     this.username = username;
     this.password = password;
     this.role = role;
