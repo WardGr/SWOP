@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class TaskManSystemTest {
     @Test
-    public void testTaskManSystem() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, NewTimeBeforeSystemTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException {
+    public void testTaskManSystem() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, IncorrectUserException {
         Time time = new Time(320);
         TaskManSystem taskManSystem = new TaskManSystem(time);
         assertEquals(5, taskManSystem.getSystemTime().getHour());
@@ -205,10 +205,10 @@ public class TaskManSystemTest {
         exception = assertThrows(InvalidTimeException.class, () -> {
             taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(7, -3), 10, new LinkedList<>(),  mechanic);
         });
-        exception = assertThrows(UserNotAllowedToChangeTaskException.class, () -> {
+        exception = assertThrows(IncorrectUserException.class, () -> {
             taskManSystem.startTask("car", "Engine", new Time(4, 34), builder);
         });
-        exception = assertThrows(UserNotAllowedToChangeTaskException.class, () -> {
+        exception = assertThrows(IncorrectUserException.class, () -> {
             taskManSystem.endTask("car", "Engine", Status.FINISHED, new Time(6, 35), builder);
         });
         exception = assertThrows(IncorrectTaskStatusException.class, () -> {

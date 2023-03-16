@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class ProjectTest {
 
     @Test
-    public void testProject() throws DueBeforeSystemTimeException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    public void testProject() throws DueBeforeSystemTimeException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, IncorrectTaskStatusException, IncorrectUserException {
         Time minecraft_begin = new Time(0, 0);
         Time minecraft_end = new Time(3000);
         Exception exception = assertThrows(DueBeforeSystemTimeException.class, () -> {
@@ -138,10 +138,10 @@ public class ProjectTest {
         car.addTask("Brake fluid", "Regulate the brake fluid of the car", new Time(10), 5, prevEng, engineer);
         assertEquals(car.showAvailableTasks().size(), 2);
         car.startTask("Build chasis", new Time(0, 0), new Time(0, 0), mechanic);
-        exception = assertThrows(UserNotAllowedToChangeTaskException.class, () -> {
+        exception = assertThrows(IncorrectUserException.class, () -> {
             car.startTask("Build chasis", new Time(0, 0), new Time(0, 0), engineer);
         });
-        exception = assertThrows(UserNotAllowedToChangeTaskException.class, () -> {
+        exception = assertThrows(IncorrectUserException.class, () -> {
             car.startTask("Install windows", new Time(0, 0), new Time(0, 0), engineer);
         });
         exception = assertThrows(TaskNotFoundException.class, () -> {
