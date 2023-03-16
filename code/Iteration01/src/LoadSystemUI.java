@@ -9,7 +9,6 @@ import java.util.Scanner;
 public class LoadSystemUI {
     private final LoadSystemController loadSystemController;
 
-
     public LoadSystemUI(UserManager userManager,TaskManSystem taskManSystem, Session session){
         loadSystemController = new LoadSystemController(userManager, taskManSystem, session);
     }
@@ -44,16 +43,9 @@ public class LoadSystemUI {
             getController().LoadSystem(path);
             System.out.println("system succesfully loaded");
         }catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException | ProjectNameAlreadyInUseException | InvalidTimeException | FailTimeAfterSystemTimeException | IncorrectUserException | ReplacedTaskNotFailedException | IncorrectTaskStatusException | DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException e) {
-            invalidFileLogic();
+            System.out.println("ERROR: invalid file logic");
         }   catch (IOException e) {
-            invalidFilePath();
+            System.out.println("ERROR: file not found");
         }
-    }
-
-    private void invalidFileLogic(){
-        System.out.println("ERROR: invalid file logic");
-    }
-    private void invalidFilePath(){
-        System.out.println("ERROR: file not found");
     }
 }
