@@ -115,6 +115,11 @@ public class Project {
         return task;
       }
     }
+    for (Task task : getReplacedTasks()) {
+      if (task.getName().equals(selectedTaskName)) {
+        return task;
+      }
+    }
     return null;
   }
 
