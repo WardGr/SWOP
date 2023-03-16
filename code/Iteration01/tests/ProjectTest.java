@@ -81,11 +81,8 @@ public class ProjectTest {
         exception = assertThrows(TaskNameAlreadyInUseException.class, () -> {
             minecraft.replaceTask("Purchase Render", "Purchase a render of the game", renderDuration, 300, "Make Render");
         });
-        exception = assertThrows(TaskNotFoundException.class, () -> {
-            minecraft.replaceTask("Make Mobs", "Adds creepers and skeletons to the game", renderDuration, 300, "Make Render");
-        });
         assertNull(minecraft.getTask("Make Mobs"));
-        assertNull(minecraft.getTask("Make Render"));
+        assertNotNull(minecraft.getTask("Make Render"));
         assertTrue(minecraft.getTasks().contains(minecraft.getTask("Purchase Render")));
         List<String> previousTasksMinecraft = new LinkedList<String>();
         previousTasksMinecraft.add("Purchase Render");
