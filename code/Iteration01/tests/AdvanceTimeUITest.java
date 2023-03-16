@@ -94,5 +94,30 @@ public class AdvanceTimeUITest {
                 Give new system minute:
                 Time successfully updated
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+
+        out.reset();
+        System.setIn(new ByteArrayInputStream("7\nhoi\n58".getBytes()));
+        atui.advanceTime();
+        assertEquals("""
+                Current system time is: 7:55
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Give new system minute:
+                Given system minute is not an integer, please try again
+                Time successfully updated
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+
+        out.reset();
+        System.setIn(new ByteArrayInputStream("hoi\n10\nhoi\n58".getBytes()));
+        atui.advanceTime();
+        assertEquals("""
+                Current system time is: 7:58
+                Type BACK to cancel advancing the system time any time
+                Give new system hour:
+                Given system hour is not an integer, please try again
+                Give new system minute:
+                Given system minute is not an integer, please try again
+                Time successfully updated
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
     }
 }
