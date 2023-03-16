@@ -2,6 +2,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+/**
+ * Handles user input for the updatetask use-case, requests necessary domain-level information from the UpdateTaskController
+ */
 public class UpdateTaskUI {
 
   private final UpdateTaskController controller;
@@ -14,39 +17,45 @@ public class UpdateTaskUI {
     return controller;
   }
 
+  /**
+   * Handles initial request to updatetask, checks if permission is correct
+   */
   public void updateTaskStatus() {
     if (controller.updateTaskPreconditions()){
-      showAvailableAndExecuting();
+      try{
+        chooseUpdateTask();
+      } catch (IncorrectPermissionException e) {
+        System.out.println(e.getMessage());
+      }
     } else {
-      permissionError();
+      System.out.println("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
     }
   }
 
-  public void showAvailableAndExecuting() {
-    try {
-      Map<String, String> availableTasks = getController().availableTasksNames();
-      Map<String, String> executingTasks = getController().executingTasksNames();
+  /**
+   * Shows all available and executing tasks (these can be updated by the user)
+   * Then allows the user to choose a task to update, and updates this task to the given status
+   *
+   * @throws IncorrectPermissionException if the user is not logged in as a developer
+   */
+  public void chooseUpdateTask() throws IncorrectPermissionException {
+    while(true) {
+
+      Map<String, List<String>> availableTasks = getController().availableTasksNames();
+      Map<String, List<String>> executingTasks = getController().executingTasksNames();
 
       System.out.println("*** AVAILABLE TASKS ***");
       availableTasks.forEach(
-              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
+              (project, tasks) -> tasks.forEach( (task) -> System.out.println("Project: " + project + "---" + task))
       );
       System.out.println();
       System.out.println("*** EXECUTING TASKS ***");
       executingTasks.forEach(
-              (project, task) -> System.out.println("Task: " + task + ", belonging to project: " + project)
+              (project, tasks) -> tasks.forEach( (task) -> System.out.println("Project: " + project + "---" + task))
       );
-      chooseUpdateTask();
-    } catch (IncorrectPermissionException e) {
-      permissionError();
-    }
+      System.out.println();
 
-  }
-
-  public void chooseUpdateTask() throws IncorrectPermissionException{
-    Scanner scanner = new Scanner(System.in);
-
-    while(true) {
+      Scanner scanner = new Scanner(System.in);
 
       System.out.println("Type BACK to cancel updating the task any time");
       System.out.println("Name of the project you want to update:");
@@ -65,16 +74,25 @@ public class UpdateTaskUI {
         updateForm(projectName, taskName);
         return;
       } catch (ProjectNotFoundException | TaskNotFoundException e) {
-        taskNotFoundError();
-      } catch (UserNotAllowedToChangeTaskException e) {
-        userNotAllowedToUpdateTaskError();
+        System.out.println("ERROR: the given task could not be found");
+      } catch (IncorrectUserException e) {
+        System.out.println("ERROR: you are not allowed to change this task");
       }
     }
   }
 
+  /**
+   * Shows the task with name taskName, related to the project with name projectName
+   *
+   * @param projectName Name of the project to which the task is attached
+   * @param taskName Name of the task which should be showed
+   * @throws ProjectNotFoundException if given projectName does not correspond to an existing project
+   * @throws TaskNotFoundException if given taskName does not correspond to an existing task
+   * @throws IncorrectPermissionException if user is not logged in as a developer
+   */
   public void showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
-    String taskDetails = controller.showTask(projectName, taskName);
-    List<Status> nextStatuses = controller.getNextStatuses(projectName, taskName);
+    String taskDetails = getController().showTask(projectName, taskName);
+    List<Status> nextStatuses = getController().getNextStatuses(projectName, taskName);
 
     System.out.println(taskDetails);
     System.out.println("-- Possible Next Statuses --");
@@ -83,10 +101,20 @@ public class UpdateTaskUI {
     }
   }
 
-  public void updateForm(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException, UserNotAllowedToChangeTaskException {
-    Status status = controller.getStatus(projectName, taskName);
-    int systemHour = controller.getSystemHour();
-    int systemMinute = controller.getSystemMinute();
+  /**
+   * Prompts the user to update the selected task and updates the task status and information
+   *
+   * @param projectName name of the project given
+   * @param taskName name of the task given
+   * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
+   * @throws TaskNotFoundException if the given task name does not correspond to an existing task
+   * @throws IncorrectPermissionException if the user is not logged in as a developer
+   * @throws IncorrectUserException if the user is not assigned to this task
+   */
+  public void updateForm(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException, IncorrectUserException {
+    Status status = getController().getStatus(projectName, taskName);
+    int systemHour = getController().getSystemHour();
+    int systemMinute = getController().getSystemMinute();
 
     Scanner scanner = new Scanner(System.in);
 
@@ -168,13 +196,13 @@ public class UpdateTaskUI {
             }
           }
           try{
-            controller.startTask(projectName, taskName, startHour, startMinute);
+            getController().startTask(projectName, taskName, startHour, startMinute);
             System.out.println("Task " + taskName + " successfully updated");
             return;
           } catch (InvalidTimeException e) {
-            invalidTimeError();
+            System.out.println("ERROR: the given time is not valid");
           } catch (IncorrectTaskStatusException e) {
-            incorrectTaskStatusError();
+            System.out.println("ERROR: the task has the wrong status for this update");
           }
         }
         case EXECUTING -> {
@@ -280,46 +308,20 @@ public class UpdateTaskUI {
           }
 
           try{
-            controller.endTask(projectName, taskName, newStatus, endHour, endMinute);
+            getController().endTask(projectName, taskName, newStatus, endHour, endMinute);
             System.out.println("Task " + taskName + " successfully updated");
             return;
           } catch (FailTimeAfterSystemTimeException e) {
-            failTimeAfterSystemTimeError();
+            System.out.println("ERROR: the fail time is after the system time");
           } catch (InvalidTimeException e) {
-            invalidTimeError();
+            System.out.println("ERROR: the given time is not valid");
           } catch (IncorrectTaskStatusException e) {
-            incorrectTaskStatusError();
+            System.out.println("ERROR: the task has the wrong status for this update");
           }
         }
+        default ->
+          System.out.println("ERROR: Task status doesn't allow an update.");
       }
     }
-  }
-
-  public void permissionError() {
-    System.out.println(
-      "You must be logged in with the " +
-      Role.DEVELOPER +
-      " role to call this function"
-    );
-  }
-
-  public void taskNotFoundError() {
-    System.out.println("ERROR: the given task could not be found");
-  }
-
-  public void invalidTimeError() {
-    System.out.println("ERROR: the given time is not valid");
-  }
-
-  public void userNotAllowedToUpdateTaskError() {
-    System.out.println("ERROR: you are not allowed to change this task");
-  }
-
-  public void failTimeAfterSystemTimeError() {
-    System.out.println("ERROR: the fail time is after the system time");
-  }
-
-  public void incorrectTaskStatusError() {
-    System.out.println("ERROR: the task has the wrong status for this update");
   }
 }

@@ -1,7 +1,4 @@
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,11 +6,11 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class TaskTest {
-    public TaskTest() throws UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException {
         testTask();
     }
     @Test
-    public void testTask() throws UserNotAllowedToChangeTaskException, IncorrectTaskStatusException {
+    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException {
         Time estimatedDuration1 = new Time(10);
         double deviation1 = 0.1;
 
@@ -80,7 +77,7 @@ public class TaskTest {
 
         Time finalSystemTime1 = systemTime;
         Task finalTask = task1;
-        assertThrows(UserNotAllowedToChangeTaskException.class , () -> finalTask.start(startTime1, finalSystemTime1, wrongUser));
+        assertThrows(IncorrectUserException.class , () -> finalTask.start(startTime1, finalSystemTime1, wrongUser));
         assertThrows(IncorrectTaskStatusException.class, () -> task2.start(startTime1, finalSystemTime1, user));
 
         task1.start(startTime1, systemTime, user);
@@ -120,7 +117,7 @@ public class TaskTest {
 
         Time finalSystemTime = systemTime;
         Task finalTask1 = task1;
-        assertThrows(UserNotAllowedToChangeTaskException.class, () -> finalTask1.end(Status.FAILED, correctEndTime, finalSystemTime, wrongUser));
+        assertThrows(IncorrectUserException.class, () -> finalTask1.end(Status.FAILED, correctEndTime, finalSystemTime, wrongUser));
         assertThrows(IncorrectTaskStatusException.class, () -> task2.end(Status.FAILED, correctEndTime, finalSystemTime, user));
         Task finalTask2 = task1;
         assertThrows(FailTimeAfterSystemTimeException.class, () -> finalTask2.end(Status.FAILED, incorrectEndTime, finalSystemTime, user));

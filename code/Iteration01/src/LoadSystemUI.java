@@ -1,10 +1,18 @@
 import java.util.Scanner;
 
+/**
+ * Handles user input for the loadsystem use-case, requests necessary domain-level information from the LoadSystemController
+ */
 public class LoadSystemUI {
     private LoadSystemController loadSystemController;
 
+
     public LoadSystemUI(UserManager userManager,TaskManSystem taskManSystem, Session session){
         loadSystemController = new LoadSystemController(userManager, taskManSystem, session, this);
+    }
+
+    private LoadSystemController getController() {
+        return loadSystemController;
     }
 
     public void loadSystem(){
@@ -21,7 +29,7 @@ public class LoadSystemUI {
             System.out.println("Cancelled system load");
             return;
         }
-        loadSystemController.LoadSystem(path);
+        getController().LoadSystem(path);
         System.out.println("system succesfully loaded");
     }
     public void printAccessError(Role role) {

@@ -1,5 +1,8 @@
 import java.util.Scanner;
 
+/**
+ * Handles user input for the advancetime use-case, requests necessary domain-level information from the AdvanceTimeController
+ */
 public class AdvanceTimeUI {
 
   private final AdvanceTimeController controller;
@@ -8,21 +11,35 @@ public class AdvanceTimeUI {
     controller = new AdvanceTimeController(session, taskManSystem);
   }
 
+  private AdvanceTimeController getController() {
+    return controller;
+  }
+
+  /**
+   * Creates the initial advancetime request, checks if the user is logged in as a project manager
+   */
   public void advanceTime() {
-    if (controller.advanceTimePreconditions()) {
-      chooseNewTime();
+    if (getController().advanceTimePreconditions()) {
+      try {
+        chooseNewTime();
+      } catch (IncorrectPermissionException e) {
+        System.out.println(e.getMessage());
+      }
     } else {
-      permissionError();
+      System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
     }
   }
 
-  public void chooseNewTime() {
+  /**
+   * Advances the system time by the given input and updates all necessary domain-objects
+   */
+  public void chooseNewTime() throws IncorrectPermissionException{
     Scanner scanner = new Scanner(System.in);
 
-    int systemHour = controller.getSystemHour();
-    int systemMinute = controller.getSystemMinute();
-
     while(true) {
+
+      int systemHour = getController().getSystemHour();
+      int systemMinute = getController().getSystemMinute();
 
       System.out.println(
               "Current system time is: " + systemHour + ":" + systemMinute
@@ -72,31 +89,14 @@ public class AdvanceTimeUI {
       }
 
       try {
-        controller.setNewTime(newHour, newMinute);
+        getController().setNewTime(newHour, newMinute);
+        System.out.println("Time successfully updated");
         return;
-      } catch (IncorrectPermissionException e) {
-        permissionError();
       } catch (InvalidTimeException e) {
-        notValidTimeError();
+        System.out.println("ERROR: the chosen time is not valid");
       } catch (NewTimeBeforeSystemTimeException e) {
-        newBeforeSystemTimeError();
+        System.out.println("ERROR: The chosen time is before the system time");
       }
     }
-  }
-
-  private void permissionError() {
-    System.out.println(
-      "You must be logged in with the " +
-      Role.PROJECTMANAGER +
-      " role to call this function"
-    );
-  }
-
-  private void notValidTimeError() {
-    System.out.println("ERROR: the chosen time is not valid");
-  }
-
-  private void newBeforeSystemTimeError() {
-    System.out.println("ERROR: The chosen time is before the system time");
   }
 }

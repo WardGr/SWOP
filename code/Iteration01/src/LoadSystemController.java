@@ -16,18 +16,38 @@ public class LoadSystemController {
 
     private LoadSystemUI loadSystemUI;
 
+    private UserManager getUserManager() {
+        return userManager;
+    }
+
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private Session getSession() {
+        return session;
+    }
+
+    private LoadSystemUI getUI() {
+        return loadSystemUI;
+    }
+
     LoadSystemController( UserManager userManager, TaskManSystem taskManSystem, Session session, LoadSystemUI loadSystemUI){
         this.userManager = userManager;
         this.taskManSystem = taskManSystem;
         this.session = session;
         this.loadSystemUI = loadSystemUI;
     }
+
+    /**
+     * Creates the initial
+     */
     public void loadSystemForm(){
-        if (session.getRole() != Role.PROJECTMANAGER) {
-            loadSystemUI.printAccessError(Role.PROJECTMANAGER);
+        if (getSession().getRole() != Role.PROJECTMANAGER) {
+            getUI().printAccessError(Role.PROJECTMANAGER);
             return;
         }
-        loadSystemUI.loadSystemForm();
+        getUI().loadSystemForm();
     }
     public void LoadSystem(String filepath){
         JSONParser jsonParser = new JSONParser();
@@ -36,17 +56,17 @@ public class LoadSystemController {
             //set system time
             int systemHour = (int) (long) doc.get("systemHour");
             int systemMinute = (int) (long) doc.get("systemMinute");
-            taskManSystem.advanceTime(systemHour, systemMinute);
+            getTaskManSystem().advanceTime(new Time(systemHour, systemMinute));
             //load projects
             JSONArray projects = (JSONArray) doc.get("projects");
             for(Object p : projects){
-                loadProject((JSONObject) p, userManager, taskManSystem);
+                loadProject((JSONObject) p, getUserManager(), taskManSystem);
             }
 
         }catch (FileNotFoundException e){
             return; // nog correct afhandelen
         }catch (IOException e){
-            return; // nog correct afhandelen
+            return; // TODO nog correct afhandelen
         }catch (ParseException e) {
             return; // nog correct afhandelen
         } catch (NewTimeBeforeSystemTimeException e) {
@@ -61,7 +81,7 @@ public class LoadSystemController {
             throw new RuntimeException(e);
         } catch (ProjectNotFoundException e) {
             throw new RuntimeException(e);
-        } catch (UserNotAllowedToChangeTaskException e) {
+        } catch (IncorrectUserException e) {
             throw new RuntimeException(e);
         } catch (TaskNotFoundException e) {
             throw new RuntimeException(e);
@@ -76,7 +96,7 @@ public class LoadSystemController {
         }
     }
 
-    private void loadProject(JSONObject project, UserManager userManager, TaskManSystem taskManSystem) throws UserNotFoundException, ReplacedTaskNotFailedException, DueBeforeSystemTimeException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, UserNotAllowedToChangeTaskException, InvalidTimeException, IncorrectTaskStatusException {
+    private void loadProject(JSONObject project, UserManager userManager, TaskManSystem taskManSystem) throws UserNotFoundException, ReplacedTaskNotFailedException, DueBeforeSystemTimeException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectUserException, InvalidTimeException, IncorrectTaskStatusException {
         //create the project
         String name = (String) project.get("name");
         String description = (String) project.get("description");
@@ -93,7 +113,7 @@ public class LoadSystemController {
 
     }
 
-    private void loadTask(JSONObject task, UserManager userManager, TaskManSystem taskManSystem, String projectName) throws UserNotFoundException, ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, UserNotAllowedToChangeTaskException, FailTimeAfterSystemTimeException, InvalidTimeException, IncorrectTaskStatusException {
+    private void loadTask(JSONObject task, UserManager userManager, TaskManSystem taskManSystem, String projectName) throws UserNotFoundException, ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectUserException, FailTimeAfterSystemTimeException, InvalidTimeException, IncorrectTaskStatusException {
         //standard task fields
         String name = (String) task.get("name");
         String description = (String) task.get("description");
@@ -105,7 +125,7 @@ public class LoadSystemController {
         User user = userManager.getDeveloper((String) task.get("user"));
         String replacesTask = (String) task.get("replaces");
         if(replacesTask != null){
-            taskManSystem.addAlternativeTaskToProject(projectName, name, description, new Time(dueHour,dueMinute), acceptableDeviation, replacesTask);
+            taskManSystem.replaceTaskInProject(projectName, name, description, new Time(dueHour,dueMinute), acceptableDeviation, replacesTask);
         }else {
             List<String> prevTasks = (List<String>) task.get("previousTasks");
             taskManSystem.addTaskToProject(projectName, name, description, new Time(dueHour,dueMinute), acceptableDeviation, prevTasks, user);
@@ -116,21 +136,21 @@ public class LoadSystemController {
         if(status.equals("EXECUTING")){
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
-            taskManSystem.startTask(projectName, name,startHour, startMinute, user);
+            taskManSystem.startTask(projectName, name, new Time(startHour, startMinute), user);
         } else if (status.equals("FINISHED")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
             int endHour = (int) (long) task.get("endHour");
             int endMinute = (int) (long) task.get("endMinute");
-            taskManSystem.startTask(projectName, name, startHour, startMinute, user);
-            taskManSystem.endTask(projectName, name, Status.FINISHED, endHour, endMinute, user);
+            taskManSystem.startTask(projectName, name, new Time(startHour, startMinute), user);
+            taskManSystem.endTask(projectName, name, Status.FINISHED, new Time(endHour, endMinute), user);
         }else if (status.equals("FAILED")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
             int endHour = (int) (long) task.get("endHour");
             int endMinute = (int) (long) task.get("endMinute");
-            taskManSystem.startTask(projectName, name, startHour, startMinute, user);
-            taskManSystem.endTask(projectName, name, Status.FAILED,endHour, endMinute, user);
+            taskManSystem.startTask(projectName, name, new Time(startHour, startMinute), user);
+            taskManSystem.endTask(projectName, name, Status.FAILED, new Time(endHour, endMinute), user);
         }
     }
 }

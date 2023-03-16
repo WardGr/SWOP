@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 /**
- * Handles I/O for the login and logout use-cases, requests necessary domain-level information from the SessionController
+ * Handles user input for the login and logout use-cases, requests necessary domain-level information from the SessionController
  */
 public class SessionUI {
 
@@ -13,12 +13,10 @@ public class SessionUI {
 
   /**
    * Initial login request: shows the login prompt if the user is not already logged in
-   *
-   * @param scanner Scanner object which to use to read user input // TODO: maybe get rid of this? only used for tests...
    */
-  public void loginRequest(Scanner scanner) {
+  public void loginRequest() {
     if (getController().loginPrecondition()) {
-      loginPrompt(scanner);
+      loginPrompt();
     } else {
       System.out.println("You are already logged in!");
     }
@@ -34,11 +32,11 @@ public class SessionUI {
    *
    * @pre User is not logged in
    * @post if user typed BACK, then user is not logged in, otherwise user is logged in
-   *
-   * @param scanner Scanner object which to use to read user input // TODO: maybe get rid of this? only used for tests...
    */
-  private void loginPrompt(Scanner scanner) {
+  private void loginPrompt() {
     while (true) {
+      Scanner scanner = new Scanner(System.in);
+
       System.out.println("Type 'BACK' to cancel login");
       System.out.println("Enter username:");
       String username = scanner.nextLine();

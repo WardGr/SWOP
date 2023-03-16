@@ -29,7 +29,7 @@ public class LogoutTest {
 
         // Login as a developer
         System.setIn(new ByteArrayInputStream("OlavBl\ntoilet753\n".getBytes()));
-        sessionUi.loginRequest(new Scanner(System.in));
+        sessionUi.loginRequest();
         assertEquals(out.toString(),
                 """
                         Type 'BACK' to cancel login\r
@@ -42,7 +42,7 @@ public class LogoutTest {
 
         // Logout, session should be removed and role made null
         sessionUi.logout();
-        assertEquals(out.toString(),"Logged out.\n");
+        assertEquals(out.toString(),"Logged out.\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         assertFalse(session.isLoggedIn());
