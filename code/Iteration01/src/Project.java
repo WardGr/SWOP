@@ -1,9 +1,6 @@
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Keeps all the information regarding an existing project, including its tasks
- */
 public class Project {
 
   private List<Task> tasks;
@@ -33,18 +30,34 @@ public class Project {
     projectString.append("Project Name:  " + getName() + '\n' +
                          "Description:   " + getDescription() + '\n' +
                          "Creation Time: " + getCreationTime() + '\n' +
-                         "Due Time:      " + getDueTime() + '\n'
+                         "Due Time:      " + getDueTime() + '\n' +
+                         "Status:        " + getStatus() + '\n'
     );
-    projectString.append("\nTasks:\n");
-    int index = 1;
-    for (Task task : getTasks()) {
-      projectString.append(index++ + "." + task.getName() + '\n');
+
+    if (getTasks().size() > 0) {
+      projectString.append("\nTasks:\n");
+      int index = 1;
+      for (Task task : getTasks()) {
+        projectString.append(index++ + ". " + task.getName() + '\n');
+      }
     }
-    // TODO geef de totale uitvoeringstijd !!! en de status toch ook?
-    // TODO en de gereplacete tasks door andere?
+
+    if (getReplacedTasks().size() > 0) {
+      projectString.append("\nTasks that have been replaced:\n");
+
+      int index = 1;
+      for (Task task : getReplacedTasks()) {
+        projectString.append(index++ + ". " + task.getName() + ", replaced by task: " + task.getReplacementTask().getName());
+      }
+      projectString.append('\n');
+    }
+
+
+    // TODO geef de totale uitvoeringstijd !!!
 
     return projectString.toString();
   }
+
 
   public String getDescription() {
     return description;
@@ -63,10 +76,17 @@ public class Project {
   }
 
   /**
-   * @return an IMMUTABLE list of the current projects task
+   * @return an IMMUTABLE list of the current project tasks
    */
   public List<Task> getTasks() {
     return List.copyOf(tasks);
+  }
+
+  /**
+   * @return an IMMUTABLE list of all tasks that have been replaced
+   */
+  private List<Task> getReplacedTasks() {
+    return List.copyOf(replacedTasks);
   }
 
   /**

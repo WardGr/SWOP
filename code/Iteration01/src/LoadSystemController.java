@@ -10,11 +10,9 @@ import org.json.simple.parser.ParseException;
 
 
 public class LoadSystemController {
-    private UserManager userManager;
-    private TaskManSystem taskManSystem;
-    private Session session;
-
-    private LoadSystemUI loadSystemUI;
+    private final UserManager userManager;
+    private final TaskManSystem taskManSystem;
+    private final Session session;
 
     private UserManager getUserManager() {
         return userManager;
@@ -28,28 +26,23 @@ public class LoadSystemController {
         return session;
     }
 
-    private LoadSystemUI getUI() {
-        return loadSystemUI;
-    }
-
-    LoadSystemController( UserManager userManager, TaskManSystem taskManSystem, Session session, LoadSystemUI loadSystemUI){
+    LoadSystemController( UserManager userManager, TaskManSystem taskManSystem, Session session){
         this.userManager = userManager;
         this.taskManSystem = taskManSystem;
         this.session = session;
-        this.loadSystemUI = loadSystemUI;
+    }
+
+    public boolean loadSystemPreconditions(){
+        return getSession().getRole() == Role.PROJECTMANAGER;
     }
 
     /**
      * Creates the initial
      */
-    public void loadSystemForm(){
+    public void LoadSystem(String filepath) throws IncorrectPermissionException {
         if (getSession().getRole() != Role.PROJECTMANAGER) {
-            getUI().printAccessError(Role.PROJECTMANAGER);
-            return;
+            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        getUI().loadSystemForm();
-    }
-    public void LoadSystem(String filepath){
         JSONParser jsonParser = new JSONParser();
         try (FileReader reader = new FileReader(filepath)){
             JSONObject doc = (JSONObject) jsonParser.parse(reader);

@@ -101,7 +101,6 @@ public class TaskManSystem {
     projects.add(newProject);
   }
 
-
   /**
    * Creates a project with given name, description and due time, using the system time as start time
    *
@@ -149,7 +148,7 @@ public class TaskManSystem {
    * Creates a task with the given information and adds it to the project corresponding to the given project name
    *
    * @param projectName Project name of project which to add the created task to
-   * @param taskName Task name of the task to add to the project
+   * @param taskName Task name of the task to create and add to the project
    * @param description Task description of the task
    * @param durationTime Duration of the task
    * @param deviation Acceptable deviation of the task

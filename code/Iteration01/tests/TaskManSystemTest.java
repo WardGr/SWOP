@@ -35,7 +35,7 @@ public class TaskManSystemTest {
                 "Description:   Make a Honda Civic 2020\n" +
                 "Creation Time: 5 hours, 20 minutes\n" +
                 "Due Time:      63 hours, 20 minutes\n" +
-                "\nTasks:\n");
+                "Status:        ongoing\n");
         exception = assertThrows(ProjectNotFoundException.class, () -> {
             taskManSystem.showProject("house");
         });
