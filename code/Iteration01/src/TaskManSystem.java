@@ -343,14 +343,12 @@ public class TaskManSystem {
   /**
    * Advances the system time
    *
-   * @param newHour Hour which to change the system time to
-   * @param newMinute Minute which to change the system time to
+   * @param newTime Time which to change the system time to
    * @throws NewTimeBeforeSystemTimeException if the given time is before the current system time
    * @throws InvalidTimeException if newMinute < 0 or newMinute > 59
    */
-  public void advanceTime(int newHour, int newMinute)
+  public void advanceTime(Time newTime)
     throws NewTimeBeforeSystemTimeException, InvalidTimeException {
-    Time newTime = new Time(newHour, newMinute);
     if (newTime.before(systemTime)) {
       throw new NewTimeBeforeSystemTimeException();
     }

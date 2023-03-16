@@ -22,11 +22,11 @@ public class AdvanceTimeController {
 
 
   public int getSystemHour(){
-    return getTaskManSystem().getSystemHour();
+    return getTaskManSystem().getSystemTime().getHour();
   }
 
   public int getSystemMinute(){
-    return getTaskManSystem().getSystemMinute();
+    return getTaskManSystem().getSystemTime().getMinute();
   }
 
   /**
@@ -49,6 +49,6 @@ public class AdvanceTimeController {
     if (getSession().getRole() != Role.PROJECTMANAGER) {
       throw new IncorrectPermissionException("");
     }
-    getTaskManSystem().advanceTime(newHour, newMinute);
+    getTaskManSystem().advanceTime(new Time(newHour, newMinute));
   }
 }

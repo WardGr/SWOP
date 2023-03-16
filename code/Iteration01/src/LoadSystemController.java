@@ -40,7 +40,7 @@ public class LoadSystemController {
             //set system time
             int systemHour = (int) (long) doc.get("systemHour");
             int systemMinute = (int) (long) doc.get("systemMinute");
-            taskManSystem.advanceTime(systemHour, systemMinute);
+            taskManSystem.advanceTime(new Time(systemHour, systemMinute));
             //load projects
             JSONArray projects = (JSONArray) doc.get("projects");
             for(Object p : projects){
