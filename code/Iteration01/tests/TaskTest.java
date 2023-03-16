@@ -6,11 +6,11 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class TaskTest {
-    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException {
+    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException {
         testTask();
     }
     @Test
-    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException {
+    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException {
         Time estimatedDuration1 = new Time(10);
         double deviation1 = 0.1;
 
@@ -104,9 +104,16 @@ public class TaskTest {
 
         assertEquals(task2.getStatus(), Status.AVAILABLE);
 
+        Task ffinalTask1 = new Task("Brew coffee", "Brew coffee for the team", new Time(10), 0.1, new LinkedList<>(), user);
 
-        // TODO: replacement task for task 1.
-        // Ending task 1 by failure
+        assertThrows(ReplacedTaskNotFailedException.class, () -> ffinalTask1.replaceTask("replacement", "Replacement of Task1", estimatedDuration1, deviation1));
+        ffinalTask1.advanceTime(new Time(1300));
+        ffinalTask1.start(new Time(1300), new Time(1300), user);
+        assertThrows(IncorrectTaskStatusException.class, () -> ffinalTask1.start(new Time(1300), new Time(1300), user));
+        ffinalTask1.advanceTime(new Time(2000));
+        ffinalTask1.end(Status.FAILED, new Time(1500), new Time(2000), user);
+        assertThrows(IncorrectTaskStatusException.class, () -> ffinalTask1.end(Status.FAILED, new Time(1500), new Time(2000), user));
+        ffinalTask1.replaceTask("replacement", "Replacement of Task1", estimatedDuration1, deviation1);
 
 
         task1 = new Task("Cool task", "Cool description", estimatedDuration1, deviation1, new LinkedList<>(), user);
@@ -128,6 +135,33 @@ public class TaskTest {
         }
 
         assertEquals(Status.FAILED, task1.getStatus());
+
+        Task task = new Task("Cool task", "Cool description", estimatedDuration1, deviation1, new LinkedList<>(), user);
+        LinkedList prev = new LinkedList();
+        prev.add(task);
+        assertThrows(IncorrectUserException.class, () -> task.start(startTime1, new Time(30000), new User("Olav", "321", Role.DEVELOPER)));
+        Task nextTask = new Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, prev, user);
+        assertThrows(IncorrectTaskStatusException.class, () -> nextTask.start(startTime1, new Time(30000), user));
+
+        Task toFinish = new Task("toFinish", "Task will finish due to time increasing", new Time(10, 0), 5, new LinkedList<>(), user);
+        LinkedList<Task> prevTasks = new LinkedList<>();
+        prevTasks.add(toFinish);
+        Task toStart = new Task("toStart", "Task will start due to time increasing", new Time(10, 0), 5, prevTasks, user);
+        assertEquals(Status.UNAVAILABLE, toStart.getStatus());
+        toFinish.start(new Time(0, 0), new Time(0, 0), user);
+        toFinish.end(Status.FINISHED, new Time(10, 0), new Time(10, 0), user);
+        toFinish.advanceTime(new Time(13, 0));
+        assertEquals(Status.FINISHED, toFinish.getStatus());
+        assertEquals(Status.AVAILABLE, toStart.getStatus());
+
+        Task lastTask = new Task("Final Task", "Task will start due to time increasing", new Time(10, 0), 5, prevTasks, user);
+        lastTask.advanceTime(new Time(0, 0));
+        assertEquals(Status.AVAILABLE, lastTask.getStatus());
+        lastTask.start(new Time(10, 0), new Time(10, 0), user);
+        lastTask.advanceTime(new Time(100, 0));
+        assertEquals(Status.EXECUTING, lastTask.getStatus());
+
+
 
 
 

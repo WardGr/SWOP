@@ -32,5 +32,14 @@ public class TimeSpanTest {
         assertEquals("No start time set", brewery.showStartTime());
         assertEquals("22 hours, 0 minutes", brewery.showEndTime());
 
+        brewery.setStartTime(new Time(17, 55));
+
+        assertEquals(new Time(1, 38).getHour(), pilsner.getTimeElapsed().getHour());
+        assertEquals(new Time(1, 38).getMinute(), pilsner.getTimeElapsed().getMinute());
+
+        assertEquals(new Time(4, 5).getHour(), brewery.getTimeElapsed().getHour());
+        assertEquals(new Time(4, 5).getMinute(), brewery.getTimeElapsed().getMinute());
+
+
     }
 }

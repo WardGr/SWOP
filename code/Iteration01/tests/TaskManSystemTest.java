@@ -105,6 +105,23 @@ public class TaskManSystemTest {
         assertEquals(Status.AVAILABLE, taskManSystem.getStatus("car", "Wheels"));
         assertEquals(Status.AVAILABLE, taskManSystem.getStatus("house", "Walls"));
 
+        assertEquals("Task Name:          Engine\n" +
+                "Description:        Get Honda to deliver engine\n" +
+                "Estimated Duration: 7 hours, 3 minutes\n" +
+                "Accepted Deviation: 10.0\n" +
+                "Status:             available\n" +
+                "\n" +
+                "Replacement Task:   No replacement task\n" +
+                "Replaces Task:      Replaces no tasks\n" +
+                "\n" +
+                "Start Time:         Task has not started yet\n" +
+                "End Time:           Task has not ended yet\n" +
+                "\n" +
+                "User:               mechanic\n" +
+                "\n" +
+                "Next tasks:\n" +
+                "Previous tasks:\n", taskManSystem.showTask("car", "Engine"));
+
         assertEquals(1, taskManSystem.getNextStatuses("car", "Engine").size());
         assertEquals(1, taskManSystem.getNextStatuses("car", "Wheels").size());
         assertEquals(1, taskManSystem.getNextStatuses("house", "Walls").size());
@@ -120,6 +137,24 @@ public class TaskManSystemTest {
         assertEquals(2, taskManSystem.getNextStatuses("car", "Wheels").size());
         assertEquals(2, taskManSystem.getNextStatuses("house", "Walls").size());
 
+        assertEquals("Task Name:          Engine\n" +
+                "Description:        Get Honda to deliver engine\n" +
+                "Estimated Duration: 7 hours, 3 minutes\n" +
+                "Accepted Deviation: 10.0\n" +
+                "Status:             executing\n" +
+                "\n" +
+                "Replacement Task:   No replacement task\n" +
+                "Replaces Task:      Replaces no tasks\n" +
+                "\n" +
+                "Start Time:         4 hours, 34 minutes\n" +
+                "End Time:           No end time set\n" +
+                "\n" +
+                "User:               mechanic\n" +
+                "\n" +
+                "Next tasks:\n" +
+                "Previous tasks:\n", taskManSystem.showTask("car", "Engine"));
+
+
         assertEquals(Status.EXECUTING, taskManSystem.getStatus("car", "Engine"));
         assertEquals(Status.EXECUTING, taskManSystem.getStatus("car", "Wheels"));
         assertEquals(Status.EXECUTING, taskManSystem.getStatus("house", "Walls"));
@@ -128,10 +163,27 @@ public class TaskManSystemTest {
 
 
 
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.endTask("website", "Engine", Status.FINISHED, new Time(6, 35), mechanic));
         taskManSystem.endTask("car", "Engine", Status.FINISHED, new Time(6, 35), mechanic);
         taskManSystem.endTask("car", "Wheels", Status.FINISHED, new Time(6, 35), mechanic);
         taskManSystem.endTask("house", "Walls", Status.FINISHED, new Time(6, 35), builder);
 
+        assertEquals("Task Name:          Engine\n" +
+                        "Description:        Get Honda to deliver engine\n" +
+                        "Estimated Duration: 7 hours, 3 minutes\n" +
+                        "Accepted Deviation: 10.0\n" +
+                        "Status:             executing\n" +
+                        "\n" +
+                        "Replacement Task:   No replacement task\n" +
+                        "Replaces Task:      Replaces no tasks\n" +
+                        "\n" +
+                        "Start Time:         4 hours, 34 minutes\n" +
+                        "End Time:           6 hours, 35 minutes\n" +
+                        "\n" +
+                        "User:               mechanic\n" +
+                        "\n" +
+                        "Next tasks:\n" +
+                        "Previous tasks:\n", taskManSystem.showTask("car", "Engine"));
 
         taskManSystem.advanceTime(new Time(6, 22));
         assertEquals(taskManSystem.getSystemTime().getHour(), 6);
@@ -143,6 +195,22 @@ public class TaskManSystemTest {
         assertEquals(0, taskManSystem.getNextStatuses("car", "Engine").size());
         assertEquals(0, taskManSystem.getNextStatuses("car", "Wheels").size());
         assertEquals(0, taskManSystem.getNextStatuses("house", "Walls").size());
+        assertEquals("Task Name:          Engine\n" +
+                "Description:        Get Honda to deliver engine\n" +
+                "Estimated Duration: 7 hours, 3 minutes\n" +
+                "Accepted Deviation: 10.0\n" +
+                "Status:             finished, on time\n" +
+                "\n" +
+                "Replacement Task:   No replacement task\n" +
+                "Replaces Task:      Replaces no tasks\n" +
+                "\n" +
+                "Start Time:         4 hours, 34 minutes\n" +
+                "End Time:           6 hours, 35 minutes\n" +
+                "\n" +
+                "User:               mechanic\n" +
+                "\n" +
+                "Next tasks:\n" +
+                "Previous tasks:\n", taskManSystem.showTask("car", "Engine"));
 
         assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
             taskManSystem.advanceTime(new Time(0, 33));
@@ -217,6 +285,12 @@ public class TaskManSystemTest {
         assertEquals(0, taskManSystem.getNextStatuses("house", "Walls").size());
         assertEquals(0, taskManSystem.getNextStatuses("car", "Body").size());
         assertEquals(0, taskManSystem.getNextStatuses("car", "Paint").size());
+
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.showTask("Website", "design"));
+        assertThrows(TaskNotFoundException.class, () -> taskManSystem.showTask("car", "design"));
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.getStatus("Phone", "battery"));
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.getStatus(null, "battery"));
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.startTask("Phone", "battery", new Time(4, 34), mechanic));
 
 
 

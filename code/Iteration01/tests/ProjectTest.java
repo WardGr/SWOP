@@ -135,6 +135,9 @@ public class ProjectTest {
         prevEng.add("Install engine");
         car.addNewTask("install navsat", "Install the navsat of the car", new Time(10), 5, prevEng, engineer);
         prevEng.add("install navsat");
+        assertEquals(Status.AVAILABLE, car.getStatus("Install engine"));
+        assertEquals(Status.AVAILABLE, car.getStatus("Build chasis"));
+        assertEquals(Status.UNAVAILABLE, car.getStatus("install navsat"));
         car.addNewTask("Brake fluid", "Regulate the brake fluid of the car", new Time(10), 5, prevEng, engineer);
         assertEquals(car.showAvailableTasks().size(), 2);
         car.startTask("Build chasis", new Time(0, 0), new Time(0, 0), mechanic);
@@ -169,6 +172,8 @@ public class ProjectTest {
         assertEquals(car.showExecutingTasks().size(), 1);
         assertEquals(car.showAvailableTasks().size(), 1);
         car.endTask("Install engine", Status.FINISHED, new Time(2, 0), new Time(3, 0), engineer);
+        assertEquals(car.getStatus("install navsat"), Status.AVAILABLE);
+        assertEquals(Status.FINISHED, car.getStatus("Build chasis"));
         car.startTask("install navsat", new Time(3, 0), new Time(3, 0), engineer);
         assertEquals(car.showExecutingTasks().size(), 1);
         car.endTask("install navsat", Status.FINISHED, new Time(3, 0), new Time(4, 0), engineer);
@@ -189,6 +194,91 @@ public class ProjectTest {
         assertEquals(car.getNextStatuses("Install windows").get(1), Status.FAILED);
         car.endTask("Install windows", Status.FINISHED, new Time(5, 0), new Time(6, 0), mechanic);
         assertEquals(car.getStatus(), "finished");
+
+        house.addNewTask("Build walls", "Build the walls of the house", new Time(500), 20.58, new LinkedList<>(), mechanic);
+        house.addNewTask("install roof", "Install the roof of the house", new Time(20), 5, new LinkedList<>(), mechanic);
+        assertEquals("Project Name:  House\n" +
+                "Description:   Build a house\n" +
+                "Creation Time: 12 hours, 55 minutes\n" +
+                "Due Time:      3058 hours, 55 minutes\n" +
+                "Status:        ongoing\n" +
+                "\n" +
+                "Tasks:\n" +
+                "1. Build walls\n" +
+                "2. install roof\n", house.toString());
+
+        assertEquals("Project Name:  Minecraft\n" +
+                "Description:   Build a game\n" +
+                "Creation Time: 0 hours, 0 minutes\n" +
+                "Due Time:      50 hours, 0 minutes\n" +
+                "Status:        finished\n" +
+                "\n" +
+                "Tasks:\n" +
+                "1. Purchase Render\n" +
+                "2. Make Mobs\n" +
+                "\n" +
+                "Tasks that have been replaced:\n" +
+                "1. Make Render, replaced by task: Purchase Render\n", minecraft.toString());
+
+        assertEquals("Task Name:          Purchase Render\n" +
+                        "Description:        Purchase a render of the game\n" +
+                        "Estimated Duration: 0 hours, 30 minutes\n" +
+                        "Accepted Deviation: 300.0\n" +
+                        "Status:             finished, on time\n" +
+                        "\n" +
+                        "Replacement Task:   No replacement task\n" +
+                        "Replaces Task:      Make Render\n" +
+                        "\n" +
+                        "Start Time:         0 hours, 2 minutes\n" +
+                        "End Time:           0 hours, 15 minutes\n" +
+                        "\n" +
+                        "User:               Ward\n" +
+                        "\n" +
+                        "Next tasks:\n" +
+                        "1.Make Mobs\n" +
+                        "Previous tasks:\n", minecraft.showTask("Purchase Render"));
+
+        assertEquals("Task Name:          Install engine\n" +
+                "Description:        Install the engine of the car\n" +
+                "Estimated Duration: 1 hours, 40 minutes\n" +
+                "Accepted Deviation: 10.0\n" +
+                "Status:             finished, on time\n" +
+                "\n" +
+                "Replacement Task:   No replacement task\n" +
+                "Replaces Task:      Replaces no tasks\n" +
+                "\n" +
+                "Start Time:         0 hours, 0 minutes\n" +
+                "End Time:           2 hours, 0 minutes\n" +
+                "\n" +
+                "User:               Engineer\n" +
+                "\n" +
+                "Next tasks:\n" +
+                "1.install navsat\n" +
+                "2.Brake fluid\n" +
+                "Previous tasks:\n", car.showTask("Install engine"));
+
+        assertEquals(Status.FINISHED, car.getStatus("Install engine"));
+        assertEquals(Status.FINISHED, car.getStatus("Build chasis"));
+        assertEquals(Status.FINISHED, car.getStatus("install navsat"));
+        assertEquals(Status.FINISHED, minecraft.getStatus("Purchase Render"));
+        assertEquals(Status.FINISHED, minecraft.getStatus("Make Mobs"));
+        assertEquals(Status.AVAILABLE, house.getStatus("Build walls"));
+        assertEquals(Status.AVAILABLE, house.getStatus("install roof"));
+        assertEquals(Status.FINISHED, car.getStatus("Brake fluid"));
+        assertThrows(TaskNotFoundException.class, () -> house.getStatus("Install windows"));
+        assertThrows(TaskNotFoundException.class, () -> minecraft.getStatus("Install windows"));
+        assertThrows(TaskNotFoundException.class, () -> house.getNextStatuses("Install windows"));
+        assertThrows(TaskNotFoundException.class, () -> minecraft.getNextStatuses("Install windows"));
+
+        Project project = new Project("Project", "Description", new Time(0), new Time(5000));
+        project.addNewTask("Task", "Description", new Time(300), 0, new LinkedList<>(), mechanic);
+        assertEquals(Status.AVAILABLE, project.getStatus("Task"));
+        project.startTask("Task", new Time(1), new Time(0), mechanic);
+        project.advanceTime(new Time(2));
+        assertEquals(Status.EXECUTING, project.getStatus("Task"));
+        project.endTask("Task", Status.FINISHED, new Time(50000), new Time(2), mechanic);
+        project.advanceTime(new Time(300000));
+        assertEquals(Status.FINISHED, project.getStatus("Task"));
 
 
 
