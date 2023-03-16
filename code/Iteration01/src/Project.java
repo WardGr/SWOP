@@ -174,11 +174,11 @@ public class Project {
     if (replacesTask == null) {
       throw new TaskNotFoundException();
     }
-    replacesTask.replaceTask(taskName, description, duration, deviation);
+    Task replacementTask = replacesTask.replaceTask(taskName, description, duration, deviation);
 
     removeTask(replacesTask);
     addReplacedTask(replacesTask);
-    addTask(replacesTask.getReplacementTask());
+    addTask(replacementTask);
   }
 
   /**

@@ -462,7 +462,7 @@ public class Task {
    * @param deviation Acceptable deviation of the replacing task
    * @throws ReplacedTaskNotFailedException if the current task has not failed yet
    */
-  public void replaceTask(String taskName, String description, Time duration, double deviation) throws ReplacedTaskNotFailedException {
+  public Task replaceTask(String taskName, String description, Time duration, double deviation) throws ReplacedTaskNotFailedException {
     if (getStatus() != Status.FAILED) {
       throw new ReplacedTaskNotFailedException();
     }
@@ -480,5 +480,7 @@ public class Task {
 
     setReplacementTask(newTask);
     newTask.setReplacesTask(this);
+
+    return newTask;
   }
 }
