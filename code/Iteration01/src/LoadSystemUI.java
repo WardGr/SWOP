@@ -4,11 +4,11 @@ import java.util.Scanner;
  * Handles user input for the loadsystem use-case, requests necessary domain-level information from the LoadSystemController
  */
 public class LoadSystemUI {
-    private LoadSystemController loadSystemController;
+    private final LoadSystemController loadSystemController;
 
 
     public LoadSystemUI(UserManager userManager,TaskManSystem taskManSystem, Session session){
-        loadSystemController = new LoadSystemController(userManager, taskManSystem, session, this);
+        loadSystemController = new LoadSystemController(userManager, taskManSystem, session);
     }
 
     private LoadSystemController getController() {
@@ -16,9 +16,17 @@ public class LoadSystemUI {
     }
 
     public void loadSystem(){
-        loadSystemController.loadSystemForm();
+        if (loadSystemController.loadSystemPreconditions()){
+            try{
+                loadSystemForm();
+            } catch (IncorrectPermissionException e) {
+                System.out.println(e.getMessage());
+            }
+        } else {
+            System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
     }
-    public void loadSystemForm(){
+    public void loadSystemForm() throws IncorrectPermissionException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Type BACK to cancel system load at any time");
@@ -31,8 +39,5 @@ public class LoadSystemUI {
         }
         getController().LoadSystem(path);
         System.out.println("system succesfully loaded");
-    }
-    public void printAccessError(Role role) {
-        System.out.println("You must be logged in with the " + role.toString() + " role to call this function");
     }
 }
