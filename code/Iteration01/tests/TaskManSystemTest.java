@@ -31,11 +31,13 @@ public class TaskManSystemTest {
         taskManSystem.createProject("car", "Make a Honda Civic 2020", new Time(63, 20));
         assertEquals(taskManSystem.getProjectNamesWithStatus().size(), 1);
         assertEquals(taskManSystem.getProjectNamesWithStatus().get("car"), "ongoing");
-        assertEquals(taskManSystem.showProject("car"), "Project Name:  car\n" +
-                "Description:   Make a Honda Civic 2020\n" +
-                "Creation Time: 5 hours, 20 minutes\n" +
-                "Due Time:      63 hours, 20 minutes\n" +
-                "Status:        ongoing\n");
+        assertEquals(taskManSystem.showProject("car"), """
+                Project Name:  car
+                Description:   Make a Honda Civic 2020
+                Creation Time: 5 hours, 20 minutes
+                Due Time:      63 hours, 20 minutes
+                Status:        ongoing
+                """);
         exception = assertThrows(ProjectNotFoundException.class, () -> {
             taskManSystem.showProject("house");
         });
@@ -80,7 +82,7 @@ public class TaskManSystemTest {
         exception = assertThrows(InvalidTimeException.class, () -> {
             taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(24, -3), 10, new LinkedList<>(),  mechanic);
         });
-        List exception_list = new ArrayList();
+        List exception_list = new ArrayList<>();
         exception_list.add("Honda");
         exception = assertThrows(TaskNotFoundException.class, () -> {
             taskManSystem.addTaskToProject("car", "Fail", "This will fail", new Time(7, 3), 10, exception_list,  mechanic);
