@@ -79,7 +79,7 @@ public class UserInterface {
     System.out.println("createproject: Shows the project creation prompt and creates a project");
     System.out.println("createtask:    Shows the task creation prompt to add a task to a project");
     System.out.println("updatetask:    Shows the update task prompt to update a tasks' information/status");
-    System.out.println("modifytime:    Allows the user to modify the system time");
+    System.out.println("advancetime:   Allows the user to modify the system time");
     System.out.println("loadsystem:    Allows the user to load projects and tasks into the system");
   }
 }

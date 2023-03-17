@@ -51,7 +51,7 @@ public class ShowProjectsUI {
         return;
       }
       try {
-        chooseProject(response);
+        chooseProject(response, scanner);
       }
       catch (ProjectNotFoundException e) {
         System.out.println("The given project could not be found.");
@@ -66,9 +66,7 @@ public class ShowProjectsUI {
    * @throws ProjectNotFoundException if projectName does not correspond to an existing projects' name
    * @throws IncorrectPermissionException if user is not a project manager
    */
-  private void chooseProject(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
-    Scanner scanner = new Scanner(System.in);
-
+  private void chooseProject(String projectName, Scanner scanner) throws ProjectNotFoundException, IncorrectPermissionException {
     showProject(getController().showProject(projectName));
 
     System.out.println("Type the name of a task to see more details, or type \"BACK\" to choose another project:");
