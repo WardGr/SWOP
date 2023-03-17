@@ -400,7 +400,6 @@ public class ShowProjectsUITest {
 
         System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nreplaceMentTask\nBACK\nBACK".getBytes()));
         ui.showProjects();
-        // TODO hier zit nog een fout in!
         assertEquals("""
                 Type "BACK" to cancel
                 ********* PROJECTS *********
@@ -416,7 +415,10 @@ public class ShowProjectsUITest {
                                 
                 Tasks:
                 1. Task1
-                2. otherTask
+                2. replaceMentTask
+                               
+                Tasks that have been replaced:
+                1. otherTask, replaced by task: replaceMentTask
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
@@ -435,7 +437,7 @@ public class ShowProjectsUITest {
                 User:               OlavBl
                                 
                 Next tasks:
-                1.otherTask
+                1.replaceMentTask
                 Previous tasks:
                                 
                 Type the name of another task to see more details, or type "BACK" to choose another project:
@@ -444,10 +446,29 @@ public class ShowProjectsUITest {
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
+                Status:             failed
+                                
+                Replacement Task:   replaceMentTask
+                Replaces Task:      Replaces no tasks
+                                
+                Start Time:         1483 hours, 23 minutes
+                End Time:           1483 hours, 24 minutes
+                                
+                User:               OlavBl
+                                
+                Next tasks:
+                Previous tasks:
+                                
+                Type the name of another task to see more details, or type "BACK" to choose another project:
+                ******** TASK DETAILS ********
+                Task Name:          replaceMentTask
+                Description:        Task to replace otherTask
+                Estimated Duration: 16 hours, 40 minutes
+                Accepted Deviation: 1.0E-4
                 Status:             available
                                 
                 Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replaces Task:      otherTask
                                 
                 Start Time:         Task has not started yet
                 End Time:           Task has not ended yet
