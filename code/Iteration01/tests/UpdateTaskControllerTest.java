@@ -1,3 +1,7 @@
+import Application.IncorrectPermissionException;
+import Application.Session;
+import Application.UpdateTaskController;
+import Domain.*;
 import org.junit.Test;
 
 import java.util.LinkedList;

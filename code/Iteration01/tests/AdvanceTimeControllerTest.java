@@ -1,3 +1,7 @@
+import Application.AdvanceTimeController;
+import Application.IncorrectPermissionException;
+import Application.Session;
+import Domain.*;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

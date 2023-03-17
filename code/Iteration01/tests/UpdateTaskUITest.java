@@ -1,3 +1,6 @@
+import Application.Session;
+import UserInterface.UpdateTaskUI;
+import Domain.*;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

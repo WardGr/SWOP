@@ -1,3 +1,7 @@
+import Application.Session;
+import Application.SessionController;
+import Domain.LoginException;
+import Domain.UserManager;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

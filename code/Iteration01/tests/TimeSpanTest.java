@@ -1,3 +1,6 @@
+import Domain.InvalidTimeException;
+import Domain.Time;
+import Domain.TimeSpan;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -1,3 +1,6 @@
+import Application.Session;
+import Domain.*;
+import UserInterface.CreateProjectUI;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

@@ -1,4 +1,4 @@
-import org.junit.Assert;
+import Domain.*;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -43,8 +43,8 @@ public class ProjectTest {
         assertEquals(minecraft.getTasks(), new LinkedList<>()); // start with empty list
         assertEquals(minecraft.getStatus(), "ongoing");
         assertNull(minecraft.getTask("Make render"));
-        assertEquals("Project Name:  Minecraft\nDescription:   Build a game\nCreation Time: " + minecraft_begin.toString()
-                + "\nDue Time:      " + minecraft_end.toString() + "\nStatus:        ongoing\n", minecraft.toString());
+        assertEquals("Domain.Project Name:  Minecraft\nDescription:   Build a game\nCreation Domain.Time: " + minecraft_begin.toString()
+                + "\nDue Domain.Time:      " + minecraft_end.toString() + "\nDomain.Status:        ongoing\n", minecraft.toString());
 
         assertEquals("Car", car.getName());
         assertEquals("Build a car", car.getDescription());
@@ -53,8 +53,8 @@ public class ProjectTest {
         assertEquals(car.getTasks(), new LinkedList<>()); // start with empty list
         assertEquals(car.getStatus(), "ongoing");
         assertNull(car.getTask("Design engine with Honda"));
-        assertEquals("Project Name:  Car\nDescription:   Build a car\nCreation Time: " + car_begin.toString()
-                + "\nDue Time:      " + car_end.toString() + "\nStatus:        ongoing\n", car.toString());
+        assertEquals("Domain.Project Name:  Car\nDescription:   Build a car\nCreation Domain.Time: " + car_begin.toString()
+                + "\nDue Domain.Time:      " + car_end.toString() + "\nDomain.Status:        ongoing\n", car.toString());
 
         assertEquals("House", house.getName());
         assertEquals("Build a house", house.getDescription());
@@ -63,8 +63,8 @@ public class ProjectTest {
         assertEquals(house.getTasks(), new LinkedList<>()); // start with empty list
         assertEquals(house.getStatus(), "ongoing");
         assertNull(house.getTask("Talk with architect"));
-        assertEquals("Project Name:  House\nDescription:   Build a house\nCreation Time: " + house_begin.toString()
-                + "\nDue Time:      " + house_end2.toString() + "\nStatus:        ongoing\n", house.toString());
+        assertEquals("Domain.Project Name:  House\nDescription:   Build a house\nCreation Domain.Time: " + house_begin.toString()
+                + "\nDue Domain.Time:      " + house_end2.toString() + "\nDomain.Status:        ongoing\n", house.toString());
 
         User ward = new User("Ward", "minecraftDev123", Role.DEVELOPER);
         User manager = new User("Manager", "minecraftManager123", Role.PROJECTMANAGER);
@@ -195,11 +195,11 @@ public class ProjectTest {
         house.addNewTask("Build walls", "Build the walls of the house", new Time(500), 20.58, new LinkedList<>(), mechanic);
         house.addNewTask("install roof", "Install the roof of the house", new Time(20), 5, new LinkedList<>(), mechanic);
         assertEquals("""
-                Project Name:  House
+                Domain.Project Name:  House
                 Description:   Build a house
-                Creation Time: 12 hours, 55 minutes
-                Due Time:      3058 hours, 55 minutes
-                Status:        ongoing
+                Creation Domain.Time: 12 hours, 55 minutes
+                Due Domain.Time:      3058 hours, 55 minutes
+                Domain.Status:        ongoing
                 
                 Tasks:
                 1. Build walls
@@ -207,11 +207,11 @@ public class ProjectTest {
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), house.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         assertEquals("""
-                Project Name:  Minecraft
+                Domain.Project Name:  Minecraft
                 Description:   Build a game
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      50 hours, 0 minutes
-                Status:        finished
+                Creation Domain.Time: 0 hours, 0 minutes
+                Due Domain.Time:      50 hours, 0 minutes
+                Domain.Status:        finished
                 
                 Tasks:
                 1. Purchase Render
@@ -222,17 +222,17 @@ public class ProjectTest {
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), minecraft.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         assertEquals("""
-                        Task Name:          Purchase Render
+                        Domain.Task Name:          Purchase Render
                         Description:        Purchase a render of the game
                         Estimated Duration: 0 hours, 30 minutes
                         Accepted Deviation: 300.0
-                        Status:             finished, on time
+                        Domain.Status:             finished, on time
                         
-                        Replacement Task:   No replacement task
-                        Replaces Task:      Make Render
+                        Replacement Domain.Task:   No replacement task
+                        Replaces Domain.Task:      Make Render
                         
-                        Start Time:         0 hours, 2 minutes
-                        End Time:           0 hours, 15 minutes
+                        Start Domain.Time:         0 hours, 2 minutes
+                        End Domain.Time:           0 hours, 15 minutes
                         
                         User:               Ward
                         
@@ -242,17 +242,17 @@ public class ProjectTest {
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), minecraft.showTask("Purchase Render").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         assertEquals("""
-                Task Name:          Install engine
+                Domain.Task Name:          Install engine
                 Description:        Install the engine of the car
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 10.0
-                Status:             finished, on time
+                Domain.Status:             finished, on time
                 
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                 
-                Start Time:         0 hours, 0 minutes
-                End Time:           2 hours, 0 minutes
+                Start Domain.Time:         0 hours, 0 minutes
+                End Domain.Time:           2 hours, 0 minutes
                 
                 User:               Engineer
                 
@@ -275,15 +275,15 @@ public class ProjectTest {
         assertThrows(TaskNotFoundException.class, () -> house.getNextStatuses("Install windows"));
         assertThrows(TaskNotFoundException.class, () -> minecraft.getNextStatuses("Install windows"));
 
-        Project project = new Project("Project", "Description", new Time(0), new Time(5000));
-        project.addNewTask("Task", "Description", new Time(300), 0, new LinkedList<>(), mechanic);
-        assertEquals(Status.AVAILABLE, project.getStatus("Task"));
-        project.startTask("Task", new Time(1), new Time(0), mechanic);
+        Project project = new Project("Domain.Project", "Description", new Time(0), new Time(5000));
+        project.addNewTask("Domain.Task", "Description", new Time(300), 0, new LinkedList<>(), mechanic);
+        assertEquals(Status.AVAILABLE, project.getStatus("Domain.Task"));
+        project.startTask("Domain.Task", new Time(1), new Time(0), mechanic);
         project.advanceTime(new Time(2));
-        assertEquals(Status.EXECUTING, project.getStatus("Task"));
-        project.endTask("Task", Status.FINISHED, new Time(50000), new Time(2), mechanic);
+        assertEquals(Status.EXECUTING, project.getStatus("Domain.Task"));
+        project.endTask("Domain.Task", Status.FINISHED, new Time(50000), new Time(2), mechanic);
         project.advanceTime(new Time(300000));
-        assertEquals(Status.FINISHED, project.getStatus("Task"));
+        assertEquals(Status.FINISHED, project.getStatus("Domain.Task"));
 
 
 

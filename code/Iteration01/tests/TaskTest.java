@@ -1,3 +1,4 @@
+import Domain.*;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -49,17 +50,17 @@ public class TaskTest {
 
         assertEquals(task1.toString(),
                 """
-                        Task Name:          Cool task
+                        Domain.Task Name:          Cool task
                         Description:        Cool description
                         Estimated Duration: 0 hours, 10 minutes
                         Accepted Deviation: 0.1
                         Status:             available
 
-                        Replacement Task:   No replacement task
-                        Replaces Task:      Replaces no tasks
+                        Replacement Domain.Task:   No replacement task
+                        Replaces Domain.Task:      Replaces no tasks
 
-                        Start Time:         Task has not started yet
-                        End Time:           Task has not ended yet
+                        Start Time:         Domain.Task has not started yet
+                        End Time:           Domain.Task has not ended yet
 
                         User:               Ward
                                                 
@@ -148,14 +149,14 @@ public class TaskTest {
         delayedTask.start(systemTime, systemTime, user);
         delayedTask.end(Status.FINISHED, new Time(10000), new Time(10000), user);
         assertEquals("""
-                Task Name:          Cooler task
+                Domain.Task Name:          Cooler task
                 Description:        Cooler description
                 Estimated Duration: 0 hours, 20 minutes
                 Accepted Deviation: 0.2
                 Status:             finished, delayed
                                 
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                 
                 Start Time:         0 hours, 10 minutes
                 End Time:           166 hours, 40 minutes
@@ -172,14 +173,14 @@ public class TaskTest {
         earlyTask.start(systemTime, systemTime, user);
         earlyTask.end(Status.FINISHED, new Time(10), new Time(10000), user);
         assertEquals("""
-                Task Name:          Cooler task
+                Domain.Task Name:          Cooler task
                 Description:        Cooler description
                 Estimated Duration: 0 hours, 20 minutes
                 Accepted Deviation: 0.2
                 Status:             finished, early
                                 
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                 
                 Start Time:         0 hours, 10 minutes
                 End Time:           0 hours, 10 minutes
@@ -194,17 +195,17 @@ public class TaskTest {
 
 
 
-        Task toFinish = new Task("toFinish", "Task will finish due to time increasing", new Time(10, 0), 0.1, new LinkedList<>(), user);
+        Task toFinish = new Task("toFinish", "Domain.Task will finish due to time increasing", new Time(10, 0), 0.1, new LinkedList<>(), user);
         LinkedList<Task> prevTasks = new LinkedList<>();
         prevTasks.add(toFinish);
-        Task toStart = new Task("toStart", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
+        Task toStart = new Task("toStart", "Domain.Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
         assertEquals(Status.UNAVAILABLE, toStart.getStatus());
         toFinish.start(new Time(0, 0), new Time(0, 0), user);
         toFinish.end(Status.FINISHED, new Time(1, 0), new Time(10, 0), user);
         toFinish.advanceTime(new Time(13, 0));
         assertEquals(Status.FINISHED, toFinish.getStatus());
 
-        Task lastTask = new Task("Final Task", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
+        Task lastTask = new Task("Final Domain.Task", "Domain.Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
         lastTask.advanceTime(new Time(0, 0));
         assertEquals(Status.AVAILABLE, lastTask.getStatus());
         lastTask.start(new Time(10, 0), new Time(10, 0), user);

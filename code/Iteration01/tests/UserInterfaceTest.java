@@ -1,3 +1,9 @@
+import Application.Session;
+import UserInterface.UserInterface;
+import Domain.InvalidTimeException;
+import Domain.TaskManSystem;
+import Domain.Time;
+import Domain.UserManager;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -11,7 +17,7 @@ public class UserInterfaceTest {
     @Test
     public void test() throws InvalidTimeException {
         Session newSession = new Session();
-        TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0)); // exception thrown by the new Time
+        TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0)); // exception thrown by the new Domain.Time
         UserManager userManager = new UserManager();
 
         UserInterface UI = new UserInterface(

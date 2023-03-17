@@ -1,3 +1,4 @@
+import Domain.*;
 import org.junit.Test;
 
 import java.util.*;

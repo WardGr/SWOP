@@ -1,3 +1,6 @@
+import Application.Session;
+import UserInterface.ShowProjectsUI;
+import Domain.*;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -187,17 +190,17 @@ public class ShowProjectsUITest {
                         
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          Task1
+                Domain.Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             available
                         
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                         
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
+                Start Time:         Domain.Task has not started yet
+                End Time:           Domain.Task has not ended yet
                         
                 User:               OlavBl
                         
@@ -207,17 +210,17 @@ public class ShowProjectsUITest {
                         
                 Type the name of another task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          otherTask
+                Domain.Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             unavailable
                         
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                         
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
+                Start Time:         Domain.Task has not started yet
+                End Time:           Domain.Task has not ended yet
                         
                 User:               OlavBl
                         
@@ -254,17 +257,17 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          Task1
+                Domain.Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             available
                                 
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                 
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
+                Start Time:         Domain.Task has not started yet
+                End Time:           Domain.Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -274,17 +277,17 @@ public class ShowProjectsUITest {
                                 
                 Type the name of another task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          otherTask
+                Domain.Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             unavailable
                                 
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                 
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
+                Start Time:         Domain.Task has not started yet
+                End Time:           Domain.Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -324,14 +327,14 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          Task1
+                Domain.Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             executing
                                 
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                 
                 Start Time:         1483 hours, 19 minutes
                 End Time:           No end time set
@@ -344,17 +347,17 @@ public class ShowProjectsUITest {
                                 
                 Type the name of another task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          otherTask
+                Domain.Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             unavailable
                                 
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                 
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
+                Start Time:         Domain.Task has not started yet
+                End Time:           Domain.Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -396,14 +399,14 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          Task1
+                Domain.Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             finished, on time
                                                    
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                                    
                 Start Time:         1483 hours, 19 minutes
                 End Time:           1483 hours, 22 minutes
@@ -416,17 +419,17 @@ public class ShowProjectsUITest {
                                 
                 Type the name of another task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          otherTask
+                Domain.Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             available
                                 
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                 
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
+                Start Time:         Domain.Task has not started yet
+                End Time:           Domain.Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -446,7 +449,7 @@ public class ShowProjectsUITest {
         tsm.startTask("Project1", "otherTask", new Time(89003), dev);
         tsm.advanceTime(new Time(110000));
         tsm.endTask("Project1", "otherTask", Status.FAILED, new Time(89004), dev);
-        tsm.replaceTaskInProject("Project1", "replaceMentTask", "Task to replace otherTask", new Time(1000), .0001, "otherTask");
+        tsm.replaceTaskInProject("Project1", "replaceMentTask", "Domain.Task to replace otherTask", new Time(1000), .0001, "otherTask");
 
         System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nreplaceMentTask\nBACK\nBACK".getBytes()));
         ui.showProjects();
@@ -472,14 +475,14 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          Task1
+                Domain.Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             finished, on time
                                                    
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      Replaces no tasks
                                                    
                 Start Time:         1483 hours, 19 minutes
                 End Time:           1483 hours, 22 minutes
@@ -492,14 +495,14 @@ public class ShowProjectsUITest {
                                 
                 Type the name of another task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          otherTask
+                Domain.Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             failed
                                 
-                Replacement Task:   replaceMentTask
-                Replaces Task:      Replaces no tasks
+                Replacement Domain.Task:   replaceMentTask
+                Replaces Domain.Task:      Replaces no tasks
                                 
                 Start Time:         1483 hours, 23 minutes
                 End Time:           1483 hours, 24 minutes
@@ -511,17 +514,17 @@ public class ShowProjectsUITest {
                                 
                 Type the name of another task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Task Name:          replaceMentTask
-                Description:        Task to replace otherTask
+                Domain.Task Name:          replaceMentTask
+                Description:        Domain.Task to replace otherTask
                 Estimated Duration: 16 hours, 40 minutes
                 Accepted Deviation: 1.0E-4
                 Status:             available
                                 
-                Replacement Task:   No replacement task
-                Replaces Task:      otherTask
+                Replacement Domain.Task:   No replacement task
+                Replaces Domain.Task:      otherTask
                                 
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
+                Start Time:         Domain.Task has not started yet
+                End Time:           Domain.Task has not ended yet
                                 
                 User:               OlavBl
                                 

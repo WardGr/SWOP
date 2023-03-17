@@ -1,3 +1,9 @@
+import Application.Session;
+import Domain.Role;
+import Domain.TaskManSystem;
+import Domain.Time;
+import Domain.User;
+import UserInterface.AdvanceTimeUI;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

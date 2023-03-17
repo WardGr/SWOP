@@ -1,4 +1,5 @@
-import org.junit.Assert;
+import Domain.Role;
+import Domain.User;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
