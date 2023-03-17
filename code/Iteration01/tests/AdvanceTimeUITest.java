@@ -27,7 +27,7 @@ public class AdvanceTimeUITest {
         session.login(dev);
         atui.advanceTime();
         assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
-                      out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
         session.logout();
         session.login(manager);

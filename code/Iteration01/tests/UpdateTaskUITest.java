@@ -1,6 +1,6 @@
 import Application.Session;
-import UserInterface.UpdateTaskUI;
 import Domain.*;
+import UserInterface.UpdateTaskUI;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -49,12 +49,12 @@ public class UpdateTaskUITest {
         System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
         developerUI.updateTaskStatus();
         assertEquals(
-                        """
+                """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Cancelled updating task
@@ -66,25 +66,25 @@ public class UpdateTaskUITest {
         developerUI.updateTaskStatus();
         assertEquals(
                 """
-                *** AVAILABLE TASKS ***
-                Project: SimpleProject --- SimpleTask
-                
-                *** EXECUTING TASKS ***
-                
-                Type BACK to cancel updating the task any time
-                Name of the project you want to update:
-                Name of the task you want to update:
-                ERROR: the given project does not exist, please try again
-                
-                *** AVAILABLE TASKS ***
-                Project: SimpleProject --- SimpleTask
-                
-                *** EXECUTING TASKS ***
-                
-                Type BACK to cancel updating the task any time
-                Name of the project you want to update:
-                Cancelled updating task
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        *** AVAILABLE TASKS ***
+                        Project: SimpleProject --- SimpleTask
+                                        
+                        *** EXECUTING TASKS ***
+                                        
+                        Type BACK to cancel updating the task any time
+                        Name of the project you want to update:
+                        Name of the task you want to update:
+                        ERROR: the given project does not exist, please try again
+                                        
+                        *** AVAILABLE TASKS ***
+                        Project: SimpleProject --- SimpleTask
+                                        
+                        *** EXECUTING TASKS ***
+                                        
+                        Type BACK to cancel updating the task any time
+                        Name of the project you want to update:
+                        Cancelled updating task
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -92,25 +92,25 @@ public class UpdateTaskUITest {
         developerUI.updateTaskStatus();
         assertEquals(
                 """
-                *** AVAILABLE TASKS ***
-                Project: SimpleProject --- SimpleTask
-                
-                *** EXECUTING TASKS ***
-                
-                Type BACK to cancel updating the task any time
-                Name of the project you want to update:
-                Name of the task you want to update:
-                ERROR: the given task does not exist, please try again
-                
-                *** AVAILABLE TASKS ***
-                Project: SimpleProject --- SimpleTask
-                
-                *** EXECUTING TASKS ***
-                
-                Type BACK to cancel updating the task any time
-                Name of the project you want to update:
-                Cancelled updating task
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        *** AVAILABLE TASKS ***
+                        Project: SimpleProject --- SimpleTask
+                                        
+                        *** EXECUTING TASKS ***
+                                        
+                        Type BACK to cancel updating the task any time
+                        Name of the project you want to update:
+                        Name of the task you want to update:
+                        ERROR: the given task does not exist, please try again
+                                        
+                        *** AVAILABLE TASKS ***
+                        Project: SimpleProject --- SimpleTask
+                                        
+                        *** EXECUTING TASKS ***
+                                        
+                        Type BACK to cancel updating the task any time
+                        Name of the project you want to update:
+                        Cancelled updating task
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -120,9 +120,9 @@ public class UpdateTaskUITest {
                 """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -131,18 +131,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             available
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         Task has not started yet
                         End Time:           Task has not ended yet
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - executing
                         Give the start time for the task:
@@ -158,16 +158,16 @@ public class UpdateTaskUITest {
         developerUI.updateTaskStatus();
         assertEquals(
                 """
-                *** AVAILABLE TASKS ***
-                Project: SimpleProject --- SimpleTask
-                
-                *** EXECUTING TASKS ***
-                
-                Type BACK to cancel updating the task any time
-                Name of the project you want to update:
-                Name of the task you want to update:
-                Cancelled updating task
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+                        *** AVAILABLE TASKS ***
+                        Project: SimpleProject --- SimpleTask
+                                        
+                        *** EXECUTING TASKS ***
+                                        
+                        Type BACK to cancel updating the task any time
+                        Name of the project you want to update:
+                        Name of the task you want to update:
+                        Cancelled updating task
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
         out.reset();
 
 
@@ -177,9 +177,9 @@ public class UpdateTaskUITest {
                 """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -188,18 +188,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             available
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         Task has not started yet
                         End Time:           Task has not ended yet
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - executing
                         Give the start time for the task:
@@ -216,9 +216,9 @@ public class UpdateTaskUITest {
                 """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -227,18 +227,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             available
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         Task has not started yet
                         End Time:           Task has not ended yet
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - executing
                         Give the start time for the task:
@@ -249,16 +249,15 @@ public class UpdateTaskUITest {
         out.reset();
 
 
-
         System.setIn(new ByteArrayInputStream("SimpleProject\nSimpleTask\nn\nsad\nBACK\n".getBytes()));
         developerUI.updateTaskStatus();
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -267,18 +266,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             available
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         Task has not started yet
                         End Time:           Task has not ended yet
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - executing
                         Give the start time for the task:
@@ -296,9 +295,9 @@ public class UpdateTaskUITest {
                 """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -307,18 +306,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             available
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         Task has not started yet
                         End Time:           Task has not ended yet
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - executing
                         Give the start time for the task:
@@ -336,9 +335,9 @@ public class UpdateTaskUITest {
                 """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -347,18 +346,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             available
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         Task has not started yet
                         End Time:           Task has not ended yet
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - executing
                         Give the start time for the task:
@@ -377,9 +376,9 @@ public class UpdateTaskUITest {
                 """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -388,18 +387,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             available
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         Task has not started yet
                         End Time:           Task has not ended yet
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - executing
                         Give the start time for the task:
@@ -407,7 +406,7 @@ public class UpdateTaskUITest {
                         Give start hour:
                         Give start minute:
                         ERROR: the given minute is not of a valid format (0-59), please try again!
-                        
+                                                
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Cancelled updating task
@@ -421,9 +420,9 @@ public class UpdateTaskUITest {
                 """
                         *** AVAILABLE TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         *** EXECUTING TASKS ***
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -432,18 +431,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             available
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         Task has not started yet
                         End Time:           Task has not ended yet
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - executing
                         Give the start time for the task:
@@ -460,10 +459,10 @@ public class UpdateTaskUITest {
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
-                        
+                                                
                         *** EXECUTING TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -472,18 +471,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             executing
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         0 hours, 0 minutes
                         End Time:           No end time set
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - finished
                         - failed
@@ -499,10 +498,10 @@ public class UpdateTaskUITest {
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
-                        
+                                                
                         *** EXECUTING TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -511,18 +510,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             executing
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         0 hours, 0 minutes
                         End Time:           No end time set
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - finished
                         - failed
@@ -539,10 +538,10 @@ public class UpdateTaskUITest {
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
-                        
+                                                
                         *** EXECUTING TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -551,18 +550,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             executing
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         0 hours, 0 minutes
                         End Time:           No end time set
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - finished
                         - failed
@@ -579,10 +578,10 @@ public class UpdateTaskUITest {
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
-                        
+                                                
                         *** EXECUTING TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -591,18 +590,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             executing
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         0 hours, 0 minutes
                         End Time:           No end time set
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - finished
                         - failed
@@ -619,10 +618,10 @@ public class UpdateTaskUITest {
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
-                        
+                                                
                         *** EXECUTING TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -631,18 +630,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             executing
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         0 hours, 0 minutes
                         End Time:           No end time set
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - finished
                         - failed
@@ -655,16 +654,15 @@ public class UpdateTaskUITest {
         out.reset();
 
 
-
         System.setIn(new ByteArrayInputStream("SimpleProject\nSimpleTask\nn\n3\nBACK\n".getBytes()));
         developerUI.updateTaskStatus();
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
-                        
+                                                
                         *** EXECUTING TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -673,18 +671,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             executing
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         0 hours, 0 minutes
                         End Time:           No end time set
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - finished
                         - failed
@@ -702,10 +700,10 @@ public class UpdateTaskUITest {
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
-                        
+                                                
                         *** EXECUTING TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -714,18 +712,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             executing
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         0 hours, 0 minutes
                         End Time:           No end time set
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - finished
                         - failed
@@ -745,10 +743,10 @@ public class UpdateTaskUITest {
         assertEquals(
                 """
                         *** AVAILABLE TASKS ***
-                        
+                                                
                         *** EXECUTING TASKS ***
                         Project: SimpleProject --- SimpleTask
-                        
+                                                
                         Type BACK to cancel updating the task any time
                         Name of the project you want to update:
                         Name of the task you want to update:
@@ -757,18 +755,18 @@ public class UpdateTaskUITest {
                         Estimated Duration: 0 hours, 40 minutes
                         Accepted Deviation: 0.1
                         Status:             executing
-                        
+                                                
                         Replacement Task:   No replacement task
                         Replaces Task:      Replaces no tasks
-                        
+                                                
                         Start Time:         0 hours, 0 minutes
                         End Time:           No end time set
-                        
+                                                
                         User:               SamHa
-                        
+                                                
                         Next tasks:
                         Previous tasks:
-                        
+                                                
                         -- Possible Next Statuses --
                         - finished
                         - failed
@@ -779,7 +777,7 @@ public class UpdateTaskUITest {
                         Given end minute is not an integer, please try again
                         Do you want to finish or fail this task? (finish/fail)
                         ERROR: the given minute is not of a valid format (0-59), please try again!
-                        
+                                                
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Cancelled updating task
@@ -951,7 +949,7 @@ public class UpdateTaskUITest {
                         Give end minute:
                         Do you want to finish or fail this task? (finish/fail)
                         ERROR: the fail time is after the system time
-                        
+                                                
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Cancelled updating task

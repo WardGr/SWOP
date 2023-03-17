@@ -10,6 +10,7 @@ public class TaskTest {
     public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException {
         testTask();
     }
+
     @Test
     public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException {
         Time estimatedDuration1 = new Time(10);
@@ -50,17 +51,17 @@ public class TaskTest {
 
         assertEquals(task1.toString(),
                 """
-                        Domain.Task Name:          Cool task
+                        Task Name:          Cool task
                         Description:        Cool description
                         Estimated Duration: 0 hours, 10 minutes
                         Accepted Deviation: 0.1
                         Status:             available
 
-                        Replacement Domain.Task:   No replacement task
-                        Replaces Domain.Task:      Replaces no tasks
+                        Replacement Task:   No replacement task
+                        Replaces Task:      Replaces no tasks
 
-                        Start Time:         Domain.Task has not started yet
-                        End Time:           Domain.Task has not ended yet
+                        Start Time:         Task has not started yet
+                        End Time:           Task has not ended yet
 
                         User:               Ward
                                                 
@@ -78,7 +79,7 @@ public class TaskTest {
 
         Time finalSystemTime1 = systemTime;
         Task finalTask = task1;
-        assertThrows(IncorrectUserException.class , () -> finalTask.start(startTime1, finalSystemTime1, wrongUser));
+        assertThrows(IncorrectUserException.class, () -> finalTask.start(startTime1, finalSystemTime1, wrongUser));
         assertThrows(IncorrectTaskStatusException.class, () -> task2.start(startTime1, finalSystemTime1, user));
 
         task1.start(startTime1, systemTime, user);
@@ -149,14 +150,14 @@ public class TaskTest {
         delayedTask.start(systemTime, systemTime, user);
         delayedTask.end(Status.FINISHED, new Time(10000), new Time(10000), user);
         assertEquals("""
-                Domain.Task Name:          Cooler task
+                Task Name:          Cooler task
                 Description:        Cooler description
                 Estimated Duration: 0 hours, 20 minutes
                 Accepted Deviation: 0.2
                 Status:             finished, delayed
                                 
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                 
                 Start Time:         0 hours, 10 minutes
                 End Time:           166 hours, 40 minutes
@@ -173,14 +174,14 @@ public class TaskTest {
         earlyTask.start(systemTime, systemTime, user);
         earlyTask.end(Status.FINISHED, new Time(10), new Time(10000), user);
         assertEquals("""
-                Domain.Task Name:          Cooler task
+                Task Name:          Cooler task
                 Description:        Cooler description
                 Estimated Duration: 0 hours, 20 minutes
                 Accepted Deviation: 0.2
                 Status:             finished, early
                                 
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                 
                 Start Time:         0 hours, 10 minutes
                 End Time:           0 hours, 10 minutes
@@ -192,32 +193,22 @@ public class TaskTest {
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), earlyTask.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
 
-
-
-
-        Task toFinish = new Task("toFinish", "Domain.Task will finish due to time increasing", new Time(10, 0), 0.1, new LinkedList<>(), user);
+        Task toFinish = new Task("toFinish", "Task will finish due to time increasing", new Time(10, 0), 0.1, new LinkedList<>(), user);
         LinkedList<Task> prevTasks = new LinkedList<>();
         prevTasks.add(toFinish);
-        Task toStart = new Task("toStart", "Domain.Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
+        Task toStart = new Task("toStart", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
         assertEquals(Status.UNAVAILABLE, toStart.getStatus());
         toFinish.start(new Time(0, 0), new Time(0, 0), user);
         toFinish.end(Status.FINISHED, new Time(1, 0), new Time(10, 0), user);
         toFinish.advanceTime(new Time(13, 0));
         assertEquals(Status.FINISHED, toFinish.getStatus());
 
-        Task lastTask = new Task("Final Domain.Task", "Domain.Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
+        Task lastTask = new Task("Final Task", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
         lastTask.advanceTime(new Time(0, 0));
         assertEquals(Status.AVAILABLE, lastTask.getStatus());
         lastTask.start(new Time(10, 0), new Time(10, 0), user);
         lastTask.advanceTime(new Time(100, 0));
         assertEquals(Status.EXECUTING, lastTask.getStatus());
-
-
-
-
-
-
-
 
 
     }

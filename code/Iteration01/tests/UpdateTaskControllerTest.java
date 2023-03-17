@@ -53,7 +53,7 @@ public class UpdateTaskControllerTest {
         devTms.addTaskToProject("Sell", "Build", "Build shop", new Time(12, 30), 50, prev, developer);
 
         assertEquals(2, devUtc.availableTasksNames().size());
-        LinkedList equals  = new LinkedList<>();
+        LinkedList equals = new LinkedList<>();
         equals.add("Brew");
         assertEquals(equals, devUtc.availableTasksNames().get("Brewery"));
         equals = new LinkedList();
@@ -69,15 +69,15 @@ public class UpdateTaskControllerTest {
                 Estimated Duration: 10 hours, 0 minutes
                 Accepted Deviation: 50.0
                 Status:             available
-                
+                                
                 Replacement Task:   No replacement task
                 Replaces Task:      Replaces no tasks
-                
+                                
                 Start Time:         Task has not started yet
                 End Time:           Task has not ended yet
-                
+                                
                 User:               OlavBl
-                
+                                
                 Next tasks:
                 Previous tasks:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), devUtc.showTask("Brewery", "Brew").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -110,15 +110,15 @@ public class UpdateTaskControllerTest {
                 Estimated Duration: 10 hours, 0 minutes
                 Accepted Deviation: 50.0
                 Status:             finished, on time
-                
+                                
                 Replacement Task:   No replacement task
                 Replaces Task:      Replaces no tasks
-                
+                                
                 Start Time:         5 hours, 10 minutes
                 End Time:           15 hours, 30 minutes
-                
+                                
                 User:               OlavBl
-                
+                                
                 Next tasks:
                 Previous tasks:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), devUtc.showTask("Brewery", "Brew").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -145,15 +145,15 @@ public class UpdateTaskControllerTest {
                 Estimated Duration: 12 hours, 30 minutes
                 Accepted Deviation: 50.0
                 Status:             failed
-                
+                                
                 Replacement Task:   No replacement task
                 Replaces Task:      Replaces no tasks
-                
+                                
                 Start Time:         30 hours, 10 minutes
                 End Time:           30 hours, 15 minutes
-                
+                                
                 User:               OlavBl
-                
+                                
                 Next tasks:
                 1.Build
                 Previous tasks:

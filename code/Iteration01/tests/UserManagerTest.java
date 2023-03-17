@@ -1,7 +1,8 @@
 import Domain.*;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class UserManagerTest {
 
@@ -45,16 +46,16 @@ public class UserManagerTest {
         assertEquals(jeroen.getRole(), userManager.getUser("jeroenBe", "Aardappel862").getRole());
 
 
-        Exception exception = assertThrows(LoginException.class, () ->  {
-             userManager.getUser("Fiona", "hoi123");
+        Exception exception = assertThrows(LoginException.class, () -> {
+            userManager.getUser("Fiona", "hoi123");
         });
-        exception = assertThrows(LoginException.class, () ->  {
+        exception = assertThrows(LoginException.class, () -> {
             userManager.getUser("Tom", null);
         });
-        exception = assertThrows(LoginException.class, () ->  {
+        exception = assertThrows(LoginException.class, () -> {
             userManager.getUser("WardGr", "fout_password");
         });
-        exception = assertThrows(LoginException.class, () ->  {
+        exception = assertThrows(LoginException.class, () -> {
             userManager.getUser("Fout_user", "minecraft123");
         });
 
@@ -71,16 +72,16 @@ public class UserManagerTest {
         assertEquals(jeroen.getPassword(), userManager.getDeveloper("jeroenBe").getPassword());
         assertEquals(jeroen.getRole(), userManager.getDeveloper("jeroenBe").getRole());
 
-        exception = assertThrows(UserNotFoundException.class, () ->  {
+        exception = assertThrows(UserNotFoundException.class, () -> {
             userManager.getDeveloper("Fiona");
         });
-        exception = assertThrows(UserNotFoundException.class, () ->  {
+        exception = assertThrows(UserNotFoundException.class, () -> {
             userManager.getDeveloper("Tom");
         });
-        exception = assertThrows(UserNotFoundException.class, () ->  {
+        exception = assertThrows(UserNotFoundException.class, () -> {
             userManager.getDeveloper("WardGr");
         });
-        exception = assertThrows(UserNotFoundException.class, () ->  {
+        exception = assertThrows(UserNotFoundException.class, () -> {
             userManager.getDeveloper("DieterVH");
         });
     }

@@ -9,7 +9,6 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 
 public class CreateTaskUITest {
 
@@ -61,7 +60,7 @@ public class CreateTaskUITest {
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********
                         Project name of which to add the task to:
-                        Domain.Task name:
+                        Task name:
                         Cancelled task creation
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -70,13 +69,13 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -84,14 +83,14 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -99,62 +98,62 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Given task duration is not an integer, please input an integer and try again
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Given task duration is not an integer, please input an integer and try again
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\nBACK".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\nnotAnInt\nBACK".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Given task duration is not an integer, please input an integer and try again
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Given task duration is not an integer, please input an integer and try again
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\n20\nBACK".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -162,17 +161,17 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Given task deviation is not a double, please input an integer and try again
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Given task deviation is not a double, please input an integer and try again
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -180,35 +179,35 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\n20\n0.3\ny\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                This task is a replacement for task:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        This task is a replacement for task:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -216,18 +215,18 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -235,19 +234,19 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -255,20 +254,20 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Tasks that should be completed before this task, enter '.' to stop adding new tasks:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Tasks that should be completed before this task, enter '.' to stop adding new tasks:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -276,20 +275,20 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Tasks that should be completed before this task, enter '.' to stop adding new tasks:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Tasks that should be completed before this task, enter '.' to stop adding new tasks:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -297,20 +296,20 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Tasks that should be completed before this task, enter '.' to stop adding new tasks:
-                Domain.Task NewTask successfully added to project SimpleProject
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Tasks that should be completed before this task, enter '.' to stop adding new tasks:
+                        Task NewTask successfully added to project SimpleProject
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -324,116 +323,116 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                This task is a replacement for task:
-                Domain.Task ReplacementTask successfully added to project SimpleProject as a replacement for task SimpleTask
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        This task is a replacement for task:
+                        Task ReplacementTask successfully added to project SimpleProject as a replacement for task SimpleTask
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         // Try to create replacement task for not failed task
-        System.setIn(new ByteArrayInputStream("SimpleProject\nDomain.Task\nCool description\n3\n20\n0.3\ny\nReplacementTask\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("SimpleProject\nTask\nCool description\n3\n20\n0.3\ny\nReplacementTask\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                This task is a replacement for task:
-                ERROR: the task to replace has not failed, please try again
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        This task is a replacement for task:
+                        ERROR: the task to replace has not failed, please try again
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
         // Input non-existent project name
-        System.setIn(new ByteArrayInputStream("WrongProject\nDomain.Task\nCool description\n3\n20\n0.3\ny\nSimpleTask\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("WrongProject\nTask\nCool description\n3\n20\n0.3\ny\nSimpleTask\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                This task is a replacement for task:
-                ERROR: the given project does not exist
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        This task is a replacement for task:
+                        ERROR: the given project does not exist
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
         // Input wrong minute format
-        System.setIn(new ByteArrayInputStream("SimpleProject\nDomain.Task\nCool description\n3\n99\n0.3\ny\nSimpleTask\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("SimpleProject\nTask\nCool description\n3\n99\n0.3\ny\nSimpleTask\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                This task is a replacement for task:
-                ERROR: The given minutes are not of a valid format (0-59)
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        This task is a replacement for task:
+                        ERROR: The given minutes are not of a valid format (0-59)
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         // Replace non-existent task
-        System.setIn(new ByteArrayInputStream("SimpleProject\nDomain.Task\nCool description\n3\n20\n0.3\ny\nNon-Existent task\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("SimpleProject\nTask\nCool description\n3\n20\n0.3\ny\nNon-Existent task\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                This task is a replacement for task:
-                ERROR: the given task to replace does not exist
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        This task is a replacement for task:
+                        ERROR: the given task to replace does not exist
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -441,23 +440,23 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                This task is a replacement for task:
-                ERROR: the given task name is already in use
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        This task is a replacement for task:
+                        ERROR: the given task name is already in use
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -465,23 +464,23 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                This task is a replacement for task:
-                ERROR: the given task name is already in use
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        This task is a replacement for task:
+                        ERROR: the given task name is already in use
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -489,25 +488,25 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Tasks that should be completed before this task, enter '.' to stop adding new tasks:
-                ERROR: Given user does not exist or is not a developer
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Tasks that should be completed before this task, enter '.' to stop adding new tasks:
+                        ERROR: Given user does not exist or is not a developer
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -515,25 +514,25 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Tasks that should be completed before this task, enter '.' to stop adding new tasks:
-                ERROR: Given project does not exist
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Tasks that should be completed before this task, enter '.' to stop adding new tasks:
+                        ERROR: Given project does not exist
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -541,25 +540,25 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Tasks that should be completed before this task, enter '.' to stop adding new tasks:
-                ERROR: The given minutes are not of a valid format (0-59)
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Tasks that should be completed before this task, enter '.' to stop adding new tasks:
+                        ERROR: The given minutes are not of a valid format (0-59)
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -567,25 +566,25 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Tasks that should be completed before this task, enter '.' to stop adding new tasks:
-                ERROR: Given task does not exist
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Tasks that should be completed before this task, enter '.' to stop adding new tasks:
+                        ERROR: Given task does not exist
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
@@ -593,25 +592,25 @@ public class CreateTaskUITest {
         managerUI.createTask();
         assertEquals(
                 """
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Domain.Task name:
-                Domain.Task description:
-                Domain.Task duration hours:
-                Domain.Task duration minutes:
-                Domain.Task deviation:
-                Is this a replacement task? (y/n)
-                Is this a replacement task? (y/n)
-                Give developer performing this task:
-                Tasks that should be completed before this task, enter '.' to stop adding new tasks:
-                ERROR: the given task name is already in use
-                
-                Type BACK to cancel task creation at any time
-                *********** TASK CREATION FORM ***********
-                Project name of which to add the task to:
-                Cancelled task creation
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer performing this task:
+                        Tasks that should be completed before this task, enter '.' to stop adding new tasks:
+                        ERROR: the given task name is already in use
+                                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        Project name of which to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
     }

@@ -1,6 +1,6 @@
 import Application.Session;
-import UserInterface.ShowProjectsUI;
 import Domain.*;
+import UserInterface.ShowProjectsUI;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -36,10 +36,10 @@ public class ShowProjectsUITest {
         System.setIn(new ByteArrayInputStream("BACK".getBytes()));
         ui.showProjects();
         assertEquals("""
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Type the name of a project to see more details:
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
+                        Type "BACK" to cancel
+                        ********* PROJECTS *********
+                        Type the name of a project to see more details:
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
         tsm.createProject("Project1", "Description1", new Time(100));
@@ -48,7 +48,7 @@ public class ShowProjectsUITest {
         LinkedList task = new LinkedList<>();
         task.add("Task1");
         tsm.addTaskToProject("Project1", "otherTask", "This is a followup task", new Time(100), 5, task, dev);
-        tsm.addTaskToProject("Project2", "Task2", "Description2", new Time(100),5, new LinkedList<>(), dev);
+        tsm.addTaskToProject("Project2", "Task2", "Description2", new Time(100), 5, new LinkedList<>(), dev);
 
         out.reset();
         System.setIn(new ByteArrayInputStream("BACK".getBytes()));
@@ -76,10 +76,10 @@ public class ShowProjectsUITest {
                 Creation Time: 0 hours, 0 minutes
                 Due Time:      1 hours, 40 minutes
                 Status:        ongoing
-                
+                                
                 Tasks:
                 1. Task2
-                
+                                
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
@@ -98,7 +98,7 @@ public class ShowProjectsUITest {
                 Project1, status: ongoing
                 Type the name of a project to see more details:
                 The given project could not be found
-                
+                                
                 Type "BACK" to cancel
                 ********* PROJECTS *********
                 Project2, status: ongoing
@@ -128,7 +128,8 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 The given task could not be found, please try again
-                                
+                
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
                 Project2, status: ongoing
@@ -156,10 +157,10 @@ public class ShowProjectsUITest {
                 Creation Time: 0 hours, 0 minutes
                 Due Time:      1 hours, 40 minutes
                 Status:        finished
-                
+                                
                 Tasks:
                 1. Task2
-                
+                                
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
@@ -190,17 +191,17 @@ public class ShowProjectsUITest {
                         
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          Task1
+                Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             available
                         
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                         
-                Start Time:         Domain.Task has not started yet
-                End Time:           Domain.Task has not ended yet
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
                         
                 User:               OlavBl
                         
@@ -208,19 +209,19 @@ public class ShowProjectsUITest {
                 1.otherTask
                 Previous tasks:
                         
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          otherTask
+                Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             unavailable
                         
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                         
-                Start Time:         Domain.Task has not started yet
-                End Time:           Domain.Task has not ended yet
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
                         
                 User:               OlavBl
                         
@@ -228,7 +229,7 @@ public class ShowProjectsUITest {
                 Previous tasks:
                 1.Task1
                         
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
                 Project2, status: finished
@@ -257,17 +258,17 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          Task1
+                Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             available
                                 
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                 
-                Start Time:         Domain.Task has not started yet
-                End Time:           Domain.Task has not ended yet
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -275,19 +276,19 @@ public class ShowProjectsUITest {
                 1.otherTask
                 Previous tasks:
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          otherTask
+                Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             unavailable
                                 
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                 
-                Start Time:         Domain.Task has not started yet
-                End Time:           Domain.Task has not ended yet
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -295,7 +296,7 @@ public class ShowProjectsUITest {
                 Previous tasks:
                 1.Task1
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
                 Project2, status: finished
@@ -327,14 +328,14 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          Task1
+                Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             executing
                                 
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                 
                 Start Time:         1483 hours, 19 minutes
                 End Time:           No end time set
@@ -345,19 +346,19 @@ public class ShowProjectsUITest {
                 1.otherTask
                 Previous tasks:
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          otherTask
+                Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             unavailable
                                 
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                 
-                Start Time:         Domain.Task has not started yet
-                End Time:           Domain.Task has not ended yet
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -365,7 +366,7 @@ public class ShowProjectsUITest {
                 Previous tasks:
                 1.Task1
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
                 Project2, status: finished
@@ -399,14 +400,14 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          Task1
+                Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             finished, on time
                                                    
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                                    
                 Start Time:         1483 hours, 19 minutes
                 End Time:           1483 hours, 22 minutes
@@ -417,19 +418,19 @@ public class ShowProjectsUITest {
                 1.otherTask
                 Previous tasks:
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          otherTask
+                Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             available
                                 
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                 
-                Start Time:         Domain.Task has not started yet
-                End Time:           Domain.Task has not ended yet
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -437,7 +438,7 @@ public class ShowProjectsUITest {
                 Previous tasks:
                 1.Task1
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
                 Project2, status: finished
@@ -449,7 +450,7 @@ public class ShowProjectsUITest {
         tsm.startTask("Project1", "otherTask", new Time(89003), dev);
         tsm.advanceTime(new Time(110000));
         tsm.endTask("Project1", "otherTask", Status.FAILED, new Time(89004), dev);
-        tsm.replaceTaskInProject("Project1", "replaceMentTask", "Domain.Task to replace otherTask", new Time(1000), .0001, "otherTask");
+        tsm.replaceTaskInProject("Project1", "replaceMentTask", "Task to replace otherTask", new Time(1000), .0001, "otherTask");
 
         System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nreplaceMentTask\nBACK\nBACK".getBytes()));
         ui.showProjects();
@@ -475,14 +476,14 @@ public class ShowProjectsUITest {
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          Task1
+                Task Name:          Task1
                 Description:        Description1
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             finished, on time
                                                    
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
                                                    
                 Start Time:         1483 hours, 19 minutes
                 End Time:           1483 hours, 22 minutes
@@ -493,16 +494,16 @@ public class ShowProjectsUITest {
                 1.replaceMentTask
                 Previous tasks:
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          otherTask
+                Task Name:          otherTask
                 Description:        This is a followup task
                 Estimated Duration: 1 hours, 40 minutes
                 Accepted Deviation: 5.0
                 Status:             failed
                                 
-                Replacement Domain.Task:   replaceMentTask
-                Replaces Domain.Task:      Replaces no tasks
+                Replacement Task:   replaceMentTask
+                Replaces Task:      Replaces no tasks
                                 
                 Start Time:         1483 hours, 23 minutes
                 End Time:           1483 hours, 24 minutes
@@ -512,19 +513,19 @@ public class ShowProjectsUITest {
                 Next tasks:
                 Previous tasks:
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 ******** TASK DETAILS ********
-                Domain.Task Name:          replaceMentTask
-                Description:        Domain.Task to replace otherTask
+                Task Name:          replaceMentTask
+                Description:        Task to replace otherTask
                 Estimated Duration: 16 hours, 40 minutes
                 Accepted Deviation: 1.0E-4
                 Status:             available
                                 
-                Replacement Domain.Task:   No replacement task
-                Replaces Domain.Task:      otherTask
+                Replacement Task:   No replacement task
+                Replaces Task:      otherTask
                                 
-                Start Time:         Domain.Task has not started yet
-                End Time:           Domain.Task has not ended yet
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
                                 
                 User:               OlavBl
                                 
@@ -532,7 +533,7 @@ public class ShowProjectsUITest {
                 Previous tasks:
                 1.Task1
                                 
-                Type the name of another task to see more details, or type "BACK" to choose another project:
+                Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
                 Project2, status: finished

@@ -1,10 +1,13 @@
 import Domain.*;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class TaskManSystemTest {
     @Test
@@ -56,41 +59,41 @@ public class TaskManSystemTest {
         // TODO taskNotFoundException
         User mechanic = new User("mechanic", "honda123", Role.DEVELOPER);
         List prev = new LinkedList<>();
-        taskManSystem.addTaskToProject("car", "Engine", "Get Honda to deliver engine", new Time(7, 3), 10, new LinkedList<>(),  mechanic);
-        taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(7, 3), 10, new LinkedList<>(),  mechanic);
+        taskManSystem.addTaskToProject("car", "Engine", "Get Honda to deliver engine", new Time(7, 3), 10, new LinkedList<>(), mechanic);
+        taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(7, 3), 10, new LinkedList<>(), mechanic);
         prev.add("Wheels");
-        taskManSystem.addTaskToProject("car", "Body", "Get Honda to deliver body", new Time(7, 3), 10, prev,  mechanic);
+        taskManSystem.addTaskToProject("car", "Body", "Get Honda to deliver body", new Time(7, 3), 10, prev, mechanic);
         prev.add("Body");
-        taskManSystem.addTaskToProject("car", "Paint", "Get Honda to deliver paint", new Time(7, 3), 10, prev,  mechanic);
+        taskManSystem.addTaskToProject("car", "Paint", "Get Honda to deliver paint", new Time(7, 3), 10, prev, mechanic);
         exception = assertThrows(TaskNameAlreadyInUseException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Engine", "Get Honda to deliver engine", new Time(7, 3), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("car", "Engine", "Get Honda to deliver engine", new Time(7, 3), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(TaskNameAlreadyInUseException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(7, 3), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(7, 3), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(TaskNameAlreadyInUseException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Body", "Get Honda to deliver body", new Time(7, 3), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("car", "Body", "Get Honda to deliver body", new Time(7, 3), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(ProjectNotFoundException.class, () -> {
-            taskManSystem.addTaskToProject("minecraft", "Engine", "Get Honda to deliver engine", new Time(7, 3), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("minecraft", "Engine", "Get Honda to deliver engine", new Time(7, 3), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(ProjectNotFoundException.class, () -> {
-            taskManSystem.addTaskToProject("minecraft", "Wheels", "Get Honda to deliver wheels", new Time(7, 3), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("minecraft", "Wheels", "Get Honda to deliver wheels", new Time(7, 3), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(InvalidTimeException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Engine", "Get Honda to deliver engine", new Time(24, 60), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("car", "Engine", "Get Honda to deliver engine", new Time(24, 60), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(InvalidTimeException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(24, -3), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(24, -3), 10, new LinkedList<>(), mechanic);
         });
         List exception_list = new ArrayList<>();
         exception_list.add("Honda");
         exception = assertThrows(TaskNotFoundException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Fail", "This will fail", new Time(7, 3), 10, exception_list,  mechanic);
+            taskManSystem.addTaskToProject("car", "Fail", "This will fail", new Time(7, 3), 10, exception_list, mechanic);
         });
 
         User builder = new User("thomas", "builder123", Role.DEVELOPER);
-        taskManSystem.addTaskToProject("house", "Walls", "Make walls out of concrete", new Time(7, 3), 10, new LinkedList<>(),  builder);
+        taskManSystem.addTaskToProject("house", "Walls", "Make walls out of concrete", new Time(7, 3), 10, new LinkedList<>(), builder);
 
         List tasks = new ArrayList();
 
@@ -112,15 +115,15 @@ public class TaskManSystemTest {
                 Estimated Duration: 7 hours, 3 minutes
                 Accepted Deviation: 10.0
                 Status:             available
-                
+                                
                 Replacement Task:   No replacement task
                 Replaces Task:      Replaces no tasks
-                
+                                
                 Start Time:         Task has not started yet
                 End Time:           Task has not ended yet
-                
+                                
                 User:               mechanic
-                
+                                
                 Next tasks:
                 Previous tasks:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -146,15 +149,15 @@ public class TaskManSystemTest {
                 Estimated Duration: 7 hours, 3 minutes
                 Accepted Deviation: 10.0
                 Status:             executing
-                
+                                
                 Replacement Task:   No replacement task
                 Replaces Task:      Replaces no tasks
-                
+                                
                 Start Time:         4 hours, 34 minutes
                 End Time:           No end time set
-                
+                                
                 User:               mechanic
-                
+                                
                 Next tasks:
                 Previous tasks:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -167,30 +170,29 @@ public class TaskManSystemTest {
         assertEquals(Status.UNAVAILABLE, taskManSystem.getStatus("car", "Paint"));
 
 
-
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.endTask("website", "Engine", Status.FINISHED, new Time(6, 35), mechanic));
         taskManSystem.endTask("car", "Engine", Status.FINISHED, new Time(6, 35), mechanic);
         taskManSystem.endTask("car", "Wheels", Status.FINISHED, new Time(6, 35), mechanic);
         taskManSystem.endTask("house", "Walls", Status.FINISHED, new Time(6, 35), builder);
 
         assertEquals("""
-                        Task Name:          Engine
-                        Description:        Get Honda to deliver engine
-                        Estimated Duration: 7 hours, 3 minutes
-                        Accepted Deviation: 10.0
-                        Status:             executing
-                        
-                        Replacement Task:   No replacement task
-                        Replaces Task:      Replaces no tasks
-                        
-                        Start Time:         4 hours, 34 minutes
-                        End Time:           6 hours, 35 minutes
-                        
-                        User:               mechanic
-                        
-                        Next tasks:
-                        Previous tasks:
-                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                Task Name:          Engine
+                Description:        Get Honda to deliver engine
+                Estimated Duration: 7 hours, 3 minutes
+                Accepted Deviation: 10.0
+                Status:             executing
+                                        
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                                        
+                Start Time:         4 hours, 34 minutes
+                End Time:           6 hours, 35 minutes
+                                        
+                User:               mechanic
+                                        
+                Next tasks:
+                Previous tasks:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
         taskManSystem.advanceTime(new Time(6, 22));
         assertEquals(taskManSystem.getSystemTime().getHour(), 6);
@@ -208,15 +210,15 @@ public class TaskManSystemTest {
                 Estimated Duration: 7 hours, 3 minutes
                 Accepted Deviation: 10.0
                 Status:             finished, on time
-                
+                                
                 Replacement Task:   No replacement task
                 Replaces Task:      Replaces no tasks
-                
+                                
                 Start Time:         4 hours, 34 minutes
                 End Time:           6 hours, 35 minutes
-                
+                                
                 User:               mechanic
-                
+                                
                 Next tasks:
                 Previous tasks:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -236,7 +238,7 @@ public class TaskManSystemTest {
         assertEquals(0, taskManSystem.showAvailableTasks().get("house").size());
         assertEquals(0, taskManSystem.showExecutingTasks().get("car").size());
         assertEquals(0, taskManSystem.showExecutingTasks().get("house").size());
-        taskManSystem.startTask("car", "Body", new Time(8,34), mechanic);
+        taskManSystem.startTask("car", "Body", new Time(8, 34), mechanic);
         taskManSystem.advanceTime(new Time(8, 40));
         assertEquals(2, taskManSystem.getNextStatuses("car", "Body").size());
         assertEquals(0, taskManSystem.showAvailableTasks().get("car").size());
@@ -256,7 +258,7 @@ public class TaskManSystemTest {
         assertEquals(1, taskManSystem.showExecutingTasks().get("car").size());
         assertEquals(0, taskManSystem.showExecutingTasks().get("house").size());
         exception = assertThrows(FailTimeAfterSystemTimeException.class, () -> {
-            taskManSystem.endTask("car", "Paint", Status.FAILED, new Time(568, 3),  mechanic);
+            taskManSystem.endTask("car", "Paint", Status.FAILED, new Time(568, 3), mechanic);
         });
         taskManSystem.endTask("car", "Paint", Status.FINISHED, new Time(16, 35), mechanic);
         taskManSystem.advanceTime(new Time(17, 33));
@@ -268,16 +270,16 @@ public class TaskManSystemTest {
         assertEquals(Status.FINISHED, taskManSystem.getStatus("car", "Paint"));
 
         exception = assertThrows(ProjectNotFoundException.class, () -> {
-            taskManSystem.addTaskToProject("minecraft", "Engine", "Get Honda to deliver engine", new Time(7, 3), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("minecraft", "Engine", "Get Honda to deliver engine", new Time(7, 3), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(TaskNotFoundException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Fail", "This will fail", new Time(7, 3), 10, exception_list,  mechanic);
+            taskManSystem.addTaskToProject("car", "Fail", "This will fail", new Time(7, 3), 10, exception_list, mechanic);
         });
         exception = assertThrows(InvalidTimeException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Windows", "Install windows", new Time(7, 60), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("car", "Windows", "Install windows", new Time(7, 60), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(InvalidTimeException.class, () -> {
-            taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(7, -3), 10, new LinkedList<>(),  mechanic);
+            taskManSystem.addTaskToProject("car", "Wheels", "Get Honda to deliver wheels", new Time(7, -3), 10, new LinkedList<>(), mechanic);
         });
         exception = assertThrows(IncorrectUserException.class, () -> {
             taskManSystem.startTask("car", "Engine", new Time(4, 34), builder);
@@ -300,7 +302,6 @@ public class TaskManSystemTest {
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.getStatus("Phone", "battery"));
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.getStatus(null, "battery"));
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.startTask("Phone", "battery", new Time(4, 34), mechanic));
-
 
 
     }

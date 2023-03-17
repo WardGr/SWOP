@@ -15,7 +15,7 @@ import java.util.Scanner;
 public class LoadSystemUI {
     private final LoadSystemController loadSystemController;
 
-    public LoadSystemUI(UserManager userManager, TaskManSystem taskManSystem, Session session){
+    public LoadSystemUI(UserManager userManager, TaskManSystem taskManSystem, Session session) {
         loadSystemController = new LoadSystemController(userManager, taskManSystem, session);
     }
 
@@ -26,9 +26,9 @@ public class LoadSystemUI {
     /**
      * Initial loadSystem request, checks the role before printing the prompt
      */
-    public void loadSystem(){
-        if (loadSystemController.loadSystemPreconditions()){
-            try{
+    public void loadSystem() {
+        if (loadSystemController.loadSystemPreconditions()) {
+            try {
                 loadSystemForm();
             } catch (IncorrectPermissionException e) {
                 System.out.println(e.getMessage());
@@ -40,6 +40,7 @@ public class LoadSystemUI {
 
     /**
      * Prints the system load form, loads  in the given JSON file to initialise the systems projects
+     *
      * @throws IncorrectPermissionException if the current user is not a project manager
      */
     private void loadSystemForm() throws IncorrectPermissionException {
@@ -53,15 +54,15 @@ public class LoadSystemUI {
             System.out.println("Cancelled system load");
             return;
         }
-        try{
+        try {
             getController().LoadSystem(path);
             System.out.println("system succesfully loaded");
-        }catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException |
-                ProjectNameAlreadyInUseException | InvalidTimeException | FailTimeAfterSystemTimeException |
-                IncorrectUserException | ReplacedTaskNotFailedException | IncorrectTaskStatusException |
-                DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException e) {
+        } catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException |
+                 ProjectNameAlreadyInUseException | InvalidTimeException | FailTimeAfterSystemTimeException |
+                 IncorrectUserException | ReplacedTaskNotFailedException | IncorrectTaskStatusException |
+                 DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException e) {
             System.out.println("ERROR: invalid file logic");
-        }   catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("ERROR: file not found");
         }
     }

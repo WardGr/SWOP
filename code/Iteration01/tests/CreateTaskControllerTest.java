@@ -70,9 +70,6 @@ public class CreateTaskControllerTest {
         assertEquals(projects, tms.showAvailableTasks());
 
 
-
-
-
         omer.logout();
         omer.login(brewer);
         assertFalse(ctc.createTaskPreconditions());
