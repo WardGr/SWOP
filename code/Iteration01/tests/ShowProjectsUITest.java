@@ -85,6 +85,56 @@ public class ShowProjectsUITest {
                 Type the name of a project to see more details:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
+
+        System.setIn(new ByteArrayInputStream("HOI\nBACK\n".getBytes()));
+        ui.showProjects();
+        assertEquals("""
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project2, status: ongoing
+                Project1, status: ongoing
+                Type the name of a project to see more details:
+                The given project could not be found
+                
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project2, status: ongoing
+                Project1, status: ongoing
+                Type the name of a project to see more details:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+
+        System.setIn(new ByteArrayInputStream("Project2\nhoi\nBACK\nBACK\n".getBytes()));
+        ui.showProjects();
+        assertEquals("""
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project2, status: ongoing
+                Project1, status: ongoing
+                Type the name of a project to see more details:
+                ******** PROJECT DETAILS ********
+                Project Name:  Project2
+                Description:   Description2
+                Creation Time: 0 hours, 0 minutes
+                Due Time:      1 hours, 40 minutes
+                Status:        ongoing
+                                
+                Tasks:
+                1. Task2
+                                
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                The given task could not be found, please try again
+                                
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project2, status: ongoing
+                Project1, status: ongoing
+                Type the name of a project to see more details:     
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+
         tsm.startTask("Project2", "Task2", new Time(200), dev);
         tsm.advanceTime(new Time(300));
         tsm.endTask("Project2", "Task2", Status.FINISHED, new Time(1000), dev);

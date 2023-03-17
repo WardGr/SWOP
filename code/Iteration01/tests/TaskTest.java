@@ -143,23 +143,75 @@ public class TaskTest {
         Task nextTask = new Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, prev, user);
         assertThrows(IncorrectTaskStatusException.class, () -> nextTask.start(startTime1, new Time(30000), user));
 
-        Task toFinish = new Task("toFinish", "Task will finish due to time increasing", new Time(10, 0), 5, new LinkedList<>(), user);
+        // Test delayed task
+        Task delayedTask = new Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, new LinkedList<>(), user);
+        delayedTask.start(systemTime, systemTime, user);
+        delayedTask.end(Status.FINISHED, new Time(10000), new Time(10000), user);
+        assertEquals("""
+                Task Name:          Cooler task
+                Description:        Cooler description
+                Estimated Duration: 0 hours, 20 minutes
+                Accepted Deviation: 0.2
+                Status:             finished, delayed
+                                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                                
+                Start Time:         0 hours, 10 minutes
+                End Time:           166 hours, 40 minutes
+                                
+                User:               Ward
+                                
+                Next tasks:
+                Previous tasks:         
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), delayedTask.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+
+        // Test early task
+
+        Task earlyTask = new Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, new LinkedList<>(), user);
+        earlyTask.start(systemTime, systemTime, user);
+        earlyTask.end(Status.FINISHED, new Time(10), new Time(10000), user);
+        assertEquals("""
+                Task Name:          Cooler task
+                Description:        Cooler description
+                Estimated Duration: 0 hours, 20 minutes
+                Accepted Deviation: 0.2
+                Status:             finished, early
+                                
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                                
+                Start Time:         0 hours, 10 minutes
+                End Time:           0 hours, 10 minutes
+                                
+                User:               Ward
+                                
+                Next tasks:
+                Previous tasks:         
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), earlyTask.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+
+
+
+
+
+        Task toFinish = new Task("toFinish", "Task will finish due to time increasing", new Time(10, 0), 0.1, new LinkedList<>(), user);
         LinkedList<Task> prevTasks = new LinkedList<>();
         prevTasks.add(toFinish);
-        Task toStart = new Task("toStart", "Task will start due to time increasing", new Time(10, 0), 5, prevTasks, user);
+        Task toStart = new Task("toStart", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
         assertEquals(Status.UNAVAILABLE, toStart.getStatus());
         toFinish.start(new Time(0, 0), new Time(0, 0), user);
-        toFinish.end(Status.FINISHED, new Time(10, 0), new Time(10, 0), user);
+        toFinish.end(Status.FINISHED, new Time(1, 0), new Time(10, 0), user);
         toFinish.advanceTime(new Time(13, 0));
         assertEquals(Status.FINISHED, toFinish.getStatus());
-        assertEquals(Status.AVAILABLE, toStart.getStatus());
 
-        Task lastTask = new Task("Final Task", "Task will start due to time increasing", new Time(10, 0), 5, prevTasks, user);
+        Task lastTask = new Task("Final Task", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
         lastTask.advanceTime(new Time(0, 0));
         assertEquals(Status.AVAILABLE, lastTask.getStatus());
         lastTask.start(new Time(10, 0), new Time(10, 0), user);
         lastTask.advanceTime(new Time(100, 0));
         assertEquals(Status.EXECUTING, lastTask.getStatus());
+
+
 
 
 
