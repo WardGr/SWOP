@@ -3,10 +3,11 @@
     {
       "name": "simpleProject",
       "description": "first LoadSystemTest",
-      "startHour": 1,
+      "startHour": 17,
       "startMinute": 11,
       "endHour": 16,
-      "endMinute": 10
+      "endMinute": 10,
+      "tasks": []
     }
   ],
   "systemHour": 15,

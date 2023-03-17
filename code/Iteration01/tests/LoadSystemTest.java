@@ -24,6 +24,9 @@ public class LoadSystemTest {
     @Test
     public void testLoadSystem() throws ProjectNotFoundException, TaskNotFoundException, LoginException {
         controller();
+        //checks if the old system gets discarded and the new gets loaded
+        controller();
+        ui();
     }
 
     @Test

@@ -53,6 +53,7 @@ public class LoadSystemController {
         JSONParser jsonParser = new JSONParser();
         FileReader reader = new FileReader(filepath);
         JSONObject doc = (JSONObject) jsonParser.parse(reader);
+        getTaskManSystem().clear();
         //set system time
         int systemHour = (int) (long) doc.get("systemHour");
         int systemMinute = (int) (long) doc.get("systemMinute");

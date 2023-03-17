@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class TaskManSystem {
 
-    private final List<Project> projects;
+    private List<Project> projects;
     private Time systemTime;
 
     public TaskManSystem(Time systemTime) {
@@ -369,5 +369,8 @@ public class TaskManSystem {
             project.advanceTime(newTime);
         }
         setSystemTime(newTime);
+    }
+    public void clear(){
+        projects = new LinkedList<>();
     }
 }
