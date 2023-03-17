@@ -303,27 +303,6 @@ public class Task {
     previousTasks.remove(task);
   }
 
-
-  /**
-   * Replaces a next task with a new task
-   * @param oldTask Task to replace
-   * @param newTask Replacing task
-   */
-  private void replaceNextTask(Task oldTask, Task newTask) {
-    removeNextTask(oldTask);
-    addNextTask(newTask);
-  }
-
-  /**
-   * Replaces a previous task with a new task
-   * @param oldTask Task to replace
-   * @param newTask Replacing task
-   */
-  private void replacePreviousTask(Task oldTask, Task newTask) {
-    removePreviousTask(oldTask);
-    addPreviousTask(newTask);
-  }
-
   /**
    * @return Status regarding when this task was finished (early, on time or delayed), based on acceptable deviation and duration
    */
@@ -467,15 +446,20 @@ public class Task {
       throw new ReplacedTaskNotFailedException();
     }
 
-    Task newTask = new Task(taskName, description, duration, deviation, getPreviousTasks(), getUser());
-    newTask.setNextTasks(getNextTasks());
+    Task newTask = new Task(taskName, description, duration, deviation, new LinkedList<>(), getUser());
 
     for (Task task : getPreviousTasks()) {
-      task.replacePreviousTask(this, newTask);
+      task.removeNextTask(this);
+      this.removePreviousTask(task);
+      task.addNextTask(newTask);
+      newTask.addPreviousTask(task);
     }
 
     for (Task task : getNextTasks()) {
-      task.replaceNextTask(this, newTask);
+      task.removePreviousTask(this);
+      this.removeNextTask(task);
+      task.addPreviousTask(newTask);
+      newTask.addNextTask(task);
     }
 
     setReplacementTask(newTask);
