@@ -17,6 +17,9 @@ public class LoadSystemUI {
         return loadSystemController;
     }
 
+    /**
+     * Initial loadSystem request, checks the role before printing the prompt
+     */
     public void loadSystem(){
         if (loadSystemController.loadSystemPreconditions()){
             try{
@@ -28,6 +31,11 @@ public class LoadSystemUI {
             System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
     }
+
+    /**
+     * Prints the system load form, loads  in the given JSON file to initialise the systems projects
+     * @throws IncorrectPermissionException if the current user is not a project manager
+     */
     public void loadSystemForm() throws IncorrectPermissionException {
         Scanner scanner = new Scanner(System.in);
 
