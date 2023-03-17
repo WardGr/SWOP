@@ -36,7 +36,7 @@ public class LoadSystemUI {
      * Prints the system load form, loads  in the given JSON file to initialise the systems projects
      * @throws IncorrectPermissionException if the current user is not a project manager
      */
-    public void loadSystemForm() throws IncorrectPermissionException {
+    private void loadSystemForm() throws IncorrectPermissionException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Type BACK to cancel system load at any time");

@@ -1,6 +1,9 @@
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.*;
+import java.io.PrintStream;
 
 import static org.junit.Assert.*;
 public class LoadSystemTest {
@@ -51,6 +54,8 @@ public class LoadSystemTest {
         assertEquals(taskManSystem.showTask("simpleProject2", "simpleTask"), expectedTask);
         expectedTask = "Task Name:          replacesTask\nDescription:        second LoadSystemTask replace\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             executing\n\nReplacement Task:   No replacement task\nReplaces Task:      simpleTask\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           No end time set\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n";
         assertEquals(taskManSystem.showTask("simpleProject3", "replacesTask"), expectedTask);
+        expectedTask = "Task Name:          simpleTask\nDescription:        first LoadSystemTask replace\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             failed\n\nReplacement Task:   replacesTask\nReplaces Task:      Replaces no tasks\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           2 hours, 10 minutes\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n";
+        assertEquals(taskManSystem.showTask("simpleProject3", "simpleTask"), expectedTask);
         expectedTask = "Task Name:          simpleTask\nDescription:        first LoadSystemTask nxt\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             executing\n\nReplacement Task:   No replacement task\nReplaces Task:      Replaces no tasks\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           No end time set\n\nUser:               SamHa\n\nNext tasks:\n1.nextTask\nPrevious tasks:\n";
         assertEquals(taskManSystem.showTask("simpleProject4", "simpleTask"), expectedTask);
         expectedTask = "Task Name:          nextTask\nDescription:        second LoadSystemTask nxt\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             unavailable\n\nReplacement Task:   No replacement task\nReplaces Task:      Replaces no tasks\n\nStart Time:         Task has not started yet\nEnd Time:           Task has not ended yet\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n1.simpleTask\n";
@@ -69,7 +74,67 @@ public class LoadSystemTest {
             fail("Wrong exception thrown");
         }
     }
+    @Test
+    public void ui() throws LoginException {
+        LoadSystemUI lsu = new LoadSystemUI(userManager, taskManSystem, session);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
 
-    public void ui(){
+        //Tests user has not the right permission
+        User manager = userManager.getUser("SamHa","pintje452");
+        session.login(manager);
+        lsu.loadSystem();
+        assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n".replaceAll("\\n|\\r\\n",System.getProperty("line.separator")), out.toString());
+        out.reset();
+
+        //Tests user has right permission but wants to go back
+        manager = userManager.getUser("WardGr","minecraft123");
+        session.login(manager);
+        System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
+        lsu.loadSystem();
+        assertEquals(
+                """
+                Type BACK to cancel system load at any time
+                *********** SYSTEM LOAD FORM ***********
+                please enter the path of the load file:\s
+                Cancelled system load
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        out.reset();
+
+        //Tests when a user succesfully loads a system
+        System.setIn(new ByteArrayInputStream("code/Iteration01/tests/loadTest.json\n".getBytes()));
+        lsu.loadSystem();
+        assertEquals(
+                """
+                Type BACK to cancel system load at any time
+                *********** SYSTEM LOAD FORM ***********
+                please enter the path of the load file:\s
+                system succesfully loaded
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        out.reset();
+
+        //Tests when a user gives an invalid file path
+        System.setIn(new ByteArrayInputStream("code/Iteration01/src/loadTest.json\n".getBytes()));
+        lsu.loadSystem();
+        assertEquals(
+                """
+                Type BACK to cancel system load at any time
+                *********** SYSTEM LOAD FORM ***********
+                please enter the path of the load file:\s
+                ERROR: file not found
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        out.reset();
+
+        //Tests wwhen a user gives a  file with invalid logic
+        System.setIn(new ByteArrayInputStream("code/Iteration01/tests/InvalidLogicTest.json\n".getBytes()));
+        lsu.loadSystem();
+        assertEquals(
+                """
+                Type BACK to cancel system load at any time
+                *********** SYSTEM LOAD FORM ***********
+                please enter the path of the load file:\s
+                ERROR: invalid file logic
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        out.reset();
     }
 }
