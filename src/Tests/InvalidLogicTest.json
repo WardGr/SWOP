@@ -1,0 +1,15 @@
+{
+  "projects": [
+    {
+      "name": "simpleProject",
+      "description": "first LoadSystemTest",
+      "startHour": 17,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10,
+      "tasks": []
+    }
+  ],
+  "systemHour": 15,
+  "systemMinute": 10
+}

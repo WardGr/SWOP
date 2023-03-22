@@ -1,0 +1,163 @@
+{
+  "projects": [
+    {
+      "name": "simpleProject",
+      "description": "first LoadSystemTest",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10,
+      "tasks": [
+        {
+          "name": "simpleTask",
+          "description": "first LoadSystemTask",
+          "acceptableDeviation": 3.3,
+          "status": "EXECUTING",
+          "dueHour": 16,
+          "dueMinute": 10,
+          "startHour": 1,
+          "startMinute": 6,
+          "endHour": null,
+          "endMinute": null,
+          "replaces": null,
+          "previousTasks": [],
+          "user": "SamHa"
+        }
+      ]
+    },
+    {
+      "name": "simpleProject2",
+      "description": "second LoadSystemTest",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10,
+      "tasks": [
+        {
+          "name": "simpleTask",
+          "description": "first LoadSystemTask failed",
+          "acceptableDeviation": 3.3,
+          "status": "FAILED",
+          "dueHour": 16,
+          "dueMinute": 10,
+          "startHour": 1,
+          "startMinute": 6,
+          "endHour": 2,
+          "endMinute": 10,
+          "replaces": null,
+          "previousTasks": [],
+          "user": "SamHa"
+        }
+      ]
+    },
+    {
+      "name": "simpleProject3",
+      "description": "Test on task replacement",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10,
+      "tasks": [
+        {
+          "name": "simpleTask",
+          "description": "first LoadSystemTask replace",
+          "acceptableDeviation": 3.3,
+          "status": "FAILED",
+          "dueHour": 16,
+          "dueMinute": 10,
+          "startHour": 1,
+          "startMinute": 6,
+          "endHour": 2,
+          "endMinute": 10,
+          "replaces": null,
+          "previousTasks": [],
+          "user": "SamHa"
+        },
+        {
+          "name": "replacesTask",
+          "description": "second LoadSystemTask replace",
+          "acceptableDeviation": 3.3,
+          "status": "EXECUTING",
+          "dueHour": 16,
+          "dueMinute": 10,
+          "startHour": 1,
+          "startMinute": 6,
+          "endHour": null,
+          "endMinute": null,
+          "replaces": "simpleTask",
+          "previousTasks": [],
+          "user": "SamHa"
+        }
+      ]
+    },
+    {
+      "name": "simpleProject4",
+      "description": "Test on task replacement",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10,
+      "tasks": [
+        {
+          "name": "simpleTask",
+          "description": "first LoadSystemTask nxt",
+          "acceptableDeviation": 3.3,
+          "status": "EXECUTING",
+          "dueHour": 16,
+          "dueMinute": 10,
+          "startHour": 1,
+          "startMinute": 6,
+          "endHour": null,
+          "endMinute": null,
+          "replaces": null,
+          "previousTasks": [],
+          "user": "SamHa"
+        },
+        {
+          "name": "nextTask",
+          "description": "second LoadSystemTask nxt",
+          "acceptableDeviation": 3.3,
+          "status": "AVAILABLE",
+          "dueHour": 16,
+          "dueMinute": 10,
+          "startHour": 2,
+          "startMinute": 6,
+          "endHour": null,
+          "endMinute": null,
+          "replaces": null,
+          "previousTasks": [
+            "simpleTask"
+          ],
+          "user": "SamHa"
+        }
+      ]
+    },
+    {
+      "name": "simpleProject5",
+      "description": "second LoadSystemTest",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10,
+      "tasks": [
+        {
+          "name": "simpleTask",
+          "description": "first LoadSystemTask finished",
+          "acceptableDeviation": 3.3,
+          "status": "FINISHED",
+          "dueHour": 16,
+          "dueMinute": 10,
+          "startHour": 1,
+          "startMinute": 6,
+          "endHour": 2,
+          "endMinute": 10,
+          "replaces": null,
+          "previousTasks": [],
+          "user": "SamHa"
+        }
+      ]
+    }
+  ],
+  "systemHour": 15,
+  "systemMinute": 10
+}
