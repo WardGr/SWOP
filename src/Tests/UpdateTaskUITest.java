@@ -1,6 +1,7 @@
 package Tests;
 
 import Application.Session;
+import Application.SessionWrapper;
 import Application.UpdateTaskController;
 import Domain.*;
 import UserInterface.UpdateTaskUI;
@@ -21,8 +22,11 @@ public class UpdateTaskUITest {
         Time systemtime = new Time(0);
 
         Session managerSession = new Session();
+        SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
         Session developerSession = new Session();
+        SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
         Session wrongSession = new Session();
+        SessionWrapper wrongSessionWrapper = new SessionWrapper(wrongSession);
 
         User manager = new User("DieterVH", "computer776", Role.PROJECTMANAGER);
         User developer = new User("SamHa", "trein123", Role.DEVELOPER);
@@ -36,9 +40,9 @@ public class UpdateTaskUITest {
         taskManSystem.createProject("SimpleProject", "Cool description", systemtime, new Time(100));
         taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, new LinkedList<>(), developer);
 
-        UpdateTaskController developerController = new UpdateTaskController(developerSession, taskManSystem);
-        UpdateTaskController wrongController = new UpdateTaskController(wrongSession, taskManSystem);
-        UpdateTaskController managerController = new UpdateTaskController(managerSession, taskManSystem);
+        UpdateTaskController developerController = new UpdateTaskController(developerSessionWrapper, taskManSystem);
+        UpdateTaskController wrongController = new UpdateTaskController(wrongSessionWrapper, taskManSystem);
+        UpdateTaskController managerController = new UpdateTaskController(managerSessionWrapper, taskManSystem);
 
         UpdateTaskUI developerUI = new UpdateTaskUI(developerController);
         UpdateTaskUI wrongUI = new UpdateTaskUI(wrongController);

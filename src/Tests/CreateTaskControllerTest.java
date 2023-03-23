@@ -3,6 +3,7 @@ package Tests;
 import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
 import Application.Session;
+import Application.SessionWrapper;
 import Domain.*;
 import org.junit.Test;
 
@@ -16,12 +17,13 @@ public class CreateTaskControllerTest {
     @Test
     public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ReplacedTaskNotFailedException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, FailTimeAfterSystemTimeException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
         Session omer = new Session();
+        SessionWrapper omerWrapper = new SessionWrapper(omer);
         TaskManSystem tms = new TaskManSystem(new Time(0));
         UserManager um = new UserManager();
         User brewer = um.getUser("OlavBl", "peer123");
         User boss = um.getUser("WardGr", "minecraft123");
 
-        CreateTaskController ctc = new CreateTaskController(omer, tms, um);
+        CreateTaskController ctc = new CreateTaskController(omerWrapper, tms, um);
         omer.login(boss);
         assertTrue(ctc.createTaskPreconditions());
         tms.createProject("project1", "description", new Time(100), new Time(1000));

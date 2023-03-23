@@ -2,6 +2,7 @@ package Tests;
 
 import Application.IncorrectPermissionException;
 import Application.Session;
+import Application.SessionWrapper;
 import Application.ShowProjectsController;
 import Domain.*;
 import org.junit.Test;
@@ -18,7 +19,9 @@ public class ShowProjectsControllerTest {
         Time systemtime = new Time(0);
 
         Session managerSession = new Session();
+        SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
         Session developerSession = new Session();
+        SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
         User manager = new User("DieterVH", "computer776", Role.PROJECTMANAGER);
         User developer = new User("SamHa", "trein123", Role.DEVELOPER);
 
@@ -29,8 +32,8 @@ public class ShowProjectsControllerTest {
         taskManSystem.createProject("SimpleProject", "Cool description", systemtime, new Time(100));
         taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, new LinkedList<>(), developer);
 
-        ShowProjectsController managerController = new ShowProjectsController(managerSession, taskManSystem);
-        ShowProjectsController developerController = new ShowProjectsController(developerSession, taskManSystem);
+        ShowProjectsController managerController = new ShowProjectsController(managerSessionWrapper, taskManSystem);
+        ShowProjectsController developerController = new ShowProjectsController(developerSessionWrapper, taskManSystem);
 
         assertTrue(managerController.showProjectsPreconditions());
         assertFalse(developerController.showProjectsPreconditions());

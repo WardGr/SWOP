@@ -22,14 +22,15 @@ public class UserInterfaceTest {
         TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0)); // exception thrown by the new Time
         UserManager userManager = new UserManager();
         Session session = new Session();
+        SessionWrapper sessionWrapper = new SessionWrapper(session);
 
         SessionController sessionController = new SessionController(session, userManager);
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(session, taskManSystem);
-        CreateProjectController createProjectController = new CreateProjectController(session, taskManSystem);
-        ShowProjectsController showProjectsController = new ShowProjectsController(session, taskManSystem);
-        CreateTaskController createTaskController = new CreateTaskController(session, taskManSystem, userManager);
-        LoadSystemController loadSystemController = new LoadSystemController(userManager, taskManSystem, session);
-        UpdateTaskController updateTaskController = new UpdateTaskController(session, taskManSystem);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionWrapper, taskManSystem);
+        CreateProjectController createProjectController = new CreateProjectController(sessionWrapper, taskManSystem);
+        ShowProjectsController showProjectsController = new ShowProjectsController(sessionWrapper, taskManSystem);
+        CreateTaskController createTaskController = new CreateTaskController(sessionWrapper, taskManSystem, userManager);
+        LoadSystemController loadSystemController = new LoadSystemController(sessionWrapper, taskManSystem, userManager);
+        UpdateTaskController updateTaskController = new UpdateTaskController(sessionWrapper, taskManSystem);
 
         SessionUI sessionUI = new SessionUI(sessionController);
         AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);

@@ -9,12 +9,12 @@ import java.util.List;
  */
 public class CreateTaskController {
 
-    private final Session session;
+    private final SessionWrapper session;
     private final TaskManSystem taskManSystem;
     private final UserManager userManager;
 
     public CreateTaskController(
-            Session session,
+            SessionWrapper session,
             TaskManSystem taskManSystem,
             UserManager userManager
     ) {
@@ -24,7 +24,7 @@ public class CreateTaskController {
     }
 
 
-    private Session getSession() {
+    private SessionWrapper getSession() {
         return session;
     }
 

@@ -3,6 +3,7 @@ package Tests;
 import Application.IncorrectPermissionException;
 import Application.LoadSystemController;
 import Application.Session;
+import Application.SessionWrapper;
 import Domain.*;
 import UserInterface.LoadSystemUI;
 import org.junit.Test;
@@ -19,8 +20,9 @@ public class LoadSystemTest {
     UserManager userManager = new UserManager();
     TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0));
     Session session = new Session();
+    SessionWrapper sessionWrapper = new SessionWrapper(session);
 
-    LoadSystemController lsc = new LoadSystemController(userManager, taskManSystem, session);
+    LoadSystemController lsc = new LoadSystemController(sessionWrapper, taskManSystem, userManager);
 
     public LoadSystemTest() throws InvalidTimeException {
     }
@@ -81,7 +83,7 @@ public class LoadSystemTest {
         try {
             manager = userManager.getUser("SamHa", "trein123");
             session.login(manager);
-            lsc = new LoadSystemController(userManager, taskManSystem, session);
+            lsc = new LoadSystemController(sessionWrapper, taskManSystem, userManager);
             lsc.LoadSystem("src/Tests/loadTest.json");
             fail("Exception not thrown");
         } catch (IncorrectPermissionException e) {

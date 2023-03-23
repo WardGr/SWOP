@@ -6,18 +6,18 @@ import Domain.*;
  */
 public class CreateProjectController {
 
-    private final Session session;
+    private final SessionWrapper session;
     private final TaskManSystem taskManSystem;
 
     public CreateProjectController(
-            Session session,
+            SessionWrapper session,
             TaskManSystem taskManSystem
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
     }
 
-    private Session getSession() {
+    private SessionWrapper getSession() {
         return session;
     }
 

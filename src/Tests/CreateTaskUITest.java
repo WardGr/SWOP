@@ -3,6 +3,7 @@ package Tests;
 import Application.CreateProjectController;
 import Application.CreateTaskController;
 import Application.Session;
+import Application.SessionWrapper;
 import Domain.*;
 import UserInterface.CreateTaskUI;
 import org.junit.Test;
@@ -23,7 +24,9 @@ public class CreateTaskUITest {
         Time systemtime = new Time(0);
 
         Session managerSession = new Session();
+        SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
         Session developerSession = new Session();
+        SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
         User manager = new User("DieterVH", "computer776", Role.PROJECTMANAGER);
         User developer = new User("SamHa", "trein123", Role.DEVELOPER);
 
@@ -36,8 +39,8 @@ public class CreateTaskUITest {
 
         UserManager userManager = new UserManager();
 
-        CreateTaskController managerController = new CreateTaskController(managerSession, taskManSystem, userManager);
-        CreateTaskController developerController = new CreateTaskController(developerSession, taskManSystem, userManager);
+        CreateTaskController managerController = new CreateTaskController(managerSessionWrapper, taskManSystem, userManager);
+        CreateTaskController developerController = new CreateTaskController(developerSessionWrapper, taskManSystem, userManager);
 
         CreateTaskUI developerUI = new CreateTaskUI(developerController);
         CreateTaskUI managerUI = new CreateTaskUI(managerController);

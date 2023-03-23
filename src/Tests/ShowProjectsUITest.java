@@ -1,6 +1,7 @@
 package Tests;
 
 import Application.Session;
+import Application.SessionWrapper;
 import Application.ShowProjectsController;
 import Domain.*;
 import UserInterface.ShowProjectsUI;
@@ -17,11 +18,12 @@ public class ShowProjectsUITest {
     @Test
     public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, ReplacedTaskNotFailedException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
         Session session = new Session();
+        SessionWrapper sessionWrapper = new SessionWrapper(session);
         TaskManSystem tsm = new TaskManSystem(new Time(0));
         User manager = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
         User dev = new User("OlavBl", "753", Role.DEVELOPER);
 
-        ShowProjectsController showProjectsController = new ShowProjectsController(session, tsm);
+        ShowProjectsController showProjectsController = new ShowProjectsController(sessionWrapper, tsm);
 
         ShowProjectsUI ui = new ShowProjectsUI(showProjectsController);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

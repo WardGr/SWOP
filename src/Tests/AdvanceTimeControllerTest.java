@@ -3,6 +3,7 @@ package Tests;
 import Application.AdvanceTimeController;
 import Application.IncorrectPermissionException;
 import Application.Session;
+import Application.SessionWrapper;
 import Domain.*;
 import org.junit.Test;
 
@@ -13,6 +14,7 @@ public class AdvanceTimeControllerTest {
     @Test
     public void testAdvanceTimeController() throws InvalidTimeException, IncorrectPermissionException, NewTimeBeforeSystemTimeException {
         Session omer = new Session();
+        SessionWrapper omerWrapper = new SessionWrapper(omer);
         User brewer = new User("OlavBl", "peer123", Role.DEVELOPER);
         User boss = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
         omer.login(boss);
@@ -20,7 +22,7 @@ public class AdvanceTimeControllerTest {
         Time systime = new Time(0);
         TaskManSystem tms = new TaskManSystem(systime);
 
-        AdvanceTimeController atc = new AdvanceTimeController(omer, tms);
+        AdvanceTimeController atc = new AdvanceTimeController(omerWrapper, tms);
         assertEquals(0, atc.getSystemHour());
         assertEquals(0, atc.getSystemMinute());
         assertTrue(atc.advanceTimePreconditions());

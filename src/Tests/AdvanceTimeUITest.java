@@ -2,6 +2,7 @@ package Tests;
 
 import Application.AdvanceTimeController;
 import Application.Session;
+import Application.SessionWrapper;
 import Domain.Role;
 import Domain.TaskManSystem;
 import Domain.Time;
@@ -24,8 +25,9 @@ public class AdvanceTimeUITest {
         User manager = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
         User dev = new User("OlavBl", "peer123", Role.DEVELOPER);
         Session session = new Session();
+        SessionWrapper sessionWrapper = new SessionWrapper(session);
         TaskManSystem tms = new TaskManSystem(new Time(0));
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(session, tms);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionWrapper, tms);
         AdvanceTimeUI atui = new AdvanceTimeUI(advanceTimeController);
 
         session.login(dev);

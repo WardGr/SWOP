@@ -2,6 +2,7 @@ package Tests;
 
 import Application.IncorrectPermissionException;
 import Application.Session;
+import Application.SessionWrapper;
 import Application.UpdateTaskController;
 import Domain.*;
 import org.junit.Test;
@@ -15,8 +16,9 @@ public class UpdateTaskControllerTest {
     @Test
     public void testUpdateTaskController() throws InvalidTimeException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, FailTimeAfterSystemTimeException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
         Session omer = new Session();
+        SessionWrapper omerWrapper = new SessionWrapper(omer);
         TaskManSystem tms = new TaskManSystem(new Time(0, 0));
-        UpdateTaskController utc = new UpdateTaskController(omer, tms);
+        UpdateTaskController utc = new UpdateTaskController(omerWrapper, tms);
         User boss = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
         assertFalse(utc.updateTaskPreconditions());
         omer.login(boss);
@@ -36,8 +38,9 @@ public class UpdateTaskControllerTest {
 
 
         Session dev = new Session();
+        SessionWrapper devWrapper = new SessionWrapper(dev);
         TaskManSystem devTms = new TaskManSystem(new Time(0, 0));
-        UpdateTaskController devUtc = new UpdateTaskController(dev, devTms);
+        UpdateTaskController devUtc = new UpdateTaskController(devWrapper, devTms);
         User developer = new User("OlavBl", "toilet573", Role.DEVELOPER);
         assertFalse(devUtc.updateTaskPreconditions());
         dev.login(developer);

@@ -11,17 +11,17 @@ import java.util.Map;
 public class UpdateTaskController {
 
     private final TaskManSystem taskManSystem;
-    private final Session session;
+    private final SessionWrapper session;
 
     public UpdateTaskController(
-            Session session,
+            SessionWrapper session,
             TaskManSystem taskManSystem
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
     }
 
-    private Session getSession() {
+    private SessionWrapper getSession() {
         return session;
     }
 

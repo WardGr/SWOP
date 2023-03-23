@@ -2,6 +2,7 @@ package Tests;
 
 import Application.CreateProjectController;
 import Application.Session;
+import Application.SessionWrapper;
 import Domain.*;
 import UserInterface.CreateProjectUI;
 import org.junit.Test;
@@ -21,9 +22,9 @@ public class CreateProjectUITest {
         Time systemtime = new Time(70);
 
         Session managerSession = new Session();
+        SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
         Session developerSession = new Session();
-
-
+        SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
 
 
         User manager = new User("DieterVH", "computer776", Role.PROJECTMANAGER);
@@ -37,8 +38,8 @@ public class CreateProjectUITest {
         taskManSystem.createProject("SimpleProject", "Cool description", systemtime, new Time(100));
         taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, new LinkedList<>(), developer);
 
-        CreateProjectController managerController = new CreateProjectController(managerSession, taskManSystem);
-        CreateProjectController developerController = new CreateProjectController(developerSession, taskManSystem);
+        CreateProjectController managerController = new CreateProjectController(managerSessionWrapper, taskManSystem);
+        CreateProjectController developerController = new CreateProjectController(developerSessionWrapper, taskManSystem);
 
         CreateProjectUI developerUI = new CreateProjectUI(developerController);
         CreateProjectUI managerUI = new CreateProjectUI(managerController);

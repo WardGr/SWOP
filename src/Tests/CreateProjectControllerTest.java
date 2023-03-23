@@ -3,6 +3,7 @@ package Tests;
 import Application.CreateProjectController;
 import Application.IncorrectPermissionException;
 import Application.Session;
+import Application.SessionWrapper;
 import Domain.*;
 import org.junit.Test;
 
@@ -14,11 +15,12 @@ public class CreateProjectControllerTest {
         User brewer = new User("OlavBl", "peer123", Role.DEVELOPER);
         User boss = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
         Session omer = new Session();
+        SessionWrapper omerWrapper = new SessionWrapper(omer);
         omer.login(brewer);
 
         TaskManSystem tms = new TaskManSystem(new Time(0));
 
-        CreateProjectController cpc = new CreateProjectController(omer, tms);
+        CreateProjectController cpc = new CreateProjectController(omerWrapper, tms);
         assertFalse(cpc.createProjectPreconditions());
         assertThrows(IncorrectPermissionException.class, () -> {
             cpc.createProject("Omer", "Brew omer beer", 2, 0);

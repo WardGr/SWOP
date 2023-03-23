@@ -16,12 +16,12 @@ import java.util.List;
 public class LoadSystemController {
     private final UserManager userManager;
     private final TaskManSystem taskManSystem;
-    private final Session session;
+    private final SessionWrapper session;
 
-    public LoadSystemController(UserManager userManager, TaskManSystem taskManSystem, Session session) {
-        this.userManager = userManager;
-        this.taskManSystem = taskManSystem;
+    public LoadSystemController(SessionWrapper session, TaskManSystem taskManSystem, UserManager userManager) {
         this.session = session;
+        this.taskManSystem = taskManSystem;
+        this.userManager = userManager;
     }
 
     private UserManager getUserManager() {
@@ -32,7 +32,7 @@ public class LoadSystemController {
         return taskManSystem;
     }
 
-    private Session getSession() {
+    private SessionWrapper getSession() {
         return session;
     }
 
