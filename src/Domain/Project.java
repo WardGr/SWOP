@@ -301,7 +301,7 @@ public class Project {
             Time systemTime,
             User currentUser
     )
-            throws TaskNotFoundException, IncorrectUserException, IncorrectTaskStatusException {
+            throws TaskNotFoundException, IncorrectUserException, IncorrectTaskStatusException, StartTimeBeforeAvailableException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
@@ -329,7 +329,7 @@ public class Project {
             Time systemTime,
             User currentUser
     )
-            throws TaskNotFoundException, FailTimeAfterSystemTimeException, IncorrectUserException, IncorrectTaskStatusException {
+            throws TaskNotFoundException, FailTimeAfterSystemTimeException, IncorrectUserException, IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();

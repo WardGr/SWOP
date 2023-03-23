@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class CreateTaskControllerTest {
 
     @Test
-    public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ReplacedTaskNotFailedException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, FailTimeAfterSystemTimeException {
+    public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ReplacedTaskNotFailedException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, FailTimeAfterSystemTimeException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
         Session omer = new Session();
         TaskManSystem tms = new TaskManSystem(new Time(0));
         UserManager um = new UserManager();

@@ -212,6 +212,8 @@ public class UpdateTaskUI {
                         System.out.println("ERROR: the given minute is not of a valid format (0-59), please try again!\n");
                     } catch (IncorrectTaskStatusException e) {
                         System.out.println("ERROR: the task has the wrong status for this update, please try again!\n");
+                    } catch (StartTimeBeforeAvailableException e) {
+                        System.out.println("ERROR: the given start time is before the task became available");
                     }
                 }
                 case EXECUTING -> {
@@ -326,6 +328,8 @@ public class UpdateTaskUI {
                         System.out.println("ERROR: the given minute is not of a valid format (0-59), please try again!\n");
                     } catch (IncorrectTaskStatusException e) {
                         System.out.println("ERROR: the task has the wrong status for this update");
+                    } catch (EndTimeBeforeStartTimeException e) {
+                        System.out.println("ERROR: the given end time is before the start time of the task");
                     }
                 }
                 default -> {

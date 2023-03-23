@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 public class ProjectTest {
 
     @Test
-    public void testProject() throws DueBeforeSystemTimeException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, IncorrectTaskStatusException, IncorrectUserException {
+    public void testProject() throws DueBeforeSystemTimeException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
         Time minecraft_begin = new Time(0, 0);
         Time minecraft_end = new Time(3000);
         Exception exception = assertThrows(DueBeforeSystemTimeException.class, () -> {
@@ -104,11 +104,11 @@ public class ProjectTest {
         minecraft.getTask("Purchase Render").start(new Time(0, 2), new Time(0, 2), ward);
         assertEquals(1, minecraft.showExecutingTasks().size());
         assertEquals(0, minecraft.showAvailableTasks().size());
-        minecraft.getTask("Purchase Render").end(Status.FINISHED, new Time(0, 15), new Time(0, 15), ward);
+        minecraft.getTask("Purchase Render").end(Status.FINISHED, new Time(0, 4), new Time(0, 4), ward);
         assertEquals(0, minecraft.showExecutingTasks().size());
         assertEquals(1, minecraft.showAvailableTasks().size());
         assertEquals(minecraft.getStatus(), "ongoing");
-        minecraft.getTask("Make Mobs").start(new Time(0, 2), new Time(0, 2), manager);
+        minecraft.getTask("Make Mobs").start(new Time(0, 5), new Time(0, 5), manager);
         assertEquals(1, minecraft.showExecutingTasks().size());
         assertEquals(0, minecraft.showAvailableTasks().size());
         minecraft.getTask("Make Mobs").end(Status.FINISHED, new Time(0, 15), new Time(0, 15), manager);
@@ -234,7 +234,7 @@ public class ProjectTest {
                 Replaces Task:      Make Render
                                         
                 Start Time:         0 hours, 2 minutes
-                End Time:           0 hours, 15 minutes
+                End Time:           0 hours, 4 minutes
                                         
                 User:               Ward
                                         

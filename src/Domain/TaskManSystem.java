@@ -305,7 +305,7 @@ public class TaskManSystem {
             Time startTime,
             User currentUser
     )
-            throws ProjectNotFoundException, TaskNotFoundException, IncorrectUserException, IncorrectTaskStatusException {
+            throws ProjectNotFoundException, TaskNotFoundException, IncorrectUserException, IncorrectTaskStatusException, StartTimeBeforeAvailableException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -339,7 +339,7 @@ public class TaskManSystem {
             Time endTime,
             User currentUser
     )
-            throws ProjectNotFoundException, TaskNotFoundException, FailTimeAfterSystemTimeException, IncorrectUserException, IncorrectTaskStatusException {
+            throws ProjectNotFoundException, TaskNotFoundException, FailTimeAfterSystemTimeException, IncorrectUserException, IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();

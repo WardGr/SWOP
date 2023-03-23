@@ -152,7 +152,7 @@ public class UpdateTaskController {
      * @throws TaskNotFoundException        if the given task name does not correspond to an existing task
      * @throws IncorrectTaskStatusException if the given task is not available
      */
-    public void startTask(String projectName, String taskName, int startHour, int startMinute) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, IncorrectUserException, TaskNotFoundException, IncorrectTaskStatusException {
+    public void startTask(String projectName, String taskName, int startHour, int startMinute) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, IncorrectUserException, TaskNotFoundException, IncorrectTaskStatusException, StartTimeBeforeAvailableException {
         if (getSession().getRole() != Role.DEVELOPER) {
             throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
         }
@@ -175,7 +175,7 @@ public class UpdateTaskController {
      * @throws TaskNotFoundException            if the given task name does not correspond to an existing task
      * @throws IncorrectTaskStatusException     if the given task is not executing
      */
-    public void endTask(String projectName, String taskName, Status newStatus, int endHour, int endMinute) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, IncorrectUserException, TaskNotFoundException, IncorrectTaskStatusException {
+    public void endTask(String projectName, String taskName, Status newStatus, int endHour, int endMinute) throws IncorrectPermissionException, FailTimeAfterSystemTimeException, ProjectNotFoundException, InvalidTimeException, IncorrectUserException, TaskNotFoundException, IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
         if (getSession().getRole() != Role.DEVELOPER) {
             throw new IncorrectPermissionException("Incorrect permission: User is not a developer");
         }

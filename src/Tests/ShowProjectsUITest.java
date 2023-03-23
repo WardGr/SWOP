@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ShowProjectsUITest {
     @Test
-    public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, ReplacedTaskNotFailedException {
+    public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, ReplacedTaskNotFailedException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
         Session session = new Session();
         TaskManSystem tsm = new TaskManSystem(new Time(0));
         User manager = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);

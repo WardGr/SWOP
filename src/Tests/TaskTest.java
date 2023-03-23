@@ -9,12 +9,12 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class TaskTest {
-    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException {
+    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException {
         testTask();
     }
 
     @Test
-    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException {
+    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException {
         Time estimatedDuration1 = new Time(10);
         double deviation1 = 0.1;
 
@@ -212,6 +212,19 @@ public class TaskTest {
         lastTask.advanceTime(new Time(100, 0));
         assertEquals(Status.EXECUTING, lastTask.getStatus());
 
+        // Test Exceptions: end time before start time and start time before available
+        User testUser = new User("Olav", "321", Role.DEVELOPER);
+        Task firstTask = new Task("firstTask", "test", estimatedDuration1, deviation1, new LinkedList<>(), testUser);
+        previousTasks = new LinkedList<>();
+        previousTasks.add(firstTask);
+        Task secondTask = new Task("secondTask", "test", estimatedDuration1, deviation1, previousTasks, testUser);
+        systemTime = new Time(60);
+        firstTask.start(new Time(20), systemTime, testUser);
+        assertThrows(EndTimeBeforeStartTimeException.class, () -> firstTask.end(Status.FAILED, new Time(10), new Time(60), testUser));
+        assertThrows(EndTimeBeforeStartTimeException.class, () -> firstTask.end(Status.FINISHED, new Time(10), new Time(60), testUser));
+
+        firstTask.end(Status.FINISHED, new Time(40), systemTime, testUser);
+        assertThrows(StartTimeBeforeAvailableException.class, () -> secondTask.start(new Time(30), new Time(60), testUser));
 
     }
 }

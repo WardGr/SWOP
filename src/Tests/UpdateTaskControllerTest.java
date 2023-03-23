@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class UpdateTaskControllerTest {
 
     @Test
-    public void testUpdateTaskController() throws InvalidTimeException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, FailTimeAfterSystemTimeException {
+    public void testUpdateTaskController() throws InvalidTimeException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, FailTimeAfterSystemTimeException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
         Session omer = new Session();
         TaskManSystem tms = new TaskManSystem(new Time(0, 0));
         UpdateTaskController utc = new UpdateTaskController(omer, tms);

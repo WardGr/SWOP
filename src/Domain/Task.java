@@ -216,7 +216,13 @@ public class Task {
      *
      * @param startTime New start time
      */
-    private void setStartTime(Time startTime) {
+    private void setStartTime(Time startTime) throws StartTimeBeforeAvailableException {
+        for (Task prevTask : getPreviousTasks()){
+            if (prevTask.getEndTime().after(startTime)){
+                throw new StartTimeBeforeAvailableException();
+            }
+        }
+
         TimeSpan timeSpan = getTimeSpan();
         if (timeSpan == null) {
             setTimeSpan(startTime);
@@ -240,11 +246,13 @@ public class Task {
      *
      * @param endTime New end time
      */
-    private void setEndTime(Time endTime) throws IncorrectTaskStatusException {
-        TimeSpan timeSpan = getTimeSpan();
-        // als het systeem al Executing is moet er eigenlijk al een starttime zijn en dus een TimeSpan
-        if (timeSpan == null) {
+    private void setEndTime(Time endTime) throws IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
+        Time startTime = getStartTime();
+        if (startTime == null) {
             throw new IncorrectTaskStatusException("");
+        }
+        if (endTime.before(startTime)){
+            throw new EndTimeBeforeStartTimeException();
         }
         timeSpan.setEndTime(endTime);
     }
@@ -334,7 +342,7 @@ public class Task {
      * @throws IncorrectTaskStatusException if the task is not available
      */
     public void start(Time startTime, Time systemTime, User currentUser)
-            throws IncorrectUserException, IncorrectTaskStatusException {
+            throws IncorrectUserException, IncorrectTaskStatusException, StartTimeBeforeAvailableException {
         if (getUser() != currentUser) {
             throw new IncorrectUserException();
         }
@@ -364,27 +372,29 @@ public class Task {
             Time systemTime,
             User currentUser
     )
-            throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException {
+            throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, EndTimeBeforeStartTimeException {
         if (getUser() != currentUser) {
             throw new IncorrectUserException();
         }
         if (getStatus() != Status.EXECUTING) {
-            throw new IncorrectTaskStatusException("d");
+            throw new IncorrectTaskStatusException("Status has to be Executing");
         }
-        if (newStatus == Status.FAILED) {
-            if (systemTime.before(endTime)) {
-                throw new FailTimeAfterSystemTimeException();
-            }
-            setStatus(Status.FAILED);
-        } else if (newStatus == Status.FINISHED && !systemTime.before(endTime)) {
-            setStatus(Status.FINISHED);
-            for (Task nextTask : getNextTasks()) {
-                if (nextTask.checkAvailable()) {
-                    nextTask.setStatus(Status.AVAILABLE);
+        if (newStatus == Status.FAILED && systemTime.before(endTime)) {
+            throw new FailTimeAfterSystemTimeException();
+        }
+
+        setEndTime(endTime);
+
+        if (!systemTime.before(endTime)) {
+            setStatus(newStatus);
+            if (newStatus == Status.FINISHED) {
+                for (Task nextTask : getNextTasks()) {
+                    if (nextTask.checkAvailable()) {
+                        nextTask.setStatus(Status.AVAILABLE);
+                    }
                 }
             }
         }
-        setEndTime(endTime);
     }
 
     /**

@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThrows;
 
 public class TaskManSystemTest {
     @Test
-    public void testTaskManSystem() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, IncorrectUserException {
+    public void testTaskManSystem() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, IncorrectUserException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
         Time time = new Time(320);
         TaskManSystem taskManSystem = new TaskManSystem(time);
         assertEquals(5, taskManSystem.getSystemTime().getHour());

@@ -59,7 +59,8 @@ public class LoadSystemUI {
         } catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException |
                  ProjectNameAlreadyInUseException | InvalidTimeException | FailTimeAfterSystemTimeException |
                  IncorrectUserException | ReplacedTaskNotFailedException | IncorrectTaskStatusException |
-                 DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException e) {
+                 DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException |
+                 EndTimeBeforeStartTimeException | StartTimeBeforeAvailableException e) {
             System.out.println("ERROR: invalid file logic");
         } catch (IOException e) {
             System.out.println("ERROR: file not found");
