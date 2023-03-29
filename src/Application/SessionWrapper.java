@@ -3,8 +3,11 @@ package Application;
 import Domain.Role;
 import Domain.User;
 
+/**
+ * Read-only wrapper class for Session object, encapsulating the Session object
+ */
 public class SessionWrapper {
-    final Session session;
+    private final Session session;
 
     public SessionWrapper(Session session){
         this.session = session;

@@ -1,6 +1,7 @@
 package Tests;
 
 import Application.Session;
+import Application.SessionWrapper;
 import Domain.Role;
 import Domain.User;
 import org.junit.Test;
@@ -47,5 +48,16 @@ public class SessionTest {
         assertEquals(brewer, bossManSession.getCurrentUser());
         assertEquals(Role.DEVELOPER, bossManSession.getRole());
         assertTrue(bossManSession.isLoggedIn());
+
+        SessionWrapper sessionWrapper1 = new SessionWrapper(brewerSession);
+        assertNull(sessionWrapper1.getRole());
+        assertNull(sessionWrapper1.getCurrentUser());
+
+        brewerSession.login(brewer);
+        SessionWrapper sessionWrapper2 = new SessionWrapper(brewerSession);
+        assertEquals(sessionWrapper2.getRole(), Role.DEVELOPER);
+        assertEquals(sessionWrapper2.getCurrentUser(), brewer);
+
+
     }
 }
