@@ -65,4 +65,7 @@ public class Time implements Comparable<Time> {
     public Time subtract(Time startTime) {
         return new Time(this.getTotalMinutes() - startTime.getTotalMinutes());
     }
+    public Time add(Time startTime) {
+        return new Time(this.getTotalMinutes() + startTime.getTotalMinutes());
+    }
 }

@@ -156,6 +156,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give start hour:
@@ -213,6 +214,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Do you want to use system time (0:0)? (y/n)
@@ -252,6 +254,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give start hour:
@@ -291,6 +294,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give start hour:
@@ -331,6 +335,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give start hour:
@@ -371,6 +376,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give start hour:
@@ -412,6 +418,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give start hour:
@@ -456,6 +463,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give start hour:
@@ -495,8 +503,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Cancelled updating task
@@ -534,8 +542,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Do you want to use system time (0:0)? (y/n)
@@ -574,8 +582,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Do you want to finish or fail this task? (finish/fail)
@@ -614,8 +622,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give end hour:
@@ -654,8 +662,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give end hour:
@@ -695,8 +703,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give end hour:
@@ -736,8 +744,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give end hour:
@@ -779,8 +787,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give end hour:
@@ -829,6 +837,7 @@ public class UpdateTaskUITest {
                                                 
                         -- Possible Next Statuses --
                         - executing
+                        - pending
                         Give the start time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Task NewTask successfully updated
@@ -867,8 +876,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Do you want to finish or fail this task? (finish/fail)
@@ -908,8 +917,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give end hour:
@@ -952,8 +961,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Give end hour:
@@ -999,8 +1008,8 @@ public class UpdateTaskUITest {
                         Previous tasks:
                                                 
                         -- Possible Next Statuses --
-                        - finished
                         - failed
+                        - finished
                         Give the end time for the task:
                         Do you want to use system time (0:0)? (y/n)
                         Do you want to finish or fail this task? (finish/fail)

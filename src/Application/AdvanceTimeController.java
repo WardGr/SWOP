@@ -34,11 +34,15 @@ public class AdvanceTimeController {
         return getTaskManSystem().getSystemTime().getMinute();
     }
 
+    private Time getSystemTime() {
+        return getTaskManSystem().getSystemTime();
+    }
+
     /**
      * @return whether the preconditions of advancetime are met
      */
     public boolean advanceTimePreconditions() {
-        return getSession().getRole() == Role.PROJECTMANAGER;
+        return getSession().getRole() == Role.PROJECTMANAGER || getSession().getRole() == Role.DEVELOPER;
     }
 
     /**
@@ -51,9 +55,24 @@ public class AdvanceTimeController {
      * @throws NewTimeBeforeSystemTimeException if the given time is before the system time (can only ADVANCE time)
      */
     public void setNewTime(int newHour, int newMinute) throws IncorrectPermissionException, InvalidTimeException, NewTimeBeforeSystemTimeException {
-        if (getSession().getRole() != Role.PROJECTMANAGER) {
-            throw new IncorrectPermissionException("Incorrect permission: User is not a project manager");
+        if (!advanceTimePreconditions()) {
+            throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(new Time(newHour, newMinute));
+    }
+
+    /**
+     * Advances the time by the given minutes
+     *
+     * @param advanceMinutes amount of minutes to advance the system clock with
+     * @throws IncorrectPermissionException if the user is not logged in as project manager or developer
+     * @throws InvalidTimeException if somehow TaskManSystem incorrectly creates a Time object from the given minutes
+     * @throws NewTimeBeforeSystemTimeException if advanceMinutes < 0
+     */
+    public void setNewTime(int advanceMinutes) throws IncorrectPermissionException, InvalidTimeException, NewTimeBeforeSystemTimeException {
+        if (!advanceTimePreconditions()) {
+            throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
+        }
+        getTaskManSystem().advanceTime(advanceMinutes);
     }
 }

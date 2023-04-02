@@ -214,7 +214,7 @@ public class TaskManSystem {
             double deviation,
             String replaces
     )
-            throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException {
+            throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -365,11 +365,24 @@ public class TaskManSystem {
         if (newTime.before(getSystemTime())) {
             throw new NewTimeBeforeSystemTimeException();
         }
-        for (Project project : getProjects()) {
-            project.advanceTime(newTime);
-        }
         setSystemTime(newTime);
     }
+
+    /**
+     * Advances the time with the given minutes
+     *
+     * @param advanceMinutes Amount of minutes to advance the system clock with
+     * @throws NewTimeBeforeSystemTimeException if advanceMinutes < 0
+     * @throws InvalidTimeException if an incorrect Time object is made (this would be a bug)
+     */
+    public void advanceTime(int advanceMinutes) throws NewTimeBeforeSystemTimeException, InvalidTimeException {
+        if(advanceMinutes < 0) {
+            throw new NewTimeBeforeSystemTimeException();
+        }
+        advanceTime(new Time(advanceMinutes).add(getSystemTime()));
+    }
+
+
     public void clear(){
         projects = new LinkedList<>();
     }

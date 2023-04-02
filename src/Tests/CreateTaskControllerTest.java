@@ -48,7 +48,7 @@ public class CreateTaskControllerTest {
         tms.endTask("project1", "task2", Status.FAILED, new Time(80), brewer);
         ctc.replaceTask("project1", "newTask1", "Replaces old task 1", 15, 12, 30.0, "task1");
         ctc.replaceTask("project1", "newTask2", "Replaces old task 2", 15, 12, 30.0, "task2");
-        assertThrows(ReplacedTaskNotFailedException.class, () -> ctc.replaceTask("project1", "newTask3", "Replaces old task 3", 15, 12, 30.0, "task3"));
+        assertThrows(IncorrectTaskStatusException.class, () -> ctc.replaceTask("project1", "newTask3", "Replaces old task 3", 15, 12, 30.0, "task3"));
         assertEquals("task3", tms.showAvailableTasks().get("project1").get(0));
         assertEquals("newTask1", tms.showAvailableTasks().get("project1").get(1));
         assertEquals("newTask2", tms.showAvailableTasks().get("project1").get(2));

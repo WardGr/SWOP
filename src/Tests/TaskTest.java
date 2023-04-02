@@ -1,6 +1,7 @@
 package Tests;
 
 import Domain.*;
+import Domain.TaskStates.Task;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -9,12 +10,12 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class TaskTest {
-    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException {
+    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException {
         testTask();
     }
 
     @Test
-    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException {
+    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException {
         Time estimatedDuration1 = new Time(10);
         double deviation1 = 0.1;
 
@@ -23,12 +24,12 @@ public class TaskTest {
 
         User user = new User("Ward", "123", Role.PROJECTMANAGER);
 
-        Task task1 = new Task("Cool task", "Cool description", estimatedDuration1, deviation1, new LinkedList<>(), user);
+        Domain.TaskStates.Task task1 = new Domain.TaskStates.Task("Cool task", "Cool description", estimatedDuration1, deviation1, new LinkedList<>(), user);
 
-        List<Task> previousTasks = new LinkedList<>();
+        List<Domain.TaskStates.Task> previousTasks = new LinkedList<>();
         previousTasks.add(task1);
 
-        Task task2 = new Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, previousTasks, user);
+        Domain.TaskStates.Task task2 = new Domain.TaskStates.Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, previousTasks, user);
 
 
         assertSame("Cool task", task1.getName());
@@ -38,7 +39,7 @@ public class TaskTest {
         assertSame(Status.UNAVAILABLE, task2.getStatus()); // Must be unavailable, because task1 hasnt been completed yet
 
         // Check if task2 is added to task1's nexttasks as a result of constructing task2
-        List<Task> newNextTasks = new LinkedList<>();
+        List<Domain.TaskStates.Task> newNextTasks = new LinkedList<>();
         newNextTasks.add(task2);
 
         assertEquals(task1.getNextTasks(), newNextTasks);
@@ -47,6 +48,7 @@ public class TaskTest {
 
         List<Status> nextStatusesAvailable = new LinkedList<>();
         nextStatusesAvailable.add(Status.EXECUTING);
+        nextStatusesAvailable.add(Status.PENDING);
 
         assertEquals(nextStatusesAvailable, task1.getNextStatuses());
         assertEquals(new LinkedList<>(), task2.getNextStatuses()); // Unavailable, cant change unless previous tasks completed!
@@ -80,7 +82,7 @@ public class TaskTest {
 
 
         Time finalSystemTime1 = systemTime;
-        Task finalTask = task1;
+        Domain.TaskStates.Task finalTask = task1;
         assertThrows(IncorrectUserException.class, () -> finalTask.start(startTime1, finalSystemTime1, wrongUser));
         assertThrows(IncorrectTaskStatusException.class, () -> task2.start(startTime1, finalSystemTime1, user));
 
@@ -90,8 +92,8 @@ public class TaskTest {
 
         // Executing next statuses
         List<Status> nextStatusesExecuting = new LinkedList<>();
-        nextStatusesExecuting.add(Status.FINISHED);
         nextStatusesExecuting.add(Status.FAILED);
+        nextStatusesExecuting.add(Status.FINISHED);
 
         assertEquals(nextStatusesExecuting, task1.getNextStatuses());
 
@@ -108,29 +110,27 @@ public class TaskTest {
 
         assertEquals(task2.getStatus(), Status.AVAILABLE);
 
-        Task ffinalTask1 = new Task("Brew coffee", "Brew coffee for the team", new Time(10), 0.1, new LinkedList<>(), user);
+        Domain.TaskStates.Task ffinalTask1 = new Domain.TaskStates.Task("Brew coffee", "Brew coffee for the team", new Time(10), 0.1, new LinkedList<>(), user);
 
-        assertThrows(ReplacedTaskNotFailedException.class, () -> ffinalTask1.replaceTask("replacement", "Replacement of Task1", estimatedDuration1, deviation1));
-        ffinalTask1.advanceTime(new Time(1300));
+        assertThrows(IncorrectTaskStatusException.class, () -> ffinalTask1.replaceTask("replacement", "Replacement of Task1", estimatedDuration1, deviation1));
         ffinalTask1.start(new Time(1300), new Time(1300), user);
         assertThrows(IncorrectTaskStatusException.class, () -> ffinalTask1.start(new Time(1300), new Time(1300), user));
-        ffinalTask1.advanceTime(new Time(2000));
         ffinalTask1.end(Status.FAILED, new Time(1500), new Time(2000), user);
         assertThrows(IncorrectTaskStatusException.class, () -> ffinalTask1.end(Status.FAILED, new Time(1500), new Time(2000), user));
         ffinalTask1.replaceTask("replacement", "Replacement of Task1", estimatedDuration1, deviation1);
 
 
-        task1 = new Task("Cool task", "Cool description", estimatedDuration1, deviation1, new LinkedList<>(), user);
+        task1 = new Domain.TaskStates.Task("Cool task", "Cool description", estimatedDuration1, deviation1, new LinkedList<>(), user);
         task1.start(startTime1, systemTime, user);
         Time incorrectEndTime = new Time(20);
         Time correctEndTime = new Time(5);
         systemTime = new Time(10);
 
         Time finalSystemTime = systemTime;
-        Task finalTask1 = task1;
+        Domain.TaskStates.Task finalTask1 = task1;
         assertThrows(IncorrectUserException.class, () -> finalTask1.end(Status.FAILED, correctEndTime, finalSystemTime, wrongUser));
         assertThrows(IncorrectTaskStatusException.class, () -> task2.end(Status.FAILED, correctEndTime, finalSystemTime, user));
-        Task finalTask2 = task1;
+        Domain.TaskStates.Task finalTask2 = task1;
         assertThrows(FailTimeAfterSystemTimeException.class, () -> finalTask2.end(Status.FAILED, incorrectEndTime, finalSystemTime, user));
         try {
             task1.end(Status.FAILED, correctEndTime, systemTime, user);
@@ -140,15 +140,15 @@ public class TaskTest {
 
         assertEquals(Status.FAILED, task1.getStatus());
 
-        Task task = new Task("Cool task", "Cool description", estimatedDuration1, deviation1, new LinkedList<>(), user);
+        Domain.TaskStates.Task task = new Domain.TaskStates.Task("Cool task", "Cool description", estimatedDuration1, deviation1, new LinkedList<>(), user);
         LinkedList prev = new LinkedList();
         prev.add(task);
         assertThrows(IncorrectUserException.class, () -> task.start(startTime1, new Time(30000), new User("Olav", "321", Role.DEVELOPER)));
-        Task nextTask = new Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, prev, user);
+        Domain.TaskStates.Task nextTask = new Domain.TaskStates.Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, prev, user);
         assertThrows(IncorrectTaskStatusException.class, () -> nextTask.start(startTime1, new Time(30000), user));
 
         // Test delayed task
-        Task delayedTask = new Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, new LinkedList<>(), user);
+        Domain.TaskStates.Task delayedTask = new Domain.TaskStates.Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, new LinkedList<>(), user);
         delayedTask.start(systemTime, systemTime, user);
         delayedTask.end(Status.FINISHED, new Time(10000), new Time(10000), user);
         assertEquals("""
@@ -172,7 +172,7 @@ public class TaskTest {
 
         // Test early task
 
-        Task earlyTask = new Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, new LinkedList<>(), user);
+        Domain.TaskStates.Task earlyTask = new Domain.TaskStates.Task("Cooler task", "Cooler description", estimatedDuration2, deviation2, new LinkedList<>(), user);
         earlyTask.start(systemTime, systemTime, user);
         earlyTask.end(Status.FINISHED, new Time(10), new Time(10000), user);
         assertEquals("""
@@ -195,29 +195,26 @@ public class TaskTest {
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), earlyTask.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
 
-        Task toFinish = new Task("toFinish", "Task will finish due to time increasing", new Time(10, 0), 0.1, new LinkedList<>(), user);
-        LinkedList<Task> prevTasks = new LinkedList<>();
+        Domain.TaskStates.Task toFinish = new Domain.TaskStates.Task("toFinish", "Task will finish due to time increasing", new Time(10, 0), 0.1, new LinkedList<>(), user);
+        LinkedList<Domain.TaskStates.Task> prevTasks = new LinkedList<>();
         prevTasks.add(toFinish);
-        Task toStart = new Task("toStart", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
+        Domain.TaskStates.Task toStart = new Domain.TaskStates.Task("toStart", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
         assertEquals(Status.UNAVAILABLE, toStart.getStatus());
         toFinish.start(new Time(0, 0), new Time(0, 0), user);
         toFinish.end(Status.FINISHED, new Time(1, 0), new Time(10, 0), user);
-        toFinish.advanceTime(new Time(13, 0));
         assertEquals(Status.FINISHED, toFinish.getStatus());
 
-        Task lastTask = new Task("Final Task", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
-        lastTask.advanceTime(new Time(0, 0));
+        Domain.TaskStates.Task lastTask = new Domain.TaskStates.Task("Final Task", "Task will start due to time increasing", new Time(10, 0), 0.1, prevTasks, user);
         assertEquals(Status.AVAILABLE, lastTask.getStatus());
         lastTask.start(new Time(10, 0), new Time(10, 0), user);
-        lastTask.advanceTime(new Time(100, 0));
         assertEquals(Status.EXECUTING, lastTask.getStatus());
 
         // Test Exceptions: end time before start time and start time before available
         User testUser = new User("Olav", "321", Role.DEVELOPER);
-        Task firstTask = new Task("firstTask", "test", estimatedDuration1, deviation1, new LinkedList<>(), testUser);
+        Domain.TaskStates.Task firstTask = new Domain.TaskStates.Task("firstTask", "test", estimatedDuration1, deviation1, new LinkedList<>(), testUser);
         previousTasks = new LinkedList<>();
         previousTasks.add(firstTask);
-        Task secondTask = new Task("secondTask", "test", estimatedDuration1, deviation1, previousTasks, testUser);
+        Domain.TaskStates.Task secondTask = new Task("secondTask", "test", estimatedDuration1, deviation1, previousTasks, testUser);
         systemTime = new Time(60);
         firstTask.start(new Time(20), systemTime, testUser);
         assertThrows(EndTimeBeforeStartTimeException.class, () -> firstTask.end(Status.FAILED, new Time(10), new Time(60), testUser));

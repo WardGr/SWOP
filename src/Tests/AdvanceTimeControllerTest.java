@@ -35,29 +35,31 @@ public class AdvanceTimeControllerTest {
         assertEquals(33, atc.getSystemHour());
         assertEquals(58, atc.getSystemMinute());
 
-        Exception exception = assertThrows(InvalidTimeException.class, () -> {
+        assertThrows(InvalidTimeException.class, () -> {
             atc.setNewTime(100, 60);
         });
 
-        exception = assertThrows(InvalidTimeException.class, () -> {
+        assertThrows(InvalidTimeException.class, () -> {
             atc.setNewTime(100, -1);
         });
 
-        exception = assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
+        assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
             atc.setNewTime(2, 58);
         });
 
-        exception = assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
+        assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
             atc.setNewTime(33, 57);
+        });
+
+        assertThrows(NewTimeBeforeSystemTimeException.class, () -> {
+            atc.setNewTime(-10);
         });
 
         omer.logout();
         omer.login(brewer);
-        exception = assertThrows(IncorrectPermissionException.class, () -> {
-            atc.setNewTime(100, 60);
-        });
+        atc.setNewTime(100, 59);
 
-        assertEquals(33, atc.getSystemHour());
-        assertEquals(58, atc.getSystemMinute());
+        assertEquals(100, atc.getSystemHour());
+        assertEquals(59, atc.getSystemMinute());
     }
 }

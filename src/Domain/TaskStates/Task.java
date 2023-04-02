@@ -1,18 +1,21 @@
-package Domain;
+package Domain.TaskStates;
+
+import Domain.*;
 
 import java.util.LinkedList;
 import java.util.List;
-// TODO: polymorphism?
 /**
  *  Keeps track of a task, including a list of tasks that should complete before it and which tasks it should come before
  */
+
+// TODO: constructors aanpassen zodat da dynamisch met state shit gebeurt
 public class Task {
 
     private final String name;
     private final String description;
     private final Time estimatedDuration;
     private final double acceptableDeviation;
-    private Status status;
+    private TaskState state;
 
     private Task replacementTask;
     private Task replacesTask;
@@ -65,9 +68,9 @@ public class Task {
         }
 
         if (available) {
-            status = Status.AVAILABLE;
+            state = new AvailableState();
         } else {
-            status = Status.UNAVAILABLE;
+            state = new UnavailableState();
         }
     }
 
@@ -87,7 +90,7 @@ public class Task {
                         "Start Time:         " + showStartTime() + '\n' +
                         "End Time:           " + showEndTime() + "\n\n" +
 
-                        "User:               " + user.getUsername() + "\n\n";
+                        "User:               " + getUser().getUsername() + "\n\n";
 
         stringBuilder.append(info);
         stringBuilder.append("Next tasks:\n");
@@ -133,20 +136,24 @@ public class Task {
         return description;
     }
 
-    private double getAcceptableDeviation() {
+    double getAcceptableDeviation() {
         return acceptableDeviation;
     }
 
-    private Time getEstimatedDuration() {
+    Time getEstimatedDuration() {
         return estimatedDuration;
     }
 
-    public Status getStatus() {
-        return status;
+    public TaskState getState() {
+        return state;
     }
 
-    private void setStatus(Status status) {
-        this.status = status;
+    public Status getStatus() {
+        return getState().getStatus();
+    }
+
+    void setState(TaskState state) {
+        this.state = state;
     }
 
     /**
@@ -156,7 +163,7 @@ public class Task {
         return replacementTask;
     }
 
-    private void setReplacementTask(Task replacementTask) {
+    void setReplacementTask(Task replacementTask) {
         this.replacementTask = replacementTask;
     }
 
@@ -167,11 +174,11 @@ public class Task {
         return replacesTask;
     }
 
-    private void setReplacesTask(Task replacesTask) {
+    void setReplacesTask(Task replacesTask) {
         this.replacesTask = replacesTask;
     }
 
-    private TimeSpan getTimeSpan() {
+    TimeSpan getTimeSpan() {
         return timeSpan;
     }
 
@@ -179,14 +186,14 @@ public class Task {
         this.timeSpan = new TimeSpan(startTime);
     }
 
-    private User getUser() {
+    User getUser() {
         return user;
     }
 
     /**
      * @return Mutable list of all tasks that should be completed before this task
      */
-    private List<Task> getPreviousTasks() {
+    List<Task> getPreviousTasks() {
         return new LinkedList<>(previousTasks);
     }
 
@@ -204,7 +211,7 @@ public class Task {
     /**
      * @return Start time if this is set, null otherwise
      */
-    private Time getStartTime() {
+    Time getStartTime() {
         if (getTimeSpan() == null) {
             return null;
         }
@@ -216,7 +223,7 @@ public class Task {
      *
      * @param startTime New start time
      */
-    private void setStartTime(Time startTime) throws StartTimeBeforeAvailableException {
+    void setStartTime(Time startTime) throws StartTimeBeforeAvailableException {
         for (Task prevTask : getPreviousTasks()){
             if (prevTask.getEndTime().after(startTime)){
                 throw new StartTimeBeforeAvailableException();
@@ -246,14 +253,7 @@ public class Task {
      *
      * @param endTime New end time
      */
-    private void setEndTime(Time endTime) throws IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
-        Time startTime = getStartTime();
-        if (startTime == null) {
-            throw new IncorrectTaskStatusException("");
-        }
-        if (endTime.before(startTime)){
-            throw new EndTimeBeforeStartTimeException();
-        }
+    void setEndTime(Time endTime) {
         timeSpan.setEndTime(endTime);
     }
 
@@ -281,34 +281,22 @@ public class Task {
      * @return (mutable) list of all statuses this task can be changed into by the assigned user
      */
     public List<Status> getNextStatuses() {
-        List<Status> statuses = new LinkedList<>();
-        switch (getStatus()) {
-            case AVAILABLE -> {
-                statuses.add(Status.EXECUTING);
-                return statuses;
-            }
-            case EXECUTING -> {
-                statuses.add(Status.FINISHED);
-                statuses.add(Status.FAILED);
-                return statuses;
-            }
-        }
-        return statuses;
+        return getState().getNextStatuses(this);
     }
 
-    private void addNextTask(Task task) {
+    void addNextTask(Task task) {
         nextTasks.add(task);
     }
 
-    private void removeNextTask(Task task) {
+    void removeNextTask(Task task) {
         nextTasks.remove(task);
     }
 
-    private void addPreviousTask(Task task) {
+    void addPreviousTask(Task task) {
         previousTasks.add(task);
     }
 
-    private void removePreviousTask(Task task) {
+    void removePreviousTask(Task task) {
         previousTasks.remove(task);
     }
 
@@ -316,22 +304,10 @@ public class Task {
      * @return Status regarding when this task was finished (early, on time or delayed), based on acceptable deviation and duration
      */
     private FinishedStatus getFinishedStatus() {
-        if (getStatus() != Status.FINISHED) {
-            return null;
-        }
-
-        int differenceMinutes = getTimeSpan().getTimeElapsed().getTotalMinutes();
-        int durationMinutes = getEstimatedDuration().getTotalMinutes();
-
-        if (differenceMinutes < (1 - getAcceptableDeviation()) * durationMinutes) {
-            return FinishedStatus.EARLY;
-        } else if (differenceMinutes < (1 + getAcceptableDeviation()) * durationMinutes) {
-            return FinishedStatus.ON_TIME;
-        } else {
-            return FinishedStatus.DELAYED;
-        }
+        return getState().getFinishedStatus(this);
     }
 
+    // TODO: Alle @throws nog is nakijken
     /**
      * Changes the current task to executing status and sets the start time
      *
@@ -339,20 +315,13 @@ public class Task {
      * @param systemTime  Current system time
      * @param currentUser User currently logged in
      * @throws IncorrectUserException       if the user currently logged in is not assigned to the current task
-     * @throws IncorrectTaskStatusException if the task is not available
      */
     public void start(Time startTime, Time systemTime, User currentUser)
-            throws IncorrectUserException, IncorrectTaskStatusException, StartTimeBeforeAvailableException {
+            throws IncorrectUserException, StartTimeBeforeAvailableException, IncorrectTaskStatusException {
         if (getUser() != currentUser) {
             throw new IncorrectUserException();
         }
-        if (getStatus() != Status.AVAILABLE) {
-            throw new IncorrectTaskStatusException("");
-        }
-        setStartTime(startTime);
-        if (!systemTime.before(startTime)) {
-            setStatus(Status.EXECUTING);
-        }
+        getState().start(this, startTime, systemTime);
     }
 
     /**
@@ -362,9 +331,9 @@ public class Task {
      * @param endTime     Time at which this task should end
      * @param systemTime  Current system time
      * @param currentUser User currently logged in
-     * @throws IncorrectUserException           if the currently logged-in user is not assigned to this task
+     * @throws IncorrectUserException                 if the currently logged-in user is not assigned to this task
      * @throws IncorrectTaskStatusException     if the task is not currently EXECUTING
-     * @throws FailTimeAfterSystemTimeException if newStatus == FAILED and endTime > systemTime
+     * @throws FailTimeAfterSystemTimeException       if newStatus == FAILED and endTime > systemTime
      */
     public void end(
             Status newStatus,
@@ -372,70 +341,11 @@ public class Task {
             Time systemTime,
             User currentUser
     )
-            throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, EndTimeBeforeStartTimeException {
+            throws IncorrectUserException, FailTimeAfterSystemTimeException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException {
         if (getUser() != currentUser) {
             throw new IncorrectUserException();
         }
-        if (getStatus() != Status.EXECUTING) {
-            throw new IncorrectTaskStatusException("Status has to be Executing");
-        }
-        if (newStatus == Status.FAILED && systemTime.before(endTime)) {
-            throw new FailTimeAfterSystemTimeException();
-        }
-
-        setEndTime(endTime);
-
-        if (!systemTime.before(endTime)) {
-            setStatus(newStatus);
-            if (newStatus == Status.FINISHED) {
-                for (Task nextTask : getNextTasks()) {
-                    if (nextTask.checkAvailable()) {
-                        nextTask.setStatus(Status.AVAILABLE);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Updates this tasks' status depending on new system time
-     *
-     * @param newTime New system time
-     */
-    public void advanceTime(Time newTime) {
-        Status status = getStatus();
-        switch (status) {
-            case EXECUTING -> {
-                if (getEndTime() != null && !newTime.before(getEndTime())) {
-                    setStatus(Status.FINISHED);
-                    for (Task nextTask : getNextTasks()) {
-                        if (nextTask.checkAvailable()) {
-                            nextTask.setStatus(Status.AVAILABLE);
-                        }
-                    }
-                }
-            }
-            case AVAILABLE -> {
-                if (getStartTime() != null && !newTime.before(getStartTime())) {
-                    setStatus(Status.EXECUTING);
-                }
-            }
-        }
-    }
-
-    /**
-     * @return true if all previous tasks are finished and this task is unavailable, false otherwise
-     */
-    private boolean checkAvailable() {
-        if (getStatus() != Status.UNAVAILABLE) {
-            return false;
-        }
-        for (Task task : getPreviousTasks()) {
-            if (task.getStatus() != Status.FINISHED) {
-                return false;
-            }
-        }
-        return true;
+        getState().end(this, newStatus, endTime, systemTime);
     }
 
     /**
@@ -445,35 +355,12 @@ public class Task {
      * @param description Description of the replacing task
      * @param duration    Duration of the replacing task
      * @param deviation   Acceptable deviation of the replacing task
-     * @throws ReplacedTaskNotFailedException if the current task has not failed yet
+     * @throws IncorrectTaskStatusException if this task hasn't failed yet
      * @pre duration is a valid time-object
      * @post all previous tasks of this task are now assigned before the new task
      * @post all next tasks of this task are now assigned after the new task
      */
-    public Task replaceTask(String taskName, String description, Time duration, double deviation) throws ReplacedTaskNotFailedException {
-        if (getStatus() != Status.FAILED) {
-            throw new ReplacedTaskNotFailedException();
-        }
-
-        Task newTask = new Task(taskName, description, duration, deviation, new LinkedList<>(), getUser());
-
-        for (Task task : getPreviousTasks()) {
-            task.removeNextTask(this);
-            this.removePreviousTask(task);
-            task.addNextTask(newTask);
-            newTask.addPreviousTask(task);
-        }
-
-        for (Task task : getNextTasks()) {
-            task.removePreviousTask(this);
-            this.removeNextTask(task);
-            task.addPreviousTask(newTask);
-            newTask.addNextTask(task);
-        }
-
-        setReplacementTask(newTask);
-        newTask.setReplacesTask(this);
-
-        return newTask;
+    public Task replaceTask(String taskName, String description, Time duration, double deviation) throws IncorrectTaskStatusException {
+        return getState().replaceTask(this, taskName, description, duration, deviation);
     }
 }

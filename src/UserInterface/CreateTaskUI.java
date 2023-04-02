@@ -179,6 +179,8 @@ public class CreateTaskUI {
                     System.out.println("ERROR: the given task to replace does not exist\n");
                 } catch (TaskNameAlreadyInUseException e) {
                     System.out.println("ERROR: the given task name is already in use\n");
+                } catch (IncorrectTaskStatusException e) {
+                    System.out.println("ERROR: " + e.getMessage() + ", please try again\n");
                 }
             } else {
                 System.out.println("Give developer performing this task:");

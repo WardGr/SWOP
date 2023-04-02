@@ -362,7 +362,7 @@ public class CreateTaskUITest {
                         Task deviation:
                         Is this a replacement task? (y/n)
                         This task is a replacement for task:
-                        ERROR: the task to replace has not failed, please try again
+                        ERROR: The task to replace has not failed, please try again
                                         
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********

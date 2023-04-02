@@ -14,6 +14,7 @@ import java.util.LinkedList;
 
 import static org.junit.Assert.assertEquals;
 
+// TODO: DEZE BOEL FAILT, OMDAT TASKS NU OP EEN ANDERE MANIER FINISHEN, DA MOET NOG GEIMPLEMENTEERD WORDEN
 public class ShowProjectsUITest {
     @Test
     public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, ReplacedTaskNotFailedException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
@@ -147,6 +148,8 @@ public class ShowProjectsUITest {
 
         tsm.startTask("Project2", "Task2", new Time(200), dev);
         tsm.advanceTime(new Time(300));
+
+        // TODO: dit geeft een error omdat tasks nu nimeer automatisch finishen met advanceTime, moeten dus onze tests beetje aanpassen
         tsm.endTask("Project2", "Task2", Status.FINISHED, new Time(1000), dev);
         tsm.advanceTime(new Time(2000));
         System.setIn(new ByteArrayInputStream("Project2\nBACK\nBACK".getBytes()));

@@ -86,6 +86,7 @@ public class UpdateTaskControllerTest {
                 Next tasks:
                 Previous tasks:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), devUtc.showTask("Brewery", "Brew").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        // TODO: dit geeft een error omdat tasks nu nimeer automatisch finishen met advanceTime, moeten dus onze tests beetje aanpassen
         assertEquals(1, devUtc.getNextStatuses("Brewery", "Brew").size());
         assertEquals(Status.EXECUTING, devUtc.getNextStatuses("Brewery", "Brew").get(0));
         assertEquals(Status.AVAILABLE, devUtc.getStatus("Brewery", "Brew"));

@@ -120,7 +120,7 @@ public class UserInterfaceTest {
         UI.startSystem();
         assertEquals("""
                 At your order! Enter 'help' for a list of commands.
-                >You must be logged in with the project manager role to call this function
+                >You must be logged in with the project manager or developer role to call this function
                 >""".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 

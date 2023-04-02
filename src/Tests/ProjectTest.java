@@ -1,6 +1,7 @@
 package Tests;
 
 import Domain.*;
+import Domain.TaskStates.Task;
 import org.junit.Test;
 
 import java.util.LinkedList;
@@ -94,7 +95,7 @@ public class ProjectTest {
         assertEquals(minecraft.getStatus(), "ongoing");
         assertEquals(minecraft.getTask("Make Mobs").getName(), "Make Mobs");
         assertEquals(minecraft.getTask("Purchase Render").getNextTasks().size(), 1);
-        List<Task> next = minecraft.getTask("Purchase Render").getNextTasks();
+        List<Domain.TaskStates.Task> next = minecraft.getTask("Purchase Render").getNextTasks();
         for (Task task : next) {
             assertEquals(task.getName(), "Make Mobs");
         }
@@ -159,6 +160,7 @@ public class ProjectTest {
             car.startTask("Install windows", new Time(0, 0), new Time(0, 0), mechanic);
         });
         assertEquals(car.showExecutingTasks().size(), 1);
+        // TODO: dit geeft een error omdat tasks nu nimeer automatisch finishen met advanceTime, moeten dus onze tests beetje aanpassen
         assertEquals(1, car.getNextStatuses("Install engine").size());
         assertEquals(car.getNextStatuses("Install engine").get(0), Status.EXECUTING);
         car.startTask("Install engine", new Time(0, 0), new Time(0, 0), engineer);
@@ -281,10 +283,8 @@ public class ProjectTest {
         project.addNewTask("Task", "Description", new Time(300), 0, new LinkedList<>(), mechanic);
         assertEquals(Status.AVAILABLE, project.getStatus("Task"));
         project.startTask("Task", new Time(1), new Time(0), mechanic);
-        project.advanceTime(new Time(2));
         assertEquals(Status.EXECUTING, project.getStatus("Task"));
         project.endTask("Task", Status.FINISHED, new Time(50000), new Time(2), mechanic);
-        project.advanceTime(new Time(300000));
         assertEquals(Status.FINISHED, project.getStatus("Task"));
 
 

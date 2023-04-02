@@ -130,6 +130,8 @@ public class TaskManSystemTest {
                 Previous tasks:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), taskManSystem.showTask("car", "Engine").replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
 
+
+        // TODO: dit geeft een error omdat tasks nu nimeer automatisch finishen met advanceTime, moeten dus onze tests beetje aanpassen
         assertEquals(1, taskManSystem.getNextStatuses("car", "Engine").size());
         assertEquals(1, taskManSystem.getNextStatuses("car", "Wheels").size());
         assertEquals(1, taskManSystem.getNextStatuses("house", "Walls").size());
