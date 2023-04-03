@@ -82,7 +82,7 @@ public class Task {
                         "Description:        " + getDescription() + '\n' +
                         "Estimated Duration: " + getEstimatedDuration().toString() + '\n' +
                         "Accepted Deviation: " + getAcceptableDeviation() + '\n' +
-                        "Status:             " + getStatus().toString() + (getStatus() == Status.FINISHED ? (", " + getFinishedStatus()) : "") + "\n\n" +
+                        "Status:             " + getState().toString() + "\n\n" +
 
                         "Replacement Task:   " + showReplacementTaskName() + '\n' +
                         "Replaces Task:      " + showReplacesTaskName() + "\n\n" +

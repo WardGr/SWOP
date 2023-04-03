@@ -41,12 +41,25 @@ public class ExecutingState implements TaskState {
 
     private void changeStatus(Task task, Status status) {
         switch(status) {
-            case FINISHED -> task.setState(new FinishedState());
+            case FINISHED -> task.setState(getFinishedState(task));
             case FAILED -> task.setState(new FailedState());
             case EXECUTING -> task.setState(new ExecutingState());
             case AVAILABLE -> task.setState(new AvailableState());
             case UNAVAILABLE -> task.setState(new UnavailableState());
             case PENDING -> task.setState(new PendingState());
+        }
+    }
+
+    private TaskState getFinishedState(Task task) {
+        int differenceMinutes = task.getTimeSpan().getTimeElapsed().getTotalMinutes();
+        int durationMinutes = task.getEstimatedDuration().getTotalMinutes();
+
+        if (differenceMinutes < (1 - task.getAcceptableDeviation()) * durationMinutes) {
+            return new FinishedEarlyState();
+        } else if (differenceMinutes < (1 + task.getAcceptableDeviation()) * durationMinutes) {
+            return new FinishedOnTimeState();
+        } else {
+            return new FinishedDelayedState();
         }
     }
 
@@ -56,6 +69,11 @@ public class ExecutingState implements TaskState {
         statuses.add(Status.FAILED);
         statuses.add(Status.FINISHED);
         return statuses;
+    }
+
+    @Override
+    public String toString() {
+        return "executing";
     }
 
 }

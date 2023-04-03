@@ -27,4 +27,9 @@ class AvailableState implements TaskState {
         return statuses;
     }
 
+    @Override
+    public String toString() {
+        return "available";
+    }
+
 }

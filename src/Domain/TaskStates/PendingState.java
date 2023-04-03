@@ -8,4 +8,9 @@ public class PendingState implements TaskState {
     public Status getStatus() {
         return Status.PENDING;
     }
+
+    @Override
+    public String toString() {
+        return "pending";
+    }
 }

@@ -35,4 +35,9 @@ public class FailedState implements TaskState {
     public Status getStatus() {
         return Status.FAILED;
     }
+
+    @Override
+    public String toString() {
+        return "failed";
+    }
 }

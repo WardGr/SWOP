@@ -22,4 +22,9 @@ public class UnavailableState implements TaskState {
     public Status getStatus() {
         return Status.UNAVAILABLE;
     }
+
+    @Override
+    public String toString() {
+        return "unavailable";
+    }
 }
