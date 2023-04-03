@@ -2,8 +2,8 @@ package Domain.TaskStates;
 
 import Domain.*;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 /**
  *  Keeps track of a task, including a list of tasks that should complete before it and which tasks it should come before
  */
@@ -58,13 +58,11 @@ public class Task {
         this.nextTasks = new LinkedList<>();
 
         this.user = user;
+        this.state = new AvailableState();
 
         boolean available = true;
         for (Task task : previousTasks) {
-            task.addNextTask(this);
-            if (task.getStatus() != Status.FINISHED) {
-                available = false;
-            }
+            task.addNextTask(this); // If task is not finished, then it will set this.state to Unavailable!
         }
 
         if (available) {
@@ -112,7 +110,7 @@ public class Task {
      * @return String containing name of replacement task
      */
     private String showReplacementTaskName() {
-        if (replacementTask == null) {
+        if (getReplacementTask() == null) {
             return "No replacement task";
         }
         return getReplacementTask().getName();
@@ -122,7 +120,7 @@ public class Task {
      * @return String containing name of task this task replaces
      */
     private String showReplacesTaskName() {
-        if (replacesTask == null) {
+        if (getReplacesTask() == null) {
             return "Replaces no tasks";
         }
         return getReplacesTask().getName();
@@ -284,8 +282,9 @@ public class Task {
         return getState().getNextStatuses(this);
     }
 
-    void addNextTask(Task task) {
-        nextTasks.add(task);
+    void addNextTask(Task nextTask) {
+        nextTasks.add(nextTask);
+        getState().updateAvailability(this); // This changes nothing if nextTask is not unavailable
     }
 
     void removeNextTask(Task task) {
@@ -298,13 +297,6 @@ public class Task {
 
     void removePreviousTask(Task task) {
         previousTasks.remove(task);
-    }
-
-    /**
-     * @return Status regarding when this task was finished (early, on time or delayed), based on acceptable deviation and duration
-     */
-    private FinishedStatus getFinishedStatus() {
-        return getState().getFinishedStatus(this);
     }
 
     // TODO: Alle @throws nog is nakijken

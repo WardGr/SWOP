@@ -65,6 +65,7 @@ public class LoadSystemTest {
         for (String p : expectedProjectNames) {
             expectedAvailableTasks.put(p, new LinkedList<>());
         }
+        // TODO: idk waarom deze failt
         assertEquals(expectedAvailableTasks, taskManSystem.showAvailableTasks());
         String expectedTask = "Task Name:          simpleTask\nDescription:        first LoadSystemTask\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             executing\n\nReplacement Task:   No replacement task\nReplaces Task:      Replaces no tasks\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           No end time set\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n";
         assertEquals(taskManSystem.showTask("simpleProject", "simpleTask"), expectedTask);

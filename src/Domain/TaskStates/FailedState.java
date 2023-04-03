@@ -40,4 +40,9 @@ public class FailedState implements TaskState {
     public String toString() {
         return "failed";
     }
+
+    @Override
+    public void updateNextTaskState(Task task) {
+        task.setState(new UnavailableState());
+    }
 }

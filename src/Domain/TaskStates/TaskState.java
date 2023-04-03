@@ -28,14 +28,13 @@ interface TaskState {
         return null;
     }
 
-    default void updateAvailability(Task nextTask) {};
+    default void updateAvailability(Task task) {};
 
     // TODO: is dit een goeie keuze? Op zich doet ge een status check, maar specifiek voor 1 type maar...
     default boolean isFinished() {
         return false;
     }
 
-    default FinishedStatus getFinishedStatus(Task task) {
-        return null;
-    }
+    // TODO: Hier default meegeven?
+    default void updateNextTaskState(Task task) {};
 }

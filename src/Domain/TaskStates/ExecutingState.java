@@ -50,6 +50,9 @@ public class ExecutingState implements TaskState {
         }
     }
 
+    /**
+     * @return Status regarding when this task was finished (early, on time or delayed), based on acceptable deviation and duration
+     */
     private TaskState getFinishedState(Task task) {
         int differenceMinutes = task.getTimeSpan().getTimeElapsed().getTotalMinutes();
         int durationMinutes = task.getEstimatedDuration().getTotalMinutes();
@@ -74,6 +77,11 @@ public class ExecutingState implements TaskState {
     @Override
     public String toString() {
         return "executing";
+    }
+
+    @Override
+    public void updateNextTaskState(Task task) {
+        task.setState(new UnavailableState());
     }
 
 }

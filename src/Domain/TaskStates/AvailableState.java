@@ -11,6 +11,7 @@ class AvailableState implements TaskState {
     public Status getStatus() {
         return Status.AVAILABLE;
     }
+
     @Override
     public void start(Task task, Time startTime, Time systemTime) throws StartTimeBeforeAvailableException {
         task.setStartTime(startTime);
@@ -32,4 +33,8 @@ class AvailableState implements TaskState {
         return "available";
     }
 
+    @Override
+    public void updateNextTaskState(Task task) {
+        task.setState(new UnavailableState()); // If this state is not finished, then the next one should be unavailable
+    }
 }

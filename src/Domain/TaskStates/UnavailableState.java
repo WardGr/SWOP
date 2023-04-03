@@ -5,16 +5,15 @@ import Domain.Status;
 public class UnavailableState implements TaskState {
 
     @Override
-    public void updateAvailability(Task task) {
-        boolean available = true;
-        for (Task previousTask : task.getPreviousTasks()) {
-            if (!previousTask.getState().isFinished()) {
-                available = false;
-            }
-        }
+    public void updateNextTaskState(Task task) {
+        task.setState(new UnavailableState()); // If this state is unavailable, then the next one should be too
+    }
 
-        if (available) {
-            task.setState(new AvailableState());
+    @Override
+    public void updateAvailability(Task task) {
+        task.setState(new AvailableState());
+        for (Task previousTask : task.getPreviousTasks()) {
+            previousTask.getState().updateNextTaskState(task); // Set this tasks' state to unavailable if previousTask is not finished
         }
     }
 
