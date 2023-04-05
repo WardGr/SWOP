@@ -5,6 +5,8 @@ import Domain.Role;
 import Domain.User;
 import Domain.UserManager;
 
+import java.util.Set;
+
 /**
  * Separates domain from UI for the login and logout use-cases
  */
@@ -42,7 +44,7 @@ public class SessionController {
      * @throws LoginException if username and password do not match or user is already logged in.
      * @post User is set in session
      */
-    public Role login(String username, String password) throws LoginException {
+    public Set<Role> login(String username, String password) throws LoginException {
         if (getSession().isLoggedIn()) {
             throw new LoginException("Incorrect permission: User already logged in");
         }

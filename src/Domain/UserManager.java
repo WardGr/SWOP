@@ -24,7 +24,7 @@ public class UserManager {
                 String password = data[1];
                 Role role = null;
                 if (data[2].equals("developer")) {
-                    role = Role.DEVELOPER;
+                    role = Role.SYSADMIN; // TODO
                 } else if (data[2].equals("manager")) {
                     role = Role.PROJECTMANAGER;
                 }
@@ -60,11 +60,14 @@ public class UserManager {
         throw new LoginException("Username/password combination is incorrect");
     }
 
+    // TODO,misschien niet meer nodig met de andere checks
     public User getDeveloper(String userName) throws UserNotFoundException {
         for (User user : getUsers()) {
             if (
                     user.getUsername().equals(userName) &&
-                            user.getRole().equals(Role.DEVELOPER)
+                            ( user.getRole().equals(Role.SYSADMIN) ||
+                                user.getRole().equals(Role.JAVAPROGRAMMER) ||
+                                user.getRole().equals(Role.PYTHONPROGRAMMER) )
             ) {
                 return user;
             }

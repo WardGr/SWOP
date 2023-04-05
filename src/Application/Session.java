@@ -3,6 +3,8 @@ package Application;
 import Domain.Role;
 import Domain.User;
 
+import java.util.Set;
+
 /**
  * Keeps track of the user currently logged in, ensures logging in and logging out happens correctly
  */
@@ -22,11 +24,11 @@ public class Session {
         this.currentUser = user;
     }
 
-    public Role getRole() {
+    public Set<Role> getRoles() {
         if (getCurrentUser() == null) {
             return null;
         }
-        return getCurrentUser().getRole();
+        return getCurrentUser().getRoles();
     }
 
     /**
@@ -37,9 +39,9 @@ public class Session {
      * @post getCurrentUser() == user
      * @post getRole() == user.getRole()
      */
-    public Role login(User user) {
+    public Set<Role> login(User user) {
         setCurrentUser(user);
-        return getRole();
+        return getRoles();
     }
 
     /**
