@@ -2,9 +2,7 @@ package Domain;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Keeps track of all registered users, manages login
@@ -22,13 +20,13 @@ public class UserManager {
                 String[] data = myReader.nextLine().split(" ");
                 String username = data[0];
                 String password = data[1];
-                Role role = null;
+                Set<Role> roles = new HashSet<>();
                 if (data[2].equals("developer")) {
-                    role = Role.SYSADMIN; // TODO
+                    roles.add(Role.SYSADMIN); // TODO
                 } else if (data[2].equals("manager")) {
-                    role = Role.PROJECTMANAGER;
+                    roles.add(Role.PROJECTMANAGER);
                 }
-                User user = new User(username, password, role);
+                User user = new User(username, password, roles);
                 users.add(user);
             }
             myReader.close();
@@ -65,9 +63,9 @@ public class UserManager {
         for (User user : getUsers()) {
             if (
                     user.getUsername().equals(userName) &&
-                            ( user.getRole().equals(Role.SYSADMIN) ||
-                                user.getRole().equals(Role.JAVAPROGRAMMER) ||
-                                user.getRole().equals(Role.PYTHONPROGRAMMER) )
+                            ( user.getRoles().contains(Role.SYSADMIN) ||
+                                user.getRoles().contains(Role.JAVAPROGRAMMER) ||
+                                user.getRoles().contains(Role.PYTHONPROGRAMMER) )
             ) {
                 return user;
             }
