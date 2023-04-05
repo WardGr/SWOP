@@ -5,9 +5,9 @@ import Application.IncorrectPermissionException;
 import Application.Session;
 import Domain.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+
+// TODO: de back met exception? dan kunnen we wel vanuit elke functie back doen
 
 /**
  * Handles user input for the createtask use-case, requests necessary domain-level information from the Application.CreateTaskController
@@ -183,13 +183,36 @@ public class CreateTaskUI {
                     System.out.println("ERROR: " + e.getMessage() + ", please try again\n");
                 }
             } else {
-                System.out.println("Give developer performing this task:");
-                String developer = scanner.nextLine();
-                if (developer.equals("BACK")) {
+                Set<Role> roles = new HashSet<>();
+
+                System.out.println("Give roles needed for this task, end with a '.'");
+                System.out.println("You can choose from: project manager, sysadmin, java programmer, python programmer");
+                String role = scanner.nextLine();
+                if (role.equals("BACK")) {
                     System.out.println("Cancelled task creation");
                     return;
                 }
+                while(!role.equals(".")){
+                    switch (role) {
+                        case ("project manager"):
+                            roles.add(Role.PROJECTMANAGER);
+                        case ("sysadmin"):
+                            roles.add(Role.SYSADMIN);
+                        case ("java programmer"):
+                            roles.add(Role.JAVAPROGRAMMER);
+                        case ("python programmer"):
+                            roles.add(Role.PYTHONPROGRAMMER);
+                        default:
+                            System.out.println("(Unrecognized role)");
+                    }
+                    role = scanner.nextLine();
+                    if (role.equals("BACK")) {
+                        System.out.println("Cancelled task creation");
+                        return;
+                    }
+                }
 
+                /*
                 System.out.println("Tasks that should be completed before this task, enter '.' to stop adding new tasks:");
                 String previousTask = scanner.nextLine();
                 if (previousTask.equals("BACK")) {
@@ -206,6 +229,7 @@ public class CreateTaskUI {
                         return;
                     }
                 }
+                */
 
 
                 try {
@@ -216,8 +240,7 @@ public class CreateTaskUI {
                             durationHour,
                             durationMinutes,
                             deviation,
-                            developer,
-                            previousTasks
+                            roles
                     );
                     System.out.println("Task " + taskName + " successfully added to project " + projectName);
                     return;
@@ -227,8 +250,6 @@ public class CreateTaskUI {
                     System.out.println("ERROR: Given project does not exist\n");
                 } catch (InvalidTimeException e) {
                     System.out.println("ERROR: The given minutes are not of a valid format (0-59)\n");
-                } catch (TaskNotFoundException e) {
-                    System.out.println("ERROR: Given task does not exist\n");
                 } catch (TaskNameAlreadyInUseException e) {
                     System.out.println("ERROR: the given task name is already in use\n");
                 }

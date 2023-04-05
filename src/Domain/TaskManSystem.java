@@ -1,9 +1,6 @@
 package Domain;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Central domain-level system class, keeps track of system time and all projects, first point of entry into the domain
@@ -162,8 +159,7 @@ public class TaskManSystem {
      * @param description   Task description of the task
      * @param durationTime  Duration of the task
      * @param deviation     Acceptable deviation of the task
-     * @param previousTasks Tasks to be completed before the task
-     * @param givenUser     User to assign to the task
+     * @param roles     TODO
      * @throws ProjectNotFoundException      if the given project name does not correspond to an existing project
      * @throws TaskNotFoundException         if one of the previous tasks does not correspond to an existing task
      * @throws TaskNameAlreadyInUseException if the given task name is already used by another task belonging to the given project
@@ -174,10 +170,9 @@ public class TaskManSystem {
             String description,
             Time durationTime,
             double deviation,
-            List<String> previousTasks,
-            User givenUser
+            Set<Role> roles
     )
-            throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException {
+            throws ProjectNotFoundException, TaskNameAlreadyInUseException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -187,8 +182,7 @@ public class TaskManSystem {
                 description,
                 durationTime,
                 deviation,
-                previousTasks,
-                givenUser
+                roles
         );
     }
 

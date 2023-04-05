@@ -3,6 +3,7 @@ package Application;
 import Domain.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Separates domain from UI for the createtask use-case
@@ -69,21 +70,19 @@ public class CreateTaskController {
             int durationHour,
             int durationMinute,
             double deviation,
-            String user,
-            List<String> previousTasks
-    ) throws ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException {
+            Set<Role> roles
+    ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        User developer = getUserManager().getDeveloper(user);
+        //User developer = getUserManager().getDeveloper(user);
         getTaskManSystem().addTaskToProject(
                 projectName,
                 taskName,
                 description,
                 new Time(durationHour, durationMinute),
                 deviation,
-                previousTasks,
-                developer
+                roles
         );
     }
 

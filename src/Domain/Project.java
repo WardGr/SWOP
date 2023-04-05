@@ -4,6 +4,7 @@ import Domain.TaskStates.Task;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A project currently registered, including a list of tasks that this project requires
@@ -138,8 +139,7 @@ public class  Project {
      * @param description       Description of the task
      * @param duration          Duration of the task
      * @param deviation         Accepted deviation of the task
-     * @param previousTaskNames Names of the tasks to be completed before the newly created task
-     * @param user              User to be assigned to this task
+     * @param roles             TODO
      * @throws TaskNotFoundException         if one of the given tasks to be completed before the new task does not exist
      * @throws TaskNameAlreadyInUseException if the given task name is already in use for this project
      */
@@ -148,23 +148,22 @@ public class  Project {
             String description,
             Time duration,
             double deviation,
-            List<String> previousTaskNames,
-            User user
-    ) throws TaskNotFoundException, TaskNameAlreadyInUseException {
+            Set<Role> roles
+    ) throws TaskNameAlreadyInUseException {
         if (getTask(taskName) != null) {
             throw new TaskNameAlreadyInUseException();
         }
 
-        List<Domain.TaskStates.Task> previousTasks = new LinkedList<>();
-        for (String previousTaskName : previousTaskNames) {
-            Domain.TaskStates.Task task = getTask(previousTaskName);
-            if (task == null) {
-                throw new TaskNotFoundException();
-            }
-            previousTasks.add(task);
-        }
+        //List<Domain.TaskStates.Task> previousTasks = new LinkedList<>();
+        //for (String previousTaskName : previousTaskNames) {
+        //    Domain.TaskStates.Task task = getTask(previousTaskName);
+        //    if (task == null) {
+        //        throw new TaskNotFoundException();
+        //    }
+        //    previousTasks.add(task);
+        //}
 
-        addTask(new Domain.TaskStates.Task(taskName, description, duration, deviation, previousTasks, user));
+        addTask(new Domain.TaskStates.Task(taskName, description, duration, deviation, roles));
     }
 
     private void addTask(Domain.TaskStates.Task task) {

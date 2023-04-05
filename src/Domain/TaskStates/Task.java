@@ -20,12 +20,14 @@ public class Task {
     private Task replacementTask;
     private Task replacesTask;
 
-    private final List<Task> previousTasks;
+    private List<Task> previousTasks;
     private List<Task> nextTasks;
 
     private TimeSpan timeSpan;
 
-    private final User user;
+    private Set<Role> requiredRoles;
+
+    private Set<User> committedUsers;
 
     /**
      * Creates a task and initialises its status using the previous tasks
@@ -34,16 +36,14 @@ public class Task {
      * @param description         Description of the new task
      * @param estimatedDuration   Estimated duration of the new task
      * @param acceptableDeviation Acceptable deviation from the duration
-     * @param previousTasks       Tasks that must be completed before this task
-     * @param user                User assigned to this task
+     * @param roles                TODO
      */
     public Task(
             String name,
             String description,
             Time estimatedDuration,
             double acceptableDeviation,
-            List<Task> previousTasks,
-            User user
+            Set<Role> roles
     ) {
         this.name = name;
         this.description = description;
@@ -54,22 +54,23 @@ public class Task {
         this.replacementTask = null;
         this.replacesTask = null;
 
-        this.previousTasks = previousTasks;
+        this.previousTasks = new LinkedList<>();
         this.nextTasks = new LinkedList<>();
 
-        this.user = user;
+        this.requiredRoles = new HashSet<>(roles);
+
         this.state = new AvailableState();
 
-        boolean available = true;
-        for (Task task : previousTasks) {
-            task.addNextTask(this); // If task is not finished, then it will set this.state to Unavailable!
-        }
+        //boolean available = true;
+        //for (Task task : previousTasks) {
+        //    task.addNextTask(this); // If task is not finished, then it will set this.state to Unavailable!
+        //}
 
-        if (available) {
-            state = new AvailableState();
-        } else {
-            state = new UnavailableState();
-        }
+        //if (available) {
+        //    state = new AvailableState();
+        //} else {
+        //    state = new UnavailableState();
+        //}
     }
 
     @Override
@@ -86,9 +87,9 @@ public class Task {
                         "Replaces Task:      " + showReplacesTaskName() + "\n\n" +
 
                         "Start Time:         " + showStartTime() + '\n' +
-                        "End Time:           " + showEndTime() + "\n\n" +
+                        "End Time:           " + showEndTime() + "\n\n";// +
 
-                        "User:               " + getUser().getUsername() + "\n\n";
+                        //"User:               " + getUser().getUsername() + "\n\n";
 
         stringBuilder.append(info);
         stringBuilder.append("Next tasks:\n");
@@ -184,8 +185,12 @@ public class Task {
         this.timeSpan = new TimeSpan(startTime);
     }
 
-    User getUser() {
-        return user;
+    private Set<Role> getRoles() {
+        return new HashSet<>(requiredRoles);
+    }
+
+    private Set<User> getUsers() {
+        return new HashSet<>(committedUsers);
     }
 
     /**
@@ -310,7 +315,7 @@ public class Task {
      */
     public void start(Time startTime, Time systemTime, User currentUser)
             throws IncorrectUserException, StartTimeBeforeAvailableException, IncorrectTaskStatusException {
-        if (getUser() != currentUser) {
+        if (!getUsers().contains(currentUser)) {
             throw new IncorrectUserException();
         }
         getState().start(this, startTime, systemTime);
@@ -334,7 +339,7 @@ public class Task {
             User currentUser
     )
             throws IncorrectUserException, FailTimeAfterSystemTimeException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException {
-        if (getUser() != currentUser) {
+        if (!getUsers().contains(currentUser)) {
             throw new IncorrectUserException();
         }
         getState().end(this, newStatus, endTime, systemTime);
