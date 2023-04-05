@@ -36,7 +36,7 @@ public class AdvanceTimeUI {
                 System.out.println(e.getMessage());
             }
         } else {
-            System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " or " + Role.DEVELOPER + " role to call this function");
+            System.out.println("You must be logged in with the Project Manager role or a Developer role to call this function");
         }
     }
 

@@ -3,6 +3,8 @@ package Application;
 import Domain.Role;
 import Domain.User;
 
+import java.util.Set;
+
 /**
  * Read-only wrapper class for Session object, encapsulating the Session object
  */
@@ -21,7 +23,7 @@ public class SessionWrapper {
         return getSession().getCurrentUser();
     }
 
-    public Role getRole(){
-        return getSession().getRole();
+    public Set<Role> getRoles(){
+        return getSession().getRoles();
     }
 }

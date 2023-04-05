@@ -40,7 +40,7 @@ public class LoadSystemController {
      * @return Whether the user is logged in as a project manager
      */
     public boolean loadSystemPreconditions() {
-        return getSession().getRole() == Role.PROJECTMANAGER;
+        return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
     /**

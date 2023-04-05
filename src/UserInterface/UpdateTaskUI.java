@@ -35,7 +35,7 @@ public class UpdateTaskUI {
                 System.out.println(e.getMessage());
             }
         } else {
-            System.out.println("You must be logged in with the " + Role.DEVELOPER + " role to call this function");
+            System.out.println("You must be logged in with a Developer role to call this function");
         }
     }
 

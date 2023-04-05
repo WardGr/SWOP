@@ -4,27 +4,34 @@ import Domain.Role;
 import Domain.User;
 import org.junit.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.*;
 
 public class UserTest {
     @Test
     public void testUser() {
-        User thomas = new User("Thomas", "banaan123", Role.PROJECTMANAGER);
+        Set<Role> roles = new HashSet<>();
+        roles.add(Role.PROJECTMANAGER);
+        User thomas = new User("Thomas", "banaan123", roles);
         assertEquals("Thomas", thomas.getUsername());
         assertEquals("banaan123", thomas.getPassword());
-        assertEquals(Role.PROJECTMANAGER, thomas.getRole());
+        assertEquals(roles, thomas.getRoles());
         assertNotEquals("Thomas", thomas.getPassword());
         assertNotEquals("banaan123", thomas.getUsername());
-        assertNotSame(thomas.getRole(), Role.DEVELOPER);
+        roles.add(Role.PYTHONPROGRAMMER);
+        assertNotSame(roles, thomas.getRoles());
         assertNotSame("banaan1234", thomas.getPassword());
 
-        User jonathan = new User("Jonathan", "perzik789", Role.DEVELOPER);
+        roles.add(Role.JAVAPROGRAMMER);
+        User jonathan = new User("Jonathan", "perzik789", roles);
         assertEquals("Jonathan", jonathan.getUsername());
         assertEquals("perzik789", jonathan.getPassword());
         assertNotEquals("perzik7890", jonathan.getPassword());
         assertNotEquals("thomas", jonathan.getUsername());
-        assertEquals(Role.DEVELOPER, jonathan.getRole());
-        assertNotSame(jonathan.getRole(), Role.PROJECTMANAGER);
+        assertEquals(roles, jonathan.getRoles());
+        assertFalse(jonathan.getRoles().contains(Role.SYSADMIN));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             User fiona = new User(null, null, null);
@@ -35,7 +42,12 @@ public class UserTest {
         });
 
         Exception exception2 = assertThrows(IllegalArgumentException.class, () -> {
-            User fiona = new User("Fiona", null, Role.PROJECTMANAGER);
+            User fiona = new User("Fiona", null, roles);
+        });
+
+        Set<Role> emptyRoles = new HashSet<>();
+        Exception exception3 = assertThrows(IllegalArgumentException.class, () -> {
+            User fiona = new User("Fiona", "hoi123", emptyRoles);
         });
     }
 }

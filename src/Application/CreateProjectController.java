@@ -31,7 +31,7 @@ public class CreateProjectController {
      * @return whether the preconditions are satisfied
      */
     public boolean createProjectPreconditions() {
-        return getSession().getRole() == Role.PROJECTMANAGER;
+        return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
     /**
@@ -47,7 +47,7 @@ public class CreateProjectController {
      * @throws DueBeforeSystemTimeException     if the due time is before the system time (the project should have been completed already)
      */
     public void createProject(String projectName, String projectDescription, int dueHour, int dueMinute) throws IncorrectPermissionException, ProjectNameAlreadyInUseException, InvalidTimeException, DueBeforeSystemTimeException {
-        if (getSession().getRole() != Role.PROJECTMANAGER) {
+        if (!createProjectPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
         getTaskManSystem().createProject(projectName, projectDescription, new Time(dueHour, dueMinute));

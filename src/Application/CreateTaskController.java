@@ -40,7 +40,7 @@ public class CreateTaskController {
      * @return whether the preconditions for the createtask use-case are met
      */
     public boolean createTaskPreconditions() {
-        return getSession().getRole() == Role.PROJECTMANAGER;
+        return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
     /**
@@ -72,7 +72,7 @@ public class CreateTaskController {
             String user,
             List<String> previousTasks
     ) throws ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException {
-        if (getSession().getRole() != Role.PROJECTMANAGER) {
+        if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
         User developer = getUserManager().getDeveloper(user);
@@ -113,7 +113,7 @@ public class CreateTaskController {
             double deviation,
             String replaces
     ) throws IncorrectPermissionException, ReplacedTaskNotFailedException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
-        if (getSession().getRole() != Role.PROJECTMANAGER) {
+        if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
         getTaskManSystem().replaceTaskInProject(

@@ -2,6 +2,8 @@ package Application;
 
 import Domain.*;
 
+import java.util.Set;
+
 /**
  * Separates domain from UI for the advancetime use-case
  */
@@ -42,7 +44,11 @@ public class AdvanceTimeController {
      * @return whether the preconditions of advancetime are met
      */
     public boolean advanceTimePreconditions() {
-        return getSession().getRole() == Role.PROJECTMANAGER || getSession().getRole() == Role.DEVELOPER;
+        Set<Role> roles = getSession().getRoles();
+        return roles.contains(Role.PROJECTMANAGER) ||
+                roles.contains(Role.SYSADMIN) ||
+                roles.contains(Role.JAVAPROGRAMMER) ||
+                roles.contains(Role.PYTHONPROGRAMMER);
     }
 
     /**
