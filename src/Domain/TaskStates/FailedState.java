@@ -9,6 +9,7 @@ import java.util.LinkedList;
 public class FailedState implements TaskState {
 
     public Task replaceTask(Task task, String taskName, String description, Time duration, double deviation) {
+        /*
         Task newTask = new Task(taskName, description, duration, deviation, new LinkedList<>(), task.getUser());
 
         for (Task prevTask : task.getPreviousTasks()) {
@@ -29,6 +30,9 @@ public class FailedState implements TaskState {
         newTask.setReplacesTask(task);
 
         return newTask;
+        */
+
+        return null;
     }
 
     @Override

@@ -111,7 +111,7 @@ public class LoadSystemController {
             getTaskManSystem().replaceTaskInProject(projectName, name, description, new Time(dueHour, dueMinute), acceptableDeviation, replacesTask);
         } else {
             List<String> prevTasks = (List<String>) task.get("previousTasks");
-            getTaskManSystem().addTaskToProject(projectName, name, description, new Time(dueHour, dueMinute), acceptableDeviation, prevTasks, user);
+            //getTaskManSystem().addTaskToProject(projectName, name, description, new Time(dueHour, dueMinute), acceptableDeviation, prevTasks, user);
         }
 
         //handling the status

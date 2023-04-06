@@ -13,7 +13,7 @@ public class User {
     private final Set<Role> roles;
 
     public User(String username, String password, Set<Role> roles) {
-        if (username == null || password == null || roles == null || roles.size() > 0) {
+        if (username == null || password == null || roles == null || roles.size() == 0) {
             throw new IllegalArgumentException("Username, password and roles have to be initiated");
         }
         this.username = username;

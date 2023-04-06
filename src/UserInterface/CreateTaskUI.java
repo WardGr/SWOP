@@ -51,7 +51,8 @@ public class CreateTaskUI {
             System.out.println("Type BACK to cancel task creation at any time");
 
             System.out.println("*********** TASK CREATION FORM ***********");
-            System.out.println("Project name of which to add the task to:");
+            printOngoingProjects();
+            System.out.println("Project name of an ongoing project to add the task to:");
             String projectName = scanner.nextLine();
             if (projectName.equals("BACK")) {
                 System.out.println("Cancelled task creation");
@@ -183,10 +184,10 @@ public class CreateTaskUI {
                     System.out.println("ERROR: " + e.getMessage() + ", please try again\n");
                 }
             } else {
-                Set<Role> roles = new HashSet<>();
+                List<Role> roles = new LinkedList<>();
 
-                System.out.println("Give roles needed for this task, end with a '.'");
-                System.out.println("You can choose from: project manager, sysadmin, java programmer, python programmer");
+                System.out.println("Give developer roles needed for this task, end with a '.'");
+                System.out.println("You can choose from: sysadmin, java programmer, python programmer");
                 String role = scanner.nextLine();
                 if (role.equals("BACK")) {
                     System.out.println("Cancelled task creation");
@@ -194,16 +195,10 @@ public class CreateTaskUI {
                 }
                 while(!role.equals(".")){
                     switch (role) {
-                        case ("project manager"):
-                            roles.add(Role.PROJECTMANAGER);
-                        case ("sysadmin"):
-                            roles.add(Role.SYSADMIN);
-                        case ("java programmer"):
-                            roles.add(Role.JAVAPROGRAMMER);
-                        case ("python programmer"):
-                            roles.add(Role.PYTHONPROGRAMMER);
-                        default:
-                            System.out.println("(Unrecognized role)");
+                        case ("sysadmin") -> roles.add(Role.SYSADMIN);
+                        case ("java programmer") -> roles.add(Role.JAVAPROGRAMMER);
+                        case ("python programmer") -> roles.add(Role.PYTHONPROGRAMMER);
+                        default -> System.out.println("(Unrecognized developer role)");
                     }
                     role = scanner.nextLine();
                     if (role.equals("BACK")) {
@@ -254,6 +249,25 @@ public class CreateTaskUI {
                     System.out.println("ERROR: the given task name is already in use\n");
                 }
             }
+        }
+    }
+
+    private void printOngoingProjects(){
+        System.out.println("-- Ongoing Projects --");
+        List<String> ongoingProjectsNames = getController().getTaskManSystemData().getProjectNames();
+        ongoingProjectsNames.removeIf( e -> {
+                try {
+                    return getController().getProjectData(e).getStatus() == ProjectStatus.FINISHED;
+                } catch (ProjectNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        if (ongoingProjectsNames.size() > 0) {
+            for (String projectName : ongoingProjectsNames) {
+                System.out.println(" - " + projectName);
+            }
+        } else {
+            System.out.println(" - There is no ongoing project in the system.");
         }
     }
 }

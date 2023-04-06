@@ -17,6 +17,7 @@ public class  Project {
     private final String description;
     private final Time creationTime;
     private final Time dueTime;
+    private final ProjectProxy projectProxy;
 
     public Project(String name, String description, Time creationTime, Time dueTime)
             throws DueBeforeSystemTimeException {
@@ -29,6 +30,7 @@ public class  Project {
         this.description = description;
         this.creationTime = creationTime;
         this.dueTime = dueTime;
+        this.projectProxy = new ProjectProxy(this);
     }
 
     @Override
@@ -90,6 +92,17 @@ public class  Project {
         return List.copyOf(tasks);
     }
 
+    public List<String> getTasksNames(){
+        List<String> names = new LinkedList<>();
+        for (Task task : getTasks()){
+            names.add(task.getName());
+        }
+        for (Task task : getReplacedTasks()){
+            names.add(task.getName());
+        }
+        return names;
+    }
+
     /**
      * @return an IMMUTABLE list of all tasks that have been replaced
      */
@@ -97,19 +110,32 @@ public class  Project {
         return List.copyOf(replacedTasks);
     }
 
+    public ProjectProxy getProjectData(){
+        return projectProxy;
+    }
+
+    public Domain.TaskStates.TaskProxy getTaskData(String taskName) throws TaskNotFoundException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        return task.getTaskData();
+    }
+
     /**
      * @return Status of the current project, finished if all tasks are finished, ongoing otherwise
      */
-    public String getStatus() {
+    public ProjectStatus getStatus() {
+        // TODO met een enum veld in Project en een Observer!
         if (getTasks().size() == 0) {
-            return "ongoing";
+            return ProjectStatus.ONGOING;
         }
         for (Domain.TaskStates.Task task : getTasks()) {
             if (task.getStatus() != Status.FINISHED) {
-                return "ongoing";
+                return ProjectStatus.ONGOING;
             }
         }
-        return "finished";
+        return ProjectStatus.FINISHED;
     }
 
     /**
@@ -148,11 +174,13 @@ public class  Project {
             String description,
             Time duration,
             double deviation,
-            Set<Role> roles
+            List<Role> roles
     ) throws TaskNameAlreadyInUseException {
         if (getTask(taskName) != null) {
             throw new TaskNameAlreadyInUseException();
         }
+
+        // TODO check if project is not finished
 
         //List<Domain.TaskStates.Task> previousTasks = new LinkedList<>();
         //for (String previousTaskName : previousTaskNames) {

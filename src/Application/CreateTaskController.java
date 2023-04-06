@@ -70,7 +70,7 @@ public class CreateTaskController {
             int durationHour,
             int durationMinute,
             double deviation,
-            Set<Role> roles
+            List<Role> roles
     ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
@@ -123,5 +123,13 @@ public class CreateTaskController {
                 deviation,
                 replaces
         );
+    }
+
+    public TaskManSystemProxy getTaskManSystemData(){
+        return getTaskManSystem().getTaskManSystemData();
+    }
+
+    public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException {
+        return getTaskManSystem().getProjectData(projectName);
     }
 }

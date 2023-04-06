@@ -11,9 +11,16 @@ public class TaskManSystem {
     private List<Project> projects;
     private Time systemTime;
 
+    private final TaskManSystemProxy taskManSystemProxy;
+
     public TaskManSystem(Time systemTime) {
         this.systemTime = systemTime;
         projects = new LinkedList<>();
+        taskManSystemProxy = new TaskManSystemProxy(this);
+    }
+
+    public TaskManSystemProxy getTaskManSystemData(){
+        return taskManSystemProxy;
     }
 
     public Time getSystemTime() {
@@ -57,13 +64,29 @@ public class TaskManSystem {
         return names;
     }
 
+    public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null) {
+            throw new ProjectNotFoundException();
+        }
+        return project.getProjectData();
+    }
+
+    public Domain.TaskStates.TaskProxy getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        return project.getTaskData(taskName);
+    }
+
     /**
      * Returns a map which maps project names to their status
      */
     public Map<String, String> getProjectNamesWithStatus() {
         Map<String, String> statuses = new HashMap<>();
         for (Project project : getProjects()) {
-            statuses.put(project.getName(), project.getStatus());
+            statuses.put(project.getName(), project.getStatus().toString());
         }
         return statuses;
     }
@@ -170,7 +193,7 @@ public class TaskManSystem {
             String description,
             Time durationTime,
             double deviation,
-            Set<Role> roles
+            List<Role> roles
     )
             throws ProjectNotFoundException, TaskNameAlreadyInUseException {
         Project project = getProject(projectName);
@@ -379,5 +402,15 @@ public class TaskManSystem {
 
     public void clear(){
         projects = new LinkedList<>();
+    }
+
+
+    public List<String> showUnfinishedTasks(){
+        List<String> projects = new LinkedList<>();
+        for (Project project : getProjects()){
+            // TODO met die enum status checken of het finished is!
+            projects.add(project.getName());
+        }
+        return projects;
     }
 }

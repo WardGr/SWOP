@@ -25,9 +25,11 @@ public class Task {
 
     private TimeSpan timeSpan;
 
-    private Set<Role> requiredRoles;
+    private List<Role> requiredRoles;
 
-    private Set<User> committedUsers;
+    private Map<User,Role> committedUsers;
+
+    private final TaskProxy taskProxy = new TaskProxy(this);
 
     /**
      * Creates a task and initialises its status using the previous tasks
@@ -43,7 +45,7 @@ public class Task {
             String description,
             Time estimatedDuration,
             double acceptableDeviation,
-            Set<Role> roles
+            List<Role> roles
     ) {
         this.name = name;
         this.description = description;
@@ -57,7 +59,10 @@ public class Task {
         this.previousTasks = new LinkedList<>();
         this.nextTasks = new LinkedList<>();
 
-        this.requiredRoles = new HashSet<>(roles);
+        //TODO check if it are developer roles
+        this.requiredRoles = new LinkedList<>(roles);
+
+        this.committedUsers = new HashMap<>();
 
         this.state = new AvailableState();
 
@@ -71,6 +76,10 @@ public class Task {
         //} else {
         //    state = new UnavailableState();
         //}
+    }
+
+    public TaskProxy getTaskData(){
+        return taskProxy;
     }
 
     @Override
@@ -131,7 +140,7 @@ public class Task {
         return name;
     }
 
-    private String getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -169,7 +178,7 @@ public class Task {
     /**
      * @return Task this task replaces
      */
-    private Task getReplacesTask() {
+    public Task getReplacesTask() {
         return replacesTask;
     }
 
@@ -185,12 +194,22 @@ public class Task {
         this.timeSpan = new TimeSpan(startTime);
     }
 
-    private Set<Role> getRoles() {
-        return new HashSet<>(requiredRoles);
+    List<Role> getRequiredRoles() {
+        return new LinkedList<>(requiredRoles);
     }
 
     private Set<User> getUsers() {
-        return new HashSet<>(committedUsers);
+        return new HashSet<>(committedUsers.keySet());
+    }
+
+    private Map<User,Role> getUsersWithRole(){
+        return committedUsers;
+    }
+    
+    Map<String,Role> getUserNamesWithRole(){
+        Map<String,Role> userNamesWithRole = new HashMap<>();
+        getUsersWithRole().forEach((user, role) -> userNamesWithRole.put(user.getUsername(), role));
+        return userNamesWithRole;
     }
 
     /**
@@ -244,7 +263,7 @@ public class Task {
     /**
      * @return End time if this is set, null otherwise
      */
-    private Time getEndTime() {
+    Time getEndTime() {
         if (getTimeSpan() == null) {
             return null;
         }

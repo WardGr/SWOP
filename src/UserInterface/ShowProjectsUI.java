@@ -3,11 +3,11 @@ package UserInterface;
 import Application.IncorrectPermissionException;
 import Application.Session;
 import Application.ShowProjectsController;
-import Domain.ProjectNotFoundException;
-import Domain.Role;
-import Domain.TaskManSystem;
-import Domain.TaskNotFoundException;
+import Domain.*;
+import Domain.TaskStates.Task;
+import Domain.TaskStates.TaskProxy;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -73,7 +73,7 @@ public class ShowProjectsUI {
      * @throws IncorrectPermissionException if user is not a project manager
      */
     private void chooseProject(String projectName, Scanner scanner) throws ProjectNotFoundException, IncorrectPermissionException {
-        showProject(getController().showProject(projectName));
+        showProject(projectName);
 
         while (true) {
             try {
@@ -83,7 +83,7 @@ public class ShowProjectsUI {
                 if (response.equals("BACK")) {
                     return;
                 }
-                showTask(getController().showTask(projectName, response));
+                showTask(projectName, response);
             } catch (TaskNotFoundException e) {
                 System.out.println("The given task could not be found, please try again\n");
             }
@@ -96,27 +96,137 @@ public class ShowProjectsUI {
      * @throws IncorrectPermissionException if current session is not held by a project manager
      */
     private void showProjectsWithStatuses() throws IncorrectPermissionException {
-        Map<String, String> statuses = getController().getProjectNamesWithStatus();
-        statuses.forEach((project, status) -> System.out.println(project + ", status: " + status));
+        List<String> projectNames = getController().getTaskManSystemData().getProjectNames();
+        for (String projectName : projectNames) {
+            try {
+                ProjectStatus status = getController().getProjectData(projectName).getStatus();
+                System.out.println(projectName + ", status: " + status.toString());
+            } catch (ProjectNotFoundException e) {
+                System.out.println("The given project could not be found\n");
+            }
+        }
     }
 
     /**
      * Pretty-prints given project string
      *
-     * @param projectString String containing project details
+     * @param projectName TODO
      */
-    private void showProject(String projectString) {
+    private void showProject(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
+        ProjectProxy projectData = getController().getProjectData(projectName);
         System.out.println("******** PROJECT DETAILS ********");
-        System.out.println(projectString);
+
+        System.out.println("Project Name:  " + projectData.getName());
+        System.out.println("Description:   " + projectData.getDescription());
+        System.out.println("Creation Time: " + projectData.getCreationTime().toString());
+        System.out.println("Due Time:      " + projectData.getDueTime().toString());
+        System.out.println("Status:        " + projectData.getStatus().toString());
+
+        System.out.println();
+        System.out.println("Tasks:");
+
+        if (projectData.getTasksNames().size() > 0) {
+            int index = 1;
+            for (String taskName : projectData.getTasksNames()) {
+                System.out.print(index++ + ". " + taskName);
+                try {
+                    String replacedBy = getController().getTaskData(projectName, taskName).getReplacementTaskName();
+                    if (replacedBy != null) {
+                        System.out.print(" - Replaced by: " + replacedBy);
+                    }
+                } catch (TaskNotFoundException e) {
+                    System.out.print("\n The given task could not be found");
+                }
+                System.out.println();
+            }
+        } else {
+            System.out.println("There are no tasks attached to this project.");
+        }
+
+        // TODO geef de totale uitvoeringstijd !!!
+
     }
 
     /**
      * Pretty-prints given task string
      *
-     * @param taskString String containing task details
+     * @param projectName TODO
      */
-    private void showTask(String taskString) {
+    private void showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+        TaskProxy taskData = getController().getTaskData(projectName, taskName);
+
         System.out.println("******** TASK DETAILS ********");
-        System.out.println(taskString);
+
+        System.out.println("Task Name:          " + taskData.getName());
+        System.out.println("Description:        " + taskData.getDescription());
+        System.out.println("Estimated Duration: " + taskData.getEstimatedDuration().toString());
+        System.out.println("Accepted Deviation: " + taskData.getAcceptableDeviation());
+        System.out.println("Status:             " + taskData.getStatus().toString() + "\n");
+
+        System.out.print("Replacement Task:   ");
+        if (taskData.getReplacementTaskName() == null){
+            System.out.println("No replacement task");
+        } else {
+            System.out.println(taskData.getReplacementTaskName());
+        }
+        System.out.print("Replaces Task:      ");
+        if (taskData.getReplacesTaskName() == null){
+            System.out.println("Replaces no tasks\n");
+        } else {
+            System.out.println(taskData.getReplacesTaskName() + '\n');
+        }
+
+        System.out.print("Start Time:         ");
+        if (taskData.getStartTime() == null){
+            System.out.println("Task has not started yet");
+        } else {
+            System.out.println(taskData.getStartTime().toString());
+        }
+        System.out.print("End Time:           ");
+        if (taskData.getEndTime() == null){
+            System.out.println("Task has not ended yet\n");
+        } else {
+            System.out.println(taskData.getEndTime().toString() + '\n');
+        }
+
+        System.out.println("Required roles:");
+        if (taskData.getRequiredRoles().size() > 0){
+            for (Role role : taskData.getRequiredRoles()){
+                System.out.println("- " + role.toString());
+            }
+        } else {
+            System.out.println("All roles are filled in.");
+        }
+        System.out.println();
+
+        System.out.println("Committed users:");
+        if (taskData.getUserNamesWithRole().size() > 0){
+            taskData.getUserNamesWithRole().forEach((userName, role) -> System.out.println("- " + userName + " as " + role.toString()));
+        } else {
+            System.out.println("No users are committed to this task.");
+        }
+        System.out.println();
+
+
+        System.out.println("Next tasks:");
+        if (taskData.getNextTasksNames().size() > 0){
+            int i = 1;
+            for (String nextTaskName : taskData.getNextTasksNames()) {
+                System.out.println(i++ + ". " + nextTaskName);
+            }
+        } else {
+            System.out.println("- There are no next tasks");
+        }
+
+
+        System.out.println("Previous tasks:");
+        if (taskData.getPreviousTasksNames().size() > 0) {
+            int i = 1;
+            for (String prevTaskName : taskData.getPreviousTasksNames()) {
+                System.out.println(i++ + ". " + prevTaskName);
+            }
+        } else {
+            System.out.println("- There are no previous tasks");
+        }
     }
 }
