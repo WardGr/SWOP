@@ -4,6 +4,7 @@ import Domain.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 class AvailableState implements TaskState {
 
@@ -13,11 +14,17 @@ class AvailableState implements TaskState {
     }
 
     @Override
-    public void start(Task task, Time startTime, Time systemTime) throws StartTimeBeforeAvailableException {
-        task.setStartTime(startTime);
-        if (!systemTime.before(startTime)) {
+    public void start(Task task, Time startTime, User currentUser, Role role) {
+        task.removeRole(role);
+        task.addUser(currentUser, role);
+
+        if (task.getRequiredRoles().size() == 0){
             task.setState(new ExecutingState());
+            task.setStartTime(startTime);
+        } else {
+            task.setState(new PendingState());
         }
+        task.notifyObservers();
     }
 
     @Override
@@ -37,4 +44,32 @@ class AvailableState implements TaskState {
     public void updateNextTaskState(Task task) {
         task.setState(new UnavailableState()); // If this state is not finished, then the next one should be unavailable
     }
+
+    @Override
+    public void updateAvailability(Task task) {
+        for (Task previousTask : task.getPreviousTasks()) {
+            previousTask.getState().updateNextTaskState(task); // Set this tasks' state to unavailable if previousTask is not finished
+        }
+    }
+
+    public void addPreviousTask(Task task, Task previousTask) throws LoopDependencyGraphException {
+        if (safeAddPrevTask(task, previousTask)) {
+            task.addPreviousTask(previousTask);
+            previousTask.addNextTask(task);
+        } else {
+            throw new LoopDependencyGraphException();
+        }
+        updateAvailability(task);
+    }
+
+    public void removePreviousTask(Task task, Task previousTask) {
+        task.removePreviousTask(previousTask);
+        previousTask.removeNextTask(task);
+        updateAvailability(task);
+    }
+
+    public boolean safeAddPrevTask(Task task, Task prevTask){
+        return !task.getAllNextTasks().contains(prevTask);
+    }
+
 }

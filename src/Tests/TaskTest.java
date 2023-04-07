@@ -1,21 +1,25 @@
 package Tests;
 
 import Domain.*;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.TaskStates.Task;
+import Domain.TaskStates.TaskObserver;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class TaskTest {
-    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException {
+    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException {
         testTask();
     }
 
     @Test
-    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException {
+    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException {
         /*
         Time estimatedDuration1 = new Time(10);
         double deviation1 = 0.1;
@@ -225,6 +229,22 @@ public class TaskTest {
         assertThrows(StartTimeBeforeAvailableException.class, () -> secondTask.start(new Time(30), new Time(60), testUser));
 
         */
+
+        Project project1 = new Project("Project 1", "test", new Time(0,0), new Time(50,0));
+
+        List<Role> roles = new LinkedList<>();
+        roles.add(Role.JAVAPROGRAMMER);
+        roles.add(Role.JAVAPROGRAMMER);
+        roles.add(Role.SYSADMIN);
+        List<TaskObserver> observers = new LinkedList<>();
+        observers.add(project1);
+        Task.NewActiveTask("Task 1", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), observers);
+        assertEquals(1, project1.getTasks().size());
+
+        roles.add(Role.PROJECTMANAGER);
+        assertThrows(NonDeveloperRoleException.class, () -> Task.NewActiveTask("TEST", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), observers));
+
+
 
     }
 }

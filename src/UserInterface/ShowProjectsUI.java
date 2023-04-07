@@ -125,11 +125,23 @@ public class ShowProjectsUI {
         System.out.println();
         System.out.println("Tasks:");
 
-        if (projectData.getTasksNames().size() > 0) {
+        if (projectData.getActiveTasksNames().size() > 0) {
             int index = 1;
-            for (String taskName : projectData.getTasksNames()) {
-                System.out.print(index++ + ". " + taskName);
+            for (String taskName : projectData.getActiveTasksNames()) {
+                System.out.println(index++ + ". " + taskName);
+            }
+        } else {
+            System.out.println("There are no active tasks attached to this project.");
+        }
+
+        System.out.println();
+        System.out.println("Replaced Tasks:");
+
+        if (projectData.getReplacedTasksNames().size() > 0) {
+            int index = 1;
+            for (String taskName : projectData.getReplacedTasksNames()) {
                 try {
+                    System.out.print(index++ + ". " + taskName);
                     String replacedBy = getController().getTaskData(projectName, taskName).getReplacementTaskName();
                     if (replacedBy != null) {
                         System.out.print(" - Replaced by: " + replacedBy);
@@ -140,7 +152,7 @@ public class ShowProjectsUI {
                 System.out.println();
             }
         } else {
-            System.out.println("There are no tasks attached to this project.");
+            System.out.println("There are no tasks replaced in this project.");
         }
 
         // TODO geef de totale uitvoeringstijd !!!

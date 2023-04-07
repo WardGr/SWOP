@@ -119,20 +119,20 @@ public class LoadSystemController {
         if (status.equals("EXECUTING")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
-            getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
+            //getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
         } else if (status.equals("FINISHED")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
             int endHour = (int) (long) task.get("endHour");
             int endMinute = (int) (long) task.get("endMinute");
-            getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
+            //getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
             getTaskManSystem().endTask(projectName, name, Status.FINISHED, new Time(endHour, endMinute), user);
         } else if (status.equals("FAILED")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
             int endHour = (int) (long) task.get("endHour");
             int endMinute = (int) (long) task.get("endMinute");
-            getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
+            //getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
             getTaskManSystem().endTask(projectName, name, Status.FAILED, new Time(endHour, endMinute), user);
         }
     }

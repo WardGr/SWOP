@@ -4,10 +4,13 @@ import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
 import Application.Session;
 import Domain.*;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
 
 import java.util.*;
 
 // TODO: de back met exception? dan kunnen we wel vanuit elke functie back doen
+// TODO: support voor het toevoegen van next/prev tasks en alternative tasks bij het creëren?
 
 /**
  * Handles user input for the createtask use-case, requests necessary domain-level information from the Application.CreateTaskController
@@ -152,19 +155,21 @@ public class CreateTaskUI {
             }
 
             if (answer.equals("y")) {
-                System.out.println("This task is a replacement for task:");
-                String replaces = scanner.nextLine();
-                if (replaces.equals("BACK")) {
-                    System.out.println("Cancelled task creation");
-                    return;
-                }
                 try {
+                    printActiveFailedTasks(projectName);
+
+                    System.out.println("This task is a replacement for task:");
+                    String replaces = scanner.nextLine();
+                    if (replaces.equals("BACK")) {
+                        System.out.println("Cancelled task creation");
+                        return;
+                    }
+
                     getController().replaceTask(
                             projectName,
                             taskName,
                             description,
-                            durationHour,
-                            durationMinutes,
+                            new Time(durationHour, durationMinutes),
                             deviation,
                             replaces
                     );
@@ -207,15 +212,14 @@ public class CreateTaskUI {
                     }
                 }
 
-                /*
-                System.out.println("Tasks that should be completed before this task, enter '.' to stop adding new tasks:");
+                System.out.println("Tasks that this task depends on, enter '.' to stop adding new tasks:");
                 String previousTask = scanner.nextLine();
                 if (previousTask.equals("BACK")) {
                     System.out.println("Cancelled task creation");
                     return;
                 }
 
-                List<String> previousTasks = new ArrayList<>();
+                Set<String> previousTasks = new HashSet<>();
                 while (!previousTask.equals(".")) {
                     previousTasks.add(previousTask);
                     previousTask = scanner.nextLine();
@@ -224,7 +228,23 @@ public class CreateTaskUI {
                         return;
                     }
                 }
-                */
+
+                System.out.println("Tasks that depend on this task, enter '.' to stop adding new tasks:");
+                String nextTask = scanner.nextLine();
+                if (nextTask.equals("BACK")) {
+                    System.out.println("Cancelled task creation");
+                    return;
+                }
+
+                Set<String> nextTasks = new HashSet<>();
+                while (!nextTask.equals(".")) {
+                    nextTasks.add(nextTask);
+                    nextTask = scanner.nextLine();
+                    if (nextTask.equals("BACK")) {
+                        System.out.println("Cancelled task creation");
+                        return;
+                    }
+                }
 
 
                 try {
@@ -232,21 +252,31 @@ public class CreateTaskUI {
                             projectName,
                             taskName,
                             description,
-                            durationHour,
-                            durationMinutes,
+                            new Time(durationHour, durationMinutes),
                             deviation,
-                            roles
+                            roles,
+                            previousTasks,
+                            nextTasks
                     );
                     System.out.println("Task " + taskName + " successfully added to project " + projectName);
                     return;
                 } catch (UserNotFoundException e) {
+                    // TODO
                     System.out.println("ERROR: Given user does not exist or is not a developer\n");
                 } catch (ProjectNotFoundException e) {
                     System.out.println("ERROR: Given project does not exist\n");
                 } catch (InvalidTimeException e) {
                     System.out.println("ERROR: The given minutes are not of a valid format (0-59)\n");
                 } catch (TaskNameAlreadyInUseException e) {
-                    System.out.println("ERROR: the given task name is already in use\n");
+                    System.out.println("ERROR: The given task name is already in use\n");
+                } catch (TaskNotFoundException e) {
+                    System.out.println("ERROR: A given previous or next task name can't be found\n");
+                } catch (IncorrectTaskStatusException e) {
+                    System.out.println("ERROR: " + e.getMessage() + '\n');
+                } catch (LoopDependencyGraphException e) {
+                    System.out.println("ERROR: Given list of tasks introduces a loop\n");
+                } catch (NonDeveloperRoleException e) {
+                    System.out.println("ERROR: One of the given roles is not a developer role");
                 }
             }
         }
@@ -268,6 +298,16 @@ public class CreateTaskUI {
             }
         } else {
             System.out.println(" - There is no ongoing project in the system.");
+        }
+    }
+
+    private void printActiveFailedTasks(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
+        System.out.println("-- Tasks that can be replaced --");
+
+        for (String taskName : getController().getProjectData(projectName).getActiveTasksNames()){
+            if (getController().getTaskData(projectName, taskName).getStatus() == Status.FAILED){
+                System.out.println(" - " + taskName);
+            }
         }
     }
 }

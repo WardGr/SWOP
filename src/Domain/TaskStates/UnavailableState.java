@@ -26,4 +26,25 @@ public class UnavailableState implements TaskState {
     public String toString() {
         return "unavailable";
     }
+
+    public void addPreviousTask(Task task, Task previousTask) throws LoopDependencyGraphException {
+        if (safeAddPrevTask(task, previousTask)) {
+            task.addPreviousTask(previousTask);
+            previousTask.addNextTask(task);
+        } else {
+            throw new LoopDependencyGraphException();
+        }
+        updateAvailability(task);
+    }
+
+    public void removePreviousTask(Task task, Task previousTask) {
+        task.removePreviousTask(previousTask);
+        previousTask.removeNextTask(task);
+        updateAvailability(task);
+    }
+
+    public boolean safeAddPrevTask(Task task, Task prevTask){
+        return !task.getAllNextTasks().contains(prevTask);
+    }
+
 }

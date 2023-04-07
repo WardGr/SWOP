@@ -20,8 +20,8 @@ public class Task {
     private Task replacementTask;
     private Task replacesTask;
 
-    private List<Task> previousTasks;
-    private List<Task> nextTasks;
+    private Set<Task> previousTasks = new HashSet<>();
+    private Set<Task> nextTasks = new HashSet<>();
 
     private TimeSpan timeSpan;
 
@@ -31,6 +31,8 @@ public class Task {
 
     private final TaskProxy taskProxy = new TaskProxy(this);
 
+    private List<TaskObserver> observers;
+
     /**
      * Creates a task and initialises its status using the previous tasks
      *
@@ -38,14 +40,12 @@ public class Task {
      * @param description         Description of the new task
      * @param estimatedDuration   Estimated duration of the new task
      * @param acceptableDeviation Acceptable deviation from the duration
-     * @param roles                TODO
      */
     public Task(
             String name,
             String description,
             Time estimatedDuration,
-            double acceptableDeviation,
-            List<Role> roles
+            double acceptableDeviation
     ) {
         this.name = name;
         this.description = description;
@@ -56,26 +56,42 @@ public class Task {
         this.replacementTask = null;
         this.replacesTask = null;
 
-        this.previousTasks = new LinkedList<>();
-        this.nextTasks = new LinkedList<>();
-
-        //TODO check if it are developer roles
-        this.requiredRoles = new LinkedList<>(roles);
-
         this.committedUsers = new HashMap<>();
 
         this.state = new AvailableState();
+    }
 
-        //boolean available = true;
-        //for (Task task : previousTasks) {
-        //    task.addNextTask(this); // If task is not finished, then it will set this.state to Unavailable!
-        //}
+    public static void NewActiveTask(String name,
+                              String description,
+                              Time estimatedDuration,
+                              double acceptableDeviation,
+                              List<Role> roles,
+                              Set<Task> prevTasks,
+                              Set<Task> nextTasks,
+                              List<TaskObserver> observers) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+        Task task = new Task(name, description, estimatedDuration, acceptableDeviation);
 
-        //if (available) {
-        //    state = new AvailableState();
-        //} else {
-        //    state = new UnavailableState();
-        //}
+        task.setRequiredRoles(roles);
+        task.setObservers(observers);
+
+        try {
+            for (Task prevTask : prevTasks) {
+                task.getState().addPreviousTask(task, prevTask);
+            }
+            for (Task nextTask : nextTasks) {
+                nextTask.getState().addPreviousTask(nextTask, task);
+            }
+        } catch (LoopDependencyGraphException e) {
+            task.clearPreviousTasks();
+            task.clearNextTasks();
+            throw new LoopDependencyGraphException();
+        } catch (IncorrectTaskStatusException e) {
+            task.clearPreviousTasks();
+            task.clearNextTasks();
+            throw new IncorrectTaskStatusException("One of the next tasks is not (un)available");
+        }
+
+        task.notifyObservers();
     }
 
     public TaskProxy getTaskData(){
@@ -164,6 +180,15 @@ public class Task {
         this.state = state;
     }
 
+    void setRequiredRoles(List<Role> roles) throws NonDeveloperRoleException {
+        for (Role role : roles){
+            if (role != Role.SYSADMIN && role != Role.JAVAPROGRAMMER && role != Role.PYTHONPROGRAMMER){
+                throw new NonDeveloperRoleException();
+            }
+        }
+        this.requiredRoles = new LinkedList<>(roles);
+    }
+
     /**
      * @return Task that replaces this task
      */
@@ -226,10 +251,6 @@ public class Task {
         return new LinkedList<>(nextTasks);
     }
 
-    private void setNextTasks(List<Task> newNextTasks) {
-        this.nextTasks = newNextTasks;
-    }
-
     /**
      * @return Start time if this is set, null otherwise
      */
@@ -245,19 +266,8 @@ public class Task {
      *
      * @param startTime New start time
      */
-    void setStartTime(Time startTime) throws StartTimeBeforeAvailableException {
-        for (Task prevTask : getPreviousTasks()){
-            if (prevTask.getEndTime().after(startTime)){
-                throw new StartTimeBeforeAvailableException();
-            }
-        }
-
-        TimeSpan timeSpan = getTimeSpan();
-        if (timeSpan == null) {
-            setTimeSpan(startTime);
-        } else {
-            timeSpan.setStartTime(startTime);
-        }
+    void setStartTime(Time startTime) {
+        setTimeSpan(startTime);
     }
 
     /**
@@ -306,38 +316,21 @@ public class Task {
         return getState().getNextStatuses(this);
     }
 
-    void addNextTask(Task nextTask) {
-        nextTasks.add(nextTask);
-        getState().updateAvailability(this); // This changes nothing if nextTask is not unavailable
-    }
-
-    void removeNextTask(Task task) {
-        nextTasks.remove(task);
-    }
-
-    void addPreviousTask(Task task) {
-        previousTasks.add(task);
-    }
-
-    void removePreviousTask(Task task) {
-        previousTasks.remove(task);
-    }
 
     // TODO: Alle @throws nog is nakijken
     /**
      * Changes the current task to executing status and sets the start time
      *
      * @param startTime   Time the task will start
-     * @param systemTime  Current system time
      * @param currentUser User currently logged in
      * @throws IncorrectUserException       if the user currently logged in is not assigned to the current task
      */
-    public void start(Time startTime, Time systemTime, User currentUser)
-            throws IncorrectUserException, StartTimeBeforeAvailableException, IncorrectTaskStatusException {
-        if (!getUsers().contains(currentUser)) {
-            throw new IncorrectUserException();
+    public void start(Time startTime, User currentUser, Role role)
+            throws IncorrectTaskStatusException, UserAlreadyExecutingTaskException {
+        if (currentUser.getExecutingTaskData() != null){
+            throw new UserAlreadyExecutingTaskException();
         }
-        getState().start(this, startTime, systemTime);
+        getState().start(this, startTime, currentUser, role);
     }
 
     /**
@@ -378,5 +371,101 @@ public class Task {
      */
     public Task replaceTask(String taskName, String description, Time duration, double deviation) throws IncorrectTaskStatusException {
         return getState().replaceTask(this, taskName, description, duration, deviation);
+    }
+
+    // TODO de echte nu
+    public static void replaceTask(String taskName, String description, Time duration, double deviation, Task replaces) throws IncorrectTaskStatusException {
+        Task replacementTask = new Task(taskName, description, duration, deviation);
+
+        replaces.getState().replaceTask(replaces, replacementTask);
+
+        replaces.notifyObservers();
+        replacementTask.notifyObservers();
+    }
+
+
+    Set<Task> getAllPrevTasks(){
+        Set<Task> prevTasks = new HashSet<>();
+        for (Task prevTask : getPreviousTasks()){
+            prevTasks.addAll(prevTask.getAllPrevTasks());
+        }
+        return prevTasks;
+    }
+
+    Set<Task> getAllNextTasks(){
+        Set<Task> prevTasks = new HashSet<>();
+        for (Task prevTask : getPreviousTasks()){
+            prevTasks.addAll(prevTask.getAllPrevTasks());
+        }
+        return prevTasks;
+    }
+
+    void addPreviousTask(Task prevTask) {
+        previousTasks.add(prevTask);
+    }
+
+    void addNextTask(Task nextTask) {
+        nextTasks.add(nextTask);
+    }
+
+    void removePreviousTask(Task previousTask) {
+        previousTasks.remove(previousTask);
+    }
+
+    void removeNextTask(Task nextTask) {
+        nextTasks.remove(nextTask);
+    }
+
+    private void clearPreviousTasks() throws IncorrectTaskStatusException {
+        for (Task prevTask : getPreviousTasks()){
+            getState().removePreviousTask(this, prevTask);
+        }
+    }
+
+    private void clearNextTasks() throws IncorrectTaskStatusException {
+        for (Task nextTask : getNextTasks()){
+            nextTask.getState().removePreviousTask(nextTask, this);
+        }
+    }
+
+    void notifyObservers(){
+        for (TaskObserver observer : observers){
+            observer.update(this);
+        }
+        for (User user : getUsers()){
+            user.update(this);
+        }
+    }
+
+    private void setObservers(List<TaskObserver> observers){
+        this.observers = new LinkedList<>(observers);
+    }
+
+    private List<TaskObserver> getObservers(){
+        return new LinkedList<>(observers);
+    }
+
+    public void stopPending(User user) throws IncorrectTaskStatusException {
+        getState().stopPending(this, user);
+    }
+
+    Role getRole(User user){
+        return committedUsers.get(user);
+    }
+
+    void removeUser(User user){
+        committedUsers.remove(user);
+    }
+
+    void addRole(Role role){
+        requiredRoles.add(role);
+    }
+
+    void removeRole(Role role){
+        requiredRoles.remove(role);
+    }
+
+    void addUser(User user, Role role){
+        committedUsers.put(user, role);
     }
 }

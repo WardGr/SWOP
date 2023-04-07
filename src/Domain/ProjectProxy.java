@@ -28,8 +28,12 @@ public class ProjectProxy {
         return getProject().getDueTime();
     }
 
-    public List<String> getTasksNames(){
-        return getProject().getTasksNames();
+    public List<String> getActiveTasksNames(){
+        return getProject().getActiveTasksNames();
+    }
+
+    public List<String> getReplacedTasksNames(){
+        return getProject().getReplacedTasksNames();
     }
 
     public ProjectStatus getStatus(){

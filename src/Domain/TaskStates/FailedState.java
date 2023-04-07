@@ -1,5 +1,6 @@
 package Domain.TaskStates;
 
+import Domain.IncorrectTaskStatusException;
 import Domain.ReplacedTaskNotFailedException;
 import Domain.Status;
 import Domain.Time;
@@ -48,5 +49,33 @@ public class FailedState implements TaskState {
     @Override
     public void updateNextTaskState(Task task) {
         task.setState(new UnavailableState());
+    }
+
+    public void replaceTask(Task replaces, Task replacementTask) {
+        for (Task prevTask : replaces.getPreviousTasks()){
+            prevTask.removeNextTask(replaces);
+            replaces.removePreviousTask(prevTask);
+
+            prevTask.addNextTask(replacementTask);
+            replacementTask.addPreviousTask(prevTask);
+        }
+        for (Task nextTask : replaces.getNextTasks()){
+            nextTask.removePreviousTask(replaces);
+            replaces.removeNextTask(nextTask);
+
+            nextTask.addPreviousTask(replacementTask);
+            replacementTask.addNextTask(nextTask);
+        }
+
+        replaces.setReplacementTask(replacementTask);
+        replacementTask.setReplacesTask(replaces);
+
+        //TODO availability van replacement task? normaal staat die op available en is dat in orde
+
+        try{
+            replacementTask.setRequiredRoles(replaces.getRequiredRoles());
+        } catch (NonDeveloperRoleException e) {
+            throw new RuntimeException(e); // TODO het zou echt een grote fout zijn als dit niet klopt, RTE goed?
+        }
     }
 }

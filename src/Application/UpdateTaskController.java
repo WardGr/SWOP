@@ -160,7 +160,7 @@ public class UpdateTaskController {
         if (!updateTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with a Developer role to call this function");
         }
-        getTaskManSystem().startTask(projectName, taskName, new Time(startHour, startMinute), getSession().getCurrentUser());
+        //getTaskManSystem().startTask(projectName, taskName, new Time(startHour, startMinute), getSession().getCurrentUser());
     }
 
     /**

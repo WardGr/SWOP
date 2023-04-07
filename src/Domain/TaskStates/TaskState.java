@@ -4,11 +4,12 @@ import Domain.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 interface TaskState {
-
-    default void start(Task task, Time startTime, Time systemTime) throws StartTimeBeforeAvailableException, IncorrectTaskStatusException {
-        throw new IncorrectTaskStatusException("Task must be available to be started");
+    // TODO of task waarbij de status hoort als veld bijhouden?
+    default void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task must be available or pending to be started");
     }
 
     default List<Status> getNextStatuses(Task task) {
@@ -37,4 +38,24 @@ interface TaskState {
 
     // TODO: Hier default meegeven?
     default void updateNextTaskState(Task task) {};
+
+    default void addPreviousTask(Task task, Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
+        throw new IncorrectTaskStatusException("Task is not (un)available");
+    }
+
+    default void removePreviousTask(Task task, Task previousTask) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task is not (un)available");
+    }
+
+    default boolean safeAddPrevTask(Task task, Task prevTask) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task is not (un)available");
+    }
+
+    default void replaceTask(Task replaces, Task replacementTask) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("The task to replace is not failed");
+    }
+
+    default void stopPending(Task task, User user) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("The task is not in the pending state");
+    }
 }

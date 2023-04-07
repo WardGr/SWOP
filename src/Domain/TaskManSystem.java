@@ -1,5 +1,9 @@
 package Domain;
 
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.UserAlreadyExecutingTaskException;
+
 import java.util.*;
 
 /**
@@ -193,9 +197,11 @@ public class TaskManSystem {
             String description,
             Time durationTime,
             double deviation,
-            List<Role> roles
+            List<Role> roles,
+            Set<String> previousTasks,
+            Set<String> nextTasks
     )
-            throws ProjectNotFoundException, TaskNameAlreadyInUseException {
+            throws ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -205,7 +211,9 @@ public class TaskManSystem {
                 description,
                 durationTime,
                 deviation,
-                roles
+                roles,
+                previousTasks,
+                nextTasks
         );
     }
 
@@ -309,7 +317,6 @@ public class TaskManSystem {
      *
      * @param projectName Name of the project to which the task to start is attached
      * @param taskName    Name of the task to start
-     * @param startTime   Time at which the task should start
      * @param currentUser User currently logged in
      * @throws ProjectNotFoundException     if the given project name does not correspond to an existing project
      * @throws TaskNotFoundException        if the given task name does not correspond to an existing task within the given project
@@ -319,19 +326,19 @@ public class TaskManSystem {
     public void startTask(
             String projectName,
             String taskName,
-            Time startTime,
-            User currentUser
+            User currentUser,
+            Role role
     )
-            throws ProjectNotFoundException, TaskNotFoundException, IncorrectUserException, IncorrectTaskStatusException, StartTimeBeforeAvailableException {
+            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
         project.startTask(
                 taskName,
-                startTime,
                 getSystemTime(),
-                currentUser
+                currentUser,
+                role
         );
     }
 

@@ -1,6 +1,9 @@
 package Application;
 
 import Domain.*;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.TaskProxy;
 
 import java.util.List;
 import java.util.Set;
@@ -13,6 +16,7 @@ public class CreateTaskController {
     private final SessionWrapper session;
     private final TaskManSystem taskManSystem;
     private final UserManager userManager;
+    // TODO deze niet meer nodig?
 
     public CreateTaskController(
             SessionWrapper session,
@@ -67,11 +71,12 @@ public class CreateTaskController {
             String projectName,
             String taskName,
             String description,
-            int durationHour,
-            int durationMinute,
+            Time durationTime,
             double deviation,
-            List<Role> roles
-    ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException {
+            List<Role> roles,
+            Set<String> previousTasks,
+            Set<String> nextTasks
+    ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
@@ -80,9 +85,11 @@ public class CreateTaskController {
                 projectName,
                 taskName,
                 description,
-                new Time(durationHour, durationMinute),
+                durationTime,
                 deviation,
-                roles
+                roles,
+                previousTasks,
+                nextTasks
         );
     }
 
@@ -107,8 +114,7 @@ public class CreateTaskController {
             String projectName,
             String taskName,
             String description,
-            int durationHour,
-            int durationMinute,
+            Time durationTime,
             double deviation,
             String replaces
     ) throws IncorrectPermissionException, ReplacedTaskNotFailedException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
@@ -119,7 +125,7 @@ public class CreateTaskController {
                 projectName,
                 taskName,
                 description,
-                new Time(durationHour, durationMinute),
+                durationTime,
                 deviation,
                 replaces
         );
@@ -131,5 +137,9 @@ public class CreateTaskController {
 
     public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException {
         return getTaskManSystem().getProjectData(projectName);
+    }
+
+    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+        return getTaskManSystem().getTaskData(projectName, taskName);
     }
 }
