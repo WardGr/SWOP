@@ -3,6 +3,8 @@ package Tests;
 import Domain.Role;
 import Domain.User;
 import org.junit.Test;
+import org.mockito.*;
+
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,8 +12,14 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class UserTest {
+
+
     @Test
     public void testUser() {
+
+
+
+
         /*
         Set<Role> roles = new HashSet<>();
         roles.add(Role.PROJECTMANAGER);
@@ -49,8 +57,6 @@ public class UserTest {
         Set<Role> emptyRoles = new HashSet<>();
         Exception exception3 = assertThrows(IllegalArgumentException.class, () -> {
             User fiona = new User("Fiona", "hoi123", emptyRoles);
-        });
-
-        */
+        });*/
     }
 }

@@ -2,6 +2,9 @@ package Domain;
 
 import java.util.List;
 
+/**
+ * Immutable wrapper for project
+ */
 public class ProjectProxy {
     private final Project project;
 

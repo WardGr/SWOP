@@ -321,6 +321,11 @@ public class  Project implements TaskObserver {
         return task.getStatus();
     }
 
+    /**
+     * Sets the status of this project to the given status
+     *
+     * @param status The status this project should be changed into
+     */
     private void setStatus(ProjectStatus status){
         this.status = status;
     }
@@ -389,17 +394,13 @@ public class  Project implements TaskObserver {
                 // TODO finished status instellen met te laat en te vroeg en alles? -> dat zit bij task zeker?
                 setStatus(ProjectStatus.FINISHED);
             }
-            if (updatedTask.getReplacementTask() != null){
-                // TODO getters en setters
-                if (getTasks().contains(updatedTask)) {
-                    tasks.remove(updatedTask);
-                    replacedTasks.add(updatedTask);
-                }
+            if (updatedTask.getReplacementTask() != null && getTasks().contains(updatedTask)){
+                removeTask(updatedTask);
+                addReplacedTask(updatedTask);
             }
         } else if (!getReplacedTasks().contains(updatedTask)){
             addTask(updatedTask);
         }
-
     }
 
     public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException {

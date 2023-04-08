@@ -105,7 +105,7 @@ public class LoadSystemController {
         double acceptableDeviation = (double) task.get("acceptableDeviation");
 
         //determening what kind of taks it is
-        User user = getUserManager().getDeveloper((String) task.get("user"));
+        User user = getUserManager().getUser((String) task.get("user"));
         String replacesTask = (String) task.get("replaces");
         if (replacesTask != null) {
             getTaskManSystem().replaceTaskInProject(projectName, name, description, new Time(dueHour, dueMinute), acceptableDeviation, replacesTask);

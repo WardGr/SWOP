@@ -2,6 +2,9 @@ package Domain;
 
 import java.util.List;
 
+/**
+ * Immutable wrapper for task man
+ */
 public class TaskManSystemProxy {
     private final TaskManSystem taskManSystem;
 
