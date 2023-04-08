@@ -223,7 +223,7 @@ public class Task {
         return new LinkedList<>(requiredRoles);
     }
 
-    private Set<User> getUsers() {
+    Set<User> getUsers() {
         return new HashSet<>(committedUsers.keySet());
     }
 
@@ -330,6 +330,8 @@ public class Task {
         if (currentUser.getExecutingTaskData() != null){
             throw new UserAlreadyExecutingTaskException();
         }
+        // TODO check if the user has this role and such things
+        // TODO check if the role is still needed?
         getState().start(this, startTime, currentUser, role);
     }
 

@@ -15,6 +15,7 @@ class AvailableState implements TaskState {
 
     @Override
     public void start(Task task, Time startTime, User currentUser, Role role) {
+        // TODO check if user is already executing this? kan niet eigenlijk
         task.removeRole(role);
         task.addUser(currentUser, role);
 

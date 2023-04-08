@@ -9,6 +9,12 @@ public class PendingState implements TaskState {
 
     @Override
     public void start(Task task, Time startTime, User currentUser, Role role) {
+        if (task.getUsers().contains(currentUser)){
+            // if user already works on this task (but with a different role)
+            task.addRole(task.getRole(currentUser));
+            task.removeUser(currentUser);
+        }
+
         task.removeRole(role);
         task.addUser(currentUser, role);
 
@@ -38,5 +44,8 @@ public class PendingState implements TaskState {
     public void stopPending(Task task, User user){
         task.addRole(task.getRole(user));
         task.removeUser(user);
+        if (task.getUsers().size() == 0){
+            task.setState(new AvailableState());
+        }
     }
 }

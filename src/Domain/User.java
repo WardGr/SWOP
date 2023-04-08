@@ -81,8 +81,8 @@ public class User implements TaskObserver {
                     throw new RuntimeException(e); // TODO deze mag eigenlijk echt niet!
                 }
             }
-
             setPendingTask(task);
+            setExecutingTask(null);
 
         } else if (task.getStatus() == Status.EXECUTING) {
             setPendingTask(null);

@@ -1,25 +1,24 @@
 package Tests;
 
 import Domain.*;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.*;
 import Domain.TaskStates.Task;
-import Domain.TaskStates.TaskObserver;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
 public class TaskTest {
-    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException {
+    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException, TaskNotFoundException, UserAlreadyExecutingTaskException {
         testTask();
     }
 
     @Test
-    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException {
+    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException, TaskNotFoundException, UserAlreadyExecutingTaskException {
         /*
         Time estimatedDuration1 = new Time(10);
         double deviation1 = 0.1;
@@ -242,7 +241,20 @@ public class TaskTest {
         assertEquals(1, project1.getTasks().size());
 
         roles.add(Role.PROJECTMANAGER);
+        assertEquals(3,project1.getTaskData("Task 1").getRequiredRoles().size());
         assertThrows(NonDeveloperRoleException.class, () -> Task.NewActiveTask("TEST", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), observers));
+
+        Set<Role> userRoles = new HashSet<>();
+        userRoles.add(Role.JAVAPROGRAMMER);
+        User user = new User("Dieter", "123", userRoles);
+        project1.startTask("Task 1", new Time(15), user, Role.JAVAPROGRAMMER);
+        project1.startTask("Task 1", new Time(15), user, Role.JAVAPROGRAMMER);
+        project1.startTask("Task 1", new Time(15), user, Role.JAVAPROGRAMMER);
+        assertEquals(2,project1.getTaskData("Task 1").getRequiredRoles().size());
+        assertEquals(1,project1.getTaskData("Task 1").getUserNamesWithRole().size());
+        assertEquals(Status.PENDING, project1.getTaskData("Task 1").getStatus());
+        assertNull(user.getExecutingTaskData());
+        assertNotNull(user.getPendingTaskData());
 
 
 
