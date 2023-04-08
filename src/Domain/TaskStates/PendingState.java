@@ -1,19 +1,15 @@
 package Domain.TaskStates;
 
-import Domain.Role;
-import Domain.Status;
-import Domain.Time;
-import Domain.User;
+import Domain.*;
 
 public class PendingState implements TaskState {
 
     @Override
-    public void start(Task task, Time startTime, User currentUser, Role role) {
-        if (task.getUsers().contains(currentUser)){
-            // if user already works on this task (but with a different role)
-            task.addRole(task.getRole(currentUser));
-            task.removeUser(currentUser);
+    public void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
+        if (!task.getRequiredRoles().contains(role)){
+            throw new IncorrectRoleException("Given role is not required in this task");
         }
+        currentUser.startTask(task, role);
 
         task.removeRole(role);
         task.addUser(currentUser, role);
@@ -21,8 +17,11 @@ public class PendingState implements TaskState {
         if (task.getRequiredRoles().size() == 0){
             task.setState(new ExecutingState());
             task.setStartTime(startTime);
+        } else {
+            task.setState(new PendingState());
+            // als user al op deze task werkte als enige kan het zijn dat de status
+            // terug available wordt bij het verwijderen van deze
         }
-        task.notifyObservers();
     }
 
     @Override
@@ -36,8 +35,9 @@ public class PendingState implements TaskState {
     }
 
     @Override
-    public void updateNextTaskState(Task task) {
-        task.setState(new UnavailableState());
+    public void updateAvailabilityNextTask(Task task, Task nextTask) {
+        nextTask.setState(new UnavailableState());
+        // If this state is not finished, then the next one should be unavailable
     }
 
     @Override

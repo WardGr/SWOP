@@ -8,7 +8,7 @@ import java.util.Set;
 
 interface TaskState {
     // TODO of task waarbij de status hoort als veld bijhouden?
-    default void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException {
+    default void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
         throw new IncorrectTaskStatusException("Task must be available or pending to be started");
     }
 
@@ -29,15 +29,19 @@ interface TaskState {
         return null;
     }
 
-    default void updateAvailability(Task task) {};
+    default void updateAvailability(Task task) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task is not (un)available");
+    }
 
     // TODO: is dit een goeie keuze? Op zich doet ge een status check, maar specifiek voor 1 type maar...
     default boolean isFinished() {
         return false;
     }
 
-    // TODO: Hier default meegeven?
-    default void updateNextTaskState(Task task) {};
+    default void updateAvailabilityNextTask(Task task, Task nextTask) {
+        nextTask.setState(new AvailableState());
+        // If this state is not finished, then the next one should be unavailable
+    }
 
     default void addPreviousTask(Task task, Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
         throw new IncorrectTaskStatusException("Task is not (un)available");
@@ -59,11 +63,11 @@ interface TaskState {
         throw new IncorrectTaskStatusException("The task is not in the pending state");
     }
 
-    default void finish(Task task, User user, Time endTime) throws IncorrectTaskStatusException {
+    default void finish(Task task, User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
         throw new IncorrectTaskStatusException("The task is not in the executing state");
     }
 
-    default void fail(Task task, User user, Time endTime) throws IncorrectTaskStatusException {
+    default void fail(Task task, User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
         throw new IncorrectTaskStatusException("The task is not in the executing state");
     }
 }

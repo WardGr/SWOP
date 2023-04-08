@@ -1,5 +1,6 @@
 package Domain;
 
+import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.Task;
 import Domain.TaskStates.TaskObserver;
 import Domain.TaskStates.TaskProxy;
@@ -10,14 +11,13 @@ import java.util.Set;
 /**
  * A user currently registered within the system
  */
-public class User implements TaskObserver {
+public class User {
 
     private final String username;
     private final String password;
     private final Set<Role> roles;
 
-    private Task pendingTask;
-    private Task executingTask;
+    private Task task;
 
     public User(String username, String password, Set<Role> roles) {
         if (username == null || password == null || roles == null || roles.size() == 0) {
@@ -40,38 +40,23 @@ public class User implements TaskObserver {
         return new HashSet<>(roles);
     }
 
-    private Task getPendingTask(){
-        return pendingTask;
+    private Task getTask(){
+        return task;
     }
 
-    private void setPendingTask(Task task){
-        pendingTask = task;
+    private void setTask(Task task){
+        this.task = task;
     }
 
-    private Task getExecutingTask(){
-        return executingTask;
-    }
-
-    private void setExecutingTask(Task task){
-        executingTask = task;
-    }
-
-    public TaskProxy getPendingTaskData() {
-        if (getPendingTask() == null){
+    public TaskProxy getTaskData() {
+        if (getTask() == null){
             return null;
         } else {
-            return getPendingTask().getTaskData();
+            return getTask().getTaskData();
         }
     }
 
-    public TaskProxy getExecutingTaskData() {
-        if (getExecutingTask() == null){
-            return null;
-        } else {
-            return getExecutingTask().getTaskData();
-        }
-    }
-
+    /*
     public void update(Task task){
         if (task.getStatus() == Status.PENDING){
             if (getPendingTask() != null && getPendingTask() != task) {
@@ -91,5 +76,25 @@ public class User implements TaskObserver {
             setPendingTask(null);
             setExecutingTask(null);
         }
+    }
+    */
+
+    public void startTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
+        if (!getRoles().contains(role)){
+            throw new IncorrectRoleException("User does not have the given role");
+        }
+        if (getTask() != null) {
+            if (getTaskData().getStatus() == Status.PENDING) {
+                getTask().stopPending(this);
+            } else {
+                throw new RuntimeException();
+                // TODO exception
+            }
+        }
+        setTask(task);
+    }
+
+    public void endTask(){
+        setTask(null);
     }
 }

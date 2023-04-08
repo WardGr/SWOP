@@ -1,19 +1,22 @@
 package Domain.TaskStates;
 
+import Domain.IncorrectTaskStatusException;
 import Domain.Status;
 
 public class UnavailableState implements TaskState {
 
     @Override
-    public void updateNextTaskState(Task task) {
-        task.setState(new UnavailableState()); // If this state is unavailable, then the next one should be too
+    public void updateAvailabilityNextTask(Task task, Task nextTask) {
+        nextTask.setState(new UnavailableState());
+        // If this state is not finished, then the next one should be unavailable
     }
 
     @Override
     public void updateAvailability(Task task) {
         task.setState(new AvailableState());
         for (Task previousTask : task.getPreviousTasks()) {
-            previousTask.getState().updateNextTaskState(task); // Set this tasks' state to unavailable if previousTask is not finished
+            previousTask.updateAvailabilityNextTask(task);
+            // Set this tasks' state to unavailable if previousTask is not finished
         }
     }
 

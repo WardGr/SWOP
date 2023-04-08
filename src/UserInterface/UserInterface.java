@@ -20,6 +20,7 @@ public class UserInterface {
     private final AdvanceTimeUI advanceTimeUI;
     private final LoadSystemUI loadSystemUI;
     private final StartTaskUI startTaskUI;
+    private final EndTaskUI endTaskUI;
 
     public UserInterface(
             SessionUI sessionUI,
@@ -29,7 +30,8 @@ public class UserInterface {
             CreateTaskUI createTaskUI,
             LoadSystemUI loadSystemUI,
             UpdateTaskUI updateTaskUI,
-            StartTaskUI startTaskUI
+            StartTaskUI startTaskUI,
+            EndTaskUI endTaskUI
     ) {
         this.sessionUI = sessionUI;
         this.advanceTimeUI = advanceTimeUI;
@@ -39,6 +41,7 @@ public class UserInterface {
         this.loadSystemUI = loadSystemUI;
         this.updateTaskUI = updateTaskUI;
         this.startTaskUI = startTaskUI;
+        this.endTaskUI = endTaskUI;
     }
 
     /**
@@ -75,6 +78,7 @@ public class UserInterface {
             case "advancetime" -> advanceTimeUI.advanceTime();
             case "loadsystem" -> loadSystemUI.loadSystem();
             case "starttask" -> startTaskUI.startTask();
+            case "endtask" -> endTaskUI.endTask();
             default -> System.out.println(
                     "Unknown command, type help to see available commands"
             );

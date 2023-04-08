@@ -9,6 +9,8 @@ public class ExecutingState implements TaskState {
 
     @Override
     public void end(Task task, Status newStatus, Time endTime, Time systemTime) throws FailTimeAfterSystemTimeException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException {
+        // TODO: deze mag weg
+
         if (newStatus == Status.FAILED && systemTime.before(endTime)) {
             throw new FailTimeAfterSystemTimeException();
         }
@@ -82,20 +84,22 @@ public class ExecutingState implements TaskState {
     }
 
     @Override
-    public void updateNextTaskState(Task task) {
-        task.setState(new UnavailableState());
+    public void updateAvailabilityNextTask(Task task, Task nextTask) {
+        nextTask.setState(new UnavailableState());
+        // If this state is not finished, then the next one should be unavailable
     }
 
     @Override
-    public void finish(Task task, User currentUser, Time endTime){
-        // TODO check if user can finish this task
+    public void finish(Task task, User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
+        if (!task.getUsers().contains(currentUser)){
+            throw new IncorrectUserException("Given user is not working on this task");
+        }
 
         task.setState(new FinishedState());
         task.setEndTime(endTime);
 
-        task.notifyObservers();
-
         for (User user : task.getUsers()){
+            user.endTask();
             task.addRole(task.getRole(user));
             task.removeUser(user);
         }
@@ -106,15 +110,15 @@ public class ExecutingState implements TaskState {
     }
 
     @Override
-    public void fail(Task task, User currentUser, Time endTime){
-        // TODO check if user can finish this task
-
+    public void fail(Task task, User currentUser, Time endTime) throws IncorrectUserException {
+        if (!task.getUsers().contains(currentUser)){
+            throw new IncorrectUserException("Given user is not working on this task");
+        }
         task.setState(new FailedState());
         task.setEndTime(endTime);
 
-        task.notifyObservers();
-
         for (User user : task.getUsers()){
+            user.endTask();
             task.addRole(task.getRole(user));
             task.removeUser(user);
         }

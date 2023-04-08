@@ -3,6 +3,7 @@ package UserInterface;
 import Application.IncorrectPermissionException;
 import Application.StartTaskController;
 import Domain.*;
+import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskProxy;
 import Domain.TaskStates.UserAlreadyExecutingTaskException;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class StartTaskUI {
             System.out.println("ERROR: You need a developer role to call this function.");
             return;
         }
-        if (getController().getUserExecutingTaskData() != null){
+        if (getController().getUserTaskData() != null && getController().getUserTaskData().getStatus() == Status.EXECUTING){
             System.out.println("ERROR: You are already working on an executing task.");
             return;
         }
@@ -132,8 +133,8 @@ public class StartTaskUI {
                 }
 
                 // PENDING TASK
-                if (getController().getUserPendingTaskData() != null) {
-                    String pendingTaskName = getController().getUserPendingTaskData().getName();
+                if (getController().getUserTaskData() != null && getController().getUserTaskData().getStatus() == Status.PENDING) {
+                    String pendingTaskName = getController().getUserTaskData().getName();
 
                     System.out.println("You are already pending for task " + pendingTaskName);
                     System.out.println("Confirm you want to stop pending for task " + pendingTaskName + " and start working on task " + taskName + "? (y/n)");
@@ -172,17 +173,14 @@ public class StartTaskUI {
                 System.out.println("ERROR: Given project could not be found");
             } catch (TaskNotFoundException e) {
                 System.out.println("ERROR: Given task could not be found");
-            } catch (IncorrectPermissionException e) {
+            } catch (IncorrectPermissionException | IncorrectRoleException e) {
                 System.out.println("ERROR: " + e.getMessage());
             } catch (IncorrectTaskStatusException e) {
                 System.out.println("ERROR: Given state has not the right status to start");
             } catch (UserAlreadyExecutingTaskException e) {
                 System.out.println("ERROR: User is already executing a task");
             }
-
         }
-
-
     }
 
 

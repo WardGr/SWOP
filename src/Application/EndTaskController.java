@@ -32,34 +32,30 @@ public class EndTaskController {
             getSession().getRoles().contains(Role.SYSADMIN));
     }
 
-    public TaskProxy getUserExecutingTaskData(){
-        return getSession().getCurrentUser().getExecutingTaskData();
+    public TaskProxy getUserTaskData(){
+        return getSession().getCurrentUser().getTaskData();
     }
 
-    public TaskProxy getUserPendingTaskData(){
-        return getSession().getCurrentUser().getPendingTaskData();
-    }
-
-    public void finishCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
+    public void finishCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         if (!endTaskPreconditions()){
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
-        TaskProxy executingTaskData = getUserExecutingTaskData();
-        if (executingTaskData == null){
+        TaskProxy userTaskData = getUserTaskData();
+        if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING){
             throw new RuntimeException(); // TODO
         }
-        getTaskManSystem().finishTask(executingTaskData.getProjectName(), executingTaskData.getName(), getSession().getCurrentUser());
+        getTaskManSystem().finishTask(userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
     }
 
-    public void failCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
+    public void failCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         if (!endTaskPreconditions()){
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
-        TaskProxy executingTaskData = getUserExecutingTaskData();
-        if (executingTaskData == null){
+        TaskProxy userTaskData = getUserTaskData();
+        if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING){
             throw new RuntimeException(); // TODO
         }
-        getTaskManSystem().failTask(executingTaskData.getProjectName(), executingTaskData.getName(), getSession().getCurrentUser());
+        getTaskManSystem().failTask(userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
     }
 
 

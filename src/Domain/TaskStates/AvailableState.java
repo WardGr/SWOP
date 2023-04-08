@@ -14,8 +14,12 @@ class AvailableState implements TaskState {
     }
 
     @Override
-    public void start(Task task, Time startTime, User currentUser, Role role) {
-        // TODO check if user is already executing this? kan niet eigenlijk
+    public void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
+        if (!task.getRequiredRoles().contains(role)){
+            throw new IncorrectRoleException("Given role is not required in the task");
+        }
+        currentUser.startTask(task, role);
+
         task.removeRole(role);
         task.addUser(currentUser, role);
 
@@ -25,7 +29,6 @@ class AvailableState implements TaskState {
         } else {
             task.setState(new PendingState());
         }
-        task.notifyObservers();
     }
 
     @Override
@@ -42,14 +45,16 @@ class AvailableState implements TaskState {
     }
 
     @Override
-    public void updateNextTaskState(Task task) {
-        task.setState(new UnavailableState()); // If this state is not finished, then the next one should be unavailable
+    public void updateAvailabilityNextTask(Task task, Task nextTask) {
+        nextTask.setState(new UnavailableState());
+        // If this state is not finished, then the next one should be unavailable
     }
 
     @Override
     public void updateAvailability(Task task) {
         for (Task previousTask : task.getPreviousTasks()) {
-            previousTask.getState().updateNextTaskState(task); // Set this tasks' state to unavailable if previousTask is not finished
+            previousTask.updateAvailabilityNextTask(task);
+            // Set this tasks' state to unavailable if previousTask is not finished
         }
     }
 

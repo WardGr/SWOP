@@ -1,5 +1,6 @@
 package Domain;
 
+import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.TaskStates.UserAlreadyExecutingTaskException;
@@ -329,7 +330,7 @@ public class TaskManSystem {
             User currentUser,
             Role role
     )
-            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException {
+            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -421,7 +422,7 @@ public class TaskManSystem {
         return projects;
     }
 
-    public void finishTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
+    public void finishTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -429,7 +430,7 @@ public class TaskManSystem {
         project.finishTask(taskName, user, getSystemTime());
     }
 
-    public void failTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
+    public void failTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();

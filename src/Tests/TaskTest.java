@@ -13,12 +13,12 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class TaskTest {
-    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException, TaskNotFoundException, UserAlreadyExecutingTaskException {
+    public TaskTest() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException, TaskNotFoundException, UserAlreadyExecutingTaskException, IncorrectRoleException {
         testTask();
     }
 
     @Test
-    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException, TaskNotFoundException, UserAlreadyExecutingTaskException {
+    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, InvalidTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException, TaskNotFoundException, UserAlreadyExecutingTaskException, IncorrectRoleException {
         /*
         Time estimatedDuration1 = new Time(10);
         double deviation1 = 0.1;
@@ -235,24 +235,22 @@ public class TaskTest {
         roles.add(Role.JAVAPROGRAMMER);
         roles.add(Role.JAVAPROGRAMMER);
         roles.add(Role.SYSADMIN);
-        Task.NewActiveTask("Task 1", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), project1, new LinkedList<>());
-        assertEquals(1, project1.getTasks().size());
+        Task task1 = Task.NewActiveTask("Task 1", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), project1);
 
         roles.add(Role.PROJECTMANAGER);
-        assertEquals(3,project1.getTaskData("Task 1").getRequiredRoles().size());
-        assertThrows(NonDeveloperRoleException.class, () -> Task.NewActiveTask("TEST", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), project1, new LinkedList<>()));
+        assertEquals(3,task1.getTaskData().getRequiredRoles().size());
+        assertThrows(NonDeveloperRoleException.class, () -> Task.NewActiveTask("TEST", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), project1));
 
         Set<Role> userRoles = new HashSet<>();
         userRoles.add(Role.JAVAPROGRAMMER);
         User user = new User("Dieter", "123", userRoles);
-        project1.startTask("Task 1", new Time(15), user, Role.JAVAPROGRAMMER);
-        project1.startTask("Task 1", new Time(15), user, Role.JAVAPROGRAMMER);
-        project1.startTask("Task 1", new Time(15), user, Role.JAVAPROGRAMMER);
-        assertEquals(2,project1.getTaskData("Task 1").getRequiredRoles().size());
-        assertEquals(1,project1.getTaskData("Task 1").getUserNamesWithRole().size());
-        assertEquals(Status.PENDING, project1.getTaskData("Task 1").getStatus());
-        assertNull(user.getExecutingTaskData());
-        assertNotNull(user.getPendingTaskData());
+        task1.start(new Time(15), user, Role.JAVAPROGRAMMER);
+        task1.start(new Time(15), user, Role.JAVAPROGRAMMER);
+        task1.start(new Time(15), user, Role.JAVAPROGRAMMER);
+        assertEquals(2,task1.getTaskData().getRequiredRoles().size());
+        assertEquals(1,task1.getTaskData().getUserNamesWithRole().size());
+        assertEquals(Status.PENDING, task1.getTaskData().getStatus());
+        assertEquals(Status.PENDING, user.getTaskData().getStatus());
 
 
 
@@ -260,30 +258,24 @@ public class TaskTest {
         //project1.startTask("Task 1", new Time(15), user, Role.SYSADMIN); -> role not in user
         project1.startTask("Task 1", new Time(15), user2, Role.JAVAPROGRAMMER);
         //project1.startTask("Task 1", new Time(15), user, Role.JAVAPROGRAMMER); -> role not needed
-        assertEquals(Status.PENDING, project1.getTaskData("Task 1").getStatus());
+        assertEquals(Status.PENDING, task1.getTaskData().getStatus());
 
         userRoles.add(Role.SYSADMIN);
         User user3 = new User("Dieter3", "123", userRoles);
         project1.startTask("Task 1", new Time(15), user3, Role.SYSADMIN);
-        assertEquals(Status.EXECUTING, project1.getTaskData("Task 1").getStatus());
-        assertEquals(0, project1.getTaskData("Task 1").getRequiredRoles().size());
-        assertNotNull(user.getExecutingTaskData());
-        assertNull(user.getPendingTaskData());
-        assertNotNull(user2.getExecutingTaskData());
-        assertNull(user2.getPendingTaskData());
-        assertNotNull(user3.getExecutingTaskData());
-        assertNull(user3.getPendingTaskData());
+        assertEquals(Status.EXECUTING, task1.getTaskData().getStatus());
+        assertEquals(0, task1.getTaskData().getRequiredRoles().size());
+        assertEquals(Status.EXECUTING, user.getTaskData().getStatus());
+        assertEquals(Status.EXECUTING, user2.getTaskData().getStatus());
+        assertEquals(Status.EXECUTING, user3.getTaskData().getStatus());
 
         project1.failTask("Task 1", user3, new Time(30));
-        assertNull(user.getExecutingTaskData());
-        assertNull(user.getPendingTaskData());
-        assertNull(user2.getExecutingTaskData());
-        assertNull(user2.getPendingTaskData());
-        assertNull(user3.getExecutingTaskData());
-        assertNull(user3.getPendingTaskData());
-        assertEquals(Status.FAILED, project1.getTaskData("Task 1").getStatus());
-        assertEquals(3, project1.getTaskData("Task 1").getRequiredRoles().size());
-        assertEquals(0, project1.getTaskData("Task 1").getUserNamesWithRole().size());
+        assertNull(user.getTaskData());
+        assertNull(user2.getTaskData());
+        assertNull(user3.getTaskData());
+        assertEquals(Status.FAILED, task1.getTaskData().getStatus());
+        assertEquals(3, task1.getTaskData().getRequiredRoles().size());
+        assertEquals(0, task1.getTaskData().getUserNamesWithRole().size());
 
 
 

@@ -1,6 +1,7 @@
 package Application;
 
 import Domain.*;
+import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskProxy;
 import Domain.TaskStates.UserAlreadyExecutingTaskException;
 
@@ -31,16 +32,11 @@ public class StartTaskController {
             getSession().getRoles().contains(Role.JAVAPROGRAMMER) ||
             getSession().getRoles().contains(Role.SYSADMIN));
     }
-
-    public TaskProxy getUserExecutingTaskData(){
-        return getSession().getCurrentUser().getExecutingTaskData();
+    public TaskProxy getUserTaskData(){
+        return getSession().getCurrentUser().getTaskData();
     }
 
-    public TaskProxy getUserPendingTaskData(){
-        return getSession().getCurrentUser().getPendingTaskData();
-    }
-
-    public void startTask(String projectName, String taskName, Role role) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException {
+    public void startTask(String projectName, String taskName, Role role) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
         if (!startTaskPreconditions()){
             throw new IncorrectPermissionException(""); // TODO
         }

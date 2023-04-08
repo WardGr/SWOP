@@ -201,12 +201,10 @@ public class  Project implements TaskObserver {
             nextTasks.add(task);
         }
 
-        Task.NewActiveTask(taskName, description, duration, deviation, roles, previousTasks, nextTasks, this, new LinkedList<>());
-
-        //addTask(new Domain.TaskStates.Task(taskName, description, duration, deviation, roles));
+        addTask(Task.NewActiveTask(taskName, description, duration, deviation, roles, previousTasks, nextTasks, this));
     }
 
-    private void addTask(Domain.TaskStates.Task task) {
+    private void addTask(Task task) {
         tasks.add(task);
     }
 
@@ -246,7 +244,9 @@ public class  Project implements TaskObserver {
         if (replacesTask == null) {
             throw new TaskNotFoundException();
         }
-        Task.replaceTask(taskName, description, duration, deviation, replacesTask);
+        addTask(Task.replaceTask(taskName, description, duration, deviation, replacesTask));
+        removeTask(replacesTask);
+        addReplacedTask(replacesTask);
     }
 
     /**
@@ -341,7 +341,7 @@ public class  Project implements TaskObserver {
             User currentUser,
             Role role
     )
-            throws TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException {
+            throws TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
@@ -402,19 +402,30 @@ public class  Project implements TaskObserver {
 
     }
 
-    public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException {
+    public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
         }
         task.finish(user, endTime);
+
+        updateFinished();
     }
 
-    public void failTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException {
+    public void failTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
         }
         task.fail(user, endTime);
+    }
+
+    private void updateFinished(){
+        setStatus(ProjectStatus.FINISHED);
+        for (Task task : getTasks()){
+            if (task.getStatus() != Status.FINISHED){
+                setStatus(ProjectStatus.ONGOING);
+            }
+        }
     }
 }

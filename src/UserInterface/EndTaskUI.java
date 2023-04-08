@@ -23,7 +23,7 @@ public class EndTaskUI {
             System.out.println("ERROR: You need a developer role to call this function.");
             return;
         }
-        if (getController().getUserExecutingTaskData() == null){
+        if (getController().getUserTaskData() == null || getController().getUserTaskData().getStatus() == Status.PENDING){
             System.out.println("ERROR: You are currently not working on an executing task.");
             return;
         }
@@ -64,7 +64,7 @@ public class EndTaskUI {
             System.out.println("ERROR: Project name could not be found.");
         } catch (TaskNotFoundException e) {
             System.out.println("ERROR: Task name could not be found.");
-        } catch (IncorrectTaskStatusException e) {
+        } catch (IncorrectTaskStatusException | IncorrectUserException e) {
             System.out.println("ERROR: " + e.getMessage());
         }
     }
@@ -72,7 +72,7 @@ public class EndTaskUI {
 
     private void printExecutingTask(){
         System.out.print("You are currently working on task: ");
-        TaskProxy executingTaskData = getController().getUserExecutingTaskData();
+        TaskProxy executingTaskData = getController().getUserTaskData();
         if (executingTaskData != null){
             System.out.println(executingTaskData.getName() + ", belonging to project: " + executingTaskData.getProjectName());
         } else {

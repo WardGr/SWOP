@@ -47,33 +47,36 @@ public class FailedState implements TaskState {
     }
 
     @Override
-    public void updateNextTaskState(Task task) {
-        task.setState(new UnavailableState());
+    public void updateAvailabilityNextTask(Task task, Task nextTask) {
+        nextTask.setState(new UnavailableState());
+        // If this state is not finished, then the next one should be unavailable
     }
 
-    public void replaceTask(Task replaces, Task replacementTask) {
+    public void replaceTask(Task replaces, Task replacement) throws IncorrectTaskStatusException {
         for (Task prevTask : replaces.getPreviousTasks()){
             prevTask.removeNextTask(replaces);
             replaces.removePreviousTask(prevTask);
 
-            prevTask.addNextTask(replacementTask);
-            replacementTask.addPreviousTask(prevTask);
+            prevTask.addNextTask(replacement);
+            replacement.addPreviousTask(prevTask);
         }
         for (Task nextTask : replaces.getNextTasks()){
             nextTask.removePreviousTask(replaces);
             replaces.removeNextTask(nextTask);
 
-            nextTask.addPreviousTask(replacementTask);
-            replacementTask.addNextTask(nextTask);
+            nextTask.addPreviousTask(replacement);
+            replacement.addNextTask(nextTask);
         }
 
-        replaces.setReplacementTask(replacementTask);
-        replacementTask.setReplacesTask(replaces);
+        replacement.setProject(replaces.getProject());
 
-        //TODO availability van replacement task? normaal staat die op available en is dat in orde
+        replaces.setReplacementTask(replacement);
+        replacement.setReplacesTask(replaces);
+
+        replacement.updateAvailability();
 
         try{
-            replacementTask.setRequiredRoles(replaces.getRequiredRoles());
+            replacement.setRequiredRoles(replaces.getRequiredRoles());
         } catch (NonDeveloperRoleException e) {
             throw new RuntimeException(e); // TODO het zou echt een grote fout zijn als dit niet klopt, RTE goed?
         }

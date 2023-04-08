@@ -31,8 +31,6 @@ public class Task {
 
     private final TaskProxy taskProxy = new TaskProxy(this);
 
-    private List<TaskObserver> observers;
-
     private Project project;
 
     /**
@@ -63,20 +61,18 @@ public class Task {
         this.state = new AvailableState();
     }
 
-    public static void NewActiveTask(String name,
+    public static Task NewActiveTask(String name,
                               String description,
                               Time estimatedDuration,
                               double acceptableDeviation,
                               List<Role> roles,
                               Set<Task> prevTasks,
                               Set<Task> nextTasks,
-                              Project project,
-                              List<TaskObserver> observers) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+                              Project project) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
         Task task = new Task(name, description, estimatedDuration, acceptableDeviation);
 
         task.setRequiredRoles(roles);
         task.setProject(project);
-        task.setObservers(observers);
 
         try {
             for (Task prevTask : prevTasks) {
@@ -95,7 +91,7 @@ public class Task {
             throw new IncorrectTaskStatusException("One of the next tasks is not (un)available");
         }
 
-        task.notifyObservers();
+        return task;
     }
 
     public TaskProxy getTaskData(){
@@ -136,11 +132,11 @@ public class Task {
         return stringBuilder.toString();
     }
 
-    private void setProject(Project project){
+    void setProject(Project project){
         this.project = project;
     }
 
-    private Project getProject(){
+    Project getProject(){
         return project;
     }
 
@@ -342,12 +338,7 @@ public class Task {
      * @throws IncorrectUserException       if the user currently logged in is not assigned to the current task
      */
     public void start(Time startTime, User currentUser, Role role)
-            throws IncorrectTaskStatusException, UserAlreadyExecutingTaskException {
-        if (currentUser.getExecutingTaskData() != null){
-            throw new UserAlreadyExecutingTaskException();
-        }
-        // TODO check if the user has this role and such things
-        // TODO check if the role is still needed?
+            throws IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
         getState().start(this, startTime, currentUser, role);
     }
 
@@ -370,7 +361,7 @@ public class Task {
     )
             throws IncorrectUserException, FailTimeAfterSystemTimeException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException {
         if (!getUsers().contains(currentUser)) {
-            throw new IncorrectUserException();
+            throw new IncorrectUserException("");
         }
         getState().end(this, newStatus, endTime, systemTime);
     }
@@ -392,13 +383,12 @@ public class Task {
     }
 
     // TODO de echte nu
-    public static void replaceTask(String taskName, String description, Time duration, double deviation, Task replaces) throws IncorrectTaskStatusException {
-        Task replacementTask = new Task(taskName, description, duration, deviation);
+    public static Task replaceTask(String taskName, String description, Time duration, double deviation, Task replaces) throws IncorrectTaskStatusException {
+        Task replacement = new Task(taskName, description, duration, deviation);
 
-        replaces.getState().replaceTask(replaces, replacementTask);
+        replaces.getState().replaceTask(replaces, replacement);
 
-        replaces.notifyObservers();
-        replacementTask.notifyObservers();
+        return replacement;
     }
 
 
@@ -446,6 +436,7 @@ public class Task {
         }
     }
 
+    /*
     void notifyObservers(){
         getProject().update(this);
         for (TaskObserver observer : observers){
@@ -455,14 +446,15 @@ public class Task {
             user.update(this);
         }
     }
+    */
 
-    private void setObservers(List<TaskObserver> observers){
-        this.observers = new LinkedList<>(observers);
-    }
+    //private void setObservers(List<TaskObserver> observers){
+    //    this.observers = new LinkedList<>(observers);
+    //}
 
-    private List<TaskObserver> getObservers(){
-        return new LinkedList<>(observers);
-    }
+    //private List<TaskObserver> getObservers(){
+    //    return new LinkedList<>(observers);
+    //}
 
     public void stopPending(User user) throws IncorrectTaskStatusException {
         getState().stopPending(this, user);
@@ -488,15 +480,19 @@ public class Task {
         committedUsers.put(user, role);
     }
 
-    public void finish(User user, Time endTime) throws IncorrectTaskStatusException {
+    public void finish(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
         getState().finish(this, user, endTime);
     }
 
-    public void fail(User user, Time endTime) throws IncorrectTaskStatusException {
+    public void fail(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
         getState().fail(this, user, endTime);
     }
 
-    void updateAvailability(){
+    void updateAvailability() throws IncorrectTaskStatusException {
         getState().updateAvailability(this);
+    }
+
+    void updateAvailabilityNextTask(Task nextTask){
+        getState().updateAvailabilityNextTask(this, nextTask);
     }
 }

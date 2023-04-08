@@ -5,7 +5,8 @@ import Domain.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+//TODO early, ontime etc
 
 public class TaskProxy {
     private final Task task;
