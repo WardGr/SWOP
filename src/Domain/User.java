@@ -55,30 +55,6 @@ public class User {
             return getTask().getTaskData();
         }
     }
-
-    /*
-    public void update(Task task){
-        if (task.getStatus() == Status.PENDING){
-            if (getPendingTask() != null && getPendingTask() != task) {
-                try {
-                    getPendingTask().stopPending(this);
-                } catch (IncorrectTaskStatusException e) {
-                    throw new RuntimeException(e); // TODO deze mag eigenlijk echt niet!
-                }
-            }
-            setPendingTask(task);
-            setExecutingTask(null);
-
-        } else if (task.getStatus() == Status.EXECUTING) {
-            setPendingTask(null);
-            setExecutingTask(task);
-        } else if (task.getStatus() == Status.FINISHED || task.getStatus() == Status.FAILED){
-            setPendingTask(null);
-            setExecutingTask(null);
-        }
-    }
-    */
-
     public void startTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
         if (!getRoles().contains(role)){
             throw new IncorrectRoleException("User does not have the given role");
@@ -87,8 +63,7 @@ public class User {
             if (getTaskData().getStatus() == Status.PENDING) {
                 getTask().stopPending(this);
             } else {
-                throw new RuntimeException();
-                // TODO exception
+                throw new IncorrectTaskStatusException("Task should be pending to be started");
             }
         }
         setTask(task);

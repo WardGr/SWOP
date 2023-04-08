@@ -20,8 +20,8 @@ public class Task {
     private Task replacementTask;
     private Task replacesTask;
 
-    private Set<Task> previousTasks = new HashSet<>();
-    private Set<Task> nextTasks = new HashSet<>();
+    private Set<Task> previousTasks;
+    private Set<Task> nextTasks;
 
     private TimeSpan timeSpan;
 
@@ -29,12 +29,12 @@ public class Task {
 
     private Map<User,Role> committedUsers;
 
-    private TaskProxy taskProxy = new TaskProxy(this);
+    private TaskProxy taskProxy;
 
     private Project project;
 
     /**
-     * Creates a task and initialises its status using the previous tasks
+     * Creates a task and initialises its status as available (no previous or next tasks)
      *
      * @param name                Name of the new task
      * @param description         Description of the new task
@@ -53,83 +53,76 @@ public class Task {
         this.estimatedDuration = estimatedDuration;
         this.acceptableDeviation = acceptableDeviation;
 
-        this.replacementTask = null;
-        this.replacesTask = null;
-
         this.committedUsers = new HashMap<>();
+
+        this.previousTasks = new HashSet<>();
+        this.nextTasks = new HashSet<>();
+
+        this.taskProxy = new TaskProxy(this);
 
         this.state = new AvailableState();
     }
 
-    public static Task NewActiveTask(String name,
-                              String description,
-                              Time estimatedDuration,
-                              double acceptableDeviation,
-                              List<Role> roles,
-                              Set<Task> prevTasks,
-                              Set<Task> nextTasks,
-                              Project project) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
-        Task task = new Task(name, description, estimatedDuration, acceptableDeviation);
 
-        task.setRequiredRoles(roles);
-        task.setProject(project);
+    /**
+     * Creates a task and initialises its status depending on the given previous and next tasks
+     *
+     * @param name                          Name of the new task
+     * @param description                   Description of the new task
+     * @param estimatedDuration             Estimated duration of the new task
+     * @param acceptableDeviation           Acceptable deviation of the new task
+     * @param roles                         Set of required roles for this task
+     * @param prevTasks                     List of tasks that must be completed before this task
+     * @param nextTasks                     List of tasks that this task must be completed before
+     * @param project                       Project this task belongs to
+     * @throws IncorrectTaskStatusException if a next task is not available nor unavailable (e.g. it is executing)
+     * @throws LoopDependencyGraphException if adding this task results in a loop in the dependency graph of tasks
+     * @throws NonDeveloperRoleException    // TODO: wanneer wordt deze gegooit??
+     */
+    public Task(String name,
+                String description,
+                Time estimatedDuration,
+                double acceptableDeviation,
+                List<Role> roles,
+                Set<Task> prevTasks,
+                Set<Task> nextTasks,
+                Project project) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+        this.name = name;
+        this.description = description;
+        this.estimatedDuration = estimatedDuration;
+        this.acceptableDeviation = acceptableDeviation;
+
+        this.committedUsers = new HashMap<>();
+
+        this.previousTasks = new HashSet<>();
+        this.nextTasks = new HashSet<>();
+
+        this.taskProxy = new TaskProxy(this);
+
+        setState(new AvailableState());
+        setRequiredRoles(roles);
+        setProject(project);
 
         try {
             for (Task prevTask : prevTasks) {
-                task.getState().addPreviousTask(task, prevTask);
+                getState().addPreviousTask(this, prevTask);
             }
             for (Task nextTask : nextTasks) {
-                nextTask.getState().addPreviousTask(nextTask, task);
+                nextTask.getState().addPreviousTask(nextTask, this);
             }
         } catch (LoopDependencyGraphException e) {
-            task.clearPreviousTasks();
-            task.clearNextTasks();
+            clearPreviousTasks();
+            clearNextTasks();
             throw new LoopDependencyGraphException();
         } catch (IncorrectTaskStatusException e) {
-            task.clearPreviousTasks();
-            task.clearNextTasks();
+            clearPreviousTasks();
+            clearNextTasks();
             throw new IncorrectTaskStatusException("One of the next tasks is not (un)available");
         }
-
-        return task;
     }
 
     public TaskProxy getTaskData(){
         return taskProxy;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder();
-        String info =
-                "Task Name:          " + getName() + '\n' +
-                        "Description:        " + getDescription() + '\n' +
-                        "Estimated Duration: " + getEstimatedDuration().toString() + '\n' +
-                        "Accepted Deviation: " + getAcceptableDeviation() + '\n' +
-                        "Status:             " + getState().toString() + "\n\n" +
-
-                        "Replacement Task:   " + showReplacementTaskName() + '\n' +
-                        "Replaces Task:      " + showReplacesTaskName() + "\n\n" +
-
-                        "Start Time:         " + showStartTime() + '\n' +
-                        "End Time:           " + showEndTime() + "\n\n";// +
-
-                        //"User:               " + getUser().getUsername() + "\n\n";
-
-        stringBuilder.append(info);
-        stringBuilder.append("Next tasks:\n");
-        int i = 1;
-        for (Task task : getNextTasks()) {
-            stringBuilder.append(i++).append(".").append(task.getName()).append('\n');
-        }
-
-        stringBuilder.append("Previous tasks:\n");
-        i = 1;
-        for (Task task : getPreviousTasks()) {
-            stringBuilder.append(i++).append(".").append(task.getName()).append('\n');
-        }
-
-        return stringBuilder.toString();
     }
 
     void setProject(Project project){
@@ -435,26 +428,6 @@ public class Task {
             nextTask.getState().removePreviousTask(nextTask, this);
         }
     }
-
-    /*
-    void notifyObservers(){
-        getProject().update(this);
-        for (TaskObserver observer : getObservers()){
-            observer.update(this);
-        }
-        for (User user : getUsers()){
-            user.update(this);
-        }
-    }
-    */
-
-    //private void setObservers(List<TaskObserver> observers){
-    //    this.observers = new LinkedList<>(observers);
-    //}
-
-    //private List<TaskObserver> getObservers(){
-    //    return new LinkedList<>(observers);
-    //}
 
     public void stopPending(User user) throws IncorrectTaskStatusException {
         getState().stopPending(this, user);

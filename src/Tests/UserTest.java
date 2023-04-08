@@ -1,9 +1,20 @@
 package Tests;
 
+import Domain.IncorrectTaskStatusException;
 import Domain.Role;
+import Domain.Status;
+import Domain.TaskStates.IncorrectRoleException;
+import Domain.TaskStates.Task;
+import Domain.TaskStates.TaskProxy;
 import Domain.User;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-//import org.mockito.*;
+import org.junit.runner.RunWith;
+import org.mockito.*;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoRule;
 
 
 import java.util.HashSet;
@@ -11,16 +22,30 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
+
+
+@RunWith(MockitoJUnitRunner.class)
 public class UserTest {
 
+    @Mock
+    private Task task;
+
+    @Mock
+    private TaskProxy taskProxy;
+
+
+    // Mockito makes it so we only have to specify specific functions (Getters etc) from the mocked classes,
+    // thus decoupling the individual classes from each other so we can specify one unit to test.
+    @Before
+    public void setUp() {
+        // See startTask, taskProxy moet PENDING status returnen.
+        Mockito.when(task.getTaskData()).thenReturn(taskProxy);
+        Mockito.when(taskProxy.getStatus()).thenReturn(Status.EXECUTING);
+    }
 
     @Test
-    public void testUser() {
+    public void testUser() throws IncorrectTaskStatusException, IncorrectRoleException {
 
-
-
-
-        /*
         Set<Role> roles = new HashSet<>();
         roles.add(Role.PROJECTMANAGER);
         User thomas = new User("Thomas", "banaan123", roles);
@@ -42,21 +67,33 @@ public class UserTest {
         assertEquals(roles, jonathan.getRoles());
         assertFalse(jonathan.getRoles().contains(Role.SYSADMIN));
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            User fiona = new User(null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new User(null, null, null);
         });
 
-        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> {
-            User fiona = new User("Fiona", "hoi123", null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new User("Fiona", "hoi123", null);
         });
 
-        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> {
-            User fiona = new User("Fiona", null, roles);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new User("Fiona", null, roles);
         });
 
         Set<Role> emptyRoles = new HashSet<>();
-        Exception exception3 = assertThrows(IllegalArgumentException.class, () -> {
-            User fiona = new User("Fiona", "hoi123", emptyRoles);
-        });*/
+        assertThrows(IllegalArgumentException.class, () -> {
+            new User("Fiona", "hoi123", emptyRoles);
+        });
+
+        assertThrows(IncorrectRoleException.class, () -> {
+            jonathan.startTask(task, Role.SYSADMIN);
+        });
+
+        jonathan.startTask(task, Role.PROJECTMANAGER);
+        // Jonathan is now assigned to this task, so it is not pending anymore
+
+        assertThrows(IncorrectTaskStatusException.class, () -> {
+            jonathan.startTask(task, Role.PROJECTMANAGER);
+        });
+
     }
 }

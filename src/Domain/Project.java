@@ -37,42 +37,6 @@ public class  Project implements TaskObserver {
         this.status = ProjectStatus.ONGOING;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder projectString = new StringBuilder();
-
-        projectString.append("Project Name:  " + getName() + '\n' +
-                "Description:   " + getDescription() + '\n' +
-                "Creation Time: " + getCreationTime() + '\n' +
-                "Due Time:      " + getDueTime() + '\n' +
-                "Status:        " + getStatus() + '\n'
-        );
-
-        if (getTasks().size() > 0) {
-            projectString.append("\nTasks:\n");
-            int index = 1;
-            for (Domain.TaskStates.Task task : getTasks()) {
-                projectString.append(index++ + ". " + task.getName() + '\n');
-            }
-        }
-
-        if (getReplacedTasks().size() > 0) {
-            projectString.append("\nTasks that have been replaced:\n");
-
-            int index = 1;
-            for (Domain.TaskStates.Task task : getReplacedTasks()) {
-                projectString.append(index++ + ". " + task.getName() + ", replaced by task: " + task.getReplacementTask().getName());
-            }
-            projectString.append('\n');
-        }
-
-
-        // TODO geef de totale uitvoeringstijd !!!
-
-        return projectString.toString();
-    }
-
-
     public String getDescription() {
         return description;
     }
@@ -201,7 +165,7 @@ public class  Project implements TaskObserver {
             nextTasks.add(task);
         }
 
-        addTask(Task.NewActiveTask(taskName, description, duration, deviation, roles, previousTasks, nextTasks, this));
+        addTask(new Task(taskName, description, duration, deviation, roles, previousTasks, nextTasks, this));
     }
 
     private void addTask(Task task) {
