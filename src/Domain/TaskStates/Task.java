@@ -387,6 +387,7 @@ public class Task {
 
     Set<Task> getAllPrevTasks(){
         Set<Task> prevTasks = new HashSet<>();
+        prevTasks.add(this);
         for (Task prevTask : getPreviousTasks()){
             prevTasks.addAll(prevTask.getAllPrevTasks());
         }
@@ -394,11 +395,12 @@ public class Task {
     }
 
     Set<Task> getAllNextTasks(){
-        Set<Task> prevTasks = new HashSet<>();
+        Set<Task> nextTasks = new HashSet<>();
+        nextTasks.add(this);
         for (Task prevTask : getPreviousTasks()){
-            prevTasks.addAll(prevTask.getAllPrevTasks());
+            nextTasks.addAll(prevTask.getAllPrevTasks());
         }
-        return prevTasks;
+        return nextTasks;
     }
 
     void addPreviousTaskDirectly(Task prevTask) {
