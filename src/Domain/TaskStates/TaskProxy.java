@@ -90,4 +90,12 @@ public class TaskProxy {
     public String getProjectName(){
         return getTask().getProjectName();
     }
+
+    public boolean safeAddNextTask(String nextTask){
+        return getTask().safeAddNextTask(nextTask);
+    }
+
+    public boolean safeAddPrevTask(String prevTask){
+        return getTask().safeAddPreviousTask(prevTask);
+    }
 }

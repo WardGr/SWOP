@@ -17,6 +17,7 @@ public class UserInterface {
     private final LoadSystemUI loadSystemUI;
     private final StartTaskUI startTaskUI;
     private final EndTaskUI endTaskUI;
+    private final UpdateDependenciesUI updateDependenciesUI;
 
     public UserInterface(
             SessionUI sessionUI,
@@ -27,7 +28,8 @@ public class UserInterface {
             LoadSystemUI loadSystemUI,
             UpdateTaskUI updateTaskUI,
             StartTaskUI startTaskUI,
-            EndTaskUI endTaskUI
+            EndTaskUI endTaskUI,
+            UpdateDependenciesUI updateDependenciesUI
     ) {
         this.sessionUI = sessionUI;
         this.advanceTimeUI = advanceTimeUI;
@@ -38,6 +40,7 @@ public class UserInterface {
         this.updateTaskUI = updateTaskUI;
         this.startTaskUI = startTaskUI;
         this.endTaskUI = endTaskUI;
+        this.updateDependenciesUI = updateDependenciesUI;
     }
 
     /**
@@ -75,6 +78,7 @@ public class UserInterface {
             case "loadsystem" -> loadSystemUI.loadSystem();
             case "starttask" -> startTaskUI.startTask();
             case "endtask" -> endTaskUI.endTask();
+            case "updatedependencies" -> updateDependenciesUI.updateDependencies();
             default -> System.out.println(
                     "Unknown command, type help to see available commands"
             );
@@ -97,5 +101,8 @@ public class UserInterface {
         System.out.println("advancetime:   Allows the user to modify the system time");
         System.out.println("loadsystem:    Allows the user to load projects and tasks into the system");
         // TODO
+        System.out.println("starttask");
+        System.out.println("endtask");
+        System.out.println("updatedependencies");
     }
 }

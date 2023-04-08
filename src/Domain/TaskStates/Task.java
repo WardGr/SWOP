@@ -408,19 +408,19 @@ public class Task {
         return prevTasks;
     }
 
-    void addPreviousTask(Task prevTask) {
+    void addPreviousTaskDirectly(Task prevTask) {
         previousTasks.add(prevTask);
     }
 
-    void addNextTask(Task nextTask) {
+    void addNextTaskDirectly(Task nextTask) {
         nextTasks.add(nextTask);
     }
 
-    void removePreviousTask(Task previousTask) {
+    void removePreviousTaskDirectly(Task previousTask) {
         previousTasks.remove(previousTask);
     }
 
-    void removeNextTask(Task nextTask) {
+    void removeNextTaskDirectly(Task nextTask) {
         nextTasks.remove(nextTask);
     }
 
@@ -494,5 +494,29 @@ public class Task {
 
     void updateAvailabilityNextTask(Task nextTask){
         getState().updateAvailabilityNextTask(this, nextTask);
+    }
+
+    public void addPreviousTask(Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
+        getState().addPreviousTask(this, prevTask);
+    }
+
+    boolean safeAddPreviousTask(String prevTask){
+        return getState().safeAddPrevTask(this, prevTask);
+    }
+
+    public void addNextTask(Task nextTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
+        nextTask.addPreviousTask(this);
+    }
+
+    boolean safeAddNextTask(String nextTask){
+        return getState().safeAddNextTask(this, nextTask);
+    }
+
+    public void removePreviousTask(Task prevTask) throws IncorrectTaskStatusException {
+        getState().removePreviousTask(this, prevTask);
+    }
+
+    public void removeNextTask(Task nextTask) throws IncorrectTaskStatusException {
+        nextTask.removePreviousTask(this);
     }
 }

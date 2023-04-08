@@ -4,6 +4,7 @@ import Domain.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 class AvailableState implements TaskState {
@@ -60,8 +61,8 @@ class AvailableState implements TaskState {
 
     public void addPreviousTask(Task task, Task previousTask) throws LoopDependencyGraphException {
         if (safeAddPrevTask(task, previousTask)) {
-            task.addPreviousTask(previousTask);
-            previousTask.addNextTask(task);
+            task.addPreviousTaskDirectly(previousTask);
+            previousTask.addNextTaskDirectly(task);
         } else {
             throw new LoopDependencyGraphException();
         }
@@ -69,13 +70,31 @@ class AvailableState implements TaskState {
     }
 
     public void removePreviousTask(Task task, Task previousTask) {
-        task.removePreviousTask(previousTask);
-        previousTask.removeNextTask(task);
+        task.removePreviousTaskDirectly(previousTask);
+        previousTask.removeNextTaskDirectly(task);
         updateAvailability(task);
     }
 
     public boolean safeAddPrevTask(Task task, Task prevTask){
         return !task.getAllNextTasks().contains(prevTask);
+    }
+
+    public boolean safeAddPrevTask(Task task, String prevTaskName){
+        for (Task nextTask : task.getAllNextTasks()){
+            if (nextTask.getName().equals(prevTaskName)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean safeAddNextTask(Task task, String nextTaskName){
+        for (Task prevTask : task.getAllPrevTasks()){
+            if (prevTask.getName().equals(nextTaskName)){
+                return false;
+            }
+        }
+        return true;
     }
 
 }

@@ -3,6 +3,7 @@ package Domain;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.Task;
 import Domain.TaskStates.UserAlreadyExecutingTaskException;
 
 import java.util.*;
@@ -436,5 +437,37 @@ public class TaskManSystem {
             throw new ProjectNotFoundException();
         }
         project.failTask(taskName, user, getSystemTime());
+    }
+
+    public void addPreviousTaskToProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        project.addPreviousTask(taskName, prevTaskName);
+    }
+
+    public void addNextTaskToProject(String projectName, String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        project.addNextTask(taskName, nextTaskName);
+    }
+
+    public void removePreviousTaskToProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        project.removePreviousTask(taskName, prevTaskName);
+    }
+
+    public void removeNextTaskToProject(String projectName, String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
+        Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
+        project.removeNextTask(taskName, nextTaskName);
     }
 }

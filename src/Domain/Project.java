@@ -429,4 +429,40 @@ public class  Project implements TaskObserver {
             }
         }
     }
+
+    public void addPreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+        Task task = getTask(taskName);
+        Task prevTask = getTask(prevTaskName);
+        if (task == null || prevTask == null){
+            throw new TaskNotFoundException();
+        }
+        task.addPreviousTask(prevTask);
+    }
+
+    public void addNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+        Task task = getTask(taskName);
+        Task nextTask = getTask(nextTaskName);
+        if (task == null || nextTask == null){
+            throw new TaskNotFoundException();
+        }
+        task.addNextTask(nextTask);
+    }
+
+    public void removePreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+        Task task = getTask(taskName);
+        Task prevTask = getTask(prevTaskName);
+        if (task == null || prevTask == null){
+            throw new TaskNotFoundException();
+        }
+        task.removePreviousTask(prevTask);
+    }
+
+    public void removeNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+        Task task = getTask(taskName);
+        Task nextTask = getTask(nextTaskName);
+        if (task == null || nextTask == null){
+            throw new TaskNotFoundException();
+        }
+        task.removeNextTask(nextTask);
+    }
 }

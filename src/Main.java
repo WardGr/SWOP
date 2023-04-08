@@ -30,6 +30,7 @@ public class Main {
             UpdateTaskController updateTaskController = new UpdateTaskController(sessionWrapper, taskManSystem);
             StartTaskController startTaskController = new StartTaskController(sessionWrapper, taskManSystem);
             EndTaskController endTaskController = new EndTaskController(sessionWrapper, taskManSystem);
+            UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionWrapper, taskManSystem);
 
             SessionUI sessionUI = new SessionUI(sessionController);
             AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);
@@ -40,6 +41,7 @@ public class Main {
             UpdateTaskUI updateTaskUI = new UpdateTaskUI(updateTaskController);
             StartTaskUI startTaskUI = new StartTaskUI(startTaskController);
             EndTaskUI endTaskUI = new EndTaskUI(endTaskController);
+            UpdateDependenciesUI updateDependenciesUI = new UpdateDependenciesUI(updateDependenciesController);
 
             UserInterface UI = new UserInterface(
                     sessionUI,
@@ -50,7 +52,8 @@ public class Main {
                     loadSystemUI,
                     updateTaskUI,
                     startTaskUI,
-                    endTaskUI
+                    endTaskUI,
+                    updateDependenciesUI
             );
             UI.startSystem();
         } catch (InvalidTimeException e) {

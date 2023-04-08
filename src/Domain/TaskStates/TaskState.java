@@ -53,6 +53,15 @@ interface TaskState {
 
     default boolean safeAddPrevTask(Task task, Task prevTask) throws IncorrectTaskStatusException {
         throw new IncorrectTaskStatusException("Task is not (un)available");
+        // TODO of met false?
+    }
+
+    default boolean safeAddPrevTask(Task task, String prevTask){
+        return false;
+    }
+
+    default boolean safeAddNextTask(Task task, String nextTask){
+        return false;
     }
 
     default void replaceTask(Task replaces, Task replacementTask) throws IncorrectTaskStatusException {

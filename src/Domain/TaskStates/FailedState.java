@@ -54,18 +54,18 @@ public class FailedState implements TaskState {
 
     public void replaceTask(Task replaces, Task replacement) throws IncorrectTaskStatusException {
         for (Task prevTask : replaces.getPreviousTasks()){
-            prevTask.removeNextTask(replaces);
-            replaces.removePreviousTask(prevTask);
+            prevTask.removeNextTaskDirectly(replaces);
+            replaces.removePreviousTaskDirectly(prevTask);
 
-            prevTask.addNextTask(replacement);
-            replacement.addPreviousTask(prevTask);
+            prevTask.addNextTaskDirectly(replacement);
+            replacement.addPreviousTaskDirectly(prevTask);
         }
         for (Task nextTask : replaces.getNextTasks()){
-            nextTask.removePreviousTask(replaces);
-            replaces.removeNextTask(nextTask);
+            nextTask.removePreviousTaskDirectly(replaces);
+            replaces.removeNextTaskDirectly(nextTask);
 
-            nextTask.addPreviousTask(replacement);
-            replacement.addNextTask(nextTask);
+            nextTask.addPreviousTaskDirectly(replacement);
+            replacement.addNextTaskDirectly(nextTask);
         }
 
         replacement.setProject(replaces.getProject());
