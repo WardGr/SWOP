@@ -235,14 +235,12 @@ public class TaskTest {
         roles.add(Role.JAVAPROGRAMMER);
         roles.add(Role.JAVAPROGRAMMER);
         roles.add(Role.SYSADMIN);
-        List<TaskObserver> observers = new LinkedList<>();
-        observers.add(project1);
-        Task.NewActiveTask("Task 1", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), observers);
+        Task.NewActiveTask("Task 1", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), project1, new LinkedList<>());
         assertEquals(1, project1.getTasks().size());
 
         roles.add(Role.PROJECTMANAGER);
         assertEquals(3,project1.getTaskData("Task 1").getRequiredRoles().size());
-        assertThrows(NonDeveloperRoleException.class, () -> Task.NewActiveTask("TEST", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), observers));
+        assertThrows(NonDeveloperRoleException.class, () -> Task.NewActiveTask("TEST", "test", new Time(10,20), 0.2, roles, new HashSet<>(), new HashSet<>(), project1, new LinkedList<>()));
 
         Set<Role> userRoles = new HashSet<>();
         userRoles.add(Role.JAVAPROGRAMMER);
@@ -255,6 +253,42 @@ public class TaskTest {
         assertEquals(Status.PENDING, project1.getTaskData("Task 1").getStatus());
         assertNull(user.getExecutingTaskData());
         assertNotNull(user.getPendingTaskData());
+
+
+
+        User user2 = new User("Dieter2", "123", userRoles);
+        //project1.startTask("Task 1", new Time(15), user, Role.SYSADMIN); -> role not in user
+        project1.startTask("Task 1", new Time(15), user2, Role.JAVAPROGRAMMER);
+        //project1.startTask("Task 1", new Time(15), user, Role.JAVAPROGRAMMER); -> role not needed
+        assertEquals(Status.PENDING, project1.getTaskData("Task 1").getStatus());
+
+        userRoles.add(Role.SYSADMIN);
+        User user3 = new User("Dieter3", "123", userRoles);
+        project1.startTask("Task 1", new Time(15), user3, Role.SYSADMIN);
+        assertEquals(Status.EXECUTING, project1.getTaskData("Task 1").getStatus());
+        assertEquals(0, project1.getTaskData("Task 1").getRequiredRoles().size());
+        assertNotNull(user.getExecutingTaskData());
+        assertNull(user.getPendingTaskData());
+        assertNotNull(user2.getExecutingTaskData());
+        assertNull(user2.getPendingTaskData());
+        assertNotNull(user3.getExecutingTaskData());
+        assertNull(user3.getPendingTaskData());
+
+        project1.failTask("Task 1", user3, new Time(30));
+        assertNull(user.getExecutingTaskData());
+        assertNull(user.getPendingTaskData());
+        assertNull(user2.getExecutingTaskData());
+        assertNull(user2.getPendingTaskData());
+        assertNull(user3.getExecutingTaskData());
+        assertNull(user3.getPendingTaskData());
+        assertEquals(Status.FAILED, project1.getTaskData("Task 1").getStatus());
+        assertEquals(3, project1.getTaskData("Task 1").getRequiredRoles().size());
+        assertEquals(0, project1.getTaskData("Task 1").getUserNamesWithRole().size());
+
+
+
+
+
 
 
 

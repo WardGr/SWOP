@@ -33,6 +33,8 @@ public class Task {
 
     private List<TaskObserver> observers;
 
+    private Project project;
+
     /**
      * Creates a task and initialises its status using the previous tasks
      *
@@ -68,10 +70,12 @@ public class Task {
                               List<Role> roles,
                               Set<Task> prevTasks,
                               Set<Task> nextTasks,
+                              Project project,
                               List<TaskObserver> observers) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
         Task task = new Task(name, description, estimatedDuration, acceptableDeviation);
 
         task.setRequiredRoles(roles);
+        task.setProject(project);
         task.setObservers(observers);
 
         try {
@@ -130,6 +134,18 @@ public class Task {
         }
 
         return stringBuilder.toString();
+    }
+
+    private void setProject(Project project){
+        this.project = project;
+    }
+
+    private Project getProject(){
+        return project;
+    }
+
+    String getProjectName(){
+        return getProject().getName();
     }
 
     /**
@@ -431,6 +447,7 @@ public class Task {
     }
 
     void notifyObservers(){
+        getProject().update(this);
         for (TaskObserver observer : observers){
             observer.update(this);
         }
@@ -469,5 +486,17 @@ public class Task {
 
     void addUser(User user, Role role){
         committedUsers.put(user, role);
+    }
+
+    public void finish(User user, Time endTime) throws IncorrectTaskStatusException {
+        getState().finish(this, user, endTime);
+    }
+
+    public void fail(User user, Time endTime) throws IncorrectTaskStatusException {
+        getState().fail(this, user, endTime);
+    }
+
+    void updateAvailability(){
+        getState().updateAvailability(this);
     }
 }

@@ -29,6 +29,8 @@ public class ExecutingState implements TaskState {
             if (newStatus == Status.FINISHED) {
                 for (Task nextTask : task.getNextTasks()) {
                     nextTask.getState().updateAvailability(nextTask); // TODO: is dit cursed?
+                    // TODO misschien een functie in Task definiëren die deze status functie oproept?
+                    // TODO heb de functie gemaakt
                 }
             }
         }
@@ -82,6 +84,40 @@ public class ExecutingState implements TaskState {
     @Override
     public void updateNextTaskState(Task task) {
         task.setState(new UnavailableState());
+    }
+
+    @Override
+    public void finish(Task task, User currentUser, Time endTime){
+        // TODO check if user can finish this task
+
+        task.setState(new FinishedState());
+        task.setEndTime(endTime);
+
+        task.notifyObservers();
+
+        for (User user : task.getUsers()){
+            task.addRole(task.getRole(user));
+            task.removeUser(user);
+        }
+
+        for (Task nextTask : task.getNextTasks()){
+            nextTask.updateAvailability();
+        }
+    }
+
+    @Override
+    public void fail(Task task, User currentUser, Time endTime){
+        // TODO check if user can finish this task
+
+        task.setState(new FailedState());
+        task.setEndTime(endTime);
+
+        task.notifyObservers();
+
+        for (User user : task.getUsers()){
+            task.addRole(task.getRole(user));
+            task.removeUser(user);
+        }
     }
 
 }

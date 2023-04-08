@@ -420,4 +420,20 @@ public class TaskManSystem {
         }
         return projects;
     }
+
+    public void finishTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
+        Project project = getProject(projectName);
+        if (project == null) {
+            throw new ProjectNotFoundException();
+        }
+        project.finishTask(taskName, user, getSystemTime());
+    }
+
+    public void failTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
+        Project project = getProject(projectName);
+        if (project == null) {
+            throw new ProjectNotFoundException();
+        }
+        project.failTask(taskName, user, getSystemTime());
+    }
 }

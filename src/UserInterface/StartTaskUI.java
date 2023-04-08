@@ -221,10 +221,11 @@ public class StartTaskUI {
     private void showTask(TaskProxy taskData) {
         System.out.println("******** TASK DETAILS ********");
 
-        System.out.println("Task Name:          " + taskData.getName());
-        System.out.println("Description:        " + taskData.getDescription());
-        System.out.println("Estimated Duration: " + taskData.getEstimatedDuration().toString());
-        System.out.println("Status:             " + taskData.getStatus().toString() + "\n");
+        System.out.println("Task Name:            " + taskData.getName());
+        System.out.println("Belonging to project: " + taskData.getProjectName());
+        System.out.println("Description:          " + taskData.getDescription());
+        System.out.println("Estimated Duration:   " + taskData.getEstimatedDuration().toString());
+        System.out.println("Status:               " + taskData.getStatus().toString() + "\n");
 
         System.out.print("Replaces Task:      ");
         if (taskData.getReplacesTaskName() == null){

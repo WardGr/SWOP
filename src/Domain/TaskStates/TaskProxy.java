@@ -82,4 +82,8 @@ public class TaskProxy {
     public Map<String,Role> getUserNamesWithRole(){
         return getTask().getUserNamesWithRole();
     }
+
+    public String getProjectName(){
+        return getTask().getProjectName();
+    }
 }

@@ -201,10 +201,7 @@ public class  Project implements TaskObserver {
             nextTasks.add(task);
         }
 
-        List<TaskObserver> observers = new LinkedList<>();
-        observers.add(this);
-
-        Task.NewActiveTask(taskName, description, duration, deviation, roles, previousTasks, nextTasks, observers);
+        Task.NewActiveTask(taskName, description, duration, deviation, roles, previousTasks, nextTasks, this, new LinkedList<>());
 
         //addTask(new Domain.TaskStates.Task(taskName, description, duration, deviation, roles));
     }
@@ -403,5 +400,21 @@ public class  Project implements TaskObserver {
             addTask(updatedTask);
         }
 
+    }
+
+    public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        task.finish(user, endTime);
+    }
+
+    public void failTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        task.fail(user, endTime);
     }
 }

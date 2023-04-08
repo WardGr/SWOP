@@ -87,6 +87,9 @@ public class User implements TaskObserver {
         } else if (task.getStatus() == Status.EXECUTING) {
             setPendingTask(null);
             setExecutingTask(task);
+        } else if (task.getStatus() == Status.FINISHED || task.getStatus() == Status.FAILED){
+            setPendingTask(null);
+            setExecutingTask(null);
         }
     }
 }
