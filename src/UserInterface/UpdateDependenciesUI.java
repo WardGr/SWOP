@@ -2,11 +2,13 @@ package UserInterface;
 
 import Application.IncorrectPermissionException;
 import Application.UpdateDependenciesController;
-import Domain.ProjectNotFoundException;
-import Domain.ProjectProxy;
-import Domain.ProjectStatus;
+import Domain.*;
+import Domain.TaskStates.TaskProxy;
 
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UpdateDependenciesUI {
     private final UpdateDependenciesController controller;
@@ -43,6 +45,44 @@ public class UpdateDependenciesUI {
 
                     while(true){
                         showRelevantTasks(projectData);
+
+                        System.out.println("Give the name of the task you want to edit:");
+                        String taskName = scanner.nextLine();
+                        if (taskName.equals("BACK")) {
+                            System.out.println("Cancelled task creation");
+                            return;
+                        }
+
+                        try{
+                            TaskProxy taskData = getController().getTaskData(projectName, taskName);
+                            if (taskData.getStatus() == Status.UNAVAILABLE || taskData.getStatus() == Status.AVAILABLE){
+                                while(true) {
+                                    showTaskDependencies(projectData, taskData);
+
+                                    System.out.println("Please put in the desired command: ");
+                                    System.out.println("   addprev/addnext/removeprev/removenext <taskName>");
+                                    String fullCommand = scanner.nextLine();
+                                    if (fullCommand.equals("BACK")) {
+                                        System.out.println("Cancelled task creation");
+                                        return;
+                                    }
+
+                                    // TODO cut the fullCommand in two parts and do checks
+
+                                    switch (fullCommand) {
+                                        case ("addprev") -> {}// TODO: checken of het in orde is via taskData
+                                        case ("addnext") -> {}// TODO: checken of het in orde is via taskData
+                                        case ("removeprev") -> {} // TODO: checken of de task in de prev zit via taskData
+                                        case ("removenext") -> {} // TODO same
+                                        default -> System.out.println("Unrecognized command");
+                                    }
+                                }
+                            } else {
+                                System.out.println("ERROR: Chosen task is not (un)available");
+                            }
+                        } catch (TaskNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 } catch (ProjectNotFoundException e) {
                     System.out.println("ERROR: The given project name could not be found.");
@@ -72,15 +112,66 @@ public class UpdateDependenciesUI {
         System.out.println();
     }
 
-    private void showRelevantTasks(ProjectProxy projectData){
+    private void showRelevantTasks(ProjectProxy projectData) throws IncorrectPermissionException {
         System.out.println("***** (UN)AVAILABLE TASKS *****");
         if (projectData.getActiveTasksNames().size() == 0){
-            System.out.println("There are no ");
+            System.out.println("There are no (un)available tasks in this project");
             return;
         }
 
         for (String taskName : projectData.getActiveTasksNames()){
+            try{
+                System.out.println(" - " + taskName + " with status: " +
+                        getController().getTaskData(projectData.getName(), taskName).getStatus().toString());
+            } catch (ProjectNotFoundException | TaskNotFoundException e) {
+                throw new RuntimeException(e); // TODO mag echt niet!
+            }
+        }
+        System.out.println();
+    }
 
+    private void showTaskDependencies(ProjectProxy projectData, TaskProxy taskData){
+        System.out.print("Previous tasks: ");
+        if (taskData.getPreviousTasksNames().size() == 0){
+            System.out.println("There are no previous tasks.");
+        } else {
+            System.out.println(
+                    taskData.getPreviousTasksNames().stream().
+                            map(Object::toString).
+                            collect(Collectors.joining(", ")));
+        }
+        System.out.print("Next tasks: ");
+        if (taskData.getNextTasksNames().size() == 0){
+            System.out.println("There are no previous tasks.");
+        } else {
+            System.out.println(
+                    taskData.getNextTasksNames().stream().
+                            map(Object::toString).
+                            collect(Collectors.joining(", ")));
+        }
+
+        List<String> possiblePreviousTasks = projectData.getActiveTasksNames();
+        possiblePreviousTasks.removeIf(prevTaskName -> !taskData.safeAddPrevTask(prevTaskName));
+        System.out.print("Possible previous tasks: ");
+        if (possiblePreviousTasks.size() == 0){
+            System.out.println("There are no possible previous tasks to add.");
+        } else {
+            System.out.println(
+                    possiblePreviousTasks.stream().
+                            map(Object::toString).
+                            collect(Collectors.joining(", ")));
+        }
+
+        List<String> possibleNextTasks = projectData.getActiveTasksNames();
+        possibleNextTasks.removeIf(nextTaskName -> !taskData.safeAddNextTask(nextTaskName));
+        System.out.print("Possible previous tasks: ");
+        if (possibleNextTasks.size() == 0){
+            System.out.println("There are no possible previous tasks to add.");
+        } else {
+            System.out.println(
+                    possibleNextTasks.stream().
+                            map(Object::toString).
+                            collect(Collectors.joining(", ")));
         }
     }
 }
