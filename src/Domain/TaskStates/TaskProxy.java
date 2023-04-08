@@ -8,6 +8,9 @@ import java.util.Map;
 
 //TODO early, ontime etc
 
+/**
+ * Immutable wrapper for task, with some extra functionality
+ */
 public class TaskProxy {
     private final Task task;
 

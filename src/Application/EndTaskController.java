@@ -58,14 +58,6 @@ public class EndTaskController {
         getTaskManSystem().failTask(userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
     }
 
-
-
-
-
-
-
-
-
     public TaskManSystemProxy getTaskManSystemData() throws IncorrectPermissionException {
         if (!endTaskPreconditions()){
             throw new IncorrectPermissionException("You need a developer role to call this function");

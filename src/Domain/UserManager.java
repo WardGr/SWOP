@@ -17,15 +17,21 @@ public class UserManager {
             File usersFile = new File("src/Resources/users.txt");
             Scanner myReader = new Scanner(usersFile);
             while (myReader.hasNextLine()) {
-                String[] data = myReader.nextLine().split(" ");
-                String username = data[0];
-                String password = data[1];
+                List<String> data = List.of(myReader.nextLine().split(" "));
+                String username = data.get(0);
+                String password = data.get(1);
+
                 Set<Role> roles = new HashSet<>();
-                if (data[2].equals("developer")) {
-                    roles.add(Role.SYSADMIN); // TODO
-                } else if (data[2].equals("manager")) {
-                    roles.add(Role.PROJECTMANAGER);
+
+                for (String role : data.subList(2, data.size())) {
+                    switch (role) {
+                        case "sysadmin" -> roles.add(Role.SYSADMIN);
+                        case "javaDev" -> roles.add(Role.JAVAPROGRAMMER);
+                        case "pythonDev" -> roles.add(Role.PYTHONPROGRAMMER);
+                        case "projectMan" -> roles.add(Role.PROJECTMANAGER);
+                    }
                 }
+
                 User user = new User(username, password, roles);
                 users.add(user);
             }
@@ -59,14 +65,9 @@ public class UserManager {
     }
 
     // TODO,misschien niet meer nodig met de andere checks
-    public User getDeveloper(String userName) throws UserNotFoundException {
+    public User getUser(String userName) throws UserNotFoundException {
         for (User user : getUsers()) {
-            if (
-                    user.getUsername().equals(userName) &&
-                            ( user.getRoles().contains(Role.SYSADMIN) ||
-                                user.getRoles().contains(Role.JAVAPROGRAMMER) ||
-                                user.getRoles().contains(Role.PYTHONPROGRAMMER) )
-            ) {
+            if (user.getUsername().equals(userName)) {
                 return user;
             }
         }

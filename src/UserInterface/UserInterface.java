@@ -1,9 +1,5 @@
 package UserInterface;
 
-import Application.Session;
-import Domain.TaskManSystem;
-import Domain.UserManager;
-
 import java.util.Scanner;
 
 /**

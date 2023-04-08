@@ -29,7 +29,7 @@ public class Task {
 
     private Map<User,Role> committedUsers;
 
-    private final TaskProxy taskProxy = new TaskProxy(this);
+    private TaskProxy taskProxy = new TaskProxy(this);
 
     private Project project;
 
@@ -439,7 +439,7 @@ public class Task {
     /*
     void notifyObservers(){
         getProject().update(this);
-        for (TaskObserver observer : observers){
+        for (TaskObserver observer : getObservers()){
             observer.update(this);
         }
         for (User user : getUsers()){
