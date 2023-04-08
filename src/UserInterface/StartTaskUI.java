@@ -55,6 +55,13 @@ public class StartTaskUI {
             }
 
             try {
+                TaskProxy taskData = getController().getTaskData(projectName, taskName);
+
+                if (taskData.getStatus() != Status.AVAILABLE && taskData.getStatus() != Status.PENDING){
+                    System.out.println("ERROR: The given task is not available or pending");
+                    break;
+                }
+
                 System.out.print("You have roles: ");
                 Set<Role> userRoles = getController().getUserRoles();
                 if (userRoles.size() > 0) {
@@ -67,7 +74,7 @@ public class StartTaskUI {
                     return;
                 }
                 System.out.print("Task requires roles: ");
-                List<Role> taskRoles = getController().getTaskData(projectName, taskName).getRequiredRoles();
+                List<Role> taskRoles = taskData.getRequiredRoles();
                 if (taskRoles.size() > 0) {
                     System.out.println(
                             taskRoles.stream().
@@ -77,8 +84,6 @@ public class StartTaskUI {
                     System.out.println("The task currently doesn't require any roles");
                     return;
                 }
-
-                TaskProxy taskData = getController().getTaskData(projectName, taskName);
 
                 Role role = null;
                 while(role == null){
