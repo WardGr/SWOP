@@ -8,20 +8,16 @@ import Domain.TaskStates.Task;
 import Domain.TaskStates.TaskProxy;
 import Domain.User;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
-import org.mockito.junit.MockitoJUnit;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.MockitoRule;
-
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.*;
-
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,7 +35,7 @@ public class UserTest {
     @Before
     public void setUp() {
         // See startTask, taskProxy moet PENDING status returnen.
-        Mockito.when(task.getTaskData()).thenReturn(taskProxy);
+        Mockito.when(task.getTaskProxy()).thenReturn(taskProxy);
         Mockito.when(taskProxy.getStatus()).thenReturn(Status.EXECUTING);
     }
 
@@ -85,14 +81,14 @@ public class UserTest {
         });
 
         assertThrows(IncorrectRoleException.class, () -> {
-            jonathan.startTask(task, Role.SYSADMIN);
+            jonathan.assignTask(task, Role.SYSADMIN);
         });
 
-        jonathan.startTask(task, Role.PROJECTMANAGER);
+        jonathan.assignTask(task, Role.PROJECTMANAGER);
         // Jonathan is now assigned to this task, so it is not pending anymore
 
         assertThrows(IncorrectTaskStatusException.class, () -> {
-            jonathan.startTask(task, Role.PROJECTMANAGER);
+            jonathan.assignTask(task, Role.PROJECTMANAGER);
         });
 
     }

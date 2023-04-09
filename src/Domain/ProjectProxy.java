@@ -8,38 +8,39 @@ import java.util.List;
 public class ProjectProxy {
     private final Project project;
 
-    public ProjectProxy(Project project){
+    public ProjectProxy(Project project) {
         this.project = project;
     }
 
-    private Project getProject(){
+    private Project getProject() {
         return project;
     }
 
-    public String getName(){
+    public String getName() {
         return getProject().getName();
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return getProject().getDescription();
     }
 
-    public Time getCreationTime(){
+    public Time getCreationTime() {
         return getProject().getCreationTime();
     }
-    public Time getDueTime(){
+
+    public Time getDueTime() {
         return getProject().getDueTime();
     }
 
-    public List<String> getActiveTasksNames(){
+    public List<String> getActiveTasksNames() {
         return getProject().getActiveTasksNames();
     }
 
-    public List<String> getReplacedTasksNames(){
+    public List<String> getReplacedTasksNames() {
         return getProject().getReplacedTasksNames();
     }
 
-    public ProjectStatus getStatus(){
+    public ProjectStatus getStatus() {
         return getProject().getStatus();
     }
 }

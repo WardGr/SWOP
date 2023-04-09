@@ -1,16 +1,8 @@
 package Tests;
 
 import Application.IncorrectPermissionException;
-import Application.Session;
-import Application.SessionWrapper;
-import Application.ShowProjectsController;
 import Domain.*;
 import org.junit.Test;
-
-import java.util.LinkedList;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 public class ShowProjectsControllerTest {
 

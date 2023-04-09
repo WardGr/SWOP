@@ -1,6 +1,7 @@
 package Application;
 
 import Domain.*;
+
 /**
  * Separates domain from UI for the createproject use-case
  */

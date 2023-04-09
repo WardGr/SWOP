@@ -2,7 +2,6 @@ package Tests;
 
 import Domain.EndTimeBeforeStartTimeException;
 import Domain.InvalidTimeException;
-import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.Time;
 import Domain.TimeSpan;
 import org.junit.Test;
@@ -51,7 +50,6 @@ public class TimeSpanTest {
         assertThrows(EndTimeBeforeStartTimeException.class, () -> exceptionTimeSpan.setEndTime(new Time(5)));
         exceptionTimeSpan.setEndTime(new Time(15));
         assertThrows(EndTimeBeforeStartTimeException.class, () -> exceptionTimeSpan.setStartTime(new Time(20)));
-
 
 
     }

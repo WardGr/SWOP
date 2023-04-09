@@ -1,19 +1,7 @@
 package Tests;
 
-import Application.*;
-import UserInterface.*;
 import Domain.InvalidTimeException;
-import Domain.TaskManSystem;
-import Domain.Time;
-import Domain.UserManager;
-import UserInterface.UserInterface;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.junit.Assert.assertEquals;
 
 public class UserInterfaceTest {
 

@@ -1,13 +1,11 @@
 package Tests;
 
-import Application.CreateProjectController;
 import Application.IncorrectPermissionException;
-import Application.Session;
-import Application.SessionWrapper;
-import Domain.*;
+import Domain.DueBeforeSystemTimeException;
+import Domain.InvalidTimeException;
+import Domain.NewTimeBeforeSystemTimeException;
+import Domain.ProjectNameAlreadyInUseException;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class CreateProjectControllerTest {
     @Test

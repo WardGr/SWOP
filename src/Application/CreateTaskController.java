@@ -131,7 +131,7 @@ public class CreateTaskController {
         );
     }
 
-    public TaskManSystemProxy getTaskManSystemData(){
+    public TaskManSystemProxy getTaskManSystemData() {
         return getTaskManSystem().getTaskManSystemData();
     }
 

@@ -1,18 +1,7 @@
 package Tests;
 
-import Application.CreateProjectController;
-import Application.Session;
-import Application.SessionWrapper;
 import Domain.*;
-import UserInterface.CreateProjectUI;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.LinkedList;
-
-import static org.junit.Assert.assertEquals;
 
 public class CreateProjectUITest {
 

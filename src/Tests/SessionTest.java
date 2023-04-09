@@ -87,6 +87,5 @@ public class SessionTest {
         assertEquals(sessionWrapper2.getCurrentUser(), brewer);
 
 
-
     }
 }

@@ -13,7 +13,7 @@ public class TimeSpan {
     }
 
     public Time getTimeElapsed() {
-        try{
+        try {
             return getEndTime().subtract(getStartTime());
         } catch (InvalidTimeException e) {
             throw new RuntimeException(e); // TODO: deze exception zou nooit kunnen volgens invarianten
@@ -36,7 +36,7 @@ public class TimeSpan {
     }
 
     public void setStartTime(Time startTime) throws EndTimeBeforeStartTimeException {
-        if (startTime != null && getEndTime() != null && getEndTime().before(startTime)){
+        if (startTime != null && getEndTime() != null && getEndTime().before(startTime)) {
             throw new EndTimeBeforeStartTimeException();
         }
         this.startTime = startTime;

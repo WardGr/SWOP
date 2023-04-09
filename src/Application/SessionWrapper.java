@@ -11,19 +11,19 @@ import java.util.Set;
 public class SessionWrapper {
     private final Session session;
 
-    public SessionWrapper(Session session){
+    public SessionWrapper(Session session) {
         this.session = session;
     }
 
-    private Session getSession(){
+    private Session getSession() {
         return session;
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         return getSession().getCurrentUser();
     }
 
-    public Set<Role> getRoles(){
+    public Set<Role> getRoles() {
         return getSession().getRoles();
     }
 }

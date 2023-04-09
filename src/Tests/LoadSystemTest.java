@@ -1,20 +1,10 @@
 package Tests;
 
-import Application.IncorrectPermissionException;
 import Application.LoadSystemController;
 import Application.Session;
 import Application.SessionWrapper;
 import Domain.*;
-import UserInterface.LoadSystemUI;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class LoadSystemTest {
     UserManager userManager = new UserManager();

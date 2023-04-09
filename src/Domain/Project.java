@@ -1,7 +1,6 @@
 package Domain;
 
 import Domain.TaskStates.*;
-import Domain.TaskStates.Task;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -11,7 +10,7 @@ import java.util.Set;
 /**
  * A project currently registered, including a list of tasks that this project requires
  */
-public class  Project implements TaskObserver {
+public class Project {
 
     private final List<Domain.TaskStates.Task> tasks;
     private final List<Domain.TaskStates.Task> replacedTasks;
@@ -70,7 +69,7 @@ public class  Project implements TaskObserver {
 
     public List<String> getReplacedTasksNames() {
         List<String> names = new LinkedList<>();
-        for (Task task : getReplacedTasks()){
+        for (Task task : getReplacedTasks()) {
             names.add(task.getName());
         }
         return names;
@@ -83,7 +82,7 @@ public class  Project implements TaskObserver {
         return List.copyOf(replacedTasks);
     }
 
-    public ProjectProxy getProjectData(){
+    public ProjectProxy getProjectData() {
         return projectProxy;
     }
 
@@ -92,7 +91,7 @@ public class  Project implements TaskObserver {
         if (task == null) {
             throw new TaskNotFoundException();
         }
-        return task.getTaskData();
+        return task.getTaskProxy();
     }
 
     /**
@@ -100,6 +99,15 @@ public class  Project implements TaskObserver {
      */
     public ProjectStatus getStatus() {
         return status;
+    }
+
+    /**
+     * Sets the status of this project to the given status
+     *
+     * @param status The status this project should be changed into
+     */
+    private void setStatus(ProjectStatus status) {
+        this.status = status;
     }
 
     /**
@@ -125,11 +133,11 @@ public class  Project implements TaskObserver {
     /**
      * Creates a task with the given information and adds it to this project
      *
-     * @param taskName          Name of the task to create and add
-     * @param description       Description of the task
-     * @param duration          Duration of the task
-     * @param deviation         Accepted deviation of the task
-     * @param roles             TODO
+     * @param taskName    Name of the task to create and add
+     * @param description Description of the task
+     * @param duration    Duration of the task
+     * @param deviation   Accepted deviation of the task
+     * @param roles       TODO
      * @throws TaskNotFoundException         if one of the given tasks to be completed before the new task does not exist
      * @throws TaskNameAlreadyInUseException if the given task name is already in use for this project
      */
@@ -208,7 +216,7 @@ public class  Project implements TaskObserver {
         if (replacesTask == null) {
             throw new TaskNotFoundException();
         }
-        addTask(Task.replaceTask(taskName, description, duration, deviation, replacesTask));
+        addTask(replacesTask.replaceTask(taskName, description, duration, deviation));
         removeTask(replacesTask);
         addReplacedTask(replacesTask);
     }
@@ -255,22 +263,6 @@ public class  Project implements TaskObserver {
     }
 
     /**
-     * Gets a list of all possible next statuses the given task could be changed into by the assigned user
-     *
-     * @param taskName Name of the task of which to return the next statuses
-     * @return List of all possible next statuses of the given task
-     * @throws TaskNotFoundException if the given taskName does not correspond to an existing task within this project
-     */
-    public List<Status> getNextStatuses(String taskName)
-            throws TaskNotFoundException {
-        Domain.TaskStates.Task task = getTask(taskName);
-        if (task == null) {
-            throw new TaskNotFoundException();
-        }
-        return task.getNextStatuses();
-    }
-
-    /**
      * Gets the status of the task within this project corresponding to the given task name
      *
      * @param taskName Name of the task for which to retrieve the current status
@@ -286,22 +278,12 @@ public class  Project implements TaskObserver {
     }
 
     /**
-     * Sets the status of this project to the given status
-     *
-     * @param status The status this project should be changed into
-     */
-    private void setStatus(ProjectStatus status){
-        this.status = status;
-    }
-
-    /**
      * Sets the start time of the given task, and changes its status according to the given system time
      *
      * @param taskName    Name of the status of which to change the status
      * @param startTime   Start time of the given task
      * @param currentUser User currently logged in
      * @throws TaskNotFoundException        if the given task name does not correspond to an existing task within this project
-     * @throws IncorrectUserException       if currentUser is not assigned to the given task
      * @throws IncorrectTaskStatusException if the given task status is not currently AVAILABLE
      */
     public void startTask(
@@ -318,55 +300,17 @@ public class  Project implements TaskObserver {
         task.start(startTime, currentUser, role);
     }
 
+
     /**
-     * Ends the given task and sets its status to FAILED or FINISHED according to input
+     * Ends the given task and sets its status to FINISHED
      *
      * @param taskName    Name of the status to end
-     * @param newStatus   New status of the task
      * @param endTime     Time at which the task was/will be finished/failed
-     * @param systemTime  Current system-time
-     * @param currentUser User currently logged in
+     * @param user        User currently logged in
      * @throws TaskNotFoundException            if taskName does not correspond to an existing task
-     * @throws FailTimeAfterSystemTimeException if newStatus == FAILED and endTime > systemTime
      * @throws IncorrectUserException           if currentUser is not the user assigned to this task
      * @throws IncorrectTaskStatusException     if the given task status is not EXECUTING
      */
-    public void endTask(
-            String taskName,
-            Status newStatus,
-            Time endTime,
-            Time systemTime,
-            User currentUser
-    )
-            throws TaskNotFoundException, FailTimeAfterSystemTimeException, IncorrectUserException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException {
-        Task task = getTask(taskName);
-        if (task == null) {
-            throw new TaskNotFoundException();
-        }
-        task.end(newStatus, endTime, systemTime, currentUser);
-    }
-
-    public void update(Task updatedTask){
-        if (getTasks().contains(updatedTask)) {
-            if (updatedTask.getStatus() == Status.FINISHED){
-                for (Task task : getTasks()){
-                    if (task.getStatus() != Status.FINISHED){
-                        setStatus(ProjectStatus.ONGOING);
-                        return;
-                    }
-                }
-                // TODO finished status instellen met te laat en te vroeg en alles? -> dat zit bij task zeker?
-                setStatus(ProjectStatus.FINISHED);
-            }
-            if (updatedTask.getReplacementTask() != null && getTasks().contains(updatedTask)){
-                removeTask(updatedTask);
-                addReplacedTask(updatedTask);
-            }
-        } else if (!getReplacedTasks().contains(updatedTask)){
-            addTask(updatedTask);
-        }
-    }
-
     public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Task task = getTask(taskName);
         if (task == null) {
@@ -374,9 +318,19 @@ public class  Project implements TaskObserver {
         }
         task.finish(user, endTime);
 
-        updateFinished();
+        updateProjectStatus();
     }
 
+    /**
+     * Ends the given task and sets its status to FAILED
+     *
+     * @param taskName    Name of the status to end
+     * @param endTime     Time at which the task was/will be finished/failed
+     * @param user        User currently logged in
+     * @throws TaskNotFoundException            if taskName does not correspond to an existing task
+     * @throws IncorrectUserException           if currentUser is not the user assigned to this task
+     * @throws IncorrectTaskStatusException     if the given task status is not EXECUTING
+     */
     public void failTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Task task = getTask(taskName);
         if (task == null) {
@@ -385,10 +339,10 @@ public class  Project implements TaskObserver {
         task.fail(user, endTime);
     }
 
-    private void updateFinished(){
+    private void updateProjectStatus() {
         setStatus(ProjectStatus.FINISHED);
-        for (Task task : getTasks()){
-            if (task.getStatus() != Status.FINISHED){
+        for (Task task : getTasks()) {
+            if (task.getStatus() != Status.FINISHED) {
                 setStatus(ProjectStatus.ONGOING);
             }
         }
@@ -397,7 +351,7 @@ public class  Project implements TaskObserver {
     public void addPreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         Task task = getTask(taskName);
         Task prevTask = getTask(prevTaskName);
-        if (task == null || prevTask == null){
+        if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
         }
         task.addPreviousTask(prevTask);
@@ -406,7 +360,7 @@ public class  Project implements TaskObserver {
     public void addNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         Task task = getTask(taskName);
         Task nextTask = getTask(nextTaskName);
-        if (task == null || nextTask == null){
+        if (task == null || nextTask == null) {
             throw new TaskNotFoundException();
         }
         task.addNextTask(nextTask);
@@ -415,7 +369,7 @@ public class  Project implements TaskObserver {
     public void removePreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
         Task task = getTask(taskName);
         Task prevTask = getTask(prevTaskName);
-        if (task == null || prevTask == null){
+        if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
         }
         task.removePreviousTask(prevTask);
@@ -424,7 +378,7 @@ public class  Project implements TaskObserver {
     public void removeNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
         Task task = getTask(taskName);
         Task nextTask = getTask(nextTaskName);
-        if (task == null || nextTask == null){
+        if (task == null || nextTask == null) {
             throw new TaskNotFoundException();
         }
         task.removeNextTask(nextTask);

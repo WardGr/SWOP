@@ -39,9 +39,9 @@ public class AdvanceTimeController {
         Set<Role> roles = getSession().getRoles();
         return roles != null &&
                 (roles.contains(Role.PROJECTMANAGER) ||
-                roles.contains(Role.SYSADMIN) ||
-                roles.contains(Role.JAVAPROGRAMMER) ||
-                roles.contains(Role.PYTHONPROGRAMMER));
+                        roles.contains(Role.SYSADMIN) ||
+                        roles.contains(Role.JAVAPROGRAMMER) ||
+                        roles.contains(Role.PYTHONPROGRAMMER));
     }
 
     /**
@@ -64,8 +64,8 @@ public class AdvanceTimeController {
      * Advances the time by the given minutes
      *
      * @param advanceMinutes amount of minutes to advance the system clock with
-     * @throws IncorrectPermissionException if the user is not logged in as project manager or developer
-     * @throws InvalidTimeException if somehow TaskManSystem incorrectly creates a Time object from the given minutes
+     * @throws IncorrectPermissionException     if the user is not logged in as project manager or developer
+     * @throws InvalidTimeException             if somehow TaskManSystem incorrectly creates a Time object from the given minutes
      * @throws NewTimeBeforeSystemTimeException if advanceMinutes < 0
      */
     public void advanceTime(int advanceMinutes) throws IncorrectPermissionException, InvalidTimeException, NewTimeBeforeSystemTimeException {

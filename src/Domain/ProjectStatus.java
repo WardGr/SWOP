@@ -2,6 +2,7 @@ package Domain;
 
 /**
  * Statuses a project can have
+ *
  * @see Project
  */
 public enum ProjectStatus {

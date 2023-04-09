@@ -4,6 +4,7 @@ import Domain.TaskStates.Task;
 
 /**
  * Statuses a task can have
+ *
  * @see Task
  */
 public enum Status {

@@ -17,7 +17,7 @@ public class Time implements Comparable<Time> {
     }
 
     public Time(int totalMinutes) throws InvalidTimeException {
-        if (totalMinutes < 0){
+        if (totalMinutes < 0) {
             throw new InvalidTimeException();
         }
         this.hour = totalMinutes / 60;
@@ -67,6 +67,7 @@ public class Time implements Comparable<Time> {
     public Time subtract(Time startTime) throws InvalidTimeException {
         return new Time(this.getTotalMinutes() - startTime.getTotalMinutes());
     }
+
     public Time add(Time startTime) throws InvalidTimeException {
         return new Time(this.getTotalMinutes() + startTime.getTotalMinutes());
     }

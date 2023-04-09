@@ -1,15 +1,8 @@
 package Tests;
 
 import Application.IncorrectPermissionException;
-import Application.Session;
-import Application.SessionWrapper;
-import Application.UpdateTaskController;
 import Domain.*;
 import org.junit.Test;
-
-import java.util.LinkedList;
-
-import static org.junit.Assert.*;
 
 public class UpdateTaskControllerTest {
 

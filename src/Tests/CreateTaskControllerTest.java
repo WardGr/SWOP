@@ -1,16 +1,8 @@
 package Tests;
 
-import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
-import Application.Session;
-import Application.SessionWrapper;
 import Domain.*;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import static org.junit.Assert.*;
 
 public class CreateTaskControllerTest {
 

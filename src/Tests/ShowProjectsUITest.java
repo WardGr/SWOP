@@ -1,18 +1,7 @@
 package Tests;
 
-import Application.Session;
-import Application.SessionWrapper;
-import Application.ShowProjectsController;
 import Domain.*;
-import UserInterface.ShowProjectsUI;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.LinkedList;
-
-import static org.junit.Assert.assertEquals;
 
 // TODO: DEZE BOEL FAILT, OMDAT TASKS NU OP EEN ANDERE MANIER FINISHEN, DA MOET NOG GEIMPLEMENTEERD WORDEN
 public class ShowProjectsUITest {
