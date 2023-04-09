@@ -49,10 +49,10 @@ public class UserManagerTest {
         samRoles.add(Role.JAVAPROGRAMMER);
 
         HashSet<Role> dieterRoles = new HashSet<>();
-        dieterRoles.add(Role.SYSADMIN);
+        dieterRoles.add(Role.PROJECTMANAGER);
 
         HashSet<Role> sanderRoles = new HashSet<>();
-        sanderRoles.add(Role.PROJECTMANAGER);
+        sanderRoles.add(Role.SYSADMIN);
 
         HashSet<Role> jasperRoles = new HashSet<>();
         jasperRoles.add(Role.PROJECTMANAGER);

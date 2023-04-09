@@ -44,8 +44,8 @@ public class SessionTest {
     @Test
     public void SessionTest() {
 
-        assertNull(brewerSession.getRoles());
-        assertNull(bossManSession.getRoles());
+        assertTrue(brewerSession.getRoles().isEmpty());
+        assertTrue(bossManSession.getRoles().isEmpty());
 
         assertFalse(brewerSession.isLoggedIn());
         assertFalse(bossManSession.isLoggedIn());
@@ -65,12 +65,12 @@ public class SessionTest {
         brewerSession.logout();
         assertFalse(brewerSession.isLoggedIn());
         assertNull(brewerSession.getCurrentUser());
-        assertNull(brewerSession.getRoles());
+        assertTrue(brewerSession.getRoles().isEmpty());
 
         bossManSession.logout();
         assertFalse(bossManSession.isLoggedIn());
         assertNull(bossManSession.getCurrentUser());
-        assertNull(bossManSession.getRoles());
+        assertTrue(bossManSession.getRoles().isEmpty());
 
         bossManSession.login(brewer);
         assertEquals(brewer, bossManSession.getCurrentUser());
@@ -78,7 +78,7 @@ public class SessionTest {
         assertTrue(bossManSession.isLoggedIn());
 
         SessionWrapper sessionWrapper1 = new SessionWrapper(brewerSession);
-        assertNull(sessionWrapper1.getRoles());
+        assertTrue(sessionWrapper1.getRoles().isEmpty());
         assertNull(sessionWrapper1.getCurrentUser());
 
         brewerSession.login(brewer);
