@@ -273,7 +273,10 @@ public class Task {
      *
      * @param startTime New start time
      */
-    void setStartTime(Time startTime) {
+    void setStartTime(Time startTime) throws IncorrectTaskStatusException {
+        if (getTimeSpan() != null){
+            throw new IncorrectTaskStatusException("Starttime already given on an available/pending task");
+        }
         setTimeSpan(startTime);
     }
 
@@ -292,7 +295,7 @@ public class Task {
      *
      * @param endTime New end time
      */
-    void setEndTime(Time endTime) {
+    void setEndTime(Time endTime) throws EndTimeBeforeStartTimeException {
         timeSpan.setEndTime(endTime);
     }
 
@@ -457,11 +460,11 @@ public class Task {
         committedUsers.put(user, role);
     }
 
-    public void finish(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
+    public void finish(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         getState().finish(this, user, endTime);
     }
 
-    public void fail(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
+    public void fail(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         getState().fail(this, user, endTime);
     }
 

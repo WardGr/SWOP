@@ -36,24 +36,24 @@ public class EndTaskController {
         return getSession().getCurrentUser().getTaskData();
     }
 
-    public void finishCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+    public void finishCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         if (!endTaskPreconditions()){
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         TaskProxy userTaskData = getUserTaskData();
         if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING){
-            throw new RuntimeException(); // TODO
+            throw new IncorrectPermissionException("You are not executing a task");
         }
         getTaskManSystem().finishTask(userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
     }
 
-    public void failCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+    public void failCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         if (!endTaskPreconditions()){
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         TaskProxy userTaskData = getUserTaskData();
         if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING){
-            throw new RuntimeException(); // TODO
+            throw new IncorrectPermissionException("You are not executing a task");
         }
         getTaskManSystem().failTask(userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
     }

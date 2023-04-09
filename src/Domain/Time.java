@@ -9,14 +9,17 @@ public class Time implements Comparable<Time> {
     private final int minute;
 
     public Time(int hour, int minute) throws InvalidTimeException {
-        if (minute < 0 || minute > 59) {
+        if (hour < 0 || minute < 0 || minute > 59) {
             throw new InvalidTimeException();
         }
         this.hour = hour;
         this.minute = minute;
     }
 
-    public Time(int totalMinutes) {
+    public Time(int totalMinutes) throws InvalidTimeException {
+        if (totalMinutes < 0){
+            throw new InvalidTimeException();
+        }
         this.hour = totalMinutes / 60;
         this.minute = totalMinutes % 60;
     }
@@ -62,10 +65,14 @@ public class Time implements Comparable<Time> {
         return 1;
     }
 
-    public Time subtract(Time startTime) {
+    public Time subtract(Time startTime) throws InvalidTimeException {
         return new Time(this.getTotalMinutes() - startTime.getTotalMinutes());
     }
     public Time add(Time startTime) {
-        return new Time(this.getTotalMinutes() + startTime.getTotalMinutes());
+        try {
+            return new Time(this.getTotalMinutes() + startTime.getTotalMinutes());
+        } catch (InvalidTimeException e){
+            throw new RuntimeException(e); // TODO deze mag echt niet!
+        }
     }
 }

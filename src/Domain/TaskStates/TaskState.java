@@ -68,11 +68,11 @@ interface TaskState {
         throw new IncorrectTaskStatusException("The task is not in the pending state");
     }
 
-    default void finish(Task task, User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
+    default void finish(Task task, User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         throw new IncorrectTaskStatusException("The task is not in the executing state");
     }
 
-    default void fail(Task task, User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
+    default void fail(Task task, User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         throw new IncorrectTaskStatusException("The task is not in the executing state");
     }
 }

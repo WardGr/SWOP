@@ -24,10 +24,10 @@ public class ExecutingState implements TaskState {
             throw new EndTimeBeforeStartTimeException();
         }
 
-        task.setEndTime(endTime);
+        //task.setEndTime(endTime);
 
         if (!systemTime.before(endTime)) {
-            changeStatus(task, newStatus);
+            //changeStatus(task, newStatus);
             if (newStatus == Status.FINISHED) {
                 for (Task nextTask : task.getNextTasks()) {
                     nextTask.getState().updateAvailability(nextTask); // TODO: is dit cursed?
@@ -43,7 +43,7 @@ public class ExecutingState implements TaskState {
         return Status.EXECUTING;
     }
 
-    private void changeStatus(Task task, Status status) {
+    private void changeStatus(Task task, Status status) throws InvalidTimeException {
         switch(status) {
             case FINISHED -> task.setState(getFinishedState(task));
             case FAILED -> task.setState(new FailedState());
@@ -57,7 +57,7 @@ public class ExecutingState implements TaskState {
     /**
      * @return Status regarding when this task was finished (early, on time or delayed), based on acceptable deviation and duration
      */
-    private TaskState getFinishedState(Task task) {
+    private TaskState getFinishedState(Task task) throws InvalidTimeException {
         int differenceMinutes = task.getTimeSpan().getTimeElapsed().getTotalMinutes();
         int durationMinutes = task.getEstimatedDuration().getTotalMinutes();
 
@@ -90,7 +90,7 @@ public class ExecutingState implements TaskState {
     }
 
     @Override
-    public void finish(Task task, User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException {
+    public void finish(Task task, User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         if (!task.getUsers().contains(currentUser)){
             throw new IncorrectUserException("Given user is not working on this task");
         }
@@ -110,7 +110,7 @@ public class ExecutingState implements TaskState {
     }
 
     @Override
-    public void fail(Task task, User currentUser, Time endTime) throws IncorrectUserException {
+    public void fail(Task task, User currentUser, Time endTime) throws IncorrectUserException, EndTimeBeforeStartTimeException {
         if (!task.getUsers().contains(currentUser)){
             throw new IncorrectUserException("Given user is not working on this task");
         }

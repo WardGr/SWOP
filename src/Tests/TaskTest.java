@@ -26,7 +26,7 @@ public class TaskTest {
 
 
     @Test
-    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, InvalidTimeException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException, TaskNotFoundException, UserAlreadyExecutingTaskException, IncorrectRoleException, TaskNameAlreadyInUseException {
+    public void testTask() throws IncorrectUserException, IncorrectTaskStatusException, InvalidTimeException, DueBeforeSystemTimeException, LoopDependencyGraphException, NonDeveloperRoleException, TaskNotFoundException, UserAlreadyExecutingTaskException, IncorrectRoleException, TaskNameAlreadyInUseException, EndTimeBeforeStartTimeException {
         Project project1 = new Project("Project 1", "test", new Time(0,0), new Time(50,0));
         // TODO: waarom start ge de tasks via de project dieter
         List<Role> roles = new LinkedList<>();

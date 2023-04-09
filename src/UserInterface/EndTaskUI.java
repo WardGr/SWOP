@@ -66,6 +66,8 @@ public class EndTaskUI {
             System.out.println("ERROR: Task name could not be found.");
         } catch (IncorrectTaskStatusException | IncorrectUserException e) {
             System.out.println("ERROR: " + e.getMessage());
+        } catch (EndTimeBeforeStartTimeException e) {
+            System.out.println("ERROR: The end time is before the start time of the task.");
         }
     }
 

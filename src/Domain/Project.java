@@ -367,7 +367,7 @@ public class  Project implements TaskObserver {
         }
     }
 
-    public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+    public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
@@ -377,7 +377,7 @@ public class  Project implements TaskObserver {
         updateFinished();
     }
 
-    public void failTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+    public void failTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();

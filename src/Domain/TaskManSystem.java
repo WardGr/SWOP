@@ -384,10 +384,9 @@ public class TaskManSystem {
      *
      * @param newTime Time which to change the system time to
      * @throws NewTimeBeforeSystemTimeException if the given time is before the current system time
-     * @throws InvalidTimeException             if newMinute < 0 or newMinute > 59
      */
     public void advanceTime(Time newTime)
-            throws NewTimeBeforeSystemTimeException, InvalidTimeException {
+            throws NewTimeBeforeSystemTimeException {
         if (newTime.before(getSystemTime())) {
             throw new NewTimeBeforeSystemTimeException();
         }
@@ -399,13 +398,16 @@ public class TaskManSystem {
      *
      * @param advanceMinutes Amount of minutes to advance the system clock with
      * @throws NewTimeBeforeSystemTimeException if advanceMinutes < 0
-     * @throws InvalidTimeException if an incorrect Time object is made (this would be a bug)
      */
-    public void advanceTime(int advanceMinutes) throws NewTimeBeforeSystemTimeException, InvalidTimeException {
+    public void advanceTime(int advanceMinutes) throws NewTimeBeforeSystemTimeException {
         if(advanceMinutes < 0) {
             throw new NewTimeBeforeSystemTimeException();
         }
-        advanceTime(new Time(advanceMinutes).add(getSystemTime()));
+        try {
+            advanceTime(new Time(advanceMinutes).add(getSystemTime()));
+        } catch (InvalidTimeException e) {
+            throw new NewTimeBeforeSystemTimeException();
+        }
     }
 
 
@@ -423,7 +425,7 @@ public class TaskManSystem {
         return projects;
     }
 
-    public void finishTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+    public void finishTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -431,7 +433,7 @@ public class TaskManSystem {
         project.finishTask(taskName, user, getSystemTime());
     }
 
-    public void failTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+    public void failTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();

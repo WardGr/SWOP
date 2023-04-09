@@ -1,16 +1,17 @@
 package Tests;
 
+import Domain.EndTimeBeforeStartTimeException;
 import Domain.InvalidTimeException;
+import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.Time;
 import Domain.TimeSpan;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.*;
 
 public class TimeSpanTest {
     @Test
-    public void testTimeSpan() throws InvalidTimeException {
+    public void testTimeSpan() throws InvalidTimeException, EndTimeBeforeStartTimeException {
         TimeSpan brewery = new TimeSpan(new Time(10, 55));
         TimeSpan pilsner = new TimeSpan(new Time(15, 22));
 
@@ -45,6 +46,11 @@ public class TimeSpanTest {
 
         assertEquals(new Time(4, 5).getHour(), brewery.getTimeElapsed().getHour());
         assertEquals(new Time(4, 5).getMinute(), brewery.getTimeElapsed().getMinute());
+
+        TimeSpan exceptionTimeSpan = new TimeSpan(new Time(10));
+        assertThrows(EndTimeBeforeStartTimeException.class, () -> exceptionTimeSpan.setEndTime(new Time(5)));
+        exceptionTimeSpan.setEndTime(new Time(15));
+        assertThrows(EndTimeBeforeStartTimeException.class, () -> exceptionTimeSpan.setStartTime(new Time(20)));
 
 
 
