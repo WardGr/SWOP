@@ -8,7 +8,6 @@ import Domain.TaskStates.TaskProxy;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UpdateDependenciesUI {
@@ -23,8 +22,6 @@ public class UpdateDependenciesUI {
     }
 
     public void updateDependencies(){
-        // TODO zorg dat back niet helemaal afsluit maar eerst een andere task laat kiezen of een ander project!
-
         if (!getController().updateDependenciesPreconditions()){
             System.out.println("ERROR: You must be a project manager to call this function");
             return;
@@ -34,92 +31,102 @@ public class UpdateDependenciesUI {
             Scanner scanner = new Scanner(System.in);
 
             while(true){
+                System.out.println("You can always use 'BACK' to return to previous menu\n");
+
                 showOngoingProjects();
 
                 System.out.println("Give the name of the project you want to edit:");
                 String projectName = scanner.nextLine();
                 if (projectName.equals("BACK")) {
-                    System.out.println("Cancelled task creation");
+                    System.out.println("Quiting updating task dependencies");
                     return;
                 }
 
                 try{
-                    ProjectProxy projectData = getController().getProjectData(projectName);
-
-                    while(true){
-                        showRelevantTasks(projectData);
-
-                        System.out.println("Give the name of the task you want to edit:");
-                        String taskName = scanner.nextLine();
-                        if (taskName.equals("BACK")) {
-                            System.out.println("Cancelled task creation");
-                            return;
-                        }
-
-                        try{
-                            TaskProxy taskData = getController().getTaskData(projectName, taskName);
-                            if (taskData.getStatus() == Status.UNAVAILABLE || taskData.getStatus() == Status.AVAILABLE){
-                                while(true) {
-                                    showTaskDependencies(projectData, taskData);
-
-                                    System.out.println("Please put in the desired command: ");
-                                    System.out.println("   addprev/addnext/removeprev/removenext <taskName>");
-                                    String fullCommand = scanner.nextLine();
-                                    if (fullCommand.equals("BACK")) {
-                                        System.out.println("Cancelled task creation");
-                                        return;
-                                    }
-
-                                    String[] command = fullCommand.split(" ", 2);
-                                    if (command.length != 2){
-                                        System.out.println("ERROR: Unrecognized command, try again.");
-                                    } else {
-                                        try{
-                                            switch (command[0]) {
-                                                case ("addprev") -> {
-                                                    getController().addPreviousTask(projectName, taskName, command[1]);
-                                                }
-                                                case ("addnext") -> {
-                                                    getController().addNextTask(projectName, taskName, command[1]);
-                                                }
-                                                case ("removeprev") -> {
-                                                    if (taskData.getPreviousTasksNames().contains(command[1])) {
-                                                        getController().removePreviousTask(projectName, taskName, command[1]);
-                                                    } else {
-                                                        System.out.println("ERROR: Given task name is not present in previous tasks, try again.");
-                                                    }
-                                                }
-                                                case ("removenext") -> {
-                                                    if (taskData.getNextTasksNames().contains(command[1])) {
-                                                        getController().removeNextTask(projectName, taskName, command[1]);
-                                                    } else {
-                                                        System.out.println("ERROR: Given task name is not present in next tasks, try again.");
-                                                    }
-                                                }
-                                                default -> System.out.println("Unrecognized command");
-                                            }
-                                        } catch (TaskNotFoundException e) {
-                                            System.out.println("ERROR: The given task could not be found, try again.");
-                                        } catch (IncorrectTaskStatusException | LoopDependencyGraphException e) {
-                                            System.out.println("ERROR: The given task could not safely be added/removed, try again.");
-                                        }
-                                    }
-                                }
-                            } else {
-                                System.out.println("ERROR: Chosen task is not (un)available");
-                            }
-                        } catch (TaskNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
+                    updateProject(projectName, scanner);
                 } catch (ProjectNotFoundException e) {
                     System.out.println("ERROR: The given project name could not be found.");
                 }
-
-
             }
         } catch (IncorrectPermissionException e) {
             System.out.println("ERROR: " + e.getMessage());
+        }
+    }
+
+    private void updateProject(String projectName, Scanner scanner) throws IncorrectPermissionException, ProjectNotFoundException {
+        ProjectProxy projectData = getController().getProjectData(projectName);
+
+        while(true){
+            showRelevantTasks(projectData);
+
+            System.out.println("Give the name of the task you want to edit:");
+            String taskName = scanner.nextLine();
+            if (taskName.equals("BACK")) {
+                System.out.println("Returning to project menu...");
+                return;
+            }
+
+            try{
+                updateTask(projectName, taskName, scanner);
+            } catch (TaskNotFoundException e) {
+                System.out.println("ERROR: Given task name could not be found, try again.");
+            }
+        }
+    }
+
+    private void updateTask(String projectName, String taskName, Scanner scanner) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException{
+        ProjectProxy projectData = getController().getProjectData(projectName);
+        TaskProxy taskData = getController().getTaskData(projectName, taskName);
+
+        if (taskData.getStatus() == Status.UNAVAILABLE || taskData.getStatus() == Status.AVAILABLE){
+            while(true) {
+                showTaskDependencies(projectData, taskData);
+
+                System.out.println("Please put in the desired command: ");
+                System.out.println("   addprev/addnext/removeprev/removenext <taskName>");
+                String fullCommand = scanner.nextLine();
+                if (fullCommand.equals("BACK")) {
+                    System.out.println("Returning to task menu...");
+                    return;
+                }
+
+                String[] command = fullCommand.split(" ", 2);
+                if (command.length != 2){
+                    System.out.println("ERROR: Unrecognized command, try again.");
+                } else {
+                    try{
+                        switch (command[0]) {
+                            case ("addprev") -> {
+                                getController().addPreviousTask(projectName, taskName, command[1]);
+                            }
+                            case ("addnext") -> {
+                                getController().addNextTask(projectName, taskName, command[1]);
+                            }
+                            case ("removeprev") -> {
+                                if (taskData.getPreviousTasksNames().contains(command[1])) {
+                                    getController().removePreviousTask(projectName, taskName, command[1]);
+                                } else {
+                                    System.out.println("ERROR: Given task name is not present in previous tasks, try again.");
+                                }
+                            }
+                            case ("removenext") -> {
+                                if (taskData.getNextTasksNames().contains(command[1])) {
+                                    getController().removeNextTask(projectName, taskName, command[1]);
+                                } else {
+                                    System.out.println("ERROR: Given task name is not present in next tasks, try again.");
+                                }
+                            }
+                            default -> System.out.println("Unrecognized command");
+                        }
+                    } catch (TaskNotFoundException e) {
+                        System.out.println("ERROR: The given task could not be found, try again.");
+                    } catch (IncorrectTaskStatusException | LoopDependencyGraphException e) {
+                        System.out.println("ERROR: The given task could not safely be added/removed, try again.");
+                    }
+                }
+            }
+        } else {
+            System.out.println("ERROR: Chosen task is not (un)available");
         }
     }
 
