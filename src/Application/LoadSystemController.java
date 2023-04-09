@@ -157,4 +157,13 @@ public class LoadSystemController {
     // dat dit niet echt problemen kan geven)
     // map? van starttijden met object, map eindtijden met object en nog een lijst van niet gestartte tasks die
     // op het einde worden toegevoegd.
+
+    // TODO
+    // lijsten van to start tasks, to end tasks, en op het einde de tasks toevoegen die nog niet gestart moeten worden.
+    // lijsten sorteren op basis van het uur van de task die erin zit, zoek het maar uit hoe hahahahah
+    // JSONObjects in de lijst best?
+    // task toevoegen op het moment dat ze gestart wordt?
+    // wat dingen bijhouden over een task in de file, zoals roles nodig, of users die het uitvoeren als de task gestart is
+    //
+    // terug alles clearen bij een error!
 }
