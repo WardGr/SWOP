@@ -150,4 +150,11 @@ public class LoadSystemController {
     // starten van een task: if endtime == null: gewoon met void, als endtime geset is, geef de taskData meteen terug.
     //
     // meerdere users: start gwn allemaal op dezelfde moment
+
+    // TODO
+    // start en eindig tasks in volgorde qua tijd, door
+    // misschien sorteren op JSONObject. pas op dat replacement task pas wordt gemaakt na vorige gefaild (het lijkt zelfs
+    // dat dit niet echt problemen kan geven)
+    // map? van starttijden met object, map eindtijden met object en nog een lijst van niet gestartte tasks die
+    // op het einde worden toegevoegd.
 }
