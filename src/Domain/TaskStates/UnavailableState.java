@@ -59,13 +59,4 @@ public class UnavailableState implements TaskState {
         return true;
     }
 
-    public boolean safeAddNextTask(Task task, String nextTaskName){
-        for (Task prevTask : task.getAllPrevTasks()){
-            if (prevTask.getName().equals(nextTaskName)){
-                return false;
-            }
-        }
-        return true;
-    }
-
 }

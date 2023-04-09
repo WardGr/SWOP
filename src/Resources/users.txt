@@ -1,8 +1,8 @@
 WardGr minecraft123 javaDev pythonDev
 OlavBl peer123 pythonDev
 SamHa trein123 javaDev
-DieterVH computer776 sysadmin
-SanderSc appelboom885 projectMan
+DieterVH computer776 projectMan
+SanderSc appelboom885 sysadmin
 JasperVH computer776 projectMan javaDev
 jeroenBe Aardappel862 projectMan pythonDev
 HannahEr Perzik123 projectMan javaDev pythonDev

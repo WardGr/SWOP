@@ -3,6 +3,7 @@ package Application;
 import Domain.Role;
 import Domain.User;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -26,7 +27,7 @@ public class Session {
 
     public Set<Role> getRoles() {
         if (getCurrentUser() == null) {
-            return null;
+            return new HashSet<>();
         }
         return getCurrentUser().getRoles();
     }

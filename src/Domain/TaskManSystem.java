@@ -455,7 +455,7 @@ public class TaskManSystem {
         project.addNextTask(taskName, nextTaskName);
     }
 
-    public void removePreviousTaskToProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
+    public void removePreviousTaskFromProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null){
             throw new ProjectNotFoundException();
@@ -463,7 +463,7 @@ public class TaskManSystem {
         project.removePreviousTask(taskName, prevTaskName);
     }
 
-    public void removeNextTaskToProject(String projectName, String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
+    public void removeNextTaskFromProject(String projectName, String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null){
             throw new ProjectNotFoundException();

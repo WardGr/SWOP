@@ -80,19 +80,9 @@ class AvailableState implements TaskState {
     }
 
     public boolean safeAddPrevTask(Task task, String prevTaskName){
-        // TODO check if nextTaskName exists
+        // TODO check if nextTaskName exists -> tis wat moeilijk voor wat het is denk ik
         for (Task nextTask : task.getAllNextTasks()){
             if (nextTask.getName().equals(prevTaskName)){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public boolean safeAddNextTask(Task task, String nextTaskName){
-        // TODO check if nextTaskName exists
-        for (Task prevTask : task.getAllPrevTasks()){
-            if (prevTask.getName().equals(nextTaskName)){
                 return false;
             }
         }

@@ -87,6 +87,8 @@ public class Task {
                 Set<Task> prevTasks,
                 Set<Task> nextTasks,
                 Project project) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+        // TODO check if roles not empty!
+
         this.name = name;
         this.description = description;
         this.estimatedDuration = estimatedDuration;
@@ -397,8 +399,8 @@ public class Task {
     Set<Task> getAllNextTasks(){
         Set<Task> nextTasks = new HashSet<>();
         nextTasks.add(this);
-        for (Task prevTask : getPreviousTasks()){
-            nextTasks.addAll(prevTask.getAllPrevTasks());
+        for (Task nextTask : getNextTasks()){
+            nextTasks.addAll(nextTask.getAllNextTasks());
         }
         return nextTasks;
     }
@@ -481,10 +483,6 @@ public class Task {
 
     public void addNextTask(Task nextTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
         nextTask.addPreviousTask(this);
-    }
-
-    boolean safeAddNextTask(String nextTask){
-        return getState().safeAddNextTask(this, nextTask);
     }
 
     public void removePreviousTask(Task prevTask) throws IncorrectTaskStatusException {

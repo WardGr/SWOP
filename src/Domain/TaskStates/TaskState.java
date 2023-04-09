@@ -60,10 +60,6 @@ interface TaskState {
         return false;
     }
 
-    default boolean safeAddNextTask(Task task, String nextTask){
-        return false;
-    }
-
     default void replaceTask(Task replaces, Task replacementTask) throws IncorrectTaskStatusException {
         throw new IncorrectTaskStatusException("The task to replace is not failed");
     }
