@@ -74,7 +74,7 @@ public class UserManager {
         throw new UserNotFoundException();
     }
 
-    private List<User> getUsers() {
+    public List<User> getUsers() {
         return List.copyOf(users);
     }
 }

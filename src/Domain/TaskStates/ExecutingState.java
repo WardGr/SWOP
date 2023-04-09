@@ -100,8 +100,9 @@ public class ExecutingState implements TaskState {
 
         for (User user : task.getUsers()){
             user.endTask();
-            task.addRole(task.getRole(user));
-            task.removeUser(user);
+            // TODO wel of niet users verwijderen uit de task? misschien wel handig voor een uitbreiding om ze bij te houden
+            // task.addRole(task.getRole(user));
+            // task.removeUser(user);
         }
 
         for (Task nextTask : task.getNextTasks()){
@@ -119,8 +120,9 @@ public class ExecutingState implements TaskState {
 
         for (User user : task.getUsers()){
             user.endTask();
-            task.addRole(task.getRole(user));
-            task.removeUser(user);
+            // TODO wel of niet users verwijderen uit de task? misschien wel handig voor een uitbreiding om ze bij te houden
+            // task.addRole(task.getRole(user));
+            // task.removeUser(user);
         }
     }
 

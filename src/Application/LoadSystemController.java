@@ -56,6 +56,11 @@ public class LoadSystemController {
         FileReader reader = new FileReader(filepath);
         JSONObject doc = (JSONObject) jsonParser.parse(reader);
         getTaskManSystem().clear();
+        // TODO is dit goed om de tasks ook uit user te halen? zowel getUsers als setTask heb ik public moeten maken
+        for (User user : getUserManager().getUsers()){
+            user.setTask(null);
+        }
+
         //set system time
         int systemHour = (int) (long) doc.get("systemHour");
         int systemMinute = (int) (long) doc.get("systemMinute");
@@ -136,4 +141,13 @@ public class LoadSystemController {
             getTaskManSystem().endTask(projectName, name, Status.FAILED, new Time(endHour, endMinute), user);
         }
     }
+
+    // TODO
+    // hou lijst bij van TaskData van tasks die nog gefinished of gefailed moeten worden.
+    // vergelijk de vroegste endtime van deze lijst en de starttime, en start of eindig de vroegste
+    // (belangrijk voor de check of user geen twee tegelijk aan het uitvoeren is
+
+    // starten van een task: if endtime == null: gewoon met void, als endtime geset is, geef de taskData meteen terug.
+    //
+    // meerdere users: start gwn allemaal op dezelfde moment
 }

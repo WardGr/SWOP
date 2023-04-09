@@ -44,7 +44,7 @@ public class User {
         return task;
     }
 
-    private void setTask(Task task){
+    public void setTask(Task task){
         this.task = task;
     }
 
