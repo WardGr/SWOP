@@ -1,7 +1,10 @@
 package Domain;
 
+import Domain.TaskStates.Task;
+
 /**
  * Statuses a task can have
+ *
  * @see Task
  */
 public enum Status {
@@ -33,6 +36,12 @@ public enum Status {
         @Override
         public String toString() {
             return "failed";
+        }
+    },
+    PENDING {
+        @Override
+        public String toString() {
+            return "pending";
         }
     },
 }

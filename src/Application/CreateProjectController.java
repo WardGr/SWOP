@@ -1,6 +1,7 @@
 package Application;
 
 import Domain.*;
+
 /**
  * Separates domain from UI for the createproject use-case
  */
@@ -31,7 +32,7 @@ public class CreateProjectController {
      * @return whether the preconditions are satisfied
      */
     public boolean createProjectPreconditions() {
-        return getSession().getRole() == Role.PROJECTMANAGER;
+        return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
     /**
@@ -39,17 +40,15 @@ public class CreateProjectController {
      *
      * @param projectName        project name given by the user
      * @param projectDescription project description given by the user
-     * @param dueHour            due hour given by the user
-     * @param dueMinute          due minute given by the user
+     * @param dueTime            due time given by the user
      * @throws IncorrectPermissionException     if the user is not logged in as a project manager
      * @throws ProjectNameAlreadyInUseException if the given project name is already in use
-     * @throws InvalidTimeException             if dueMinute > 59 or dueMinute < 0
      * @throws DueBeforeSystemTimeException     if the due time is before the system time (the project should have been completed already)
      */
-    public void createProject(String projectName, String projectDescription, int dueHour, int dueMinute) throws IncorrectPermissionException, ProjectNameAlreadyInUseException, InvalidTimeException, DueBeforeSystemTimeException {
-        if (getSession().getRole() != Role.PROJECTMANAGER) {
+    public void createProject(String projectName, String projectDescription, Time dueTime) throws IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
+        if (!createProjectPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        getTaskManSystem().createProject(projectName, projectDescription, new Time(dueHour, dueMinute));
+        getTaskManSystem().createProject(projectName, projectDescription, dueTime);
     }
 }

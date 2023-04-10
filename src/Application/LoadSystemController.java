@@ -40,7 +40,7 @@ public class LoadSystemController {
      * @return Whether the user is logged in as a project manager
      */
     public boolean loadSystemPreconditions() {
-        return getSession().getRole() == Role.PROJECTMANAGER;
+        return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
     /**
@@ -56,6 +56,11 @@ public class LoadSystemController {
         FileReader reader = new FileReader(filepath);
         JSONObject doc = (JSONObject) jsonParser.parse(reader);
         getTaskManSystem().clear();
+        // TODO is dit goed om de tasks ook uit user te halen? zowel getUsers als setTask heb ik public moeten maken
+        for (User user : getUserManager().getUsers()) {
+            user.setTask(null);
+        }
+
         //set system time
         int systemHour = (int) (long) doc.get("systemHour");
         int systemMinute = (int) (long) doc.get("systemMinute");
@@ -105,13 +110,13 @@ public class LoadSystemController {
         double acceptableDeviation = (double) task.get("acceptableDeviation");
 
         //determening what kind of taks it is
-        User user = getUserManager().getDeveloper((String) task.get("user"));
+        User user = getUserManager().getUser((String) task.get("user"));
         String replacesTask = (String) task.get("replaces");
         if (replacesTask != null) {
             getTaskManSystem().replaceTaskInProject(projectName, name, description, new Time(dueHour, dueMinute), acceptableDeviation, replacesTask);
         } else {
             List<String> prevTasks = (List<String>) task.get("previousTasks");
-            getTaskManSystem().addTaskToProject(projectName, name, description, new Time(dueHour, dueMinute), acceptableDeviation, prevTasks, user);
+            //getTaskManSystem().addTaskToProject(projectName, name, description, new Time(dueHour, dueMinute), acceptableDeviation, prevTasks, user);
         }
 
         //handling the status
@@ -119,21 +124,46 @@ public class LoadSystemController {
         if (status.equals("EXECUTING")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
-            getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
+            //getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
         } else if (status.equals("FINISHED")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
             int endHour = (int) (long) task.get("endHour");
             int endMinute = (int) (long) task.get("endMinute");
-            getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
-            getTaskManSystem().endTask(projectName, name, Status.FINISHED, new Time(endHour, endMinute), user);
+            //getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
+            getTaskManSystem().finishTask(projectName, name, user);
         } else if (status.equals("FAILED")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
             int endHour = (int) (long) task.get("endHour");
             int endMinute = (int) (long) task.get("endMinute");
-            getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
-            getTaskManSystem().endTask(projectName, name, Status.FAILED, new Time(endHour, endMinute), user);
+            //getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
+            getTaskManSystem().failTask(projectName, name, user);
         }
     }
+
+    // TODO
+    // hou lijst bij van TaskData van tasks die nog gefinished of gefailed moeten worden.
+    // vergelijk de vroegste endtime van deze lijst en de starttime, en start of eindig de vroegste
+    // (belangrijk voor de check of user geen twee tegelijk aan het uitvoeren is
+
+    // starten van een task: if endtime == null: gewoon met void, als endtime geset is, geef de taskData meteen terug.
+    //
+    // meerdere users: start gwn allemaal op dezelfde moment
+
+    // TODO
+    // start en eindig tasks in volgorde qua tijd, door
+    // misschien sorteren op JSONObject. pas op dat replacement task pas wordt gemaakt na vorige gefaild (het lijkt zelfs
+    // dat dit niet echt problemen kan geven)
+    // map? van starttijden met object, map eindtijden met object en nog een lijst van niet gestartte tasks die
+    // op het einde worden toegevoegd.
+
+    // TODO
+    // lijsten van to start tasks, to end tasks, en op het einde de tasks toevoegen die nog niet gestart moeten worden.
+    // lijsten sorteren op basis van het uur van de task die erin zit, zoek het maar uit hoe hahahahah
+    // JSONObjects in de lijst best?
+    // task toevoegen op het moment dat ze gestart wordt?
+    // wat dingen bijhouden over een task in de file, zoals roles nodig, of users die het uitvoeren als de task gestart is
+    //
+    // terug alles clearen bij een error!
 }

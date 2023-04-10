@@ -1,9 +1,5 @@
 package UserInterface;
 
-import Application.Session;
-import Domain.TaskManSystem;
-import Domain.UserManager;
-
 import java.util.Scanner;
 
 /**
@@ -16,9 +12,11 @@ public class UserInterface {
     private final ShowProjectsUI showProjectsUI;
     private final CreateProjectUI createProjectUI;
     private final CreateTaskUI createTaskUI;
-    private final UpdateTaskUI updateTaskUI;
     private final AdvanceTimeUI advanceTimeUI;
     private final LoadSystemUI loadSystemUI;
+    private final StartTaskUI startTaskUI;
+    private final EndTaskUI endTaskUI;
+    private final UpdateDependenciesUI updateDependenciesUI;
 
     public UserInterface(
             SessionUI sessionUI,
@@ -27,7 +25,9 @@ public class UserInterface {
             ShowProjectsUI showProjectsUI,
             CreateTaskUI createTaskUI,
             LoadSystemUI loadSystemUI,
-            UpdateTaskUI updateTaskUI
+            StartTaskUI startTaskUI,
+            EndTaskUI endTaskUI,
+            UpdateDependenciesUI updateDependenciesUI
     ) {
         this.sessionUI = sessionUI;
         this.advanceTimeUI = advanceTimeUI;
@@ -35,7 +35,9 @@ public class UserInterface {
         this.showProjectsUI = showProjectsUI;
         this.createTaskUI = createTaskUI;
         this.loadSystemUI = loadSystemUI;
-        this.updateTaskUI = updateTaskUI;
+        this.startTaskUI = startTaskUI;
+        this.endTaskUI = endTaskUI;
+        this.updateDependenciesUI = updateDependenciesUI;
     }
 
     /**
@@ -68,9 +70,11 @@ public class UserInterface {
             case "showprojects" -> showProjectsUI.showProjects();
             case "createproject" -> createProjectUI.createProject();
             case "createtask" -> createTaskUI.createTask();
-            case "updatetask" -> updateTaskUI.updateTaskStatus();
             case "advancetime" -> advanceTimeUI.advanceTime();
             case "loadsystem" -> loadSystemUI.loadSystem();
+            case "starttask" -> startTaskUI.startTask();
+            case "endtask" -> endTaskUI.endTask();
+            case "updatedependencies" -> updateDependenciesUI.updateDependencies();
             default -> System.out.println(
                     "Unknown command, type help to see available commands"
             );
@@ -92,5 +96,9 @@ public class UserInterface {
         System.out.println("updatetask:    Shows the update task prompt to update a tasks' information/status");
         System.out.println("advancetime:   Allows the user to modify the system time");
         System.out.println("loadsystem:    Allows the user to load projects and tasks into the system");
+        // TODO
+        System.out.println("starttask");
+        System.out.println("endtask");
+        System.out.println("updatedependencies");
     }
 }

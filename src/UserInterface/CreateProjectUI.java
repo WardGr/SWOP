@@ -1,9 +1,7 @@
 package UserInterface;
 
 import Application.CreateProjectController;
-import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
-import Application.Session;
 import Domain.*;
 
 import java.util.Scanner;
@@ -107,7 +105,7 @@ public class CreateProjectUI {
             }
 
             try {
-                getController().createProject(projectName, projectDescription, dueHour, dueMinute);
+                getController().createProject(projectName, projectDescription, new Time(dueHour, dueMinute));
                 System.out.println("Project with name " + projectName + " created!");
                 return;
             } catch (ProjectNameAlreadyInUseException e) {

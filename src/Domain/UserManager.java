@@ -2,9 +2,7 @@ package Domain;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Keeps track of all registered users, manages login
@@ -19,16 +17,22 @@ public class UserManager {
             File usersFile = new File("src/Resources/users.txt");
             Scanner myReader = new Scanner(usersFile);
             while (myReader.hasNextLine()) {
-                String[] data = myReader.nextLine().split(" ");
-                String username = data[0];
-                String password = data[1];
-                Role role = null;
-                if (data[2].equals("developer")) {
-                    role = Role.DEVELOPER;
-                } else if (data[2].equals("manager")) {
-                    role = Role.PROJECTMANAGER;
+                List<String> data = List.of(myReader.nextLine().split(" "));
+                String username = data.get(0);
+                String password = data.get(1);
+
+                Set<Role> roles = new HashSet<>();
+
+                for (String role : data.subList(2, data.size())) {
+                    switch (role) {
+                        case "sysadmin" -> roles.add(Role.SYSADMIN);
+                        case "javaDev" -> roles.add(Role.JAVAPROGRAMMER);
+                        case "pythonDev" -> roles.add(Role.PYTHONPROGRAMMER);
+                        case "projectMan" -> roles.add(Role.PROJECTMANAGER);
+                    }
                 }
-                User user = new User(username, password, role);
+
+                User user = new User(username, password, roles);
                 users.add(user);
             }
             myReader.close();
@@ -60,19 +64,17 @@ public class UserManager {
         throw new LoginException("Username/password combination is incorrect");
     }
 
-    public User getDeveloper(String userName) throws UserNotFoundException {
+    // TODO,misschien niet meer nodig met de andere checks
+    public User getUser(String userName) throws UserNotFoundException {
         for (User user : getUsers()) {
-            if (
-                    user.getUsername().equals(userName) &&
-                            user.getRole().equals(Role.DEVELOPER)
-            ) {
+            if (user.getUsername().equals(userName)) {
                 return user;
             }
         }
         throw new UserNotFoundException();
     }
 
-    private List<User> getUsers() {
+    public List<User> getUsers() {
         return List.copyOf(users);
     }
 }

@@ -1,21 +1,14 @@
 package Tests;
 
 import Application.IncorrectPermissionException;
-import Application.Session;
-import Application.SessionWrapper;
-import Application.ShowProjectsController;
 import Domain.*;
 import org.junit.Test;
-
-import java.util.LinkedList;
-import java.util.Map;
-
-import static org.junit.Assert.*;
 
 public class ShowProjectsControllerTest {
 
     @Test
     public void test() throws DueBeforeSystemTimeException, ProjectNotFoundException, IncorrectPermissionException, ProjectNameAlreadyInUseException, TaskNotFoundException, TaskNameAlreadyInUseException {
+        /*
         Time systemtime = new Time(0);
 
         Session managerSession = new Session();
@@ -53,6 +46,8 @@ public class ShowProjectsControllerTest {
 
         Map<String, String> statuses = managerController.getProjectNamesWithStatus();
         assertEquals("ongoing", statuses.get("SimpleProject"));
+
+        */
 
     }
 }

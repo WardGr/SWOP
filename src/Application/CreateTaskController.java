@@ -1,8 +1,12 @@
 package Application;
 
 import Domain.*;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.TaskProxy;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Separates domain from UI for the createtask use-case
@@ -12,6 +16,7 @@ public class CreateTaskController {
     private final SessionWrapper session;
     private final TaskManSystem taskManSystem;
     private final UserManager userManager;
+    // TODO deze niet meer nodig?
 
     public CreateTaskController(
             SessionWrapper session,
@@ -40,7 +45,7 @@ public class CreateTaskController {
      * @return whether the preconditions for the createtask use-case are met
      */
     public boolean createTaskPreconditions() {
-        return getSession().getRole() == Role.PROJECTMANAGER;
+        return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
     /**
@@ -66,24 +71,25 @@ public class CreateTaskController {
             String projectName,
             String taskName,
             String description,
-            int durationHour,
-            int durationMinute,
+            Time durationTime,
             double deviation,
-            String user,
-            List<String> previousTasks
-    ) throws ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException {
-        if (getSession().getRole() != Role.PROJECTMANAGER) {
+            List<Role> roles,
+            Set<String> previousTasks,
+            Set<String> nextTasks
+    ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+        if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        User developer = getUserManager().getDeveloper(user);
+        //User developer = getUserManager().getDeveloper(user);
         getTaskManSystem().addTaskToProject(
                 projectName,
                 taskName,
                 description,
-                new Time(durationHour, durationMinute),
+                durationTime,
                 deviation,
+                roles,
                 previousTasks,
-                developer
+                nextTasks
         );
     }
 
@@ -108,21 +114,32 @@ public class CreateTaskController {
             String projectName,
             String taskName,
             String description,
-            int durationHour,
-            int durationMinute,
+            Time durationTime,
             double deviation,
             String replaces
-    ) throws IncorrectPermissionException, ReplacedTaskNotFailedException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException {
-        if (getSession().getRole() != Role.PROJECTMANAGER) {
+    ) throws IncorrectPermissionException, ReplacedTaskNotFailedException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
+        if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
         getTaskManSystem().replaceTaskInProject(
                 projectName,
                 taskName,
                 description,
-                new Time(durationHour, durationMinute),
+                durationTime,
                 deviation,
                 replaces
         );
+    }
+
+    public TaskManSystemProxy getTaskManSystemData() {
+        return getTaskManSystem().getTaskManSystemData();
+    }
+
+    public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException {
+        return getTaskManSystem().getProjectData(projectName);
+    }
+
+    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+        return getTaskManSystem().getTaskData(projectName, taskName);
     }
 }

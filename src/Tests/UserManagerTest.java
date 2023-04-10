@@ -1,90 +1,130 @@
 package Tests;
 
 import Domain.*;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+
+
+/*
+WardGr minecraft123 javaDev pythonDev
+OlavBl peer123 pythonDev
+SamHa trein123 javaDev
+DieterVH computer776 sysadmin
+SanderSc appelboom885 projectMan
+JasperVH computer776 projectMan javaDev
+jeroenBe Aardappel862 projectMan pythonDev
+HannahEr Perzik123 projectMan javaDev pythonDev
+ */
 
 public class UserManagerTest {
 
     private final UserManager userManager = new UserManager();
 
+    private User ward;
+    private User olav;
+    private User sam;
+    private User dieter;
+    private User sander;
+    private User jasper;
+    private User jeroen;
+    private User hannah;
+
+
+    @Before
+    public void setUp() {
+        // Set up roles for users
+        HashSet<Role> wardRoles = new HashSet<>();
+        wardRoles.add(Role.JAVAPROGRAMMER);
+        wardRoles.add(Role.PYTHONPROGRAMMER);
+
+        HashSet<Role> olavRoles = new HashSet<>();
+        olavRoles.add(Role.PYTHONPROGRAMMER);
+
+        HashSet<Role> samRoles = new HashSet<>();
+        samRoles.add(Role.JAVAPROGRAMMER);
+
+        HashSet<Role> dieterRoles = new HashSet<>();
+        dieterRoles.add(Role.PROJECTMANAGER);
+
+        HashSet<Role> sanderRoles = new HashSet<>();
+        sanderRoles.add(Role.SYSADMIN);
+
+        HashSet<Role> jasperRoles = new HashSet<>();
+        jasperRoles.add(Role.PROJECTMANAGER);
+        jasperRoles.add(Role.JAVAPROGRAMMER);
+
+        HashSet<Role> jeroenRoles = new HashSet<>();
+        jeroenRoles.add(Role.PROJECTMANAGER);
+        jeroenRoles.add(Role.PYTHONPROGRAMMER);
+
+        HashSet<Role> hannahRoles = new HashSet<>();
+        hannahRoles.add(Role.PROJECTMANAGER);
+        hannahRoles.add(Role.PYTHONPROGRAMMER);
+        hannahRoles.add(Role.JAVAPROGRAMMER);
+
+
+        ward = new User("WardGr", "minecraft123", wardRoles);
+        olav = new User("OlavBl", "peer123", olavRoles);
+        sam = new User("SamHa", "trein123", samRoles);
+        dieter = new User("DieterVH", "computer776", dieterRoles);
+        sander = new User("SanderSc", "appelboom885", sanderRoles);
+        jasper = new User("JasperVH", "computer776", jasperRoles);
+        jeroen = new User("jeroenBe", "Aardappel862", jeroenRoles);
+        hannah = new User("HannahEr", "Perzik123", hannahRoles);
+    }
 
     @Test
     public void UserManTest() throws LoginException, UserNotFoundException {
-        User ward = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
-        User olav = new User("OlavBl", "peer123", Role.DEVELOPER);
-        User sam = new User("SamHa", "trein123", Role.DEVELOPER);
-        User dieter = new User("DieterVH", "computer776", Role.PROJECTMANAGER);
-        User sander = new User("SanderSc", "appelboom885", Role.DEVELOPER);
-        User jasper = new User("JasperVH", "computer776", Role.PROJECTMANAGER);
-        User jeroen = new User("jeroenBe", "Aardappel862", Role.DEVELOPER);
-        User hannah = new User("HannahEr", "Perzik123", Role.PROJECTMANAGER);
-
         assertEquals(ward.getUsername(), userManager.getUser("WardGr", "minecraft123").getUsername());
         assertEquals(ward.getPassword(), userManager.getUser("WardGr", "minecraft123").getPassword());
-        assertEquals(ward.getRole(), userManager.getUser("WardGr", "minecraft123").getRole());
+        assertEquals(ward.getRoles(), userManager.getUser("WardGr", "minecraft123").getRoles());
         assertEquals(sam.getUsername(), userManager.getUser("SamHa", "trein123").getUsername());
         assertEquals(sam.getPassword(), userManager.getUser("SamHa", "trein123").getPassword());
-        assertEquals(sam.getRole(), userManager.getUser("SamHa", "trein123").getRole());
+        assertEquals(sam.getRoles(), userManager.getUser("SamHa", "trein123").getRoles());
         assertEquals(olav.getUsername(), userManager.getUser(("OlavBl"), "peer123").getUsername());
         assertEquals(olav.getPassword(), userManager.getUser("OlavBl", "peer123").getPassword());
-        assertEquals(olav.getRole(), userManager.getUser("OlavBl", "peer123").getRole());
+        assertEquals(olav.getRoles(), userManager.getUser("OlavBl", "peer123").getRoles());
         assertEquals(dieter.getUsername(), userManager.getUser("DieterVH", "computer776").getUsername());
         assertEquals(dieter.getPassword(), userManager.getUser("DieterVH", "computer776").getPassword());
-        assertEquals(dieter.getRole(), userManager.getUser("DieterVH", "computer776").getRole());
+        assertEquals(dieter.getRoles(), userManager.getUser("DieterVH", "computer776").getRoles());
         assertEquals(sander.getUsername(), userManager.getUser("SanderSc", "appelboom885").getUsername());
         assertEquals(sander.getPassword(), userManager.getUser("SanderSc", "appelboom885").getPassword());
-        assertEquals(sander.getRole(), userManager.getUser("SanderSc", "appelboom885").getRole());
-        assertEquals(jasper.getUsername(), userManager.getUser("JasperVH", "computer776").getUsername());
-        assertEquals(jasper.getPassword(), userManager.getUser("JasperVH", "computer776").getPassword());
-        assertEquals(jasper.getRole(), userManager.getUser("JasperVH", "computer776").getRole());
-        assertEquals(hannah.getUsername(), userManager.getUser("HannahEr", "Perzik123").getUsername());
-        assertEquals(hannah.getPassword(), userManager.getUser("HannahEr", "Perzik123").getPassword());
-        assertEquals(hannah.getRole(), userManager.getUser("HannahEr", "Perzik123").getRole());
-        assertEquals(jeroen.getUsername(), userManager.getUser("jeroenBe", "Aardappel862").getUsername());
-        assertEquals(jeroen.getPassword(), userManager.getUser("jeroenBe", "Aardappel862").getPassword());
-        assertEquals(jeroen.getRole(), userManager.getUser("jeroenBe", "Aardappel862").getRole());
+        assertEquals(sander.getRoles(), userManager.getUser("SanderSc", "appelboom885").getRoles());
 
-
-        Exception exception = assertThrows(LoginException.class, () -> {
+        assertThrows(LoginException.class, () -> {
             userManager.getUser("Fiona", "hoi123");
         });
-        exception = assertThrows(LoginException.class, () -> {
+        assertThrows(LoginException.class, () -> {
             userManager.getUser("Tom", null);
         });
-        exception = assertThrows(LoginException.class, () -> {
+        assertThrows(LoginException.class, () -> {
             userManager.getUser("WardGr", "fout_password");
         });
-        exception = assertThrows(LoginException.class, () -> {
+        assertThrows(LoginException.class, () -> {
             userManager.getUser("Fout_user", "minecraft123");
         });
 
-        assertEquals(olav.getUsername(), userManager.getDeveloper("OlavBl").getUsername());
-        assertEquals(olav.getPassword(), userManager.getDeveloper("OlavBl").getPassword());
-        assertEquals(olav.getRole(), userManager.getDeveloper("OlavBl").getRole());
-        assertEquals(sam.getUsername(), userManager.getDeveloper("SamHa").getUsername());
-        assertEquals(sam.getPassword(), userManager.getDeveloper("SamHa").getPassword());
-        assertEquals(sam.getRole(), userManager.getDeveloper("SamHa").getRole());
-        assertEquals(sander.getUsername(), userManager.getDeveloper("SanderSc").getUsername());
-        assertEquals(sander.getPassword(), userManager.getDeveloper("SanderSc").getPassword());
-        assertEquals(sander.getRole(), userManager.getDeveloper("SanderSc").getRole());
-        assertEquals(jeroen.getUsername(), userManager.getDeveloper("jeroenBe").getUsername());
-        assertEquals(jeroen.getPassword(), userManager.getDeveloper("jeroenBe").getPassword());
-        assertEquals(jeroen.getRole(), userManager.getDeveloper("jeroenBe").getRole());
+        assertEquals(olav.getUsername(), userManager.getUser("OlavBl").getUsername());
+        assertEquals(olav.getPassword(), userManager.getUser("OlavBl").getPassword());
+        assertEquals(olav.getRoles(), userManager.getUser("OlavBl").getRoles());
+        assertEquals(sam.getUsername(), userManager.getUser("SamHa").getUsername());
+        assertEquals(sam.getPassword(), userManager.getUser("SamHa").getPassword());
+        assertEquals(sam.getRoles(), userManager.getUser("SamHa").getRoles());
+        assertEquals(sander.getUsername(), userManager.getUser("SanderSc").getUsername());
+        assertEquals(sander.getPassword(), userManager.getUser("SanderSc").getPassword());
+        assertEquals(sander.getRoles(), userManager.getUser("SanderSc").getRoles());
 
-        exception = assertThrows(UserNotFoundException.class, () -> {
-            userManager.getDeveloper("Fiona");
+        assertThrows(UserNotFoundException.class, () -> {
+            userManager.getUser("Fiona");
         });
-        exception = assertThrows(UserNotFoundException.class, () -> {
-            userManager.getDeveloper("Tom");
+        assertThrows(UserNotFoundException.class, () -> {
+            userManager.getUser("Tom");
         });
-        exception = assertThrows(UserNotFoundException.class, () -> {
-            userManager.getDeveloper("WardGr");
-        });
-        exception = assertThrows(UserNotFoundException.class, () -> {
-            userManager.getDeveloper("DieterVH");
-        });
+
     }
 }

@@ -2,7 +2,7 @@ package Domain;
 
 public class IncorrectUserException extends Exception {
 
-    public IncorrectUserException() {
-        super();
+    public IncorrectUserException(String e) {
+        super(e);
     }
 }
