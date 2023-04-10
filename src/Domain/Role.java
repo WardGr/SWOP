@@ -4,12 +4,27 @@ package Domain;
  * The different user roles
  */
 public enum Role {
-    DEVELOPER {
+    SYSADMIN {
         @Override
         public String toString() {
-            return "developer";
+            return "system administration developer";
         }
     },
+
+    JAVAPROGRAMMER {
+        @Override
+        public String toString() {
+            return "Java programmer";
+        }
+    },
+
+    PYTHONPROGRAMMER {
+        @Override
+        public String toString() {
+            return "Python programmer";
+        }
+    },
+
     PROJECTMANAGER {
         @Override
         public String toString() {

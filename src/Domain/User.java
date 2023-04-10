@@ -1,5 +1,12 @@
 package Domain;
 
+import Domain.TaskStates.IncorrectRoleException;
+import Domain.TaskStates.Task;
+import Domain.TaskStates.TaskProxy;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A user currently registered within the system
  */
@@ -7,15 +14,17 @@ public class User {
 
     private final String username;
     private final String password;
-    private final Role role;
+    private final Set<Role> roles;
 
-    public User(String username, String password, Role role) {
-        if (username == null || password == null || role == null) {
-            throw new IllegalArgumentException("Username, password or role cannot be null");
+    private Task task;
+
+    public User(String username, String password, Set<Role> roles) {
+        if (username == null || password == null || roles == null || roles.size() == 0) {
+            throw new IllegalArgumentException("Username, password and roles have to be initiated");
         }
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.roles = new HashSet<>(roles);
     }
 
     public String getUsername() {
@@ -26,7 +35,41 @@ public class User {
         return password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return new HashSet<>(roles);
+    }
+
+    private Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public TaskProxy getTaskData() {
+        if (getTask() == null) {
+            return null;
+        } else {
+            return getTask().getTaskProxy();
+        }
+    }
+
+    public void assignTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+        if (!getRoles().contains(role)) {
+            throw new IncorrectRoleException("User does not have the given role");
+        }
+        if (getTask() != null) {
+            if (getTaskData().getStatus() == Status.PENDING) {
+                getTask().unassignUser(this);
+            } else {
+                throw new UserAlreadyAssignedToTaskException();
+            }
+        }
+        setTask(task);
+    }
+
+    public void endTask() {
+        setTask(null);
     }
 }

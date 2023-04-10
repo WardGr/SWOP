@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="system2">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/system.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

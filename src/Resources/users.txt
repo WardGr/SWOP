@@ -1,8 +1,8 @@
-WardGr minecraft123 manager
-OlavBl peer123 developer
-SamHa trein123 developer
-DieterVH computer776 manager
-SanderSc appelboom885 developer
-JasperVH computer776 manager
-jeroenBe Aardappel862 developer
-HannahEr Perzik123 manager
+WardGr minecraft123 javaDev pythonDev
+OlavBl peer123 pythonDev
+SamHa trein123 javaDev
+DieterVH computer776 projectMan
+SanderSc appelboom885 sysadmin
+JasperVH computer776 projectMan javaDev
+jeroenBe Aardappel862 projectMan pythonDev
+HannahEr Perzik123 projectMan javaDev pythonDev

@@ -1,14 +1,17 @@
 package Domain;
 
+import Domain.TaskStates.*;
 import Domain.TaskStates.Task;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A project currently registered, including a list of tasks that this project requires
  */
-public class  Project {
+public class Project {
 
     private final List<Domain.TaskStates.Task> tasks;
     private final List<Domain.TaskStates.Task> replacedTasks;
@@ -16,6 +19,8 @@ public class  Project {
     private final String description;
     private final Time creationTime;
     private final Time dueTime;
+    private final ProjectProxy projectProxy;
+    private ProjectStatus status;
 
     public Project(String name, String description, Time creationTime, Time dueTime)
             throws DueBeforeSystemTimeException {
@@ -28,43 +33,9 @@ public class  Project {
         this.description = description;
         this.creationTime = creationTime;
         this.dueTime = dueTime;
+        this.projectProxy = new ProjectProxy(this);
+        this.status = ProjectStatus.ONGOING;
     }
-
-    @Override
-    public String toString() {
-        StringBuilder projectString = new StringBuilder();
-
-        projectString.append("Project Name:  " + getName() + '\n' +
-                "Description:   " + getDescription() + '\n' +
-                "Creation Time: " + getCreationTime() + '\n' +
-                "Due Time:      " + getDueTime() + '\n' +
-                "Status:        " + getStatus() + '\n'
-        );
-
-        if (getTasks().size() > 0) {
-            projectString.append("\nTasks:\n");
-            int index = 1;
-            for (Domain.TaskStates.Task task : getTasks()) {
-                projectString.append(index++ + ". " + task.getName() + '\n');
-            }
-        }
-
-        if (getReplacedTasks().size() > 0) {
-            projectString.append("\nTasks that have been replaced:\n");
-
-            int index = 1;
-            for (Domain.TaskStates.Task task : getReplacedTasks()) {
-                projectString.append(index++ + ". " + task.getName() + ", replaced by task: " + task.getReplacementTask().getName());
-            }
-            projectString.append('\n');
-        }
-
-
-        // TODO geef de totale uitvoeringstijd !!!
-
-        return projectString.toString();
-    }
-
 
     public String getDescription() {
         return description;
@@ -89,6 +60,22 @@ public class  Project {
         return List.copyOf(tasks);
     }
 
+    public List<String> getActiveTasksNames() {
+        List<String> names = new LinkedList<>();
+        for (Task task : getTasks()) {
+            names.add(task.getName());
+        }
+        return names;
+    }
+
+    public List<String> getReplacedTasksNames() {
+        List<String> names = new LinkedList<>();
+        for (Task task : getReplacedTasks()) {
+            names.add(task.getName());
+        }
+        return names;
+    }
+
     /**
      * @return an IMMUTABLE list of all tasks that have been replaced
      */
@@ -96,19 +83,32 @@ public class  Project {
         return List.copyOf(replacedTasks);
     }
 
+    public ProjectProxy getProjectData() {
+        return projectProxy;
+    }
+
+    public Domain.TaskStates.TaskProxy getTaskData(String taskName) throws TaskNotFoundException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        return task.getTaskProxy();
+    }
+
     /**
      * @return Status of the current project, finished if all tasks are finished, ongoing otherwise
      */
-    public String getStatus() {
-        if (getTasks().size() == 0) {
-            return "ongoing";
-        }
-        for (Domain.TaskStates.Task task : getTasks()) {
-            if (task.getStatus() != Status.FINISHED) {
-                return "ongoing";
-            }
-        }
-        return "finished";
+    public ProjectStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Sets the status of this project to the given status
+     *
+     * @param status The status this project should be changed into
+     */
+    private void setStatus(ProjectStatus status) {
+        this.status = status;
     }
 
     /**
@@ -134,12 +134,11 @@ public class  Project {
     /**
      * Creates a task with the given information and adds it to this project
      *
-     * @param taskName          Name of the task to create and add
-     * @param description       Description of the task
-     * @param duration          Duration of the task
-     * @param deviation         Accepted deviation of the task
-     * @param previousTaskNames Names of the tasks to be completed before the newly created task
-     * @param user              User to be assigned to this task
+     * @param taskName    Name of the task to create and add
+     * @param description Description of the task
+     * @param duration    Duration of the task
+     * @param deviation   Accepted deviation of the task
+     * @param roles       TODO
      * @throws TaskNotFoundException         if one of the given tasks to be completed before the new task does not exist
      * @throws TaskNameAlreadyInUseException if the given task name is already in use for this project
      */
@@ -148,26 +147,37 @@ public class  Project {
             String description,
             Time duration,
             double deviation,
-            List<String> previousTaskNames,
-            User user
-    ) throws TaskNotFoundException, TaskNameAlreadyInUseException {
+            List<Role> roles,
+            Set<String> previousTasksNames,
+            Set<String> nextTasksNames
+    ) throws TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
         if (getTask(taskName) != null) {
             throw new TaskNameAlreadyInUseException();
         }
 
-        List<Domain.TaskStates.Task> previousTasks = new LinkedList<>();
-        for (String previousTaskName : previousTaskNames) {
-            Domain.TaskStates.Task task = getTask(previousTaskName);
+        // TODO check if project is not finished
+
+        Set<Task> previousTasks = new HashSet<>();
+        for (String previousTaskName : previousTasksNames) {
+            Task task = getTask(previousTaskName);
             if (task == null) {
                 throw new TaskNotFoundException();
             }
             previousTasks.add(task);
         }
+        Set<Task> nextTasks = new HashSet<>();
+        for (String nextTaskName : nextTasksNames) {
+            Task task = getTask(nextTaskName);
+            if (task == null) {
+                throw new TaskNotFoundException();
+            }
+            nextTasks.add(task);
+        }
 
-        addTask(new Domain.TaskStates.Task(taskName, description, duration, deviation, previousTasks, user));
+        addTask(new Task(taskName, description, duration, deviation, roles, previousTasks, nextTasks, this));
     }
 
-    private void addTask(Domain.TaskStates.Task task) {
+    private void addTask(Task task) {
         tasks.add(task);
     }
 
@@ -203,15 +213,13 @@ public class  Project {
             throw new TaskNameAlreadyInUseException();
         }
 
-        Domain.TaskStates.Task replacesTask = getTask(replaces);
+        Task replacesTask = getTask(replaces);
         if (replacesTask == null) {
             throw new TaskNotFoundException();
         }
-        Domain.TaskStates.Task replacementTask = replacesTask.replaceTask(taskName, description, duration, deviation);
-
+        addTask(replacesTask.replaceTask(taskName, description, duration, deviation));
         removeTask(replacesTask);
         addReplacedTask(replacesTask);
-        addTask(replacementTask);
     }
 
     /**
@@ -256,22 +264,6 @@ public class  Project {
     }
 
     /**
-     * Gets a list of all possible next statuses the given task could be changed into by the assigned user
-     *
-     * @param taskName Name of the task of which to return the next statuses
-     * @return List of all possible next statuses of the given task
-     * @throws TaskNotFoundException if the given taskName does not correspond to an existing task within this project
-     */
-    public List<Status> getNextStatuses(String taskName)
-            throws TaskNotFoundException {
-        Domain.TaskStates.Task task = getTask(taskName);
-        if (task == null) {
-            throw new TaskNotFoundException();
-        }
-        return task.getNextStatuses();
-    }
-
-    /**
      * Gets the status of the task within this project corresponding to the given task name
      *
      * @param taskName Name of the task for which to retrieve the current status
@@ -291,51 +283,105 @@ public class  Project {
      *
      * @param taskName    Name of the status of which to change the status
      * @param startTime   Start time of the given task
-     * @param systemTime  Current system-time
      * @param currentUser User currently logged in
      * @throws TaskNotFoundException        if the given task name does not correspond to an existing task within this project
-     * @throws IncorrectUserException       if currentUser is not assigned to the given task
      * @throws IncorrectTaskStatusException if the given task status is not currently AVAILABLE
      */
     public void startTask(
             String taskName,
             Time startTime,
-            Time systemTime,
-            User currentUser
+            User currentUser,
+            Role role
     )
-            throws TaskNotFoundException, IncorrectUserException, StartTimeBeforeAvailableException, IncorrectTaskStatusException {
-        Domain.TaskStates.Task task = getTask(taskName);
-        if (task == null) {
-            throw new TaskNotFoundException();
-        }
-        task.start(startTime, systemTime, currentUser);
-    }
-
-    /**
-     * Ends the given task and sets its status to FAILED or FINISHED according to input
-     *
-     * @param taskName    Name of the status to end
-     * @param newStatus   New status of the task
-     * @param endTime     Time at which the task was/will be finished/failed
-     * @param systemTime  Current system-time
-     * @param currentUser User currently logged in
-     * @throws TaskNotFoundException            if taskName does not correspond to an existing task
-     * @throws FailTimeAfterSystemTimeException if newStatus == FAILED and endTime > systemTime
-     * @throws IncorrectUserException           if currentUser is not the user assigned to this task
-     * @throws IncorrectTaskStatusException     if the given task status is not EXECUTING
-     */
-    public void endTask(
-            String taskName,
-            Status newStatus,
-            Time endTime,
-            Time systemTime,
-            User currentUser
-    )
-            throws TaskNotFoundException, FailTimeAfterSystemTimeException, IncorrectUserException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException {
+            throws TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
         }
-        task.end(newStatus, endTime, systemTime, currentUser);
+        task.start(startTime, currentUser, role);
+    }
+
+
+    /**
+     * Ends the given task and sets its status to FINISHED
+     *
+     * @param taskName    Name of the status to end
+     * @param endTime     Time at which the task was/will be finished/failed
+     * @param user        User currently logged in
+     * @throws TaskNotFoundException            if taskName does not correspond to an existing task
+     * @throws IncorrectUserException           if currentUser is not the user assigned to this task
+     * @throws IncorrectTaskStatusException     if the given task status is not EXECUTING
+     */
+    public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        task.finish(user, endTime);
+
+        updateProjectStatus();
+    }
+
+    /**
+     * Ends the given task and sets its status to FAILED
+     *
+     * @param taskName    Name of the status to end
+     * @param endTime     Time at which the task was/will be finished/failed
+     * @param user        User currently logged in
+     * @throws TaskNotFoundException            if taskName does not correspond to an existing task
+     * @throws IncorrectUserException           if currentUser is not the user assigned to this task
+     * @throws IncorrectTaskStatusException     if the given task status is not EXECUTING
+     */
+    public void failTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        task.fail(user, endTime);
+    }
+
+    private void updateProjectStatus() {
+        setStatus(ProjectStatus.FINISHED);
+        for (Task task : getTasks()) {
+            if (task.getStatus() != Status.FINISHED) {
+                setStatus(ProjectStatus.ONGOING);
+            }
+        }
+    }
+
+    public void addPreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+        Domain.TaskStates.Task task = getTask(taskName);
+        Domain.TaskStates.Task prevTask = getTask(prevTaskName);
+        if (task == null || prevTask == null) {
+            throw new TaskNotFoundException();
+        }
+        task.addPreviousTask(prevTask);
+    }
+
+    public void addNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+        Domain.TaskStates.Task task = getTask(taskName);
+        Domain.TaskStates.Task nextTask = getTask(nextTaskName);
+        if (task == null || nextTask == null) {
+            throw new TaskNotFoundException();
+        }
+        task.addNextTask(nextTask);
+    }
+
+    public void removePreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+        Domain.TaskStates.Task task = getTask(taskName);
+        Task prevTask = getTask(prevTaskName);
+        if (task == null || prevTask == null) {
+            throw new TaskNotFoundException();
+        }
+        task.removePreviousTask(prevTask);
+    }
+
+    public void removeNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+        Task task = getTask(taskName);
+        Task nextTask = getTask(nextTaskName);
+        if (task == null || nextTask == null) {
+            throw new TaskNotFoundException();
+        }
+        task.removeNextTask(nextTask);
     }
 }

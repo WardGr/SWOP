@@ -1,41 +1,95 @@
 package Tests;
 
+import Domain.IncorrectTaskStatusException;
 import Domain.Role;
+import Domain.Status;
+import Domain.TaskStates.IncorrectRoleException;
+import Domain.TaskStates.Task;
+import Domain.TaskStates.TaskProxy;
 import Domain.User;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
+
+@RunWith(MockitoJUnitRunner.class)
 public class UserTest {
+
+    @Mock
+    private Task task;
+
+    @Mock
+    private TaskProxy taskProxy;
+
+
+    // Mockito makes it so we only have to specify specific functions (Getters etc) from the mocked classes,
+    // thus decoupling the individual classes from each other so we can specify one unit to test.
+    @Before
+    public void setUp() {
+        // See startTask, taskProxy moet PENDING status returnen.
+        Mockito.when(task.getTaskProxy()).thenReturn(taskProxy);
+        Mockito.when(taskProxy.getStatus()).thenReturn(Status.EXECUTING);
+    }
+
     @Test
-    public void testUser() {
-        User thomas = new User("Thomas", "banaan123", Role.PROJECTMANAGER);
+    public void testUser() throws IncorrectTaskStatusException, IncorrectRoleException {
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(Role.PROJECTMANAGER);
+        User thomas = new User("Thomas", "banaan123", roles);
         assertEquals("Thomas", thomas.getUsername());
         assertEquals("banaan123", thomas.getPassword());
-        assertEquals(Role.PROJECTMANAGER, thomas.getRole());
+        assertEquals(roles, thomas.getRoles());
         assertNotEquals("Thomas", thomas.getPassword());
         assertNotEquals("banaan123", thomas.getUsername());
-        assertNotSame(thomas.getRole(), Role.DEVELOPER);
+        roles.add(Role.PYTHONPROGRAMMER);
+        assertNotSame(roles, thomas.getRoles());
         assertNotSame("banaan1234", thomas.getPassword());
 
-        User jonathan = new User("Jonathan", "perzik789", Role.DEVELOPER);
+        roles.add(Role.JAVAPROGRAMMER);
+        User jonathan = new User("Jonathan", "perzik789", roles);
         assertEquals("Jonathan", jonathan.getUsername());
         assertEquals("perzik789", jonathan.getPassword());
         assertNotEquals("perzik7890", jonathan.getPassword());
         assertNotEquals("thomas", jonathan.getUsername());
-        assertEquals(Role.DEVELOPER, jonathan.getRole());
-        assertNotSame(jonathan.getRole(), Role.PROJECTMANAGER);
+        assertEquals(roles, jonathan.getRoles());
+        assertFalse(jonathan.getRoles().contains(Role.SYSADMIN));
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            User fiona = new User(null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new User(null, null, null);
         });
 
-        Exception exception1 = assertThrows(IllegalArgumentException.class, () -> {
-            User fiona = new User("Fiona", "hoi123", null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new User("Fiona", "hoi123", null);
         });
 
-        Exception exception2 = assertThrows(IllegalArgumentException.class, () -> {
-            User fiona = new User("Fiona", null, Role.PROJECTMANAGER);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new User("Fiona", null, roles);
         });
+
+        Set<Role> emptyRoles = new HashSet<>();
+        assertThrows(IllegalArgumentException.class, () -> {
+            new User("Fiona", "hoi123", emptyRoles);
+        });
+
+        assertThrows(IncorrectRoleException.class, () -> {
+            jonathan.assignTask(task, Role.SYSADMIN);
+        });
+
+        jonathan.assignTask(task, Role.PROJECTMANAGER);
+        // Jonathan is now assigned to this task, so it is not pending anymore
+
+        assertThrows(IncorrectTaskStatusException.class, () -> {
+            jonathan.assignTask(task, Role.PROJECTMANAGER);
+        });
+
     }
 }

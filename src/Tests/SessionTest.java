@@ -4,20 +4,48 @@ import Application.Session;
 import Application.SessionWrapper;
 import Domain.Role;
 import Domain.User;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
 public class SessionTest {
+
+    private User brewer;
+    private User bossman;
+
+    private Session brewerSession;
+    private Session bossManSession;
+
+    private Set<Role> brewerRoles;
+    private Set<Role> bossRoles;
+
+    @Before
+    public void setUp() {
+        brewerSession = new Session();
+        bossManSession = new Session();
+
+        Set<Role> brewerRoles = new HashSet<>();
+        brewerRoles.add(Role.PYTHONPROGRAMMER);
+
+        Set<Role> bossRoles = new HashSet<>();
+        bossRoles.add(Role.PROJECTMANAGER);
+
+        brewer = new User("OlavBl", "peer123", brewerRoles);
+        bossman = new User("WardGr", "minecraft123", bossRoles);
+
+        this.brewerRoles = brewerRoles;
+        this.bossRoles = bossRoles;
+    }
+
     @Test
     public void SessionTest() {
-        Session brewerSession = new Session();
-        Session bossManSession = new Session();
-        User brewer = new User("OlavBl", "peer123", Role.DEVELOPER);
-        User bossman = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
 
-        assertNull(brewerSession.getRole());
-        assertNull(bossManSession.getRole());
+        assertTrue(brewerSession.getRoles().isEmpty());
+        assertTrue(bossManSession.getRoles().isEmpty());
 
         assertFalse(brewerSession.isLoggedIn());
         assertFalse(bossManSession.isLoggedIn());
@@ -31,31 +59,31 @@ public class SessionTest {
         assertTrue(bossManSession.isLoggedIn());
         assertEquals(bossman, bossManSession.getCurrentUser());
 
-        assertEquals(Role.DEVELOPER, brewerSession.getRole());
-        assertEquals(Role.PROJECTMANAGER, bossManSession.getRole());
+        assertEquals(brewerRoles, brewerSession.getRoles());
+        assertEquals(bossRoles, bossManSession.getRoles());
 
         brewerSession.logout();
         assertFalse(brewerSession.isLoggedIn());
         assertNull(brewerSession.getCurrentUser());
-        assertNull(brewerSession.getRole());
+        assertTrue(brewerSession.getRoles().isEmpty());
 
         bossManSession.logout();
         assertFalse(bossManSession.isLoggedIn());
         assertNull(bossManSession.getCurrentUser());
-        assertNull(bossManSession.getRole());
+        assertTrue(bossManSession.getRoles().isEmpty());
 
         bossManSession.login(brewer);
         assertEquals(brewer, bossManSession.getCurrentUser());
-        assertEquals(Role.DEVELOPER, bossManSession.getRole());
+        assertEquals(brewerRoles, bossManSession.getRoles());
         assertTrue(bossManSession.isLoggedIn());
 
         SessionWrapper sessionWrapper1 = new SessionWrapper(brewerSession);
-        assertNull(sessionWrapper1.getRole());
+        assertTrue(sessionWrapper1.getRoles().isEmpty());
         assertNull(sessionWrapper1.getCurrentUser());
 
         brewerSession.login(brewer);
         SessionWrapper sessionWrapper2 = new SessionWrapper(brewerSession);
-        assertEquals(sessionWrapper2.getRole(), Role.DEVELOPER);
+        assertEquals(sessionWrapper2.getRoles(), brewerRoles);
         assertEquals(sessionWrapper2.getCurrentUser(), brewer);
 
 

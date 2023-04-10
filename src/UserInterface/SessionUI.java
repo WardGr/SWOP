@@ -1,12 +1,11 @@
 package UserInterface;
 
-import Application.Session;
 import Application.SessionController;
 import Domain.LoginException;
 import Domain.Role;
-import Domain.UserManager;
 
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Handles user input for the login and logout use-cases, requests necessary domain-level information from the Application.SessionController
@@ -57,8 +56,15 @@ public class SessionUI {
                 return;
             }
             try {
-                Role newRole = getController().login(username, password);
-                System.out.println("Welcome " + username + "! Your assigned role is " + newRole.toString());
+                Set<Role> roles = getController().login(username, password);
+                StringBuilder showRoles = new StringBuilder();
+                for (Role role : roles) {
+                    if (showRoles.length() > 0) {
+                        showRoles.append(", ");
+                    }
+                    showRoles.append(role.toString());
+                }
+                System.out.println("Welcome " + username + "! Your assigned roles are: " + showRoles);
                 return;
             } catch (LoginException e) {
                 System.out.println(e.getMessage());
