@@ -96,10 +96,18 @@ public class UserManagerTest {
         assertEquals(sander.getPassword(), userManager.getUser("SanderSc", "appelboom885").getPassword());
         assertEquals(sander.getRoles(), userManager.getUser("SanderSc", "appelboom885").getRoles());
 
-        assertThrows(LoginException.class, () -> {userManager.getUser("Fiona", "hoi123");});
-        assertThrows(LoginException.class, () -> {userManager.getUser("Tom", null);});
-        assertThrows(LoginException.class, () -> {userManager.getUser("WardGr", "fout_password");});
-        assertThrows(LoginException.class, () -> {userManager.getUser("Fout_user", "minecraft123");});
+        assertThrows(LoginException.class, () -> {
+            userManager.getUser("Fiona", "hoi123");
+        });
+        assertThrows(LoginException.class, () -> {
+            userManager.getUser("Tom", null);
+        });
+        assertThrows(LoginException.class, () -> {
+            userManager.getUser("WardGr", "fout_password");
+        });
+        assertThrows(LoginException.class, () -> {
+            userManager.getUser("Fout_user", "minecraft123");
+        });
 
         assertEquals(olav.getUsername(), userManager.getUser("OlavBl").getUsername());
         assertEquals(olav.getPassword(), userManager.getUser("OlavBl").getPassword());
@@ -111,8 +119,12 @@ public class UserManagerTest {
         assertEquals(sander.getPassword(), userManager.getUser("SanderSc").getPassword());
         assertEquals(sander.getRoles(), userManager.getUser("SanderSc").getRoles());
 
-        assertThrows(UserNotFoundException.class, () -> {userManager.getUser("Fiona");});
-        assertThrows(UserNotFoundException.class, () -> {userManager.getUser("Tom");});
+        assertThrows(UserNotFoundException.class, () -> {
+            userManager.getUser("Fiona");
+        });
+        assertThrows(UserNotFoundException.class, () -> {
+            userManager.getUser("Tom");
+        });
 
     }
 }

@@ -1,13 +1,12 @@
 // TODO: Do we have to comment every class with @ tags as well? And what about postconditions and invariants?
 
 
-import UserInterface.*;
 import Application.*;
 import Domain.InvalidTimeException;
 import Domain.TaskManSystem;
 import Domain.Time;
 import Domain.UserManager;
-import UserInterface.UserInterface;
+import UserInterface.*;
 
 /**
  * Creates the initial objects and starts the UI
@@ -27,7 +26,6 @@ public class Main {
             ShowProjectsController showProjectsController = new ShowProjectsController(sessionWrapper, taskManSystem);
             CreateTaskController createTaskController = new CreateTaskController(sessionWrapper, taskManSystem, userManager);
             LoadSystemController loadSystemController = new LoadSystemController(sessionWrapper, taskManSystem, userManager);
-            UpdateTaskController updateTaskController = new UpdateTaskController(sessionWrapper, taskManSystem);
             StartTaskController startTaskController = new StartTaskController(sessionWrapper, taskManSystem);
             EndTaskController endTaskController = new EndTaskController(sessionWrapper, taskManSystem);
             UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionWrapper, taskManSystem);
@@ -38,7 +36,6 @@ public class Main {
             ShowProjectsUI showProjectsUI = new ShowProjectsUI(showProjectsController);
             CreateTaskUI createTaskUI = new CreateTaskUI(createTaskController);
             LoadSystemUI loadSystemUI = new LoadSystemUI(loadSystemController);
-            UpdateTaskUI updateTaskUI = new UpdateTaskUI(updateTaskController);
             StartTaskUI startTaskUI = new StartTaskUI(startTaskController);
             EndTaskUI endTaskUI = new EndTaskUI(endTaskController);
             UpdateDependenciesUI updateDependenciesUI = new UpdateDependenciesUI(updateDependenciesController);
@@ -50,7 +47,6 @@ public class Main {
                     showProjectsUI,
                     createTaskUI,
                     loadSystemUI,
-                    updateTaskUI,
                     startTaskUI,
                     endTaskUI,
                     updateDependenciesUI

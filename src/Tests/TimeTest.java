@@ -2,7 +2,7 @@ package Tests;
 
 import Domain.InvalidTimeException;
 import Domain.Time;
-import org.junit.*;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 

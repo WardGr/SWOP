@@ -2,7 +2,6 @@ package Domain;
 
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.Task;
-import Domain.TaskStates.TaskObserver;
 import Domain.TaskStates.TaskProxy;
 
 import java.util.HashSet;
@@ -40,28 +39,29 @@ public class User {
         return new HashSet<>(roles);
     }
 
-    private Task getTask(){
+    private Task getTask() {
         return task;
     }
 
-    public void setTask(Task task){
+    public void setTask(Task task) {
         this.task = task;
     }
 
     public TaskProxy getTaskData() {
-        if (getTask() == null){
+        if (getTask() == null) {
             return null;
         } else {
-            return getTask().getTaskData();
+            return getTask().getTaskProxy();
         }
     }
-    public void startTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
-        if (!getRoles().contains(role)){
+
+    public void assignTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
+        if (!getRoles().contains(role)) {
             throw new IncorrectRoleException("User does not have the given role");
         }
         if (getTask() != null) {
             if (getTaskData().getStatus() == Status.PENDING) {
-                getTask().stopPending(this);
+                getTask().unassignUser(this);
             } else {
                 throw new IncorrectTaskStatusException("Task should be pending to be started");
             }
@@ -69,7 +69,7 @@ public class User {
         setTask(task);
     }
 
-    public void endTask(){
+    public void endTask() {
         setTask(null);
     }
 }

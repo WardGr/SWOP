@@ -1,15 +1,8 @@
 package Domain.TaskStates;
 
-import Domain.IncorrectTaskStatusException;
 import Domain.Status;
 
 public class UnavailableState implements TaskState {
-
-    @Override
-    public void updateAvailabilityNextTask(Task task, Task nextTask) {
-        nextTask.setState(new UnavailableState());
-        // If this state is not finished, then the next one should be unavailable
-    }
 
     @Override
     public void updateAvailability(Task task) {
@@ -31,7 +24,7 @@ public class UnavailableState implements TaskState {
     }
 
     public void addPreviousTask(Task task, Task previousTask) throws LoopDependencyGraphException {
-        if (safeAddPrevTask(task, previousTask)) {
+        if (canSafelyAddPrevTask(task, previousTask)) {
             task.addPreviousTaskDirectly(previousTask);
             previousTask.addNextTaskDirectly(task);
         } else {
@@ -46,13 +39,13 @@ public class UnavailableState implements TaskState {
         updateAvailability(task);
     }
 
-    public boolean safeAddPrevTask(Task task, Task prevTask){
+    public boolean canSafelyAddPrevTask(Task task, Task prevTask) {
         return !task.getAllNextTasks().contains(prevTask);
     }
 
-    public boolean safeAddPrevTask(Task task, String prevTaskName){
-        for (Task nextTask : task.getAllNextTasks()){
-            if (nextTask.getName().equals(prevTaskName)){
+    public boolean canSafelyAddPrevTask(Task task, String prevTaskName) {
+        for (Task nextTask : task.getAllNextTasks()) {
+            if (nextTask.getName().equals(prevTaskName)) {
                 return false;
             }
         }

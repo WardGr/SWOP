@@ -12,7 +12,6 @@ public class UserInterface {
     private final ShowProjectsUI showProjectsUI;
     private final CreateProjectUI createProjectUI;
     private final CreateTaskUI createTaskUI;
-    private final UpdateTaskUI updateTaskUI;
     private final AdvanceTimeUI advanceTimeUI;
     private final LoadSystemUI loadSystemUI;
     private final StartTaskUI startTaskUI;
@@ -26,7 +25,6 @@ public class UserInterface {
             ShowProjectsUI showProjectsUI,
             CreateTaskUI createTaskUI,
             LoadSystemUI loadSystemUI,
-            UpdateTaskUI updateTaskUI,
             StartTaskUI startTaskUI,
             EndTaskUI endTaskUI,
             UpdateDependenciesUI updateDependenciesUI
@@ -37,7 +35,6 @@ public class UserInterface {
         this.showProjectsUI = showProjectsUI;
         this.createTaskUI = createTaskUI;
         this.loadSystemUI = loadSystemUI;
-        this.updateTaskUI = updateTaskUI;
         this.startTaskUI = startTaskUI;
         this.endTaskUI = endTaskUI;
         this.updateDependenciesUI = updateDependenciesUI;
@@ -73,7 +70,6 @@ public class UserInterface {
             case "showprojects" -> showProjectsUI.showProjects();
             case "createproject" -> createProjectUI.createProject();
             case "createtask" -> createTaskUI.createTask();
-            case "updatetask" -> updateTaskUI.updateTaskStatus();
             case "advancetime" -> advanceTimeUI.advanceTime();
             case "loadsystem" -> loadSystemUI.loadSystem();
             case "starttask" -> startTaskUI.startTask();

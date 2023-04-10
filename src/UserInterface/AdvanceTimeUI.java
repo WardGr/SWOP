@@ -2,8 +2,9 @@ package UserInterface;
 
 import Application.AdvanceTimeController;
 import Application.IncorrectPermissionException;
-import Application.Session;
-import Domain.*;
+import Domain.InvalidTimeException;
+import Domain.NewTimeBeforeSystemTimeException;
+import Domain.Time;
 
 import java.util.Scanner;
 
@@ -45,8 +46,8 @@ public class AdvanceTimeUI {
 
         Time systemTime = getController().getSystemTime();
 
-        while(true) {
-            try{
+        while (true) {
+            try {
                 System.out.println("Current system time is: " + systemTime.toString());
                 System.out.println("Type BACK to cancel advancing the system time any time");
                 System.out.println("Do you want to advance the clock with a certain amount of minutes or choose a new timestamp");
@@ -69,11 +70,9 @@ public class AdvanceTimeUI {
                     newTime(scanner);
                 }
                 return;
-            }
-            catch (InvalidTimeException e) {
+            } catch (InvalidTimeException e) {
                 System.out.println("ERROR: the chosen time is not valid");
-            }
-            catch (NewTimeBeforeSystemTimeException e) {
+            } catch (NewTimeBeforeSystemTimeException e) {
                 System.out.println("ERROR: The chosen time is before the system time");
             }
         }

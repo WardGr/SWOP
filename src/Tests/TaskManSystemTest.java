@@ -3,14 +3,6 @@ package Tests;
 import Domain.*;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-
 public class TaskManSystemTest {
     @Test
     public void testTaskManSystem() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, FailTimeAfterSystemTimeException, IncorrectUserException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {

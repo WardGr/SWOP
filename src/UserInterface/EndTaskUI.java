@@ -18,12 +18,12 @@ public class EndTaskUI {
         return controller;
     }
 
-    public void endTask(){
-        if (!getController().endTaskPreconditions()){
+    public void endTask() {
+        if (!getController().endTaskPreconditions()) {
             System.out.println("ERROR: You need a developer role to call this function.");
             return;
         }
-        if (getController().getUserTaskData() == null || getController().getUserTaskData().getStatus() == Status.PENDING){
+        if (getController().getUserTaskData() == null || getController().getUserTaskData().getStatus() == Status.PENDING) {
             System.out.println("ERROR: You are currently not working on an executing task.");
             return;
         }
@@ -72,10 +72,10 @@ public class EndTaskUI {
     }
 
 
-    private void printExecutingTask(){
+    private void printExecutingTask() {
         System.out.print("You are currently working on task: ");
         TaskProxy executingTaskData = getController().getUserTaskData();
-        if (executingTaskData != null){
+        if (executingTaskData != null) {
             System.out.println(executingTaskData.getName() + ", belonging to project: " + executingTaskData.getProjectName());
         } else {
             System.out.println("You are currently not executing a task.");

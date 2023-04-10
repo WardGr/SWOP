@@ -3,7 +3,7 @@ package Application;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskProxy;
-import Domain.TaskStates.UserAlreadyExecutingTaskException;
+import Domain.TaskStates.UserAlreadyAssignedToTaskException;
 
 import java.util.Set;
 
@@ -19,58 +19,54 @@ public class StartTaskController {
         this.taskManSystem = taskManSystem;
     }
 
-    private SessionWrapper getSession(){
+    private SessionWrapper getSession() {
         return session;
     }
 
-    private TaskManSystem getTaskManSystem(){
+    private TaskManSystem getTaskManSystem() {
         return taskManSystem;
     }
 
-    public boolean startTaskPreconditions(){
+    public boolean startTaskPreconditions() {
         return (getSession().getRoles().contains(Role.PYTHONPROGRAMMER) ||
-            getSession().getRoles().contains(Role.JAVAPROGRAMMER) ||
-            getSession().getRoles().contains(Role.SYSADMIN));
+                getSession().getRoles().contains(Role.JAVAPROGRAMMER) ||
+                getSession().getRoles().contains(Role.SYSADMIN));
     }
-    public TaskProxy getUserTaskData(){
+
+    public TaskProxy getUserTaskData() {
         return getSession().getCurrentUser().getTaskData();
     }
 
-    public void startTask(String projectName, String taskName, Role role) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
-        if (!startTaskPreconditions()){
+    public void startTask(String projectName, String taskName, Role role) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+        if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException(""); // TODO
         }
         getTaskManSystem().startTask(projectName, taskName, getSession().getCurrentUser(), role);
     }
 
 
-
-
-
-
-
     public TaskManSystemProxy getTaskManSystemData() throws IncorrectPermissionException {
-        if (!startTaskPreconditions()){
+        if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         return getTaskManSystem().getTaskManSystemData();
     }
 
     public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
-        if (!startTaskPreconditions()){
+        if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         return getTaskManSystem().getProjectData(projectName);
     }
 
     public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
-        if (!startTaskPreconditions()){
+        if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         return getTaskManSystem().getTaskData(projectName, taskName);
     }
 
-    public Set<Role> getUserRoles(){
+    public Set<Role> getUserRoles() {
         return getSession().getRoles();
     }
 }

@@ -3,7 +3,6 @@ package Tests;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
-import Domain.TaskStates.Task;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -325,48 +324,48 @@ public class ProjectTest {
         assertThrows(LoopDependencyGraphException.class, () -> project1.addPreviousTask("Task 2", "Task 2"));
 
 
-        assertFalse(project1.getTaskData("Task 1").safeAddPrevTask("Task 1"));
-        assertFalse(project1.getTaskData("Task 1").safeAddPrevTask("Task 2"));
-        assertTrue(project1.getTaskData("Task 1").safeAddPrevTask("Task 3"));
-        assertTrue(project1.getTaskData("Task 1").safeAddPrevTask("Task 4"));
+        assertFalse(project1.getTaskData("Task 1").canSafelyAddPrevTask("Task 1"));
+        assertFalse(project1.getTaskData("Task 1").canSafelyAddPrevTask("Task 2"));
+        assertTrue(project1.getTaskData("Task 1").canSafelyAddPrevTask("Task 3"));
+        assertTrue(project1.getTaskData("Task 1").canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(project1.getTaskData("Task 2").safeAddPrevTask("Task 1"));
-        assertFalse(project1.getTaskData("Task 2").safeAddPrevTask("Task 2"));
-        assertTrue(project1.getTaskData("Task 2").safeAddPrevTask("Task 3"));
-        assertTrue(project1.getTaskData("Task 2").safeAddPrevTask("Task 4"));
+        assertTrue(project1.getTaskData("Task 2").canSafelyAddPrevTask("Task 1"));
+        assertFalse(project1.getTaskData("Task 2").canSafelyAddPrevTask("Task 2"));
+        assertTrue(project1.getTaskData("Task 2").canSafelyAddPrevTask("Task 3"));
+        assertTrue(project1.getTaskData("Task 2").canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(project1.getTaskData("Task 3").safeAddPrevTask("Task 1"));
-        assertTrue(project1.getTaskData("Task 3").safeAddPrevTask("Task 2"));
-        assertFalse(project1.getTaskData("Task 3").safeAddPrevTask("Task 3"));
-        assertFalse(project1.getTaskData("Task 3").safeAddPrevTask("Task 4"));
+        assertTrue(project1.getTaskData("Task 3").canSafelyAddPrevTask("Task 1"));
+        assertTrue(project1.getTaskData("Task 3").canSafelyAddPrevTask("Task 2"));
+        assertFalse(project1.getTaskData("Task 3").canSafelyAddPrevTask("Task 3"));
+        assertFalse(project1.getTaskData("Task 3").canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(project1.getTaskData("Task 4").safeAddPrevTask("Task 1"));
-        assertTrue(project1.getTaskData("Task 4").safeAddPrevTask("Task 2"));
-        assertTrue(project1.getTaskData("Task 4").safeAddPrevTask("Task 3"));
-        assertFalse(project1.getTaskData("Task 4").safeAddPrevTask("Task 4"));
+        assertTrue(project1.getTaskData("Task 4").canSafelyAddPrevTask("Task 1"));
+        assertTrue(project1.getTaskData("Task 4").canSafelyAddPrevTask("Task 2"));
+        assertTrue(project1.getTaskData("Task 4").canSafelyAddPrevTask("Task 3"));
+        assertFalse(project1.getTaskData("Task 4").canSafelyAddPrevTask("Task 4"));
 
         project1.addNextTask("Task 2", "Task 3");
         project1.addPreviousTask("Task 4", "Task 1");
 
-        assertFalse(project1.getTaskData("Task 1").safeAddPrevTask("Task 1"));
-        assertFalse(project1.getTaskData("Task 1").safeAddPrevTask("Task 2"));
-        assertFalse(project1.getTaskData("Task 1").safeAddPrevTask("Task 3"));
-        assertFalse(project1.getTaskData("Task 1").safeAddPrevTask("Task 4"));
+        assertFalse(project1.getTaskData("Task 1").canSafelyAddPrevTask("Task 1"));
+        assertFalse(project1.getTaskData("Task 1").canSafelyAddPrevTask("Task 2"));
+        assertFalse(project1.getTaskData("Task 1").canSafelyAddPrevTask("Task 3"));
+        assertFalse(project1.getTaskData("Task 1").canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(project1.getTaskData("Task 2").safeAddPrevTask("Task 1"));
-        assertFalse(project1.getTaskData("Task 2").safeAddPrevTask("Task 2"));
-        assertFalse(project1.getTaskData("Task 2").safeAddPrevTask("Task 3"));
-        assertFalse(project1.getTaskData("Task 2").safeAddPrevTask("Task 4"));
+        assertTrue(project1.getTaskData("Task 2").canSafelyAddPrevTask("Task 1"));
+        assertFalse(project1.getTaskData("Task 2").canSafelyAddPrevTask("Task 2"));
+        assertFalse(project1.getTaskData("Task 2").canSafelyAddPrevTask("Task 3"));
+        assertFalse(project1.getTaskData("Task 2").canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(project1.getTaskData("Task 3").safeAddPrevTask("Task 1"));
-        assertTrue(project1.getTaskData("Task 3").safeAddPrevTask("Task 2"));
-        assertFalse(project1.getTaskData("Task 3").safeAddPrevTask("Task 3"));
-        assertFalse(project1.getTaskData("Task 3").safeAddPrevTask("Task 4"));
+        assertTrue(project1.getTaskData("Task 3").canSafelyAddPrevTask("Task 1"));
+        assertTrue(project1.getTaskData("Task 3").canSafelyAddPrevTask("Task 2"));
+        assertFalse(project1.getTaskData("Task 3").canSafelyAddPrevTask("Task 3"));
+        assertFalse(project1.getTaskData("Task 3").canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(project1.getTaskData("Task 4").safeAddPrevTask("Task 1"));
-        assertTrue(project1.getTaskData("Task 4").safeAddPrevTask("Task 2"));
-        assertTrue(project1.getTaskData("Task 4").safeAddPrevTask("Task 3"));
-        assertFalse(project1.getTaskData("Task 4").safeAddPrevTask("Task 4"));
+        assertTrue(project1.getTaskData("Task 4").canSafelyAddPrevTask("Task 1"));
+        assertTrue(project1.getTaskData("Task 4").canSafelyAddPrevTask("Task 2"));
+        assertTrue(project1.getTaskData("Task 4").canSafelyAddPrevTask("Task 3"));
+        assertFalse(project1.getTaskData("Task 4").canSafelyAddPrevTask("Task 4"));
 
         assertThrows(LoopDependencyGraphException.class, () -> project1.addPreviousTask("Task 1", "Task 1"));
         assertThrows(LoopDependencyGraphException.class, () -> project1.addNextTask("Task 1", "Task 1"));
@@ -376,10 +375,6 @@ public class ProjectTest {
         project1.addPreviousTask("Task 2", "Task 1");
         project1.addNextTask("Task 1", "Task 2");
         project1.addNextTask("Task 1", "Task 3");
-
-
-
-
 
 
     }

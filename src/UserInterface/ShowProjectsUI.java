@@ -1,14 +1,11 @@
 package UserInterface;
 
 import Application.IncorrectPermissionException;
-import Application.Session;
 import Application.ShowProjectsController;
 import Domain.*;
-import Domain.TaskStates.Task;
 import Domain.TaskStates.TaskProxy;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -177,34 +174,34 @@ public class ShowProjectsUI {
         System.out.println("Status:               " + taskData.getStatus().toString() + "\n");
 
         System.out.print("Replacement Task:   ");
-        if (taskData.getReplacementTaskName() == null){
+        if (taskData.getReplacementTaskName() == null) {
             System.out.println("No replacement task");
         } else {
             System.out.println(taskData.getReplacementTaskName());
         }
         System.out.print("Replaces Task:      ");
-        if (taskData.getReplacesTaskName() == null){
+        if (taskData.getReplacesTaskName() == null) {
             System.out.println("Replaces no tasks\n");
         } else {
             System.out.println(taskData.getReplacesTaskName() + '\n');
         }
 
         System.out.print("Start Time:         ");
-        if (taskData.getStartTime() == null){
+        if (taskData.getStartTime() == null) {
             System.out.println("Task has not started yet");
         } else {
             System.out.println(taskData.getStartTime().toString());
         }
         System.out.print("End Time:           ");
-        if (taskData.getEndTime() == null){
+        if (taskData.getEndTime() == null) {
             System.out.println("Task has not ended yet\n");
         } else {
             System.out.println(taskData.getEndTime().toString() + '\n');
         }
 
         System.out.println("Required roles:");
-        if (taskData.getRequiredRoles().size() > 0){
-            for (Role role : taskData.getRequiredRoles()){
+        if (taskData.getRequiredRoles().size() > 0) {
+            for (Role role : taskData.getRequiredRoles()) {
                 System.out.println("- " + role.toString());
             }
         } else {
@@ -213,7 +210,7 @@ public class ShowProjectsUI {
         System.out.println();
 
         System.out.println("Committed users:");
-        if (taskData.getUserNamesWithRole().size() > 0){
+        if (taskData.getUserNamesWithRole().size() > 0) {
             taskData.getUserNamesWithRole().forEach((userName, role) -> System.out.println("- " + userName + " as " + role.toString()));
         } else {
             System.out.println("No users are committed to this task.");
@@ -222,7 +219,7 @@ public class ShowProjectsUI {
 
 
         System.out.println("Next tasks:");
-        if (taskData.getNextTasksNames().size() > 0){
+        if (taskData.getNextTasksNames().size() > 0) {
             int i = 1;
             for (String nextTaskName : taskData.getNextTasksNames()) {
                 System.out.println(i++ + ". " + nextTaskName);

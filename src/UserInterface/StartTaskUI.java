@@ -5,8 +5,7 @@ import Application.StartTaskController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskProxy;
-import Domain.TaskStates.UserAlreadyExecutingTaskException;
-import org.junit.Test;
+import Domain.TaskStates.UserAlreadyAssignedToTaskException;
 
 import java.util.List;
 import java.util.Scanner;
@@ -24,19 +23,19 @@ public class StartTaskUI {
         return controller;
     }
 
-    public void startTask(){
-        if (!getController().startTaskPreconditions()){
+    public void startTask() {
+        if (!getController().startTaskPreconditions()) {
             System.out.println("ERROR: You need a developer role to call this function.");
             return;
         }
-        if (getController().getUserTaskData() != null && getController().getUserTaskData().getStatus() == Status.EXECUTING){
+        if (getController().getUserTaskData() != null && getController().getUserTaskData().getStatus() == Status.EXECUTING) {
             System.out.println("ERROR: You are already working on an executing task.");
             return;
         }
 
         Scanner scanner = new Scanner(System.in);
 
-        while(true) {
+        while (true) {
 
             printTasksList();
 
@@ -57,7 +56,7 @@ public class StartTaskUI {
             try {
                 TaskProxy taskData = getController().getTaskData(projectName, taskName);
 
-                if (taskData.getStatus() != Status.AVAILABLE && taskData.getStatus() != Status.PENDING){
+                if (taskData.getStatus() != Status.AVAILABLE && taskData.getStatus() != Status.PENDING) {
                     System.out.println("ERROR: The given task is not available or pending");
                     break;
                 }
@@ -86,7 +85,7 @@ public class StartTaskUI {
                 }
 
                 Role role = null;
-                while(role == null){
+                while (role == null) {
                     System.out.println("Give the role you want to fulfill in task " + taskName + ":");
                     String roleString = scanner.nextLine();
                     if (roleString.equals("BACK")) {
@@ -100,7 +99,7 @@ public class StartTaskUI {
                         case ("python programmer") -> role = Role.PYTHONPROGRAMMER;
                         default -> System.out.println("Unrecognized developer role");
                     }
-                    if (role != null && !taskData.getRequiredRoles().contains(role)){
+                    if (role != null && !taskData.getRequiredRoles().contains(role)) {
                         System.out.println("ERROR: The given role is not required in this task.");
                         role = null;
                     }
@@ -182,14 +181,14 @@ public class StartTaskUI {
                 System.out.println("ERROR: " + e.getMessage());
             } catch (IncorrectTaskStatusException e) {
                 System.out.println("ERROR: Given state has not the right status to start");
-            } catch (UserAlreadyExecutingTaskException e) {
+            } catch (UserAlreadyAssignedToTaskException e) {
                 System.out.println("ERROR: User is already executing a task");
             }
         }
     }
 
 
-    private void printTasksList(){
+    private void printTasksList() {
         System.out.println("***** LIST OF AVAILABLE OR PENDING TASKS *****");
         try {
             for (String projectName : getController().getTaskManSystemData().getProjectNames()) {
@@ -231,15 +230,15 @@ public class StartTaskUI {
         System.out.println("Status:               " + taskData.getStatus().toString() + "\n");
 
         System.out.print("Replaces Task:      ");
-        if (taskData.getReplacesTaskName() == null){
+        if (taskData.getReplacesTaskName() == null) {
             System.out.println("Replaces no tasks\n");
         } else {
             System.out.println(taskData.getReplacesTaskName() + '\n');
         }
 
         System.out.println("Required roles:");
-        if (taskData.getRequiredRoles().size() > 0){
-            for (Role role : taskData.getRequiredRoles()){
+        if (taskData.getRequiredRoles().size() > 0) {
+            for (Role role : taskData.getRequiredRoles()) {
                 System.out.println("- " + role.toString());
             }
         } else {
@@ -248,7 +247,7 @@ public class StartTaskUI {
         System.out.println();
 
         System.out.println("Committed users:");
-        if (taskData.getUserNamesWithRole().size() > 0){
+        if (taskData.getUserNamesWithRole().size() > 0) {
             taskData.getUserNamesWithRole().forEach((userName, role) -> System.out.println("- " + userName + " as " + role.toString()));
         } else {
             System.out.println("No users are committed to this task.");

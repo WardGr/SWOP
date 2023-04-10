@@ -1,6 +1,6 @@
 package Domain.TaskStates;
 
-public class FinishedOnTimeState extends FinishedState{
+public class FinishedOnTimeState extends FinishedState {
 
     @Override
     public String toString() {

@@ -1,10 +1,8 @@
 package UserInterface;
 
-import Application.Session;
 import Application.SessionController;
 import Domain.LoginException;
 import Domain.Role;
-import Domain.UserManager;
 
 import java.util.Scanner;
 import java.util.Set;
@@ -60,8 +58,8 @@ public class SessionUI {
             try {
                 Set<Role> roles = getController().login(username, password);
                 StringBuilder showRoles = new StringBuilder();
-                for (Role role : roles){
-                    if (showRoles.length() > 0){
+                for (Role role : roles) {
+                    if (showRoles.length() > 0) {
                         showRoles.append(", ");
                     }
                     showRoles.append(role.toString());

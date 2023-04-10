@@ -2,7 +2,6 @@ package UserInterface;
 
 import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
-import Application.Session;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
@@ -198,7 +197,7 @@ public class CreateTaskUI {
                     System.out.println("Cancelled task creation");
                     return;
                 }
-                while(!role.equals(".")){
+                while (!role.equals(".")) {
                     switch (role) {
                         case ("sysadmin") -> roles.add(Role.SYSADMIN);
                         case ("java programmer") -> roles.add(Role.JAVAPROGRAMMER);
@@ -282,16 +281,16 @@ public class CreateTaskUI {
         }
     }
 
-    private void printOngoingProjects(){
+    private void printOngoingProjects() {
         System.out.println("-- Ongoing Projects --");
         List<String> ongoingProjectsNames = getController().getTaskManSystemData().getProjectNames();
-        ongoingProjectsNames.removeIf( e -> {
-                try {
-                    return getController().getProjectData(e).getStatus() == ProjectStatus.FINISHED;
-                } catch (ProjectNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
+        ongoingProjectsNames.removeIf(e -> {
+            try {
+                return getController().getProjectData(e).getStatus() == ProjectStatus.FINISHED;
+            } catch (ProjectNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         if (ongoingProjectsNames.size() > 0) {
             for (String projectName : ongoingProjectsNames) {
                 System.out.println(" - " + projectName);
@@ -304,8 +303,8 @@ public class CreateTaskUI {
     private void printActiveFailedTasks(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
         System.out.println("-- Tasks that can be replaced --");
 
-        for (String taskName : getController().getProjectData(projectName).getActiveTasksNames()){
-            if (getController().getTaskData(projectName, taskName).getStatus() == Status.FAILED){
+        for (String taskName : getController().getProjectData(projectName).getActiveTasksNames()) {
+            if (getController().getTaskData(projectName, taskName).getStatus() == Status.FAILED) {
                 System.out.println(" - " + taskName);
             }
         }

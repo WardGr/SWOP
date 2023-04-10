@@ -1,13 +1,9 @@
 package Tests;
 
-import Application.AdvanceTimeController;
 import Application.IncorrectPermissionException;
-import Application.Session;
-import Application.SessionWrapper;
-import Domain.*;
+import Domain.InvalidTimeException;
+import Domain.NewTimeBeforeSystemTimeException;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class AdvanceTimeControllerTest {
 

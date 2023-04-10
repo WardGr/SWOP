@@ -1,20 +1,6 @@
 package Tests;
 
-import Application.AdvanceTimeController;
-import Application.Session;
-import Application.SessionWrapper;
-import Domain.Role;
-import Domain.TaskManSystem;
-import Domain.Time;
-import Domain.User;
-import UserInterface.AdvanceTimeUI;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
-import static org.junit.Assert.assertEquals;
 
 public class AdvanceTimeUITest {
     @Test

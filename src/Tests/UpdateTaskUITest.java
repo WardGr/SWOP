@@ -1,18 +1,7 @@
 package Tests;
 
-import Application.Session;
-import Application.SessionWrapper;
-import Application.UpdateTaskController;
 import Domain.*;
-import UserInterface.UpdateTaskUI;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.LinkedList;
-
-import static org.junit.Assert.assertEquals;
 
 public class UpdateTaskUITest {
     @Test

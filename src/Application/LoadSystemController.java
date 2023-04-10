@@ -57,7 +57,7 @@ public class LoadSystemController {
         JSONObject doc = (JSONObject) jsonParser.parse(reader);
         getTaskManSystem().clear();
         // TODO is dit goed om de tasks ook uit user te halen? zowel getUsers als setTask heb ik public moeten maken
-        for (User user : getUserManager().getUsers()){
+        for (User user : getUserManager().getUsers()) {
             user.setTask(null);
         }
 
@@ -131,14 +131,14 @@ public class LoadSystemController {
             int endHour = (int) (long) task.get("endHour");
             int endMinute = (int) (long) task.get("endMinute");
             //getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
-            getTaskManSystem().endTask(projectName, name, Status.FINISHED, new Time(endHour, endMinute), user);
+            getTaskManSystem().finishTask(projectName, name, user);
         } else if (status.equals("FAILED")) {
             int startHour = (int) (long) task.get("startHour");
             int startMinute = (int) (long) task.get("startMinute");
             int endHour = (int) (long) task.get("endHour");
             int endMinute = (int) (long) task.get("endMinute");
             //getTaskManSystem().startTask(projectName, name, new Time(startHour, startMinute), user);
-            getTaskManSystem().endTask(projectName, name, Status.FAILED, new Time(endHour, endMinute), user);
+            getTaskManSystem().failTask(projectName, name, user);
         }
     }
 
