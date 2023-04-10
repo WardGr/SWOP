@@ -264,8 +264,7 @@ public class TaskManSystem {
      * @param newTime Time which to change the system time to
      * @throws NewTimeBeforeSystemTimeException if the given time is before the current system time
      */
-    public void advanceTime(Time newTime)
-            throws NewTimeBeforeSystemTimeException {
+    public void advanceTime(Time newTime) throws NewTimeBeforeSystemTimeException {
         if (newTime.before(getSystemTime())) {
             throw new NewTimeBeforeSystemTimeException();
         }
@@ -279,9 +278,6 @@ public class TaskManSystem {
      * @throws NewTimeBeforeSystemTimeException if advanceMinutes < 0
      */
     public void advanceTime(int advanceMinutes) throws NewTimeBeforeSystemTimeException {
-        if (advanceMinutes < 0) {
-            throw new NewTimeBeforeSystemTimeException();
-        }
         try {
             advanceTime(new Time(advanceMinutes).add(getSystemTime()));
         } catch (InvalidTimeException e) {

@@ -12,6 +12,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -24,7 +26,13 @@ public class UserTest {
     private Task task;
 
     @Mock
+    private Task task2;
+
+    @Mock
     private TaskProxy taskProxy;
+
+    @Mock
+    private TaskProxy taskProxy2;
 
 
     // Mockito makes it so we only have to specify specific functions (Getters etc) from the mocked classes,
@@ -33,6 +41,7 @@ public class UserTest {
     public void setUp() {
         // See startTask, taskProxy moet PENDING status returnen.
         Mockito.when(task.getTaskProxy()).thenReturn(taskProxy);
+        Mockito.when(task2.getTaskProxy()).thenReturn(taskProxy2);
         Mockito.when(taskProxy.getStatus()).thenReturn(Status.EXECUTING);
     }
 
@@ -60,33 +69,31 @@ public class UserTest {
         assertEquals(roles, jonathan.getRoles());
         assertFalse(jonathan.getRoles().contains(Role.SYSADMIN));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new User(null, null, null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new User(null, null, null));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new User("Fiona", "hoi123", null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new User("Fiona", "hoi123", null));
 
-        assertThrows(IllegalArgumentException.class, () -> {
-            new User("Fiona", null, roles);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new User("Fiona", null, roles));
 
         Set<Role> emptyRoles = new HashSet<>();
-        assertThrows(IllegalArgumentException.class, () -> {
-            new User("Fiona", "hoi123", emptyRoles);
-        });
+        assertThrows(IllegalArgumentException.class, () -> new User("Fiona", "hoi123", emptyRoles));
 
-        assertThrows(IncorrectRoleException.class, () -> {
-            jonathan.assignTask(task, Role.SYSADMIN);
-        });
+        assertThrows(IncorrectRoleException.class, () -> jonathan.assignTask(task, Role.SYSADMIN));
 
         jonathan.assignTask(task, Role.PROJECTMANAGER);
         // Jonathan is now assigned to this task, so it is not pending anymore
 
-        assertThrows(IncorrectTaskStatusException.class, () -> {
-            jonathan.assignTask(task, Role.PROJECTMANAGER);
-        });
+        assertThrows(UserAlreadyAssignedToTaskException.class, () -> jonathan.assignTask(task, Role.PROJECTMANAGER));
+
+        Mockito.when(taskProxy.getStatus()).thenReturn(Status.PENDING);
+        jonathan.assignTask(task2, Role.PROJECTMANAGER);
+        // This should unassign jonathan to the pending task, and assign task as its current task
+
+        assertEquals(taskProxy2, jonathan.getTaskData());
+
+
+        jonathan.endTask();
+        assertNull(jonathan.getTaskData());
 
     }
 }

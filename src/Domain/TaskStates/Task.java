@@ -39,7 +39,7 @@ public class Task {
      * @param estimatedDuration   Estimated duration of the new task
      * @param acceptableDeviation Acceptable deviation from the duration
      */
-    private Task(
+    public Task(
             String name,
             String description,
             Time estimatedDuration,
@@ -296,20 +296,14 @@ public class Task {
     /**
      * Semantically replaces this (failed) task with a task created with the given task details
      *
-     * @param taskName    Name of the replacing task
-     * @param description Description of the replacing task
-     * @param duration    Duration of the replacing task
-     * @param deviation   Acceptable deviation of the replacing task
+     * @param replacement The task to replace this task with
      * @throws IncorrectTaskStatusException if this task hasn't failed yet
      * @pre duration is a valid time-object
      * @post all previous tasks of this task are now assigned before the new task
      * @post all next tasks of this task are now assigned after the new task
      */
-    public Task replaceTask(String taskName, String description, Time duration, double deviation) throws IncorrectTaskStatusException {
-        Task replacement = new Task(taskName, description, duration, deviation);
-
+    public Task replaceTask(Task replacement) throws IncorrectTaskStatusException {
         getState().replaceTask(this, replacement);
-
         return replacement;
     }
 

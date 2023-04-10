@@ -8,8 +8,10 @@ import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.TaskStates.IncorrectRoleException;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -17,7 +19,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.*;
 
 import static org.junit.Assert.*;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaskTest {
@@ -46,6 +47,7 @@ public class TaskTest {
     private Task task2;
     private Task task3;
     private Task task4;
+    private Task replacementTask;
 
 
     @Before
@@ -56,6 +58,8 @@ public class TaskTest {
         this.prevTask = new Task("Previous Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER), Set.of(), Set.of(), project1);
         this.currentTask = new Task("Current Task", "Test", new Time(100), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), Set.of(prevTask), Set.of(), project1);
         this.nextTask = new Task("Next Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN), Set.of(currentTask), Set.of(), project1);
+
+        this.replacementTask = new Task("Replacement Task", "", new Time(20), 0);
 
 
         // Loop dependency check tasks
@@ -150,7 +154,7 @@ public class TaskTest {
         assertThrows(IncorrectTaskStatusException.class, () -> prevTask.finish(pythonProg, new Time(0)));
         assertThrows(IncorrectTaskStatusException.class, () -> prevTask.fail(pythonProg, new Time(0)));
         assertThrows(IncorrectTaskStatusException.class, () -> prevTask.unassignUser(pythonProg));
-        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.replaceTask("", "", new Time(0), 0));
+        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.replaceTask(task));
 
         // Checks if the next task becomes available once prevTask is finished
         assertEquals(Status.AVAILABLE, currentTask.getStatus());
@@ -190,11 +194,8 @@ public class TaskTest {
         assertEquals(Status.FAILED, currentTask.getStatus());
         assertEquals(Status.UNAVAILABLE, nextTask.getStatus());
 
-        currentTask.replaceTask("Replacement Task", "", new Time(20), 0);
-    }
+        currentTask.replaceTask(replacementTask);
 
-    @Test
-    public void testTaskProxy() throws InvalidTimeException, IncorrectTaskStatusException, LoopDependencyGraphException {
         Task replacementTask = currentTask.getReplacementTask();
 
         // TASK PROXY REPLACED TASK

@@ -61,6 +61,7 @@ public class User {
         }
         if (getTask() != null) {
             if (getTaskData().getStatus() == Status.PENDING) {
+                // We will now switch tasks
                 getTask().unassignUser(this);
             } else {
                 throw new UserAlreadyAssignedToTaskException();
