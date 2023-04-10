@@ -3,7 +3,7 @@ package Application;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskProxy;
-import Domain.TaskStates.UserAlreadyAssignedToTaskException;
+import Domain.UserAlreadyAssignedToTaskException;
 
 import java.util.Set;
 

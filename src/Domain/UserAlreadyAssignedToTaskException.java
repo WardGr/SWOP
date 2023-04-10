@@ -1,4 +1,4 @@
-package Domain.TaskStates;
+package Domain;
 
 public class UserAlreadyAssignedToTaskException extends Exception {
 

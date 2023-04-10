@@ -10,7 +10,7 @@ public class AvailableState implements TaskState {
     }
 
     @Override
-    public void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
+    public void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         if (!task.getRequiredRoles().contains(role)) {
             throw new IncorrectRoleException("Given role is not required in the task");
         }

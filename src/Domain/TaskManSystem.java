@@ -3,7 +3,6 @@ package Domain;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
-import Domain.TaskStates.UserAlreadyAssignedToTaskException;
 
 import java.util.*;
 

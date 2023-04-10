@@ -5,7 +5,7 @@ import Application.StartTaskController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskProxy;
-import Domain.TaskStates.UserAlreadyAssignedToTaskException;
+import Domain.UserAlreadyAssignedToTaskException;
 
 import java.util.List;
 import java.util.Scanner;

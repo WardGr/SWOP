@@ -9,9 +9,6 @@ public class PendingState implements TaskState {
         if (!task.getRequiredRoles().contains(role)) {
             throw new IncorrectRoleException("Given role is not required in this task");
         }
-        if (task.getUsers().contains(currentUser)) {
-            throw new UserAlreadyAssignedToTaskException();
-        }
         for (Task prevTask : task.getPreviousTasks()) {
             if (prevTask.getEndTime() == null || prevTask.getEndTime().after(startTime)) {
                 throw new IncorrectTaskStatusException("Start time is before end time previous task");

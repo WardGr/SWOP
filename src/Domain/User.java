@@ -55,7 +55,7 @@ public class User {
         }
     }
 
-    public void assignTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
+    public void assignTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         if (!getRoles().contains(role)) {
             throw new IncorrectRoleException("User does not have the given role");
         }
@@ -63,7 +63,7 @@ public class User {
             if (getTaskData().getStatus() == Status.PENDING) {
                 getTask().unassignUser(this);
             } else {
-                throw new IncorrectTaskStatusException("Task should be pending to be started");
+                throw new UserAlreadyAssignedToTaskException();
             }
         }
         setTask(task);
