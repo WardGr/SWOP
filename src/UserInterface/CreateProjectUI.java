@@ -107,7 +107,7 @@ public class CreateProjectUI {
             }
 
             try {
-                getController().createProject(projectName, projectDescription, dueHour, dueMinute);
+                getController().createProject(projectName, projectDescription, new Time(dueHour, dueMinute));
                 System.out.println("Project with name " + projectName + " created!");
                 return;
             } catch (ProjectNameAlreadyInUseException e) {
