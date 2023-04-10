@@ -1,12 +1,9 @@
 package Tests;
 
-import Domain.IncorrectTaskStatusException;
-import Domain.Role;
-import Domain.Status;
+import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.Task;
 import Domain.TaskStates.TaskProxy;
-import Domain.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +37,7 @@ public class UserTest {
     }
 
     @Test
-    public void testUser() throws IncorrectTaskStatusException, IncorrectRoleException {
+    public void testUser() throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
 
         Set<Role> roles = new HashSet<>();
         roles.add(Role.PROJECTMANAGER);

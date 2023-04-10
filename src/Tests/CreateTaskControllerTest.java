@@ -20,7 +20,7 @@ public class CreateTaskControllerTest {
         omer.login(boss);
         assertTrue(ctc.createTaskPreconditions());
         tms.createProject("project1", "description", new Time(100), new Time(1000));
-        ctc.createTask("project1", "task1", "description", 1, 1, 1, "OlavBl", new LinkedList<>());
+        ctc.createTask("project1", "task", "description", 1, 1, 1, "OlavBl", new LinkedList<>());
         ctc.createTask("project1", "task2", "description", 1, 1, 1, "OlavBl", new LinkedList<>());
         ctc.createTask("project1", "task3", "description", 1, 1, 1, "OlavBl", new LinkedList<>());
         assertEquals("task1", tms.showAvailableTasks().get("project1").get(0));

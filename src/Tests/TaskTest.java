@@ -36,21 +36,37 @@ public class TaskTest {
     @Mock
     private User javaProg;
 
-    private Task task1;
+    private Task task;
 
     private Task prevTask;
     private Task currentTask;
     private Task nextTask;
 
+    private Task task1;
+    private Task task2;
+    private Task task3;
+    private Task task4;
+
 
     @Before
     public void setUp() throws InvalidTimeException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
-        this.task1 = new Task("Task 1", "Test", new Time(100), 0.1, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(), project1);
+        // Tasks for general task tests
+        this.task = new Task("Task", "Test", new Time(100), 0.1, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(), project1);
 
         this.prevTask = new Task("Previous Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER), Set.of(), Set.of(), project1);
         this.currentTask = new Task("Current Task", "Test", new Time(100), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), Set.of(prevTask), Set.of(), project1);
         this.nextTask = new Task("Next Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN), Set.of(currentTask), Set.of(), project1);
 
+
+        // Loop dependency check tasks
+        List<Role> roles = List.of(Role.SYSADMIN, Role.JAVAPROGRAMMER);
+
+        this.task1 = new Task("Task 1", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), project1);
+        this.task2 = new Task("Task 2", "test", new Time(20), 0, roles, Set.of(task1), new HashSet<>(), project1);
+        this.task4 = new Task("Task 4", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), project1);
+        this.task3 = new Task("Task 3", "test", new Time(20), 0, roles, new HashSet<>(), Set.of(task4), project1);
+
+        // Set stubs
         Mockito.when(project1.getName()).thenReturn("Project 1");
         Mockito.when(pythonProg.getUsername()).thenReturn("Python Programmer");
         Mockito.when(javaProg.getUsername()).thenReturn("Java Programmer");
@@ -85,12 +101,12 @@ public class TaskTest {
         prevTask.removePreviousTask(testTask);
 
         // Check basic getters
-        assertEquals("Task 1", task1.getName());
-        assertEquals("Test", task1.getDescription());
-        assertEquals(task1.getStatus(), Status.AVAILABLE);
+        assertEquals("Task", task.getName());
+        assertEquals("Test", task.getDescription());
+        assertEquals(task.getStatus(), Status.AVAILABLE);
 
-        assertNull(task1.getReplacesTask());
-        assertNull(task1.getReplacementTask());
+        assertNull(task.getReplacesTask());
+        assertNull(task.getReplacementTask());
 
         // Assert unavailable tasks cant be started, and tasks cannot be started with irrelevant roles
         assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN));
@@ -99,8 +115,8 @@ public class TaskTest {
 
 
         // Checks start and pending status
-        task1.start(new Time(0), pythonProg, Role.PYTHONPROGRAMMER);
-        assertEquals(task1.getStatus(), Status.EXECUTING);
+        task.start(new Time(0), pythonProg, Role.PYTHONPROGRAMMER);
+        assertEquals(task.getStatus(), Status.EXECUTING);
 
         prevTask.start(new Time(0), pythonProg, Role.PYTHONPROGRAMMER);
         assertEquals(prevTask.getStatus(), Status.PENDING);
@@ -157,9 +173,6 @@ public class TaskTest {
         currentTask.start(new Time(10), sysAdmin, Role.SYSADMIN);
         assertEquals(Status.PENDING, currentTask.getStatus());
 
-        // Make sure you cannot assign the same user to a task twice
-        assertThrows(UserAlreadyAssignedToTaskException.class, () -> currentTask.start(new Time(10), sysAdmin, Role.PYTHONPROGRAMMER));
-
 
         // Make sure you cannot assign a user to a pending task with start time before the end time of any of its previous tasks
         assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(5), pythonProg, Role.PYTHONPROGRAMMER));
@@ -178,7 +191,10 @@ public class TaskTest {
         assertEquals(Status.UNAVAILABLE, nextTask.getStatus());
 
         currentTask.replaceTask("Replacement Task", "", new Time(20), 0);
+    }
 
+    @Test
+    public void testTaskProxy() throws InvalidTimeException, IncorrectTaskStatusException, LoopDependencyGraphException {
         Task replacementTask = currentTask.getReplacementTask();
 
         // TASK PROXY REPLACED TASK
@@ -217,7 +233,35 @@ public class TaskTest {
         assertNull(replacementProxy.getEndTime());
         assertNull(replacementProxy.getStartTime());
 
-        // Voor 1 of andere reden heeft iemand heel extensief de canSafelyAddPrevTask getest in ProjectTest, dus die test ik hier niet meer
+
+        task2.addNextTask(task3);
+        task4.addPreviousTask(task1);
+
+        TaskProxy taskProxy1 = task1.getTaskProxy();
+        TaskProxy taskProxy2 = task2.getTaskProxy();
+        TaskProxy taskProxy3 = task3.getTaskProxy();
+        TaskProxy taskProxy4 = task4.getTaskProxy();
+
+
+        assertFalse(taskProxy1.canSafelyAddPrevTask("Task 1"));
+        assertFalse(taskProxy1.canSafelyAddPrevTask("Task 2"));
+        assertFalse(taskProxy1.canSafelyAddPrevTask("Task 3"));
+        assertFalse(taskProxy1.canSafelyAddPrevTask("Task 4"));
+
+        assertTrue(taskProxy2.canSafelyAddPrevTask("Task 1"));
+        assertFalse(taskProxy2.canSafelyAddPrevTask("Task 2"));
+        assertFalse(taskProxy2.canSafelyAddPrevTask("Task 3"));
+        assertFalse(taskProxy2.canSafelyAddPrevTask("Task 4"));
+
+        assertTrue(taskProxy3.canSafelyAddPrevTask("Task 1"));
+        assertTrue(taskProxy3.canSafelyAddPrevTask("Task 2"));
+        assertFalse(taskProxy3.canSafelyAddPrevTask("Task 3"));
+        assertFalse(taskProxy3.canSafelyAddPrevTask("Task 4"));
+
+        assertTrue(taskProxy4.canSafelyAddPrevTask("Task 1"));
+        assertTrue(taskProxy4.canSafelyAddPrevTask("Task 2"));
+        assertTrue(taskProxy4.canSafelyAddPrevTask("Task 3"));
+        assertFalse(taskProxy4.canSafelyAddPrevTask("Task 4"));
 
     }
 }

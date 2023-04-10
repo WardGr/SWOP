@@ -79,7 +79,7 @@ public class Project {
     /**
      * @return an IMMUTABLE list of all tasks that have been replaced
      */
-    private List<Domain.TaskStates.Task> getReplacedTasks() {
+    private List<Task> getReplacedTasks() {
         return List.copyOf(replacedTasks);
     }
 
@@ -87,7 +87,7 @@ public class Project {
         return projectProxy;
     }
 
-    public Domain.TaskStates.TaskProxy getTaskData(String taskName) throws TaskNotFoundException {
+    public TaskProxy getTaskData(String taskName) throws TaskNotFoundException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
@@ -117,13 +117,13 @@ public class Project {
      * @param selectedTaskName User input, may correspond to a task name
      * @return The (unique) task corresponding with selectedTaskName, or null
      */
-    public Domain.TaskStates.Task getTask(String selectedTaskName) {
-        for (Domain.TaskStates.Task task : getTasks()) {
+    private Task getTask(String selectedTaskName) {
+        for (Task task : getTasks()) {
             if (task.getName().equals(selectedTaskName)) {
                 return task;
             }
         }
-        for (Domain.TaskStates.Task task : getReplacedTasks()) {
+        for (Task task : getReplacedTasks()) {
             if (task.getName().equals(selectedTaskName)) {
                 return task;
             }
