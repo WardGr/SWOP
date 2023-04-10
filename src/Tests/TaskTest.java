@@ -1,7 +1,12 @@
 package Tests;
 
 import Domain.*;
-import Domain.TaskStates.*;
+import Domain.TaskStates.Task;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IncorrectRoleException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,6 +1,7 @@
 package Domain;
 
 import Domain.TaskStates.*;
+import Domain.TaskStates.Task;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -349,8 +350,8 @@ public class Project {
     }
 
     public void addPreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-        Task task = getTask(taskName);
-        Task prevTask = getTask(prevTaskName);
+        Domain.TaskStates.Task task = getTask(taskName);
+        Domain.TaskStates.Task prevTask = getTask(prevTaskName);
         if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
         }
@@ -358,8 +359,8 @@ public class Project {
     }
 
     public void addNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-        Task task = getTask(taskName);
-        Task nextTask = getTask(nextTaskName);
+        Domain.TaskStates.Task task = getTask(taskName);
+        Domain.TaskStates.Task nextTask = getTask(nextTaskName);
         if (task == null || nextTask == null) {
             throw new TaskNotFoundException();
         }
@@ -367,7 +368,7 @@ public class Project {
     }
 
     public void removePreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
-        Task task = getTask(taskName);
+        Domain.TaskStates.Task task = getTask(taskName);
         Task prevTask = getTask(prevTaskName);
         if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
