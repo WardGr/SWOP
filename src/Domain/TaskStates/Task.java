@@ -105,10 +105,10 @@ public class Task {
 
         try {
             for (Task prevTask : prevTasks) {
-                getState().addPreviousTask(this, prevTask);
+                addPreviousTask(prevTask);
             }
             for (Task nextTask : nextTasks) {
-                nextTask.getState().addPreviousTask(nextTask, this);
+                nextTask.addPreviousTask(this);
             }
         } catch (LoopDependencyGraphException e) {
             clearPreviousTasks();
