@@ -289,7 +289,7 @@ public class Task {
      * @throws IncorrectUserException if the user currently logged in is not assigned to the current task
      */
     public void start(Time startTime, User currentUser, Role role)
-            throws IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
+            throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         getState().start(this, startTime, currentUser, role);
     }
 

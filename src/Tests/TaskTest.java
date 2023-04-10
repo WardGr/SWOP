@@ -54,7 +54,7 @@ public class TaskTest {
 
 
     @Test
-    public void testTask() throws InvalidTimeException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyExecutingTaskException, FailTimeAfterSystemTimeException, EndTimeBeforeStartTimeException, IncorrectUserException, LoopDependencyGraphException, NonDeveloperRoleException {
+    public void testTask() throws InvalidTimeException, IncorrectTaskStatusException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException {
 
         assertThrows(NonDeveloperRoleException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PROJECTMANAGER), Set.of(), Set.of(), project1));
 
@@ -151,6 +151,10 @@ public class TaskTest {
         // Assign a first user to this task, ensuring it is pending
         currentTask.start(new Time(10), sysAdmin, Role.SYSADMIN);
         assertEquals(Status.PENDING, currentTask.getStatus());
+
+        // Make sure you cannot assign the same user to a task twice
+        assertThrows(UserAlreadyAssignedToTaskException.class, () -> currentTask.start(new Time(10), sysAdmin, Role.PYTHONPROGRAMMER));
+
 
         // Make sure you cannot assign a user to a pending task with start time before the end time of any of its previous tasks
         assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(5), pythonProg, Role.PYTHONPROGRAMMER));

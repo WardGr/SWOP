@@ -3,7 +3,7 @@ package Application;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskProxy;
-import Domain.TaskStates.UserAlreadyExecutingTaskException;
+import Domain.TaskStates.UserAlreadyAssignedToTaskException;
 
 import java.util.Set;
 
@@ -37,7 +37,7 @@ public class StartTaskController {
         return getSession().getCurrentUser().getTaskData();
     }
 
-    public void startTask(String projectName, String taskName, Role role) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
+    public void startTask(String projectName, String taskName, Role role) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException(""); // TODO
         }

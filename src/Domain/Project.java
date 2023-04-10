@@ -292,7 +292,7 @@ public class Project {
             User currentUser,
             Role role
     )
-            throws TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
+            throws TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();

@@ -5,7 +5,7 @@ import Application.StartTaskController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskProxy;
-import Domain.TaskStates.UserAlreadyExecutingTaskException;
+import Domain.TaskStates.UserAlreadyAssignedToTaskException;
 
 import java.util.List;
 import java.util.Scanner;
@@ -181,7 +181,7 @@ public class StartTaskUI {
                 System.out.println("ERROR: " + e.getMessage());
             } catch (IncorrectTaskStatusException e) {
                 System.out.println("ERROR: Given state has not the right status to start");
-            } catch (UserAlreadyExecutingTaskException e) {
+            } catch (UserAlreadyAssignedToTaskException e) {
                 System.out.println("ERROR: User is already executing a task");
             }
         }

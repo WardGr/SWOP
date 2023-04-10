@@ -4,7 +4,7 @@ import Domain.*;
 
 interface TaskState {
     // TODO of task waarbij de status hoort als veld bijhouden?
-    default void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
+    default void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         throw new IncorrectTaskStatusException("Task must be available or pending to be started");
     }
 

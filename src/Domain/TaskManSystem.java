@@ -3,7 +3,7 @@ package Domain;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
-import Domain.TaskStates.UserAlreadyExecutingTaskException;
+import Domain.TaskStates.UserAlreadyAssignedToTaskException;
 
 import java.util.*;
 
@@ -254,28 +254,6 @@ public class TaskManSystem {
     }
 
     /**
-     * @return A map with tuples (project, tasks) mapping all projects to a list of all its available tasks
-     */
-    public Map<String, List<String>> showAvailableTasks() {
-        Map<String, List<String>> availableTasks = new HashMap<>();
-        for (Project project : getProjects()) {
-            availableTasks.put(project.getName(), project.showAvailableTasks());
-        }
-        return availableTasks;
-    }
-
-    /**
-     * @return A map with tuples (project, tasks) mapping all projects to a list of all its executing tasks
-     */
-    public Map<String, List<String>> showExecutingTasks() {
-        Map<String, List<String>> executingTasks = new HashMap<>();
-        for (Project project : getProjects()) {
-            executingTasks.put(project.getName(), project.showExecutingTasks());
-        }
-        return executingTasks;
-    }
-
-    /**
      * Gets the status of the given task within the given project
      *
      * @param projectName Name of the project to which the task is assigned
@@ -310,7 +288,7 @@ public class TaskManSystem {
             User currentUser,
             Role role
     )
-            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyExecutingTaskException, IncorrectRoleException {
+            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();

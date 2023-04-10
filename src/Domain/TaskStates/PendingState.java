@@ -5,9 +5,12 @@ import Domain.*;
 public class PendingState implements TaskState {
 
     @Override
-    public void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException {
+    public void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         if (!task.getRequiredRoles().contains(role)) {
             throw new IncorrectRoleException("Given role is not required in this task");
+        }
+        if (task.getUsers().contains(currentUser)) {
+            throw new UserAlreadyAssignedToTaskException();
         }
         for (Task prevTask : task.getPreviousTasks()) {
             if (prevTask.getEndTime() == null || prevTask.getEndTime().after(startTime)) {
