@@ -260,7 +260,6 @@ public class CreateTaskUI {
                     System.out.println("Task " + taskName + " successfully added to project " + projectName);
                     return;
                 } catch (UserNotFoundException e) {
-                    // TODO
                     System.out.println("ERROR: Given user does not exist or is not a developer\n");
                 } catch (ProjectNotFoundException e) {
                     System.out.println("ERROR: Given project does not exist\n");
@@ -275,7 +274,9 @@ public class CreateTaskUI {
                 } catch (LoopDependencyGraphException e) {
                     System.out.println("ERROR: Given list of tasks introduces a loop\n");
                 } catch (NonDeveloperRoleException e) {
-                    System.out.println("ERROR: One of the given roles is not a developer role");
+                    System.out.println("ERROR: One of the given roles is not a developer role (Python programmer, Java programmer or system administrator)\n");
+                } catch (ProjectNotOngoingException e) {
+                    System.out.println("ERROR: Project is already finished\n");
                 }
             }
         }

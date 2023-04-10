@@ -13,8 +13,8 @@ import java.util.Set;
  */
 public class Project {
 
-    private final List<Domain.TaskStates.Task> tasks;
-    private final List<Domain.TaskStates.Task> replacedTasks;
+    private final List<Task> tasks;
+    private final List<Task> replacedTasks;
     private final String name;
     private final String description;
     private final Time creationTime;
@@ -23,9 +23,9 @@ public class Project {
     private ProjectStatus status;
 
     public Project(String name, String description, Time creationTime, Time dueTime)
-            throws DueBeforeSystemTimeException {
-        if (!dueTime.after(creationTime)) {
-            throw new DueBeforeSystemTimeException();
+            throws DueTimeBeforeCreationTimeException {
+        if (dueTime.before(creationTime)) {
+            throw new DueTimeBeforeCreationTimeException();
         }
         this.tasks = new LinkedList<>();
         this.replacedTasks = new LinkedList<>();
@@ -56,7 +56,7 @@ public class Project {
     /**
      * @return an IMMUTABLE list of the current project tasks
      */
-    public List<Domain.TaskStates.Task> getTasks() {
+    public List<Task> getTasks() {
         return List.copyOf(tasks);
     }
 
@@ -138,7 +138,7 @@ public class Project {
      * @param description Description of the task
      * @param duration    Duration of the task
      * @param deviation   Accepted deviation of the task
-     * @param roles       TODO
+     * @param roles       List of roles that are required for this task to start
      * @throws TaskNotFoundException         if one of the given tasks to be completed before the new task does not exist
      * @throws TaskNameAlreadyInUseException if the given task name is already in use for this project
      */
@@ -150,12 +150,14 @@ public class Project {
             List<Role> roles,
             Set<String> previousTasksNames,
             Set<String> nextTasksNames
-    ) throws TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+    ) throws TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, ProjectNotOngoingException {
         if (getTask(taskName) != null) {
             throw new TaskNameAlreadyInUseException();
         }
 
-        // TODO check if project is not finished
+        if (getStatus() != ProjectStatus.ONGOING) {
+            throw new ProjectNotOngoingException();
+        }
 
         Set<Task> previousTasks = new HashSet<>();
         for (String previousTaskName : previousTasksNames) {
@@ -197,7 +199,6 @@ public class Project {
      * @param duration    Duration of the new task
      * @param deviation   Accepted deviation of the new task
      * @param replaces    Name of the task to replace
-     * @throws ReplacedTaskNotFailedException if the task corresponding to "replaces" has not failed
      * @throws TaskNotFoundException          if the task corresponding to "replaces" does not exist
      * @throws TaskNameAlreadyInUseException  if the given taskName is already in use in this project
      */
@@ -208,7 +209,7 @@ public class Project {
             double deviation,
             String replaces
     )
-            throws ReplacedTaskNotFailedException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
+            throws TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
         if (getTask(taskName) != null) {
             throw new TaskNameAlreadyInUseException();
         }
@@ -223,47 +224,6 @@ public class Project {
     }
 
     /**
-     * @return A list of names of all tasks in this project that are available
-     */
-    public List<String> showAvailableTasks() {
-        List<String> availableTasks = new LinkedList<>();
-        for (Task task : getTasks()) {
-            if (task.getStatus() == Status.AVAILABLE) { // TODO: wat met status checks buiten de Task class, we hebben nu een temporary status getter?
-                availableTasks.add(task.getName());
-            }
-        }
-        return availableTasks;
-    }
-
-    /**
-     * @return A list of names of all tasks in this project that are executing
-     */
-    public List<String> showExecutingTasks() {
-        List<String> executingTasks = new LinkedList<>();
-        for (Domain.TaskStates.Task task : getTasks()) {
-            if (task.getStatus() == Status.EXECUTING) {
-                executingTasks.add(task.getName());
-            }
-        }
-        return executingTasks;
-    }
-
-    /**
-     * Gets detailed information about the task with the given task name
-     *
-     * @param taskName Name of the task of which to return
-     * @return String containing detailed information about the given task
-     * @throws TaskNotFoundException if taskName does not correspond to an existing task within this project
-     */
-    public String showTask(String taskName) throws TaskNotFoundException {
-        Domain.TaskStates.Task task = getTask(taskName);
-        if (task == null) {
-            throw new TaskNotFoundException();
-        }
-        return task.toString();
-    }
-
-    /**
      * Gets the status of the task within this project corresponding to the given task name
      *
      * @param taskName Name of the task for which to retrieve the current status
@@ -271,7 +231,7 @@ public class Project {
      * @throws TaskNotFoundException if taskName does not correspond to an existing task within this project
      */
     public Status getStatus(String taskName) throws TaskNotFoundException {
-        Domain.TaskStates.Task task = getTask(taskName);
+        Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
         }
@@ -350,8 +310,8 @@ public class Project {
     }
 
     public void addPreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-        Domain.TaskStates.Task task = getTask(taskName);
-        Domain.TaskStates.Task prevTask = getTask(prevTaskName);
+        Task task = getTask(taskName);
+        Task prevTask = getTask(prevTaskName);
         if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
         }
@@ -359,8 +319,8 @@ public class Project {
     }
 
     public void addNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-        Domain.TaskStates.Task task = getTask(taskName);
-        Domain.TaskStates.Task nextTask = getTask(nextTaskName);
+        Task task = getTask(taskName);
+        Task nextTask = getTask(nextTaskName);
         if (task == null || nextTask == null) {
             throw new TaskNotFoundException();
         }
@@ -368,7 +328,7 @@ public class Project {
     }
 
     public void removePreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
-        Domain.TaskStates.Task task = getTask(taskName);
+        Task task = getTask(taskName);
         Task prevTask = getTask(prevTaskName);
         if (task == null || prevTask == null) {
             throw new TaskNotFoundException();

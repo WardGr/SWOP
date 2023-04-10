@@ -64,6 +64,8 @@ public class LoadSystemUI {
             System.out.println("ERROR: invalid file logic");
         } catch (IOException e) {
             System.out.println("ERROR: file not found");
+        } catch (DueTimeBeforeCreationTimeException e) {
+            System.out.println("ERROR: a projects' due time is set before its creation time");
         }
     }
 }
