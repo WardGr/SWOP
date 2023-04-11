@@ -6,13 +6,16 @@ import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.TaskStates.Task;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ProjectTest {
 
     @Mock
@@ -63,5 +66,21 @@ public class ProjectTest {
         project.addNewTask("Current Task", "", new Time(10), 0, roles, Set.of("Previous Task"), Set.of("Next Task"));
 
         assertNotNull(project.getStatus("Previous Task"));
+
+
+        // PROJECT PROXY TEST
+
+        ProjectProxy projectProxy = project.getProjectData();
+
+        assertEquals(project.getName(), projectProxy.getName());
+        assertEquals(project.getStatus(), projectProxy.getStatus());
+        assertEquals(project.getReplacedTasksNames(), projectProxy.getReplacedTasksNames());
+        assertEquals(project.getActiveTasksNames(), projectProxy.getActiveTasksNames());
+        assertEquals(project.getReplacedTasksNames(), projectProxy.getReplacedTasksNames());
+        assertEquals(project.getCreationTime(), projectProxy.getCreationTime());
+        assertEquals(project.getDueTime(), projectProxy.getDueTime());
+        assertEquals(project.getDescription(), projectProxy.getDescription());
+
+        assertEquals("ongoing", project.getStatus().toString());
     }
 }
