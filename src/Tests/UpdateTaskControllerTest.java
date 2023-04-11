@@ -7,7 +7,7 @@ import org.junit.Test;
 public class UpdateTaskControllerTest {
 
     @Test
-    public void testUpdateTaskController() throws InvalidTimeException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, FailTimeAfterSystemTimeException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
+    public void testUpdateTaskController() throws InvalidTimeException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException {
         /*
         Session omer = new Session();
         SessionWrapper omerWrapper = new SessionWrapper(omer);

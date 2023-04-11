@@ -199,9 +199,9 @@ public class ShowProjectsUI {
             System.out.println(taskData.getEndTime().toString() + '\n');
         }
 
-        System.out.println("Required roles:");
-        if (taskData.getRequiredRoles().size() > 0) {
-            for (Role role : taskData.getRequiredRoles()) {
+        System.out.println("Unfulfilled roles:");
+        if (taskData.getUnfulfilledRoles().size() > 0) {
+            for (Role role : taskData.getUnfulfilledRoles()) {
                 System.out.println("- " + role.toString());
             }
         } else {

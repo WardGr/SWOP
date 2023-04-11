@@ -3,12 +3,14 @@ package Domain.TaskStates;
 import Domain.*;
 
 interface TaskState {
-    // TODO of task waarbij de status hoort als veld bijhouden?
     default void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         throw new IncorrectTaskStatusException("Task must be available or pending to be started");
     }
 
-    // TODO: is dit een goeie keuze? gewoon temporary omda het anders ni compileert
+    default FinishedStatus getFinishedStatus(Task task) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task must be finished to get its finished status");
+    }
+
     Status getStatus();
 
     default void updateAvailability(Task task) throws IncorrectTaskStatusException {
@@ -45,11 +47,11 @@ interface TaskState {
         throw new IncorrectTaskStatusException("The task is not in the pending state");
     }
 
-    default void finish(Task task, User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+    default void finish(Task task, User user, Time endTime) throws IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
         throw new IncorrectTaskStatusException("The task is not in the executing state");
     }
 
-    default void fail(Task task, User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+    default void fail(Task task, Time endTime) throws IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
         throw new IncorrectTaskStatusException("The task is not in the executing state");
     }
 }

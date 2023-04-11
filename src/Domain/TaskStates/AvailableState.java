@@ -11,7 +11,7 @@ public class AvailableState implements TaskState {
 
     @Override
     public void start(Task task, Time startTime, User currentUser, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
-        if (!task.getRequiredRoles().contains(role)) {
+        if (!task.getUnfulfilledRoles().contains(role)) {
             throw new IncorrectRoleException("Given role is not required in the task");
         }
         for (Task prevTask : task.getPreviousTasks()) {
@@ -20,11 +20,9 @@ public class AvailableState implements TaskState {
             }
         }
         currentUser.assignTask(task, role);
-
-        task.removeRole(role);
         task.commitUser(currentUser, role);
 
-        if (task.getRequiredRoles().size() == 0) {
+        if (task.getUnfulfilledRoles().size() == 0) {
             task.setState(new ExecutingState());
             task.setStartTime(startTime);
         } else {

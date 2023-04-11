@@ -200,6 +200,16 @@ public class Task {
         return new LinkedList<>(requiredRoles);
     }
 
+    FinishedStatus getFinishedStatus() throws IncorrectTaskStatusException {
+        return getState().getFinishedStatus(this);
+    }
+
+    List<Role> getUnfulfilledRoles() {
+        List<Role> unfulfilledRoles = getRequiredRoles();
+        unfulfilledRoles.removeAll(getUsersWithRole().values());
+        return unfulfilledRoles;
+    }
+
     void setRequiredRoles(List<Role> roles) throws NonDeveloperRoleException {
         for (Role role : roles) {
             if (role != Role.SYSADMIN && role != Role.JAVAPROGRAMMER && role != Role.PYTHONPROGRAMMER) {
@@ -209,8 +219,8 @@ public class Task {
         this.requiredRoles = new LinkedList<>(roles);
     }
 
-    Set<User> getUsers() {
-        return new HashSet<>(committedUsers.keySet());
+    Set<User> getCommittedUsers() {
+        return new HashSet<>(getUsersWithRole().keySet());
     }
 
     private Map<User, Role> getUsersWithRole() {
@@ -275,7 +285,7 @@ public class Task {
      * @param endTime New end time
      */
     void setEndTime(Time endTime) throws EndTimeBeforeStartTimeException {
-        timeSpan.setEndTime(endTime);
+        getTimeSpan().setEndTime(endTime);
     }
 
 
@@ -348,21 +358,11 @@ public class Task {
         getState().unassignUser(this, user);
     }
 
-    Role getRole(User user) {
-        return committedUsers.get(user);
-    }
 
     void uncommitUser(User user) {
         committedUsers.remove(user);
     }
 
-    void addRole(Role role) {
-        requiredRoles.add(role);
-    }
-
-    void removeRole(Role role) {
-        requiredRoles.remove(role);
-    }
 
     void commitUser(User user, Role role) {
         committedUsers.put(user, role);
@@ -377,7 +377,7 @@ public class Task {
      * @throws EndTimeBeforeStartTimeException  if endTime > systemTime
      */
     public void finish(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
-        if (!getUsers().contains(user)) {
+        if (!getCommittedUsers().contains(user)) {
             throw new IncorrectUserException("This user is not assigned to the current task");
         }
         getState().finish(this, user, endTime);
@@ -393,10 +393,10 @@ public class Task {
      * @throws EndTimeBeforeStartTimeException  if endTime > systemTime
      */
     public void fail(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
-        if (!getUsers().contains(user)) {
+        if (!getCommittedUsers().contains(user)) {
             throw new IncorrectUserException("This user is not assigned to the current task");
         }
-        getState().fail(this, user, endTime);
+        getState().fail(this, endTime);
     }
 
     void updateAvailability() throws IncorrectTaskStatusException {

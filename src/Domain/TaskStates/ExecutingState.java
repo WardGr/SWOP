@@ -2,9 +2,6 @@ package Domain.TaskStates;
 
 import Domain.*;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class ExecutingState implements TaskState {
 
     @Override
@@ -12,17 +9,13 @@ public class ExecutingState implements TaskState {
         return Status.EXECUTING;
     }
 
-    @Override
-    public String toString() {
-        return "executing";
-    }
 
     @Override
-    public void finish(Task task, User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+    public void finish(Task task, User currentUser, Time endTime) throws IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
         task.setState(new FinishedState());
         task.setEndTime(endTime);
 
-        for (User user : task.getUsers()) {
+        for (User user : task.getCommittedUsers()) {
             user.endTask();
             // TODO wel of niet users verwijderen uit de task? misschien wel handig voor een uitbreiding om ze bij te houden
             // task.addRole(task.getRole(user));
@@ -35,12 +28,13 @@ public class ExecutingState implements TaskState {
     }
 
     @Override
-    public void fail(Task task, User currentUser, Time endTime) throws IncorrectUserException, EndTimeBeforeStartTimeException {
+    public void fail(Task task, Time endTime) throws EndTimeBeforeStartTimeException {
         task.setState(new FailedState());
         task.setEndTime(endTime);
 
-        for (User user : task.getUsers()) {
+        for (User user : task.getCommittedUsers()) {
             user.endTask();
+            task.uncommitUser(user);
         }
     }
 

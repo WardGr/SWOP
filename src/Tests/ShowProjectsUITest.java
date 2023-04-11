@@ -6,7 +6,7 @@ import org.junit.Test;
 // TODO: DEZE BOEL FAILT, OMDAT TASKS NU OP EEN ANDERE MANIER FINISHEN, DA MOET NOG GEIMPLEMENTEERD WORDEN
 public class ShowProjectsUITest {
     @Test
-    public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, ReplacedTaskNotFailedException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
+    public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException {
         /*
         Session session = new Session();
         SessionWrapper sessionWrapper = new SessionWrapper(session);

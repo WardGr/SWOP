@@ -1,5 +1,6 @@
 package Domain.TaskStates;
 
+import Domain.IncorrectTaskStatusException;
 import Domain.Role;
 import Domain.Status;
 import Domain.Time;
@@ -44,6 +45,10 @@ public class TaskProxy {
         return getTask().getStatus();
     }
 
+    public FinishedStatus getFinishedStatus() throws IncorrectTaskStatusException {
+        return getTask().getFinishedStatus();
+    }
+
     public String getReplacementTaskName() {
         if (getTask().getReplacementTask() == null) {
             return null;
@@ -85,8 +90,8 @@ public class TaskProxy {
         return getTask().getEndTime();
     }
 
-    public List<Role> getRequiredRoles() {
-        return getTask().getRequiredRoles();
+    public List<Role> getUnfulfilledRoles() {
+        return getTask().getUnfulfilledRoles();
     }
 
     public Map<String, Role> getUserNamesWithRole() {

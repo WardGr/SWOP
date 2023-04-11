@@ -99,15 +99,14 @@ public class CreateTaskController {
      * @param projectName    Project name corresponding to the project to which both tasks belong, given by the user
      * @param taskName       Task name of the replacement task, given by the user
      * @param description    Task description of the replacement task, given by the user
-     * @param durationHour   Hours of the replacement tasks' duration, given by the user
-     * @param durationMinute Minutes of the replacement tasks' duration, given by the user
+     * @param durationTime   Duration the user gave for the task
      * @param deviation      Acceptable deviation from the given duration, given by the user
      * @param replaces       Task name of the task that the new task would replace, given by the user
      * @throws TaskNotFoundException          If the given task name of the task to replace does not correspond to an existing task
      * @throws ProjectNotFoundException       If the given project name does not correspond to an existing project
      * @throws TaskNameAlreadyInUseException  If the given task name is already in use as a task name within the given project
      * @throws IncorrectPermissionException   If the user is not logged in as project manager
-     * @throws ReplacedTaskNotFailedException If the task to replace has not failed yet
+     * @throws IncorrectTaskStatusException If the task to replace has not failed yet
      * @throws InvalidTimeException           If durationMinute > 59 or durationMinute < 0
      */
     public void replaceTask(
@@ -117,7 +116,7 @@ public class CreateTaskController {
             Time durationTime,
             double deviation,
             String replaces
-    ) throws IncorrectPermissionException, ReplacedTaskNotFailedException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
+    ) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }

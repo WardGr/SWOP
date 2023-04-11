@@ -1,4 +1,4 @@
-package Domain;
+package Domain.TaskStates;
 
 /**
  * Different statuses a finished project can be in, depending on it's timing

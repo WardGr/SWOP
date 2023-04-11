@@ -57,10 +57,10 @@ public class LoadSystemUI {
             getController().LoadSystem(path);
             System.out.println("system succesfully loaded");
         } catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException |
-                 ProjectNameAlreadyInUseException | InvalidTimeException | FailTimeAfterSystemTimeException |
-                 IncorrectUserException | ReplacedTaskNotFailedException | IncorrectTaskStatusException |
+                 ProjectNameAlreadyInUseException | InvalidTimeException |
+                 IncorrectUserException | IncorrectTaskStatusException |
                  DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException |
-                 EndTimeBeforeStartTimeException | StartTimeBeforeAvailableException e) {
+                 EndTimeBeforeStartTimeException e) {
             System.out.println("ERROR: invalid file logic");
         } catch (IOException e) {
             System.out.println("ERROR: file not found");

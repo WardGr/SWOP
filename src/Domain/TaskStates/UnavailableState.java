@@ -18,10 +18,6 @@ public class UnavailableState implements TaskState {
         return Status.UNAVAILABLE;
     }
 
-    @Override
-    public String toString() {
-        return "unavailable";
-    }
 
     public void addPreviousTask(Task task, Task previousTask) throws LoopDependencyGraphException {
         if (canSafelyAddPrevTask(task, previousTask)) {

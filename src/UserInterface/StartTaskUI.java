@@ -73,7 +73,7 @@ public class StartTaskUI {
                     return;
                 }
                 System.out.print("Task requires roles: ");
-                List<Role> taskRoles = taskData.getRequiredRoles();
+                List<Role> taskRoles = taskData.getUnfulfilledRoles();
                 if (taskRoles.size() > 0) {
                     System.out.println(
                             taskRoles.stream().
@@ -99,7 +99,7 @@ public class StartTaskUI {
                         case ("python programmer") -> role = Role.PYTHONPROGRAMMER;
                         default -> System.out.println("Unrecognized developer role");
                     }
-                    if (role != null && !taskData.getRequiredRoles().contains(role)) {
+                    if (role != null && !taskData.getUnfulfilledRoles().contains(role)) {
                         System.out.println("ERROR: The given role is not required in this task.");
                         role = null;
                     }
@@ -203,7 +203,7 @@ public class StartTaskUI {
                         if (taskData.getStatus() == Status.AVAILABLE || taskData.getStatus() == Status.PENDING) {
 
                             Set<Role> userRoles = getController().getUserRoles();
-                            userRoles.retainAll(taskData.getRequiredRoles());
+                            userRoles.retainAll(taskData.getUnfulfilledRoles());
 
                             if (userRoles.size() > 0) {
                                 System.out.println(" - Task: " + taskName + ", belonging to Project: " + projectName);
@@ -237,8 +237,8 @@ public class StartTaskUI {
         }
 
         System.out.println("Required roles:");
-        if (taskData.getRequiredRoles().size() > 0) {
-            for (Role role : taskData.getRequiredRoles()) {
+        if (taskData.getUnfulfilledRoles().size() > 0) {
+            for (Role role : taskData.getUnfulfilledRoles()) {
                 System.out.println("- " + role.toString());
             }
         } else {

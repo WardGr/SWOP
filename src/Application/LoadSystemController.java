@@ -48,7 +48,7 @@ public class LoadSystemController {
      *
      * @param filepath String containing the filepath to the JSON holding the system information
      */
-    public void LoadSystem(String filepath) throws IncorrectPermissionException, IOException, InvalidTimeException, ParseException, UserNotFoundException, ProjectNameAlreadyInUseException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, DueBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueTimeBeforeCreationTimeException {
+    public void LoadSystem(String filepath) throws IncorrectPermissionException, IOException, InvalidTimeException, ParseException, UserNotFoundException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, DueBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException {
         if (!loadSystemPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
@@ -78,7 +78,7 @@ public class LoadSystemController {
      *
      * @param project JSONObject containing the details of the project to create and load
      */
-    private void loadProject(JSONObject project) throws UserNotFoundException, ReplacedTaskNotFailedException, DueBeforeSystemTimeException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, FailTimeAfterSystemTimeException, IncorrectUserException, InvalidTimeException, IncorrectTaskStatusException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, DueTimeBeforeCreationTimeException {
+    private void loadProject(JSONObject project) throws UserNotFoundException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectUserException, InvalidTimeException, IncorrectTaskStatusException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException {
         //create the project
         String name = (String) project.get("name");
         String description = (String) project.get("description");
@@ -101,7 +101,7 @@ public class LoadSystemController {
      * @param task        JSONobject holding the new task information
      * @param projectName Name of the project which to add the new task to
      */
-    private void loadTask(JSONObject task, String projectName) throws UserNotFoundException, ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectUserException, FailTimeAfterSystemTimeException, InvalidTimeException, IncorrectTaskStatusException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
+    private void loadTask(JSONObject task, String projectName) throws UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectUserException, InvalidTimeException, IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
         //standard task fields
         String name = (String) task.get("name");
         String description = (String) task.get("description");

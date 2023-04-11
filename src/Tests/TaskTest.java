@@ -8,10 +8,8 @@ import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.TaskStates.IncorrectRoleException;
 
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -72,9 +70,6 @@ public class TaskTest {
 
         // Set stubs
         Mockito.when(project1.getName()).thenReturn("Project 1");
-        Mockito.when(pythonProg.getUsername()).thenReturn("Python Programmer");
-        Mockito.when(javaProg.getUsername()).thenReturn("Java Programmer");
-        Mockito.when(sysAdmin.getUsername()).thenReturn("System Administrator");
     }
 
 
@@ -93,7 +88,7 @@ public class TaskTest {
         assertEquals(Status.AVAILABLE, nextTask.getStatus());
 
         currentTask.addNextTask(nextTask);
-        assertEquals(Status.UNAVAILABLE, nextTask.getStatus());
+        assertEquals("unavailable", nextTask.getStatus().toString());
 
 
         // Asserts it's impossible to add loops in the dependency graph
@@ -138,7 +133,7 @@ public class TaskTest {
 
         // Start executing the pending task
         prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
-        assertEquals(prevTask.getStatus(), Status.EXECUTING);
+        assertEquals("executing", Status.EXECUTING.toString());
 
         // Check if an executing task cannot be a next task for a new task, and that we cannot finish/fail a task with the wrong user
         assertThrows(IncorrectTaskStatusException.class, () -> new Task("", "", new Time(0), 0, List.of(), Set.of(), Set.of(prevTask), project1));
@@ -147,7 +142,8 @@ public class TaskTest {
 
         // Finish the task
         prevTask.finish(sysAdmin, new Time(10));
-        assertEquals(Status.FINISHED, prevTask.getStatus());
+        assertEquals("finished", prevTask.getStatus().toString());
+        assertEquals("on time", prevTask.getTaskProxy().getFinishedStatus().toString());
 
         // Checks if finished state cannot start/fail/finish/unassign/replace
         assertThrows(IncorrectTaskStatusException.class, () -> prevTask.start(new Time(0), user, Role.JAVAPROGRAMMER));
@@ -169,13 +165,13 @@ public class TaskTest {
 
         // Checks removing and adding of tasks to available task
         currentTask.removePreviousTask(prevTask);
-        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+        assertEquals("available", currentTask.getStatus().toString());
         currentTask.addPreviousTask(prevTask);
-        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+        assertEquals("available", currentTask.getStatus().toString());
 
         // Assign a first user to this task, ensuring it is pending
         currentTask.start(new Time(10), sysAdmin, Role.SYSADMIN);
-        assertEquals(Status.PENDING, currentTask.getStatus());
+        assertEquals("pending", currentTask.getStatus().toString());
 
 
         // Make sure you cannot assign a user to a pending task with start time before the end time of any of its previous tasks
@@ -191,7 +187,8 @@ public class TaskTest {
 
         // Fail the current task
         currentTask.fail(pythonProg, new Time(15));
-        assertEquals(Status.FAILED, currentTask.getStatus());
+        assertEquals(new HashMap<>(), currentTask.getTaskProxy().getUserNamesWithRole());
+        assertEquals("failed", currentTask.getStatus().toString());
         assertEquals(Status.UNAVAILABLE, nextTask.getStatus());
 
         currentTask.replaceTask(replacementTask);
@@ -210,7 +207,7 @@ public class TaskTest {
         assertEquals("Replacement Task", taskProxyFailed.getReplacementTaskName());
         assertEquals(new Time(10), taskProxyFailed.getStartTime());
         assertEquals(new Time(15), taskProxyFailed.getEndTime());
-        assertEquals(List.of(), taskProxyFailed.getRequiredRoles());
+        assertEquals(List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), taskProxyFailed.getUnfulfilledRoles());
         assertEquals("Project 1", taskProxyFailed.getProjectName());
         assertFalse(taskProxyFailed.canSafelyAddPrevTask("Current Task"));
         assertNull(taskProxyFailed.getReplacesTaskName());
@@ -221,7 +218,8 @@ public class TaskTest {
         userRoleMap.put("Python Programmer", Role.PYTHONPROGRAMMER);
         userRoleMap.put("Java Programmer", Role.JAVAPROGRAMMER);
 
-        assertEquals(userRoleMap, taskProxyFailed.getUserNamesWithRole());
+        assertEquals(new HashMap<>(), taskProxyFailed.getUserNamesWithRole());
+        assertEquals(userRoleMap.values().stream().sorted().toList(), taskProxyFailed.getUnfulfilledRoles().stream().sorted().toList());
 
         // TASK PROXY WITH REPLACEMENT TASK
 
@@ -233,6 +231,28 @@ public class TaskTest {
         assertEquals(List.of("Next Task"), replacementProxy.getNextTasksNames());
         assertNull(replacementProxy.getEndTime());
         assertNull(replacementProxy.getStartTime());
+
+
+
+        assertFalse(task1.getTaskProxy().canSafelyAddPrevTask("Task 1"));
+        assertFalse(task1.getTaskProxy().canSafelyAddPrevTask("Task 2"));
+        assertTrue(task1.getTaskProxy().canSafelyAddPrevTask("Task 3"));
+        assertTrue(task1.getTaskProxy().canSafelyAddPrevTask("Task 4"));
+
+        assertTrue(task2.getTaskProxy().canSafelyAddPrevTask("Task 1"));
+        assertFalse(task2.getTaskProxy().canSafelyAddPrevTask("Task 2"));
+        assertTrue(task2.getTaskProxy().canSafelyAddPrevTask("Task 3"));
+        assertTrue(task2.getTaskProxy().canSafelyAddPrevTask("Task 4"));
+
+        assertTrue(task3.getTaskProxy().canSafelyAddPrevTask("Task 1"));
+        assertTrue(task3.getTaskProxy().canSafelyAddPrevTask("Task 2"));
+        assertFalse(task3.getTaskProxy().canSafelyAddPrevTask("Task 3"));
+        assertFalse(task3.getTaskProxy().canSafelyAddPrevTask("Task 4"));
+
+        assertTrue(task4.getTaskProxy().canSafelyAddPrevTask("Task 1"));
+        assertTrue(task4.getTaskProxy().canSafelyAddPrevTask("Task 2"));
+        assertTrue(task4.getTaskProxy().canSafelyAddPrevTask("Task 3"));
+        assertFalse(task4.getTaskProxy().canSafelyAddPrevTask("Task 4"));
 
 
         task2.addNextTask(task3);
@@ -263,6 +283,26 @@ public class TaskTest {
         assertTrue(taskProxy4.canSafelyAddPrevTask("Task 2"));
         assertTrue(taskProxy4.canSafelyAddPrevTask("Task 3"));
         assertFalse(taskProxy4.canSafelyAddPrevTask("Task 4"));
+
+
+        // FinishedStatusTest
+
+        Task onTime = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), project1);
+        onTime.start(new Time(0), user, Role.JAVAPROGRAMMER);
+        onTime.finish(user, new Time(10));
+        assertEquals("on time", onTime.getTaskProxy().getFinishedStatus().toString());
+
+
+        Task early = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), project1);
+        early.start(new Time(0), user, Role.JAVAPROGRAMMER);
+        early.finish(user, new Time(5));
+        assertEquals("early", early.getTaskProxy().getFinishedStatus().toString());
+
+
+        Task delayed = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), project1);
+        delayed.start(new Time(0), user, Role.JAVAPROGRAMMER);
+        delayed.finish(user, new Time(100));
+        assertEquals("delayed", delayed.getTaskProxy().getFinishedStatus().toString());
 
     }
 }

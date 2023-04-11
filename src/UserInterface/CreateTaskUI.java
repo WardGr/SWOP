@@ -174,8 +174,6 @@ public class CreateTaskUI {
                     );
                     System.out.println("Task " + taskName + " successfully added to project " + projectName + " as a replacement for task " + replaces);
                     return;
-                } catch (ReplacedTaskNotFailedException e) {
-                    System.out.println("ERROR: the task to replace has not failed, please try again\n");
                 } catch (ProjectNotFoundException e) {
                     System.out.println("ERROR: the given project does not exist\n");
                 } catch (InvalidTimeException e) {

@@ -1,6 +1,7 @@
 package Tests;
 
 import Domain.*;
+import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.TaskStates.Task;
@@ -26,12 +27,11 @@ public class ProjectTest {
     @Before
     public void setUp() throws InvalidTimeException, DueTimeBeforeCreationTimeException {
         this.project = new Project("Project 1", "", new Time(0), new Time(100));
-        this.roles = List.of(Role.JAVAPROGRAMMER, Role.PYTHONPROGRAMMER);
-
+        this.roles = List.of(Role.PYTHONPROGRAMMER);
     }
 
     @Test
-    public void testProject() throws InvalidTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, ProjectNotOngoingException {
+    public void testProject() throws InvalidTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, ProjectNotOngoingException, EndTimeBeforeStartTimeException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
 
         assertEquals("Project 1", project.getName());
         assertEquals("", project.getDescription());
@@ -65,8 +65,30 @@ public class ProjectTest {
         project.addNewTask("Next Task", "", new Time(0), 0, roles, Set.of(), Set.of());
         project.addNewTask("Current Task", "", new Time(10), 0, roles, Set.of("Previous Task"), Set.of("Next Task"));
 
+        assertEquals("ongoing", project.getStatus().toString());
+
         assertNotNull(project.getStatus("Previous Task"));
 
+        project.startTask("Previous Task", new Time(0), user, Role.PYTHONPROGRAMMER);
+        assertEquals(Status.EXECUTING, project.getStatus("Previous Task"));
+        project.finishTask("Previous Task", user, new Time(20));
+        assertEquals(Status.FINISHED, project.getStatus("Previous Task"));
+        assertEquals(Status.AVAILABLE, project.getStatus("Current Task"));
+
+        project.startTask("Current Task", new Time(20), user, Role.PYTHONPROGRAMMER);
+        assertEquals(Status.EXECUTING, project.getStatus("Current Task"));
+        project.finishTask("Current Task", user, new Time(40));
+        assertEquals(Status.FINISHED, project.getStatus("Current Task"));
+        assertEquals(Status.AVAILABLE, project.getStatus("Next Task"));
+
+        project.startTask("Next Task", new Time(40), user, Role.PYTHONPROGRAMMER);
+        assertEquals(Status.EXECUTING, project.getStatus("Next Task"));
+        project.finishTask("Next Task", user, new Time(60));
+        assertEquals(Status.FINISHED, project.getStatus("Next Task"));
+
+        assertEquals("finished", project.getStatus().toString());
+
+        assertThrows(ProjectNotOngoingException.class, () -> project.addNewTask("", "", new Time(10), 0, List.of(), Set.of(), Set.of()));
 
         // PROJECT PROXY TEST
 
@@ -81,6 +103,6 @@ public class ProjectTest {
         assertEquals(project.getDueTime(), projectProxy.getDueTime());
         assertEquals(project.getDescription(), projectProxy.getDescription());
 
-        assertEquals("ongoing", project.getStatus().toString());
+
     }
 }

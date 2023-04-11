@@ -10,11 +10,6 @@ public class FailedState implements TaskState {
         return Status.FAILED;
     }
 
-    @Override
-    public String toString() {
-        return "failed";
-    }
-
     public void replaceTask(Task replaces, Task replacement) throws IncorrectTaskStatusException {
         for (Task prevTask : replaces.getPreviousTasks()) {
             prevTask.removeNextTaskDirectly(replaces);
@@ -39,7 +34,7 @@ public class FailedState implements TaskState {
         replacement.updateAvailability();
 
         try {
-            replacement.setRequiredRoles(replaces.getRequiredRoles());
+            replacement.setRequiredRoles(replaces.getUnfulfilledRoles());
         } catch (NonDeveloperRoleException e) {
             throw new RuntimeException(e); // TODO het zou echt een grote fout zijn als dit niet klopt, RTE goed?
         }

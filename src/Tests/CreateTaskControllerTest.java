@@ -7,7 +7,7 @@ import org.junit.Test;
 public class CreateTaskControllerTest {
 
     @Test
-    public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ReplacedTaskNotFailedException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, FailTimeAfterSystemTimeException, StartTimeBeforeAvailableException, EndTimeBeforeStartTimeException {
+    public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         /*
         Session omer = new Session();
         SessionWrapper omerWrapper = new SessionWrapper(omer);

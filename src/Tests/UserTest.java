@@ -34,9 +34,6 @@ public class UserTest {
     @Mock
     private TaskProxy taskProxy2;
 
-
-    // Mockito makes it so we only have to specify specific functions (Getters etc) from the mocked classes,
-    // thus decoupling the individual classes from each other so we can specify one unit to test.
     @Before
     public void setUp() {
         // See startTask, taskProxy moet PENDING status returnen.

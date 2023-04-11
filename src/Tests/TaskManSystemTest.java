@@ -30,6 +30,7 @@ public class TaskManSystemTest {
 
         // Mockito.when(user.getRoles()).thenReturn(Set.of(Role.JAVAPROGRAMMER));
     }
+
     @Test
     public void testTaskManSystem() throws InvalidTimeException, NewTimeBeforeSystemTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
 
@@ -102,12 +103,16 @@ public class TaskManSystemTest {
         assertEquals(List.of("Replacement Task", "Next Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         assertEquals(List.of("Task 1"), taskManSystem.getProjectData("Project 1").getReplacedTasksNames());
 
-        // TODO: fix dit
-        //taskManSystem.startTask("Project 1", "Replacement Task", user, Role.JAVAPROGRAMMER);
-        //assertEquals(Status.EXECUTING, taskManSystem.getStatus("Project 1", "Replacement Task"));
-        //taskManSystem.finishTask("Project 1", "Replacement Task", user);
-        //assertEquals(Status.FINISHED, taskManSystem.getStatus("Project 1", "Replacement Task"));
-        //assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Next Task"));
+        //  TODO: fix dit
+        taskManSystem.startTask("Project 1", "Replacement Task", user, Role.JAVAPROGRAMMER);
+        assertEquals(Status.EXECUTING, taskManSystem.getStatus("Project 1", "Replacement Task"));
+        taskManSystem.finishTask("Project 1", "Replacement Task", user);
+        assertEquals(Status.FINISHED, taskManSystem.getStatus("Project 1", "Replacement Task"));
+        assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Next Task"));
+
+
+        assertEquals(new Time(20), taskManSystem.getTaskManSystemData().getSystemTime());
+        assertEquals(List.of("Project 1", "Project 2"), taskManSystem.getTaskManSystemData().getProjectNames());
 
         taskManSystem.clear();
         assertEquals(List.of(), taskManSystem.getProjectNames());

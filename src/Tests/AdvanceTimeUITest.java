@@ -3,6 +3,8 @@ package Tests;
 import org.junit.Test;
 
 public class AdvanceTimeUITest {
+    // TODO: MOCK USER INPUT!
+
     @Test
     public void testAdvanceTimeUI() {
         /*
