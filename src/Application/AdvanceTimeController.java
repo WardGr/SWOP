@@ -47,17 +47,16 @@ public class AdvanceTimeController {
     /**
      * Sets the system time to the new time given by the user
      *
-     * @param newHour   hour given by the user for the new time
-     * @param newMinute minute given by the user for the new time
+     * @param newTime time given by the user for the new time
      * @throws IncorrectPermissionException     if the user is not logged in as project manager
      * @throws InvalidTimeException             if newMinute > 59 or < 0
      * @throws NewTimeBeforeSystemTimeException if the given time is before the system time (can only ADVANCE time)
      */
-    public void setNewTime(int newHour, int newMinute) throws IncorrectPermissionException, InvalidTimeException, NewTimeBeforeSystemTimeException {
+    public void setNewTime(Time newTime) throws IncorrectPermissionException, NewTimeBeforeSystemTimeException {
         if (!advanceTimePreconditions()) {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
-        getTaskManSystem().advanceTime(new Time(newHour, newMinute));
+        getTaskManSystem().advanceTime(newTime);
     }
 
     /**

@@ -139,7 +139,7 @@ public class AdvanceTimeUI {
                 newMinuteString = scanner.nextLine();
             }
         }
-        getController().setNewTime(newHour, newMinute);
+        getController().setNewTime(new Time(newHour, newMinute));
         System.out.println("Time successfully updated");
     }
 }
