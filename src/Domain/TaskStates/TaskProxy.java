@@ -9,8 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-//TODO early, ontime etc
-
 /**
  * Immutable wrapper for task, with some extra functionality
  */

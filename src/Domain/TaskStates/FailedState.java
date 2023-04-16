@@ -36,7 +36,7 @@ public class FailedState implements TaskState {
         try {
             replacement.setRequiredRoles(replaces.getUnfulfilledRoles());
         } catch (NonDeveloperRoleException e) {
-            throw new RuntimeException(e); // TODO het zou echt een grote fout zijn als dit niet klopt, RTE goed?
+            throw new RuntimeException(e);
         }
     }
 }
