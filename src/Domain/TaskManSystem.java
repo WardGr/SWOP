@@ -211,24 +211,6 @@ public class TaskManSystem {
     }
 
     /**
-     * Gets the status of the given task within the given project
-     *
-     * @param projectName Name of the project to which the task is assigned
-     * @param taskName    Name of the task of which to return the status
-     * @return Status of the given task (AVAILABLE, UNAVAILABLE, EXECUTING, FINISHED, FAILED)
-     * @throws ProjectNotFoundException if the given project does not correspond to an existing project
-     * @throws TaskNotFoundException    if the given task does not correspond to an existing task within the given project
-     */
-    public Status getStatus(String projectName, String taskName)
-            throws ProjectNotFoundException, TaskNotFoundException {
-        Project project = getProject(projectName);
-        if (project == null) {
-            throw new ProjectNotFoundException();
-        }
-        return project.getStatus(taskName);
-    }
-
-    /**
      * Sets the start time of the given (AVAILABLE) task, and changes its status to EXECUTING if this time is after the system time
      *
      * @param projectName Name of the project to which the task to start is attached
