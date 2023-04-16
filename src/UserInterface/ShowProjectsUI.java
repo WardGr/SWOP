@@ -3,6 +3,8 @@ package UserInterface;
 import Application.IncorrectPermissionException;
 import Application.ShowProjectsController;
 import Domain.*;
+import Domain.TaskStates.FinishedState;
+import Domain.TaskStates.FinishedStatus;
 import Domain.TaskStates.TaskProxy;
 
 import java.util.List;
@@ -172,6 +174,12 @@ public class ShowProjectsUI {
         System.out.println("Estimated Duration:   " + taskData.getEstimatedDuration().toString());
         System.out.println("Accepted Deviation:   " + taskData.getAcceptableDeviation());
         System.out.println("Status:               " + taskData.getStatus().toString() + "\n");
+        try{
+            FinishedStatus finishedState = taskData.getFinishedStatus();
+            System.out.println("   Finished:          " + finishedState.toString());
+        } catch (IncorrectTaskStatusException e) {
+            System.out.println();
+        }
 
         System.out.print("Replacement Task:   ");
         if (taskData.getReplacementTaskName() == null) {
