@@ -173,10 +173,10 @@ public class ShowProjectsUI {
         System.out.println("Description:          " + taskData.getDescription());
         System.out.println("Estimated Duration:   " + taskData.getEstimatedDuration().toString());
         System.out.println("Accepted Deviation:   " + taskData.getAcceptableDeviation());
-        System.out.println("Status:               " + taskData.getStatus().toString() + "\n");
+        System.out.println("Status:               " + taskData.getStatus().toString());
         try{
             FinishedStatus finishedState = taskData.getFinishedStatus();
-            System.out.println("   Finished:          " + finishedState.toString());
+            System.out.println("   Finished:          " + finishedState.toString() + '\n');
         } catch (IncorrectTaskStatusException e) {
             System.out.println();
         }
