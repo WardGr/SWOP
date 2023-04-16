@@ -26,7 +26,7 @@ public class FailedState implements TaskState {
             replacement.addNextTaskDirectly(nextTask);
         }
 
-        replacement.setProject(replaces.getProject());
+        replacement.setProjectName(replaces.getProjectName());
 
         replaces.setReplacementTask(replacement);
         replacement.setReplacesTask(replaces);

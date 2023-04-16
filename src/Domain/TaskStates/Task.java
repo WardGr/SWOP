@@ -29,7 +29,7 @@ public class Task {
 
     private TaskProxy taskProxy;
 
-    private Project project;
+    private String projectName;
 
     /**
      * Creates a task and initialises its status as available (no previous or next tasks)
@@ -72,7 +72,7 @@ public class Task {
      * @param roles               Set of required roles for this task
      * @param prevTasks           List of tasks that must be completed before this task
      * @param nextTasks           List of tasks that this task must be completed before
-     * @param project             Project this task belongs to
+     * @param projectName         Project this task belongs to
      * @throws IncorrectTaskStatusException if a next task is not available nor unavailable (e.g. it is executing)
      * @throws LoopDependencyGraphException if adding this task results in a loop in the dependency graph of tasks
      * @throws NonDeveloperRoleException    // TODO: wanneer wordt deze gegooit??
@@ -84,7 +84,7 @@ public class Task {
                 List<Role> roles,
                 Set<Task> prevTasks,
                 Set<Task> nextTasks,
-                Project project) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+                String projectName) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
         // TODO check if roles not empty!
 
         this.name = name;
@@ -101,7 +101,7 @@ public class Task {
 
         setState(new AvailableState());
         setRequiredRoles(roles);
-        setProject(project);
+        setProjectName(projectName);
 
         try {
             for (Task prevTask : prevTasks) {
@@ -125,18 +125,13 @@ public class Task {
         return taskProxy;
     }
 
-    Project getProject() {
-        return project;
-    }
-
-    void setProject(Project project) {
-        this.project = project;
-    }
-
     String getProjectName() {
-        return getProject().getName();
+        return projectName;
     }
 
+    void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
     public String getName() {
         return name;
@@ -376,11 +371,16 @@ public class Task {
      * @throws IncorrectTaskStatusException     if the task is not currently EXECUTING
      * @throws EndTimeBeforeStartTimeException  if endTime > systemTime
      */
-    public void finish(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
-        if (!getCommittedUsers().contains(user)) {
+    public void finish(User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+        if (!getCommittedUsers().contains(currentUser)) {
             throw new IncorrectUserException("This user is not assigned to the current task");
         }
-        getState().finish(this, user, endTime);
+        getState().finish(this, endTime);
+
+        for (User user : getCommittedUsers()) {
+            user.endTask();
+            uncommitUser(user);
+        }
     }
 
 
@@ -392,11 +392,15 @@ public class Task {
      * @throws IncorrectTaskStatusException     if the task is not currently EXECUTING
      * @throws EndTimeBeforeStartTimeException  if endTime > systemTime
      */
-    public void fail(User user, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
-        if (!getCommittedUsers().contains(user)) {
+    public void fail(User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+        if (!getCommittedUsers().contains(currentUser)) {
             throw new IncorrectUserException("This user is not assigned to the current task");
         }
         getState().fail(this, endTime);
+        for (User user : getCommittedUsers()) {
+            user.endTask();
+            uncommitUser(user);
+        }
     }
 
     void updateAvailability() throws IncorrectTaskStatusException {

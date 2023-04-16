@@ -176,7 +176,7 @@ public class Project {
             nextTasks.add(task);
         }
 
-        addTask(new Task(taskName, description, duration, deviation, roles, previousTasks, nextTasks, this));
+        addTask(new Task(taskName, description, duration, deviation, roles, previousTasks, nextTasks, getName()));
     }
 
     private void addTask(Task task) {
