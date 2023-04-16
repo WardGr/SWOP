@@ -219,7 +219,8 @@ public class Project {
             throw new TaskNotFoundException();
         }
         Task replacement = new Task(taskName, description, duration, deviation);
-        addTask(replacesTask.replaceTask(replacement));
+        replacesTask.replaceTask(replacement);
+        addTask(replacement);
         removeTask(replacesTask);
         addReplacedTask(replacesTask);
     }

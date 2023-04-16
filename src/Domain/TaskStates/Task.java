@@ -307,9 +307,8 @@ public class Task {
      * @post all previous tasks of this task are now assigned before the new task
      * @post all next tasks of this task are now assigned after the new task
      */
-    public Task replaceTask(Task replacement) throws IncorrectTaskStatusException {
+    public void replaceTask(Task replacement) throws IncorrectTaskStatusException {
         getState().replaceTask(this, replacement);
-        return replacement;
     }
 
     Set<Task> getAllNextTasks() {
