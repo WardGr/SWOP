@@ -1,0 +1,41 @@
+{
+  "projects": [
+    {
+      "name": "failedProject",
+      "description": "LoadSystemTest",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10
+    }
+  ],
+  "tasks": [
+    {
+      "name": "failedTask",
+      "project": "failedProject",
+      "description": "LoadSystemTask",
+      "acceptableDeviation": 3.3,
+      "dueHour": 2,
+      "dueMinute": 11,
+      "startHour": 2,
+      "startMinute": 10,
+      "endHour": 3,
+      "endMinute": 10,
+      "replaces": null,
+      "previousTasks": [],
+      "users": [
+        {
+          "user": "SamHa",
+          "role": "JAVAPROGRAMMER"
+        },
+        {
+          "user": "OlavBl",
+          "role": "PYTHONPROGRAMMER"
+        }
+      ],
+      "roles": ["JAVAPROGRAMMER", "PYTHONPROGRAMMER"]
+    }
+  ],
+  "systemHour": 15,
+  "systemMinute": 10
+}

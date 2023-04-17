@@ -4,7 +4,12 @@ import Application.LoadSystemController;
 import Application.Session;
 import Application.SessionWrapper;
 import Domain.*;
+import Domain.TaskStates.TaskProxy;
 import org.junit.Test;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 public class LoadSystemTest {
     UserManager userManager = new UserManager();
@@ -30,64 +35,119 @@ public class LoadSystemTest {
 
     @Test
     public void controller() throws ProjectNotFoundException, TaskNotFoundException, LoginException {
-        /*
-        User manager = userManager.getUser("WardGr", "minecraft123");
+
+        User manager = userManager.getUser("DieterVH", "computer776");
         session.login(manager);
         try {
-            lsc.LoadSystem("src/Tests/loadTest.json");
+            lsc.LoadSystem("src/Tests/jsons/availableTask.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        //tests basic project fields
         assertEquals(taskManSystem.getSystemTime().getHour(), 15);
         assertEquals(10, taskManSystem.getSystemTime().getMinute());
-        List<String> projectNames = taskManSystem.getProjectNames();
-        String[] expectedProjectNames = new String[]{"simpleProject", "simpleProject2", "simpleProject3", "simpleProject4", "simpleProject5"};
-        for (int i = 0; i < expectedProjectNames.length; i++) {
-            assertEquals(projectNames.get(i), expectedProjectNames[i]);
-        }
-        assertEquals(taskManSystem.getStatus("simpleProject", "simpleTask"), Status.EXECUTING);
-        assertEquals(taskManSystem.getStatus("simpleProject5", "simpleTask"), Status.FINISHED);
-        Map<String, List<String>> executingTasks = taskManSystem.showExecutingTasks();
-        Map<String, List<String>> expectedExecutingTasks = new HashMap<>();
-        expectedExecutingTasks.put("simpleProject", new LinkedList<>(Collections.singleton("simpleTask")));
-        expectedExecutingTasks.put("simpleProject2", new LinkedList<>());
-        expectedExecutingTasks.put("simpleProject3", new LinkedList<>(Collections.singleton("replacesTask")));
-        expectedExecutingTasks.put("simpleProject4", new LinkedList<>(Collections.singleton("simpleTask")));
-        expectedExecutingTasks.put("simpleProject5", new LinkedList<>());
-        assertEquals(executingTasks, expectedExecutingTasks);
-        Map<String, List<String>> expectedAvailableTasks = new HashMap<>();
-        for (String p : expectedProjectNames) {
-            expectedAvailableTasks.put(p, new LinkedList<>());
-        }
-        // TODO: idk waarom deze failt
-        assertEquals(expectedAvailableTasks, taskManSystem.showAvailableTasks());
-        String expectedTask = "Task Name:          simpleTask\nDescription:        first LoadSystemTask\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             executing\n\nReplacement Task:   No replacement task\nReplaces Task:      Replaces no tasks\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           No end time set\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n";
-        assertEquals(taskManSystem.showTask("simpleProject", "simpleTask"), expectedTask);
-        expectedTask = "Task Name:          simpleTask\nDescription:        first LoadSystemTask failed\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             failed\n\nReplacement Task:   No replacement task\nReplaces Task:      Replaces no tasks\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           2 hours, 10 minutes\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n";
-        assertEquals(taskManSystem.showTask("simpleProject2", "simpleTask"), expectedTask);
-        expectedTask = "Task Name:          replacesTask\nDescription:        second LoadSystemTask replace\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             executing\n\nReplacement Task:   No replacement task\nReplaces Task:      simpleTask\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           No end time set\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n";
-        assertEquals(taskManSystem.showTask("simpleProject3", "replacesTask"), expectedTask);
-        expectedTask = "Task Name:          simpleTask\nDescription:        first LoadSystemTask replace\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             failed\n\nReplacement Task:   replacesTask\nReplaces Task:      Replaces no tasks\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           2 hours, 10 minutes\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n";
-        assertEquals(taskManSystem.showTask("simpleProject3", "simpleTask"), expectedTask);
-        expectedTask = "Task Name:          simpleTask\nDescription:        first LoadSystemTask nxt\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             executing\n\nReplacement Task:   No replacement task\nReplaces Task:      Replaces no tasks\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           No end time set\n\nUser:               SamHa\n\nNext tasks:\n1.nextTask\nPrevious tasks:\n";
-        assertEquals(taskManSystem.showTask("simpleProject4", "simpleTask"), expectedTask);
-        expectedTask = "Task Name:          nextTask\nDescription:        second LoadSystemTask nxt\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             unavailable\n\nReplacement Task:   No replacement task\nReplaces Task:      Replaces no tasks\n\nStart Time:         Task has not started yet\nEnd Time:           Task has not ended yet\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n1.simpleTask\n";
-        assertEquals(taskManSystem.showTask("simpleProject4", "nextTask"), expectedTask);
-        expectedTask = "Task Name:          simpleTask\nDescription:        first LoadSystemTask finished\nEstimated Duration: 16 hours, 10 minutes\nAccepted Deviation: 3.3\nStatus:             finished, on time\n\nReplacement Task:   No replacement task\nReplaces Task:      Replaces no tasks\n\nStart Time:         1 hours, 6 minutes\nEnd Time:           2 hours, 10 minutes\n\nUser:               SamHa\n\nNext tasks:\nPrevious tasks:\n";
-        assertEquals(taskManSystem.showTask("simpleProject5", "simpleTask"), expectedTask);
+        ProjectProxy projectData = taskManSystem.getProjectData("availableProject");
+        assertEquals(projectData.getName(), "availableProject");
+        assertEquals(projectData.getStatus(), ProjectStatus.ONGOING);
+        assertEquals(projectData.getDescription(), "first LoadSystemTest");
+        assertEquals(projectData.getCreationTime().getHour(), 1);
+        assertEquals(projectData.getCreationTime().getMinute(), 11);
+        assertEquals(projectData.getDueTime().getHour(), 16);
+        assertEquals(projectData.getDueTime().getMinute(), 10);
+
+        //tests basic task fields
+        TaskProxy taskData = taskManSystem.getTaskData("availableProject", "availableTask");
+        assertEquals(taskData.getName(), "availableTask");
+        assertEquals(taskData.getDescription(), "first LoadSystemTask");
+        assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
+        assertEquals(taskData.getNextTasksNames().size(), 0);
+        assertEquals(taskData.getPreviousTasksNames().size(), 0);
+        assertEquals(taskData.getProjectName(), "availableProject");
+        assertNull(taskData.getReplacesTaskName());
+        assertEquals(taskData.getEstimatedDuration().getHour(), 16);
+        assertEquals(taskData.getEstimatedDuration().getMinute(), 10);
+        assertEquals(3.3, taskData.getAcceptableDeviation(), 0.0);
+        assertNull(taskData.getEndTime());
+
+        //tests if available
+        assertEquals(taskData.getStatus(), Status.AVAILABLE);
+
+        //test executing task
         try {
-            manager = userManager.getUser("SamHa", "trein123");
-            session.login(manager);
-            lsc = new LoadSystemController(sessionWrapper, taskManSystem, userManager);
-            lsc.LoadSystem("src/Tests/loadTest.json");
-            fail("Exception not thrown");
-        } catch (IncorrectPermissionException e) {
-            assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function", e.getMessage());
+            lsc.LoadSystem("src/Tests/jsons/executingTask.json");
         } catch (Exception e) {
-            fail("Wrong exception thrown");
+            throw new RuntimeException(e);
         }
 
-        */
+        taskData = taskManSystem.getTaskData("executingProject", "executingTask");
+
+        assertEquals(taskData.getStatus(), Status.EXECUTING);
+
+        //test if users are correctly loaded
+        assertTrue(taskData.getUserNamesWithRole().containsKey("SamHa"));
+        assertTrue(taskData.getUserNamesWithRole().containsKey("OlavBl"));
+        assertEquals(taskData.getUserNamesWithRole().get("OlavBl"), Role.PYTHONPROGRAMMER);
+        assertEquals(taskData.getUserNamesWithRole().get("SamHa"), Role.JAVAPROGRAMMER);
+
+        //test pending task
+        try {
+            lsc.LoadSystem("src/Tests/jsons/pendingTask.json");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        taskData = taskManSystem.getTaskData("pendingProject", "pendingTask");
+
+        assertEquals(taskData.getStatus(), Status.PENDING);
+        assertTrue(taskData.getUserNamesWithRole().containsKey("SamHa"));
+        assertFalse(taskData.getUserNamesWithRole().containsKey("OlavBl"));
+        assertEquals(taskData.getUserNamesWithRole().get("SamHa"), Role.JAVAPROGRAMMER);
+
+        //TODO replace, prev, multiple projects, started ended and remaining task in 1, testen met 2 starten dezelfde tijd
+
+        //test finished task
+        try {
+            lsc.LoadSystem("src/Tests/jsons/finishedTask.json");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        taskData = taskManSystem.getTaskData("finishedProject", "finishedTask");
+        assertEquals(taskData.getStatus(), Status.FINISHED);
+        assertEquals(taskData.getEndTime().getHour(), 3);
+        assertEquals(taskData.getEndTime().getMinute(), 10);
+
+        try {
+            lsc.LoadSystem("src/Tests/jsons/failedTask.json");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        taskData = taskManSystem.getTaskData("failedProject", "failedTask");
+        assertEquals(taskData.getStatus(), Status.FAILED);
+        assertEquals(taskData.getEndTime().getHour(), 3);
+        assertEquals(taskData.getEndTime().getMinute(), 10);
+
+
+        try {
+            lsc.LoadSystem("src/Tests/jsons/replaceTask.json");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        taskData = taskManSystem.getTaskData("replaceProject", "replacedTask");
+        assertEquals(taskData.getStatus(), Status.FAILED);
+        assertEquals(taskData.getEndTime().getHour(), 3);
+        assertEquals(taskData.getEndTime().getMinute(), 11);
+        taskData = taskManSystem.getTaskData("replaceProject", "replacesTask");
+        assertEquals(taskData.getRequiredRoles().size(), 1);
+        assertTrue(taskData.getRequiredRoles().contains(Role.JAVAPROGRAMMER));
+        assertEquals(taskData.getStatus(), Status.EXECUTING);
+        assertEquals(taskData.getReplacesTaskName(), "replacedTask");
+        projectData = taskManSystem.getProjectData("replaceProject");
+        assertTrue(projectData.getReplacedTasksNames().contains("replacedTask"));
+
+        // TODO hier nog active en replaced tasks testen
+
     }
 
     @Test
