@@ -34,7 +34,7 @@ public class FailedState implements TaskState {
         replacement.updateAvailability();
 
         try {
-            replacement.setRequiredRoles(replaces.getUnfulfilledRoles());
+            replacement.setRequiredRoles(replaces.getRequiredRoles());
         } catch (NonDeveloperRoleException e) {
             throw new RuntimeException(e);
         }
