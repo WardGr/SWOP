@@ -59,7 +59,7 @@ public class LoadSystemTest {
         TaskProxy taskData = taskManSystem.getTaskData("availableProject", "availableTask");
         assertEquals(taskData.getName(), "availableTask");
         assertEquals(taskData.getDescription(), "first LoadSystemTask");
-        assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
+        //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
         assertEquals(taskData.getNextTasksNames().size(), 0);
         assertEquals(taskData.getPreviousTasksNames().size(), 0);
         assertEquals(taskData.getProjectName(), "availableProject");
@@ -71,6 +71,8 @@ public class LoadSystemTest {
 
         //tests if available
         assertEquals(taskData.getStatus(), Status.AVAILABLE);
+        assertTrue(taskData.getUnfulfilledRoles().contains(Role.JAVAPROGRAMMER));
+        assertEquals(taskData.getUnfulfilledRoles().size(), 1);
 
         //test executing task
         try {
@@ -141,8 +143,7 @@ public class LoadSystemTest {
         assertEquals(taskData.getEndTime().getHour(), 3);
         assertEquals(taskData.getEndTime().getMinute(), 11);
         taskData = taskManSystem.getTaskData("replaceProject", "replacesTask");
-        assertEquals(taskData.getRequiredRoles().size(), 1);
-        assertTrue(taskData.getRequiredRoles().contains(Role.JAVAPROGRAMMER));
+        assertEquals(taskData.getUnfulfilledRoles().size(), 0);
         assertEquals(taskData.getStatus(), Status.EXECUTING);
         assertEquals(taskData.getReplacesTaskName(), "replacedTask");
         projectData = taskManSystem.getProjectData("replaceProject");

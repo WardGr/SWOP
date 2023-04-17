@@ -62,12 +62,11 @@ public class LoadSystemUI {
             getController().LoadSystem(path);
             System.out.println("system succesfully loaded");
         } catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException |
-                 ProjectNameAlreadyInUseException | InvalidTimeException | FailTimeAfterSystemTimeException |
-                 IncorrectUserException | ReplacedTaskNotFailedException | IncorrectTaskStatusException |
-                 DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException |
-                 EndTimeBeforeStartTimeException | StartTimeBeforeAvailableException |
-                 UserAlreadyAssignedToTaskException | LoopDependencyGraphException | IncorrectRoleException |
-                 NonDeveloperRoleException | RoleNotFoundException e) {
+                 ProjectNameAlreadyInUseException | InvalidTimeException | IncorrectUserException |
+                 IncorrectTaskStatusException | DueBeforeSystemTimeException | ProjectNotFoundException |
+                 TaskNameAlreadyInUseException | EndTimeBeforeStartTimeException | UserAlreadyAssignedToTaskException |
+                 LoopDependencyGraphException | IncorrectRoleException | NonDeveloperRoleException |
+                 RoleNotFoundException | DueTimeBeforeCreationTimeException | ProjectNotOngoingException e) {
             System.out.println("ERROR: invalid file logic");
             getController().clear();
         } catch (IOException e) {

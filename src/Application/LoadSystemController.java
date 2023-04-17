@@ -53,7 +53,7 @@ public class LoadSystemController {
      *
      * @param filepath String containing the filepath to the JSON holding the system information
      */
-    public void LoadSystem(String filepath) throws IncorrectPermissionException, IOException, InvalidTimeException, ParseException, UserNotFoundException, ProjectNameAlreadyInUseException, ReplacedTaskNotFailedException, FailTimeAfterSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, DueBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, StartTimeBeforeAvailableException, UserAlreadyAssignedToTaskException, LoopDependencyGraphException, IncorrectRoleException, NonDeveloperRoleException, RoleNotFoundException {
+    public void LoadSystem(String filepath) throws IncorrectPermissionException, IOException, InvalidTimeException, ParseException, UserNotFoundException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, DueBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, UserAlreadyAssignedToTaskException, LoopDependencyGraphException, IncorrectRoleException, NonDeveloperRoleException, RoleNotFoundException, DueTimeBeforeCreationTimeException, ProjectNotOngoingException {
         if (!loadSystemPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
@@ -86,7 +86,7 @@ public class LoadSystemController {
      *
      * @param project JSONObject containing the details of the project to create and load
      */
-    private void loadProject(JSONObject project) throws  DueBeforeSystemTimeException, ProjectNameAlreadyInUseException, InvalidTimeException {
+    private void loadProject(JSONObject project) throws ProjectNameAlreadyInUseException, InvalidTimeException, DueTimeBeforeCreationTimeException {
         //create the project
         String name = (String) project.get("name");
         String description = (String) project.get("description");
@@ -99,7 +99,7 @@ public class LoadSystemController {
     }
 
 
-    private void loadTasks(JSONArray tasks) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, NonDeveloperRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+    private void loadTasks(JSONArray tasks) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, NonDeveloperRoleException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException {
         TreeMap<Time, JSONArray> startedTasks = new TreeMap<>();
         TreeMap<Time, JSONArray> endedTasks = new TreeMap<>();
         HashSet<JSONObject> remainingTasks = new HashSet<>();
@@ -165,7 +165,7 @@ public class LoadSystemController {
         }
     }
 
-    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, RoleNotFoundException, EndTimeBeforeStartTimeException, IncorrectUserException {
+    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, RoleNotFoundException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException {
         //standard task fields
         String name = (String) task.get("name");
         String description = (String) task.get("description");
@@ -187,12 +187,11 @@ public class LoadSystemController {
         }else{
             ArrayList<String> prevTasks = (ArrayList<String>) task.get("previousTasks");
             getTaskManSystem().addTaskToProject(projectName, name, description, dueTime, acceptableDeviation, roles, new HashSet<>(prevTasks), new HashSet<>());
-
-            //start the task
-            JSONArray users = (JSONArray) task.get("users");
-            for(Object user : users){
-                getTaskManSystem().startTask(projectName, name, getUserManager().getUser((String) ((JSONObject) user).get("user")), findRole((String) ((JSONObject) user).get("role")));
-            }
+        }
+        //start the task
+        JSONArray users = (JSONArray) task.get("users");
+        for(Object user : users){
+            getTaskManSystem().startTask(projectName, name, getUserManager().getUser((String) ((JSONObject) user).get("user")), findRole((String) ((JSONObject) user).get("role")));
         }
     }
 
