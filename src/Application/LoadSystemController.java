@@ -189,9 +189,11 @@ public class LoadSystemController {
             getTaskManSystem().addTaskToProject(projectName, name, description, dueTime, acceptableDeviation, roles, new HashSet<>(prevTasks), new HashSet<>());
         }
         //start the task
-        JSONArray users = (JSONArray) task.get("users");
-        for(Object user : users){
-            getTaskManSystem().startTask(projectName, name, getUserManager().getUser((String) ((JSONObject) user).get("user")), findRole((String) ((JSONObject) user).get("role")));
+        if(getTaskManSystem().getTaskData(projectName, name).getStatus() == Status.AVAILABLE || getTaskManSystem().getTaskData(projectName, name).getStatus() == Status.PENDING){
+            JSONArray users = (JSONArray) task.get("users");
+            for(Object user : users){
+                getTaskManSystem().startTask(projectName, name, getUserManager().getUser((String) ((JSONObject) user).get("user")), findRole((String) ((JSONObject) user).get("role")));
+            }
         }
     }
 

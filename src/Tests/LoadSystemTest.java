@@ -6,6 +6,7 @@ import Application.SessionWrapper;
 import Domain.*;
 import Domain.TaskStates.TaskProxy;
 import org.junit.Test;
+import UserInterface.LoadSystemUI;
 
 import java.util.*;
 
@@ -105,7 +106,7 @@ public class LoadSystemTest {
         assertFalse(taskData.getUserNamesWithRole().containsKey("OlavBl"));
         assertEquals(taskData.getUserNamesWithRole().get("SamHa"), Role.JAVAPROGRAMMER);
 
-        //TODO replace, prev, multiple projects, started ended and remaining task in 1, testen met 2 starten dezelfde tijd
+        //TODO multiple projects, started ended and remaining task in 1, testen met 2 starten dezelfde tijd
 
         //test finished task
         try {
@@ -150,16 +151,98 @@ public class LoadSystemTest {
         assertTrue(projectData.getReplacedTasksNames().contains("replacedTask"));
 
         //test adding previousTask
+        try {
+            lsc.LoadSystem("src/Tests/jsons/previousTask.json");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        taskData = taskManSystem.getTaskData("previousProject", "previousTask");
+        assertEquals(taskData.getStatus(), Status.EXECUTING);
+        assertTrue(taskData.getNextTasksNames().contains("nextTask"));
+        taskData = taskManSystem.getTaskData("previousProject", "nextTask");
+        assertEquals(taskData.getStatus(), Status.UNAVAILABLE);
+        assertTrue(taskData.getPreviousTasksNames().contains("previousTask"));
+        assertEquals(taskData.getPreviousTasksNames().size(), 1);
+        assertEquals(taskData.getNextTasksNames().size(), 0);
 
+        //testing loading multiple projects from 1 file
 
+        try {
+            lsc.LoadSystem("src/Tests/jsons/multipleProjects.json");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
+        //tests basic project fields
+        assertEquals(taskManSystem.getSystemTime().getHour(), 15);
+        assertEquals(10, taskManSystem.getSystemTime().getMinute());
+        projectData = taskManSystem.getProjectData("availableProject");
+        assertEquals(projectData.getName(), "availableProject");
+        assertEquals(projectData.getStatus(), ProjectStatus.ONGOING);
+        assertEquals(projectData.getDescription(), "first LoadSystemTest");
+        assertEquals(projectData.getCreationTime().getHour(), 1);
+        assertEquals(projectData.getCreationTime().getMinute(), 11);
+        assertEquals(projectData.getDueTime().getHour(), 16);
+        assertEquals(projectData.getDueTime().getMinute(), 10);
+
+        projectData = taskManSystem.getProjectData("executingProject");
+        assertEquals(projectData.getName(), "executingProject");
+        assertEquals(projectData.getStatus(), ProjectStatus.ONGOING);
+        assertEquals(projectData.getDescription(), "LoadSystemTest");
+        assertEquals(projectData.getCreationTime().getHour(), 1);
+        assertEquals(projectData.getCreationTime().getMinute(), 11);
+        assertEquals(projectData.getDueTime().getHour(), 16);
+        assertEquals(projectData.getDueTime().getMinute(), 10);
+
+        projectData = taskManSystem.getProjectData("finishedProject");
+        assertEquals(projectData.getName(), "finishedProject");
+        assertEquals(projectData.getStatus(), ProjectStatus.FINISHED);
+        assertEquals(projectData.getDescription(), "LoadSystemTest");
+        assertEquals(projectData.getCreationTime().getHour(), 2);
+        assertEquals(projectData.getCreationTime().getMinute(), 11);
+        assertEquals(projectData.getDueTime().getHour(), 17);
+        assertEquals(projectData.getDueTime().getMinute(), 10);
+
+        //tests basic task fields
+        taskData = taskManSystem.getTaskData("availableProject", "availableTask");
+        assertEquals(taskData.getName(), "availableTask");
+        assertEquals(taskData.getDescription(), "first LoadSystemTask");
+        //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
+        assertEquals(taskData.getNextTasksNames().size(), 0);
+        assertEquals(taskData.getPreviousTasksNames().size(), 0);
+        assertEquals(taskData.getProjectName(), "availableProject");
+        assertNull(taskData.getReplacesTaskName());
+        assertEquals(taskData.getEstimatedDuration().getHour(), 16);
+        assertEquals(taskData.getEstimatedDuration().getMinute(), 10);
+        assertEquals(3.3, taskData.getAcceptableDeviation(), 0.0);
+        assertNull(taskData.getEndTime());
+
+        //tests if available
+        assertEquals(taskData.getStatus(), Status.AVAILABLE);
+        assertTrue(taskData.getUnfulfilledRoles().contains(Role.JAVAPROGRAMMER));
+        assertEquals(taskData.getUnfulfilledRoles().size(), 1);
+
+        //test finished test
+        taskData = taskManSystem.getTaskData("finishedProject", "finishedTask");
+        assertEquals(taskData.getStatus(), Status.FINISHED);
+        assertEquals(taskData.getEndTime().getHour(), 3);
+        assertEquals(taskData.getEndTime().getMinute(), 10);
+
+        //test executing task
+        taskData = taskManSystem.getTaskData("executingProject", "executingTask");
+        assertEquals(taskData.getStatus(), Status.EXECUTING);
+
+        //test if users are correctly loaded
+        assertTrue(taskData.getUserNamesWithRole().containsKey("JasperVH"));
+        assertTrue(taskData.getUserNamesWithRole().containsKey("HannahEr"));
+        assertEquals(taskData.getUserNamesWithRole().get("HannahEr"), Role.PYTHONPROGRAMMER);
+        assertEquals(taskData.getUserNamesWithRole().get("JasperVH"), Role.JAVAPROGRAMMER);
 
     }
 
     @Test
     public void ui() throws LoginException {
         /*
-
         LoadSystemUI lsu = new LoadSystemUI(lsc);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
@@ -220,8 +303,6 @@ public class LoadSystemTest {
                         ERROR: invalid file logic
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
         out.reset();
-
-        */
+     */
     }
-
 }
