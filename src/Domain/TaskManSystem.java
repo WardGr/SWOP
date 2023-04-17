@@ -3,6 +3,7 @@ package Domain;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.TaskProxy;
 
 import java.util.*;
 
@@ -75,59 +76,12 @@ public class TaskManSystem {
         return project.getProjectData();
     }
 
-    public Domain.TaskStates.TaskProxy getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
+    public TaskProxy getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
         return project.getTaskData(taskName);
-    }
-
-    /**
-     * Returns a map which maps project names to their status
-     */
-    public Map<String, String> getProjectNamesWithStatus() {
-        Map<String, String> statuses = new HashMap<>();
-        for (Project project : getProjects()) {
-            statuses.put(project.getName(), project.getStatus().toString());
-        }
-        return statuses;
-    }
-
-    /**
-     * TODO: maybe it's cleaner to just return the empty string if no such project is found? Semantically this is logical and it removes an exception to be caught...
-     * Returns detailed information about the given project
-     *
-     * @param projectName Name of the project of which to return the details
-     * @return string containing detailed information about the project  + a list of its tasks
-     * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
-     */
-    public String showProject(String projectName)
-            throws ProjectNotFoundException {
-        Project project = getProject(projectName);
-        if (project == null) {
-            throw new ProjectNotFoundException();
-        }
-        return project.toString();
-    }
-
-    /**
-     * TODO: maybe it's cleaner to just return the empty string if no such task is found? Semantically this is logical and it removes an exception to be caught...
-     * Returns detailed information about the given task
-     *
-     * @param projectName Name of the project which the task belongs to
-     * @param taskName    Name of the task of which to return detailed information
-     * @return string containing detailed information about the task
-     * @throws ProjectNotFoundException if the given project name does not correspond to an existing project
-     * @throws TaskNotFoundException    if the given task does not correspond to an existing task within the given project
-     */
-    public String showTask(String projectName, String taskName)
-            throws ProjectNotFoundException, TaskNotFoundException {
-        Project project = getProject(projectName);
-        if (project == null) {
-            throw new ProjectNotFoundException();
-        }
-        return project.showTask(taskName);
     }
 
     private void addProject(Project newProject) {
@@ -144,7 +98,12 @@ public class TaskManSystem {
      * @throws ProjectNameAlreadyInUseException if the given project name is already in use
      */
     public void createProject(String projectName, String projectDescription, Time dueTime) throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
-        createProject(projectName, projectDescription, getSystemTime(), dueTime);
+        try {
+            createProject(projectName, projectDescription, getSystemTime(), dueTime);
+        }
+        catch (DueTimeBeforeCreationTimeException e) {
+            throw new DueBeforeSystemTimeException();
+        }
     }
 
     /**
@@ -163,7 +122,7 @@ public class TaskManSystem {
             Time startTime,
             Time dueTime
     )
-            throws DueBeforeSystemTimeException, ProjectNameAlreadyInUseException {
+            throws ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException {
         if (getProject(projectName) == null) {
             Project newProject = new Project(
                     projectName,
@@ -185,7 +144,7 @@ public class TaskManSystem {
      * @param description  Task description of the task
      * @param durationTime Duration of the task
      * @param deviation    Acceptable deviation of the task
-     * @param roles        TODO
+     * @param roles        List of roles necessary for this task to start
      * @throws ProjectNotFoundException      if the given project name does not correspond to an existing project
      * @throws TaskNotFoundException         if one of the previous tasks does not correspond to an existing task
      * @throws TaskNameAlreadyInUseException if the given task name is already used by another task belonging to the given project
@@ -200,7 +159,7 @@ public class TaskManSystem {
             Set<String> previousTasks,
             Set<String> nextTasks
     )
-            throws ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+            throws ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, ProjectNotOngoingException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -225,7 +184,6 @@ public class TaskManSystem {
      * @param description  Description of the task to create
      * @param durationTime Duration of the task to create
      * @param deviation    Accepted deviation of the task to create
-     * @throws ReplacedTaskNotFailedException if the task to replace has not failed yet
      * @throws ProjectNotFoundException       if the given project name does not correspond to an existing project
      * @throws TaskNotFoundException          if the given task name does not correspond to a task within the given project
      * @throws TaskNameAlreadyInUseException  if the task name to use for the new task is already in use by another task within the project
@@ -238,7 +196,7 @@ public class TaskManSystem {
             double deviation,
             String replaces
     )
-            throws ReplacedTaskNotFailedException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
+            throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -250,24 +208,6 @@ public class TaskManSystem {
                 deviation,
                 replaces
         );
-    }
-
-    /**
-     * Gets the status of the given task within the given project
-     *
-     * @param projectName Name of the project to which the task is assigned
-     * @param taskName    Name of the task of which to return the status
-     * @return Status of the given task (AVAILABLE, UNAVAILABLE, EXECUTING, FINISHED, FAILED)
-     * @throws ProjectNotFoundException if the given project does not correspond to an existing project
-     * @throws TaskNotFoundException    if the given task does not correspond to an existing task within the given project
-     */
-    public Status getStatus(String projectName, String taskName)
-            throws ProjectNotFoundException, TaskNotFoundException {
-        Project project = getProject(projectName);
-        if (project == null) {
-            throw new ProjectNotFoundException();
-        }
-        return project.getStatus(taskName);
     }
 
     /**
@@ -287,7 +227,7 @@ public class TaskManSystem {
             User currentUser,
             Role role
     )
-            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -306,8 +246,7 @@ public class TaskManSystem {
      * @param newTime Time which to change the system time to
      * @throws NewTimeBeforeSystemTimeException if the given time is before the current system time
      */
-    public void advanceTime(Time newTime)
-            throws NewTimeBeforeSystemTimeException {
+    public void advanceTime(Time newTime) throws NewTimeBeforeSystemTimeException {
         if (newTime.before(getSystemTime())) {
             throw new NewTimeBeforeSystemTimeException();
         }
@@ -321,9 +260,6 @@ public class TaskManSystem {
      * @throws NewTimeBeforeSystemTimeException if advanceMinutes < 0
      */
     public void advanceTime(int advanceMinutes) throws NewTimeBeforeSystemTimeException {
-        if (advanceMinutes < 0) {
-            throw new NewTimeBeforeSystemTimeException();
-        }
         try {
             advanceTime(new Time(advanceMinutes).add(getSystemTime()));
         } catch (InvalidTimeException e) {
@@ -332,9 +268,8 @@ public class TaskManSystem {
     }
 
 
-    public void clear() throws InvalidTimeException {
+    public void clear() {
         projects = new LinkedList<>();
-        systemTime = new Time(0, 0);
     }
 
 
