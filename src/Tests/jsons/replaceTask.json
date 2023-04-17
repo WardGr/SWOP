@@ -1,0 +1,60 @@
+{
+  "projects": [
+    {"name": "replaceProject",
+      "description": "Test on task replacement",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10
+    }
+  ],
+  "tasks": [
+    {
+      "name": "replacedTask",
+      "project": "replaceProject",
+      "description": "first LoadSystemTask replace",
+      "acceptableDeviation": 3.3,
+      "dueHour": 3,
+      "dueMinute": 10,
+      "startHour": 2,
+      "startMinute": 6,
+      "endHour": 3,
+      "endMinute": 11,
+      "replaces": null,
+      "previousTasks": [],
+      "users": [
+        {
+          "user": "SamHa",
+          "role": "JAVAPROGRAMMER"
+        }
+      ],
+      "roles": [
+        "JAVAPROGRAMMER"
+      ]
+    },
+    {
+      "name": "replacesTask",
+      "project": "replaceProject",
+      "description": "second LoadSystemTask replace",
+      "acceptableDeviation": 3.3,
+      "dueHour": 16,
+      "dueMinute": 10,
+      "startHour": 3,
+      "startMinute": 12,
+      "endHour": null,
+      "endMinute": null,
+      "replaces": "replacedTask",
+      "previousTasks": [],
+      "users": [
+        {
+          "user": "SamHa",
+          "role": "JAVAPROGRAMMER"
+        }
+      ],
+      "roles": [
+        "JAVAPROGRAMMER"
+      ]
+    }],
+      "systemHour": 15,
+      "systemMinute": 10
+}
