@@ -147,8 +147,8 @@ public class TaskTest {
 
         // Checks if finished state cannot start/fail/finish/unassign/replace
         assertThrows(IncorrectTaskStatusException.class, () -> prevTask.start(new Time(0), user, Role.JAVAPROGRAMMER));
-        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.finish(pythonProg, new Time(0)));
-        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.fail(pythonProg, new Time(0)));
+        assertThrows(IncorrectUserException.class, () -> prevTask.finish(pythonProg, new Time(0)));
+        assertThrows(IncorrectUserException.class, () -> prevTask.fail(pythonProg, new Time(0)));
         assertThrows(IncorrectTaskStatusException.class, () -> prevTask.unassignUser(pythonProg));
         assertThrows(IncorrectTaskStatusException.class, () -> prevTask.replaceTask(task));
 
@@ -208,7 +208,7 @@ public class TaskTest {
         assertEquals(new Time(10), taskProxyFailed.getStartTime());
         assertEquals(new Time(15), taskProxyFailed.getEndTime());
         assertEquals(List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), taskProxyFailed.getUnfulfilledRoles());
-        assertEquals("Project 1", taskProxyFailed.getProjectName());
+        assertEquals("project1", taskProxyFailed.getProjectName());
         assertFalse(taskProxyFailed.canSafelyAddPrevTask("Current Task"));
         assertNull(taskProxyFailed.getReplacesTaskName());
 
