@@ -3,6 +3,9 @@ package UserInterface;
 import Application.IncorrectPermissionException;
 import Application.LoadSystemController;
 import Domain.*;
+import Domain.TaskStates.IncorrectRoleException;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
@@ -31,6 +34,8 @@ public class LoadSystemUI {
                 loadSystemForm();
             } catch (IncorrectPermissionException e) {
                 System.out.println(e.getMessage());
+            } catch (InvalidTimeException e) {
+                throw new RuntimeException(e);
             }
         } else {
             System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
@@ -42,7 +47,7 @@ public class LoadSystemUI {
      *
      * @throws IncorrectPermissionException if the current user is not a project manager
      */
-    private void loadSystemForm() throws IncorrectPermissionException {
+    private void loadSystemForm() throws IncorrectPermissionException, InvalidTimeException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Type BACK to cancel system load at any time");
@@ -57,15 +62,17 @@ public class LoadSystemUI {
             getController().LoadSystem(path);
             System.out.println("system succesfully loaded");
         } catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException |
-                 ProjectNameAlreadyInUseException | InvalidTimeException |
-                 IncorrectUserException | IncorrectTaskStatusException |
+                 ProjectNameAlreadyInUseException | InvalidTimeException | FailTimeAfterSystemTimeException |
+                 IncorrectUserException | ReplacedTaskNotFailedException | IncorrectTaskStatusException |
                  DueBeforeSystemTimeException | ProjectNotFoundException | TaskNameAlreadyInUseException |
-                 EndTimeBeforeStartTimeException e) {
+                 EndTimeBeforeStartTimeException | StartTimeBeforeAvailableException |
+                 UserAlreadyAssignedToTaskException | LoopDependencyGraphException | IncorrectRoleException |
+                 NonDeveloperRoleException | RoleNotFoundException e) {
             System.out.println("ERROR: invalid file logic");
+            getController().clear();
         } catch (IOException e) {
             System.out.println("ERROR: file not found");
-        } catch (DueTimeBeforeCreationTimeException e) {
-            System.out.println("ERROR: a projects' due time is set before its creation time");
+            getController().clear();
         }
     }
 }
