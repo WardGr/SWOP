@@ -131,27 +131,27 @@ public class CreateTaskControllerTest {
         x.add(Role.PYTHONPROGRAMMER);
         User dieter = new User("Dieter", "Dieter", x);
 
-        assertEquals(Status.AVAILABLE, tms.getStatus("Omer", "Hire brewer"));
-        assertEquals(Status.UNAVAILABLE, tms.getStatus("Omer", "Buy ingredients"));
+        assertEquals(Status.AVAILABLE, tms.getTaskData("Omer", "Hire brewer").getStatus());
+        assertEquals(Status.UNAVAILABLE, tms.getTaskData("Omer", "Buy ingredients").getStatus());
         tms.startTask("Omer", "Hire brewer", ward, Role.JAVAPROGRAMMER);
         tms.startTask("Omer", "Hire brewer", dieter, Role.PYTHONPROGRAMMER);
-        assertEquals(Status.EXECUTING, tms.getStatus("Omer", "Hire brewer"));
+        assertEquals(Status.EXECUTING, tms.getTaskData("Omer", "Hire brewer").getStatus());
         tms.advanceTime(10);
         tms.failTask("Omer", "Hire brewer", ward);
 
-        assertEquals(Status.FAILED, tms.getStatus("Omer", "Hire brewer"));
+        assertEquals(Status.FAILED, tms.getTaskData("Omer", "Hire brewer").getStatus());
 
         ctc.replaceTask("Omer", "Replace brewer", "Replace incapable brewer for new one", new Time(5), 1, "Hire brewer");
-        assertEquals(Status.AVAILABLE, tms.getStatus("Omer", "Replace brewer"));
-        assertEquals(Status.FAILED, tms.getStatus("Omer", "Hire brewer"));
-        assertEquals(Status.UNAVAILABLE, tms.getStatus("Omer", "Buy ingredients"));
+        assertEquals(Status.AVAILABLE, tms.getTaskData("Omer", "Replace brewer").getStatus());
+        assertEquals(Status.FAILED, tms.getTaskData("Omer", "Hire brewer").getStatus());
+        assertEquals(Status.UNAVAILABLE, tms.getTaskData("Omer", "Buy ingredients").getStatus());
 
         tms.startTask("Omer", "Replace brewer", ward, Role.JAVAPROGRAMMER);
         tms.startTask("Omer", "Replace brewer", dieter, Role.PYTHONPROGRAMMER);
         tms.advanceTime(10);
         tms.finishTask("Omer", "Replace brewer", ward);
-        assertEquals(Status.FINISHED, tms.getStatus("Omer", "Replace brewer"));
-        assertEquals(Status.AVAILABLE, tms.getStatus("Omer", "Buy ingredients"));
+        assertEquals(Status.FINISHED, tms.getTaskData("Omer", "Replace brewer").getStatus());
+        assertEquals(Status.AVAILABLE, tms.getTaskData("Omer", "Buy ingredients").getStatus());
 
 
         /*

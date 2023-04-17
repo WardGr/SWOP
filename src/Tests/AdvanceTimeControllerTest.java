@@ -58,6 +58,18 @@ public class AdvanceTimeControllerTest {
         assertTrue(atcDuvel.advanceTimePreconditions());
         assertTrue(atcChouffe.advanceTimePreconditions());
 
+        omer.logout();
+        assertFalse(atcOmer.advanceTimePreconditions());
+        omer.login(ward);
+
+        duvel.logout();
+        assertFalse(atcDuvel.advanceTimePreconditions());
+        duvel.login(olav);
+
+        chouffe.logout();
+        assertFalse(atcChouffe.advanceTimePreconditions());
+        chouffe.login(dieter);
+
         // Testen of de setNewTime werkt
         atcOmer.setNewTime(new Time(200));
         assertEquals(new Time(200), atcOmer.getSystemTime());
@@ -93,6 +105,19 @@ public class AdvanceTimeControllerTest {
         assertEquals(new Time(350), atcOmer.getSystemTime());
         assertEquals(new Time(330), atcDuvel.getSystemTime());
         assertEquals(new Time(400), atcChouffe.getSystemTime());
+
+        // Testen of de throws werken
+        omer.logout();
+        chouffe.logout();
+        duvel.logout();
+
+        assertThrows(IncorrectPermissionException.class, () -> atcOmer.advanceTime(30));
+        assertThrows(IncorrectPermissionException.class, () -> atcDuvel.advanceTime(30));
+        assertThrows(IncorrectPermissionException.class, () -> atcChouffe.advanceTime(30));
+
+        assertThrows(IncorrectPermissionException.class, () -> atcOmer.setNewTime(new Time(100)));
+        assertThrows(IncorrectPermissionException.class, () -> atcDuvel.setNewTime(new Time(100)));
+        assertThrows(IncorrectPermissionException.class, () -> atcChouffe.setNewTime(new Time(100)));
 
 
 

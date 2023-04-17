@@ -42,7 +42,7 @@ public class StartTaskControllerTest {
 
         SessionWrapper wrapper = new SessionWrapper(current);
 
-        assertEquals(Status.AVAILABLE, tms.getStatus("Omer", "Hire brewer"));
+        assertEquals(Status.AVAILABLE, tms.getTaskData("Omer", "Hire brewer").getStatus());
 
         StartTaskController stc = new StartTaskController(wrapper, tms);
         assertTrue(stc.startTaskPreconditions());
@@ -50,7 +50,7 @@ public class StartTaskControllerTest {
         assertEquals(1, stc.getUserRoles().size());
 
         stc.startTask("Omer", "Hire brewer", Role.JAVAPROGRAMMER);
-        assertEquals(Status.PENDING, tms.getStatus("Omer", "Hire brewer"));
+        assertEquals(Status.PENDING, tms.getTaskData("Omer", "Hire brewer").getStatus());
 
 
         current.logout();
@@ -60,7 +60,7 @@ public class StartTaskControllerTest {
         assertEquals(1, stc.getUserRoles().size());
 
         stc.startTask("Omer", "Hire brewer", Role.PYTHONPROGRAMMER);
-        assertEquals(Status.EXECUTING, tms.getStatus("Omer", "Hire brewer"));
+        assertEquals(Status.EXECUTING, tms.getTaskData("Omer", "Hire brewer").getStatus());
 
 
 

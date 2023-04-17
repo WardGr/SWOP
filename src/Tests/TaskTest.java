@@ -51,11 +51,11 @@ public class TaskTest {
     @Before
     public void setUp() throws InvalidTimeException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
         // Tasks for general task tests
-        this.task = new Task("Task", "Test", new Time(100), 0.1, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(), project1);
+        this.task = new Task("Task", "Test", new Time(100), 0.1, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(), "project1");
 
-        this.prevTask = new Task("Previous Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER), Set.of(), Set.of(), project1);
-        this.currentTask = new Task("Current Task", "Test", new Time(100), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), Set.of(prevTask), Set.of(), project1);
-        this.nextTask = new Task("Next Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN), Set.of(currentTask), Set.of(), project1);
+        this.prevTask = new Task("Previous Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER), Set.of(), Set.of(), "project1");
+        this.currentTask = new Task("Current Task", "Test", new Time(100), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), Set.of(prevTask), Set.of(), "project1");
+        this.nextTask = new Task("Next Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN), Set.of(currentTask), Set.of(), "project1");
 
         this.replacementTask = new Task("Replacement Task", "", new Time(20), 0);
 
@@ -63,10 +63,10 @@ public class TaskTest {
         // Loop dependency check tasks
         List<Role> roles = List.of(Role.SYSADMIN, Role.JAVAPROGRAMMER);
 
-        this.task1 = new Task("Task 1", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), project1);
-        this.task2 = new Task("Task 2", "test", new Time(20), 0, roles, Set.of(task1), new HashSet<>(), project1);
-        this.task4 = new Task("Task 4", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), project1);
-        this.task3 = new Task("Task 3", "test", new Time(20), 0, roles, new HashSet<>(), Set.of(task4), project1);
+        this.task1 = new Task("Task 1", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), "project1");
+        this.task2 = new Task("Task 2", "test", new Time(20), 0, roles, Set.of(task1), new HashSet<>(), "project1");
+        this.task4 = new Task("Task 4", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), "project1");
+        this.task3 = new Task("Task 3", "test", new Time(20), 0, roles, new HashSet<>(), Set.of(task4), "project1");
 
         // Set stubs
         Mockito.when(project1.getName()).thenReturn("Project 1");
@@ -76,7 +76,7 @@ public class TaskTest {
     @Test
     public void testTask() throws InvalidTimeException, IncorrectTaskStatusException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException {
 
-        assertThrows(NonDeveloperRoleException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PROJECTMANAGER), Set.of(), Set.of(), project1));
+        assertThrows(NonDeveloperRoleException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PROJECTMANAGER), Set.of(), Set.of(), "project1"));
 
         // Test if the task states are initialised correctly
         assertEquals(Status.AVAILABLE, prevTask.getStatus());
@@ -93,10 +93,10 @@ public class TaskTest {
 
         // Asserts it's impossible to add loops in the dependency graph
         assertThrows(LoopDependencyGraphException.class, () -> nextTask.addNextTask(currentTask));
-        assertThrows(LoopDependencyGraphException.class, () -> new Task("", "", new Time(0), 0, List.of(), Set.of(prevTask), Set.of(prevTask), project1));
+        assertThrows(LoopDependencyGraphException.class, () -> new Task("", "", new Time(0), 0, List.of(), Set.of(prevTask), Set.of(prevTask), "project1"));
 
-        Task testTask = new Task("", "", new Time(0), 0, List.of(), Set.of(), Set.of(prevTask), project1);
-        assertThrows(LoopDependencyGraphException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(prevTask), Set.of(currentTask, testTask, nextTask), project1));
+        Task testTask = new Task("", "", new Time(0), 0, List.of(), Set.of(), Set.of(prevTask), "project1");
+        assertThrows(LoopDependencyGraphException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(prevTask), Set.of(currentTask, testTask, nextTask), "project1"));
         prevTask.removePreviousTask(testTask);
 
         // Check basic getters
@@ -136,7 +136,7 @@ public class TaskTest {
         assertEquals("executing", Status.EXECUTING.toString());
 
         // Check if an executing task cannot be a next task for a new task, and that we cannot finish/fail a task with the wrong user
-        assertThrows(IncorrectTaskStatusException.class, () -> new Task("", "", new Time(0), 0, List.of(), Set.of(), Set.of(prevTask), project1));
+        assertThrows(IncorrectTaskStatusException.class, () -> new Task("", "", new Time(0), 0, List.of(), Set.of(), Set.of(prevTask), "project1"));
         assertThrows(IncorrectUserException.class, () -> prevTask.finish(user, new Time(10)));
         assertThrows(IncorrectUserException.class, () -> prevTask.fail(user, new Time(10)));
 
@@ -156,7 +156,7 @@ public class TaskTest {
         assertEquals(Status.AVAILABLE, currentTask.getStatus());
 
         // Checks if next tasks are properly added upon task creation
-        Task test = new Task("", "", new Time(0), 0, List.of(), Set.of(), Set.of(currentTask), project1);
+        Task test = new Task("", "", new Time(0), 0, List.of(), Set.of(), Set.of(currentTask), "project1");
         currentTask.removePreviousTask(test);
         assertEquals(Status.AVAILABLE, currentTask.getStatus());
 
@@ -287,19 +287,19 @@ public class TaskTest {
 
         // FinishedStatusTest
 
-        Task onTime = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), project1);
+        Task onTime = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
         onTime.start(new Time(0), user, Role.JAVAPROGRAMMER);
         onTime.finish(user, new Time(10));
         assertEquals("on time", onTime.getTaskProxy().getFinishedStatus().toString());
 
 
-        Task early = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), project1);
+        Task early = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
         early.start(new Time(0), user, Role.JAVAPROGRAMMER);
         early.finish(user, new Time(5));
         assertEquals("early", early.getTaskProxy().getFinishedStatus().toString());
 
 
-        Task delayed = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), project1);
+        Task delayed = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
         delayed.start(new Time(0), user, Role.JAVAPROGRAMMER);
         delayed.finish(user, new Time(100));
         assertEquals("delayed", delayed.getTaskProxy().getFinishedStatus().toString());
