@@ -1,13 +1,16 @@
 package Tests;
 
-import Domain.LoginException;
+import Application.*;
+import Domain.*;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class SessionControllerTest {
 
     @Test
     public void testSessionController() throws LoginException {
-        /*
+
         Session omer = new Session();
         UserManager um = new UserManager();
         SessionController sc = new SessionController(omer, um);
@@ -32,7 +35,6 @@ public class SessionControllerTest {
         assertTrue(sc.loginPrecondition());
         assertFalse(sc.logout());
 
-        */
 
     }
 }

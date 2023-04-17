@@ -1,15 +1,93 @@
 package Tests;
 
+import Application.CreateProjectController;
 import Application.IncorrectPermissionException;
+import Application.Session;
+import Application.SessionWrapper;
 import Domain.DueBeforeSystemTimeException;
-import Domain.InvalidTimeException;
-import Domain.NewTimeBeforeSystemTimeException;
-import Domain.ProjectNameAlreadyInUseException;
+import Domain.*;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 public class CreateProjectControllerTest {
     @Test
     public void testCreateProjectController() throws ProjectNameAlreadyInUseException, InvalidTimeException, DueBeforeSystemTimeException, IncorrectPermissionException, NewTimeBeforeSystemTimeException {
+        Session wardsSession = new Session();
+        SessionWrapper omerWrapper = new SessionWrapper(wardsSession);
+        Set wardsRoles = new HashSet();
+        wardsRoles.add(Role.PROJECTMANAGER);
+        wardsRoles.add(Role.JAVAPROGRAMMER);
+        User ward = new User("WardGr", "peer123", wardsRoles);
+        wardsSession.login(ward);
+        TaskManSystem tms = new TaskManSystem(new Time(12));
+
+        CreateProjectController cpc = new CreateProjectController(omerWrapper, tms);
+
+        assertTrue(cpc.createProjectPreconditions());
+
+        wardsSession.logout();
+        assertFalse(cpc.createProjectPreconditions());
+
+        Set falseRoles = new HashSet();
+        falseRoles.add(Role.SYSADMIN);
+        User false1 = new User("false1", "false1", falseRoles);
+        wardsSession.login(false1);
+        assertFalse(cpc.createProjectPreconditions());
+        assertThrows(IncorrectPermissionException.class, () -> {
+            cpc.createProject("Omer", "Brew omer beer", new Time(30));
+        });
+
+        wardsSession.logout();
+
+        falseRoles = new HashSet();
+        falseRoles.add(Role.JAVAPROGRAMMER);
+        User false2 = new User("false2", "false2", falseRoles);
+        wardsSession.login(false2);
+        assertFalse(cpc.createProjectPreconditions());
+        assertThrows(IncorrectPermissionException.class, () -> {
+            cpc.createProject("Omer", "Brew omer beer", new Time(30));
+        });
+
+        wardsSession.logout();
+
+        falseRoles = new HashSet();
+        falseRoles.add(Role.PYTHONPROGRAMMER);
+        User false3 = new User("false3", "false3", falseRoles);
+        wardsSession.login(false3);
+        assertFalse(cpc.createProjectPreconditions());
+        assertThrows(IncorrectPermissionException.class, () -> {
+            cpc.createProject("Omer", "Brew omer beer", new Time(30));
+        });
+
+        ;
+        wardsSession.login(ward);
+        assertTrue(cpc.createProjectPreconditions());
+        cpc.createProject("Omer", "Brew omer beer", new Time(30));
+        cpc.createProject("LeFort", "Brew Tripel LeFort", new Time(60));
+
+        assertThrows(ProjectNameAlreadyInUseException.class, () -> {
+            cpc.createProject("Omer", "Brew omer beer", new Time(40));
+        });
+
+        assertThrows(DueBeforeSystemTimeException.class, () -> {
+            cpc.createProject("Duvel", "Brew duvel beer", new Time(11));
+        });
+
+        assertThrows(DueBeforeSystemTimeException.class, () -> {
+            cpc.createProject("Duvel", "Brew duvel beer", new Time(10));
+        });
+
+        assertThrows(ProjectNameAlreadyInUseException.class, () -> {
+            cpc.createProject("LeFort", "Drink a LeFort Tripel ;)", new Time(22));
+        });
+
+
+
+
         /*
         User brewer = new User("OlavBl", "peer123", Role.DEVELOPER);
         User boss = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);

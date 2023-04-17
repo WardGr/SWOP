@@ -1,13 +1,159 @@
 package Tests;
 
+import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
+import Application.Session;
+import Application.SessionWrapper;
 import Domain.*;
+import Domain.TaskStates.IncorrectRoleException;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 public class CreateTaskControllerTest {
 
     @Test
-    public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+    public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        Session wardsSession = new Session();
+        SessionWrapper omerWrapper = new SessionWrapper(wardsSession);
+        Set wardsRoles = new HashSet();
+        wardsRoles.add(Role.PROJECTMANAGER);
+        wardsRoles.add(Role.JAVAPROGRAMMER);
+        wardsRoles.add(Role.PYTHONPROGRAMMER);
+        User ward = new User("WardGr", "peer123", wardsRoles);
+        wardsSession.login(ward);
+        TaskManSystem tms = new TaskManSystem(new Time(12));
+
+        CreateTaskController ctc = new CreateTaskController(omerWrapper, tms, new UserManager());
+
+        assertTrue(ctc.createTaskPreconditions());
+
+        wardsSession.logout();
+        assertFalse(ctc.createTaskPreconditions());
+
+        tms.createProject("Omer", "Brew omer beer", new Time(30));
+        List roles = new ArrayList();
+        roles.add(Role.JAVAPROGRAMMER);
+        roles.add(Role.PYTHONPROGRAMMER);
+
+        Set falseRoles = new HashSet();
+        falseRoles.add(Role.SYSADMIN);
+        User false1 = new User("false1", "false1", falseRoles);
+        wardsSession.login(false1);
+        assertFalse(ctc.createTaskPreconditions());
+        assertThrows(IncorrectPermissionException.class, () -> {
+            ctc.createTask("Omer", "Hire brewer", "Find a suitable brewer for our beer", new Time(5), 1,  roles, new HashSet<>(), new HashSet<>());
+        });
+        assertThrows(IncorrectPermissionException.class, () -> {
+            ctc.replaceTask("omer", "Switch Brewer", "Hire a new brewer", new Time(5), 1, "Hire Brewer");
+        });
+
+        wardsSession.logout();
+
+        falseRoles = new HashSet();
+        falseRoles.add(Role.JAVAPROGRAMMER);
+        User false2 = new User("false2", "false2", falseRoles);
+        wardsSession.login(false2);
+        assertFalse(ctc.createTaskPreconditions());
+        assertThrows(IncorrectPermissionException.class, () -> {
+            ctc.createTask("Omer", "Hire brewer", "Find a suitable brewer for our beer", new Time(5), 1,  roles, new HashSet<>(), new HashSet<>());
+        });
+        assertThrows(IncorrectPermissionException.class, () -> {
+            ctc.replaceTask("omer", "Switch Brewer", "Hire a new brewer", new Time(5), 1, "Hire Brewer");
+        });
+
+        wardsSession.logout();
+
+        falseRoles = new HashSet();
+        falseRoles.add(Role.PYTHONPROGRAMMER);
+        User false3 = new User("false3", "false3", falseRoles);
+        wardsSession.login(false3);
+        assertFalse(ctc.createTaskPreconditions());
+        assertThrows(IncorrectPermissionException.class, () -> {
+            ctc.createTask("Omer", "Hire brewer", "Find a suitable brewer for our beer", new Time(5), 1,  roles, new HashSet<>(), new HashSet<>());
+        });
+        assertThrows(IncorrectPermissionException.class, () -> {
+            ctc.replaceTask("omer", "Switch Brewer", "Hire a new brewer", new Time(5), 1, "Hire Brewer");
+        });
+
+        wardsSession.logout();
+        wardsSession.login(ward);
+
+        ctc.createTask("Omer", "Hire brewer", "Find a suitable brewer for our beer", new Time(5), 1,  roles, new HashSet<>(), new HashSet<>());
+        Set prev = new HashSet();
+        prev.add("Hire brewer");
+
+        ctc.createTask("Omer", "Buy ingredients", "Buy ingredients for the beer", new Time(5), 1,  roles, prev, new HashSet<>());
+
+        Set prev2 = new HashSet(prev);
+        prev2.add("Buy ingredients");
+
+        ctc.createTask("Omer", "Brew beer", "Brew the beer", new Time(5), 1,  roles, prev2, new HashSet<>());
+
+        assertThrows(ProjectNotFoundException.class, () -> {
+            ctc.createTask("Omer2", "Brew beer", "Brew the beer", new Time(5), 1,  roles, prev2, new HashSet<>());
+        });
+        assertThrows(ProjectNotFoundException.class, () -> {
+            ctc.createTask("LeFort", "Brew beer", "Brew the beer", new Time(5), 1,  roles, prev2, new HashSet<>());
+        });
+
+        assertThrows(InvalidTimeException.class, () -> {
+            ctc.createTask("Omer", "Brew beer", "Brew the beer", new Time(-5), 1,  roles, prev2, new HashSet<>());
+        });
+        assertThrows(InvalidTimeException.class, () -> {
+            ctc.createTask("Omer", "Brew beer", "Brew the beer", new Time(-1), 1,  roles, prev2, new HashSet<>());
+        });
+
+        assertThrows(TaskNameAlreadyInUseException.class, () -> {
+            ctc.createTask("Omer", "Hire brewer", "Find a suitable brewer for our beer", new Time(5), 1,  roles, new HashSet<>(), new HashSet<>());
+        });
+        assertThrows(TaskNameAlreadyInUseException.class, () -> {
+            ctc.createTask("Omer", "Buy ingredients", "Buy ingredients for the beer", new Time(5), 1,  roles, new HashSet<>(), new HashSet<>());
+        });
+
+        HashSet fakeTask = new HashSet();
+        fakeTask.add("fake");
+        assertThrows(TaskNotFoundException.class, () -> {
+            ctc.createTask("Omer", "Fire brewer", "fire the current lead of brewery", new Time(5), 1,  roles, fakeTask, new HashSet<>());
+        });
+
+        // TODO de andere exceptionso testen??
+
+        // Test replaceTask
+        Set x = new HashSet();
+        x.add(Role.PYTHONPROGRAMMER);
+        User dieter = new User("Dieter", "Dieter", x);
+
+        assertEquals(Status.AVAILABLE, tms.getStatus("Omer", "Hire brewer"));
+        assertEquals(Status.UNAVAILABLE, tms.getStatus("Omer", "Buy ingredients"));
+        tms.startTask("Omer", "Hire brewer", ward, Role.JAVAPROGRAMMER);
+        tms.startTask("Omer", "Hire brewer", dieter, Role.PYTHONPROGRAMMER);
+        assertEquals(Status.EXECUTING, tms.getStatus("Omer", "Hire brewer"));
+        tms.advanceTime(10);
+        tms.failTask("Omer", "Hire brewer", ward);
+
+        assertEquals(Status.FAILED, tms.getStatus("Omer", "Hire brewer"));
+
+        ctc.replaceTask("Omer", "Replace brewer", "Replace incapable brewer for new one", new Time(5), 1, "Hire brewer");
+        assertEquals(Status.AVAILABLE, tms.getStatus("Omer", "Replace brewer"));
+        assertEquals(Status.FAILED, tms.getStatus("Omer", "Hire brewer"));
+        assertEquals(Status.UNAVAILABLE, tms.getStatus("Omer", "Buy ingredients"));
+
+        tms.startTask("Omer", "Replace brewer", ward, Role.JAVAPROGRAMMER);
+        tms.startTask("Omer", "Replace brewer", dieter, Role.PYTHONPROGRAMMER);
+        tms.advanceTime(10);
+        tms.finishTask("Omer", "Replace brewer", ward);
+        assertEquals(Status.FINISHED, tms.getStatus("Omer", "Replace brewer"));
+        assertEquals(Status.AVAILABLE, tms.getStatus("Omer", "Buy ingredients"));
+
+
         /*
         Session omer = new Session();
         SessionWrapper omerWrapper = new SessionWrapper(omer);
