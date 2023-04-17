@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SessionWrapperTest {
 
@@ -38,9 +39,9 @@ public class SessionWrapperTest {
 
         assertEquals(dieter, wrapper.getCurrentUser());
         assertEquals(3, wrapper.getRoles().size());
-        assertEquals(Role.PYTHONPROGRAMMER, wrapper.getRoles().toArray()[0]);
-        assertEquals(Role.PROJECTMANAGER, wrapper.getRoles().toArray()[1]);
-        assertEquals(Role.JAVAPROGRAMMER, wrapper.getRoles().toArray()[2]);
+        assertTrue(wrapper.getRoles().contains(Role.PYTHONPROGRAMMER));
+        assertTrue(wrapper.getRoles().contains(Role.PROJECTMANAGER));
+        assertTrue(wrapper.getRoles().contains(Role.JAVAPROGRAMMER));
     }
 
 }

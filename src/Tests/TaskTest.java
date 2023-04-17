@@ -68,8 +68,6 @@ public class TaskTest {
         this.task4 = new Task("Task 4", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), "project1");
         this.task3 = new Task("Task 3", "test", new Time(20), 0, roles, new HashSet<>(), Set.of(task4), "project1");
 
-        // Set stubs
-        Mockito.when(project1.getName()).thenReturn("Project 1");
     }
 
 
