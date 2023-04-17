@@ -332,9 +332,8 @@ public class TaskManSystem {
     }
 
 
-    public void clear() throws InvalidTimeException {
+    public void clear() {
         projects = new LinkedList<>();
-        systemTime = new Time(0, 0);
     }
 
 
