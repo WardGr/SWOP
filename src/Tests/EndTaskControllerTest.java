@@ -64,8 +64,15 @@ public class EndTaskControllerTest {
         assertEquals(Status.PENDING, tms.getTaskData("Omer", "Buy ingredients").getStatus());
         tms.startTask("Omer", "Buy ingredients", python, Role.PYTHONPROGRAMMER);
         assertEquals(Status.EXECUTING, tms.getTaskData("Omer", "Buy ingredients").getStatus());
+        current.logout();
+        current.login(man);
+        assertThrows(IncorrectPermissionException.class, () -> etc.finishCurrentTask());
+        current.logout();
+        current.login(java);
         etc.failCurrentTask();
         assertEquals(Status.FAILED, tms.getTaskData("Omer", "Buy ingredients").getStatus());
+        assertThrows(IncorrectPermissionException.class, etc::finishCurrentTask);
+        assertThrows(IncorrectPermissionException.class, etc::failCurrentTask);
 
         Set prev = new HashSet();
         Set next = new HashSet();
@@ -87,12 +94,21 @@ public class EndTaskControllerTest {
         etc.finishCurrentTask();
         assertEquals(Status.FINISHED, tms.getTaskData("Omer", "Make beer").getStatus());
         assertEquals(Status.AVAILABLE, tms.getTaskData("Omer", "Clean up").getStatus());
+        assertThrows(IncorrectPermissionException.class, etc::finishCurrentTask);
+        assertThrows(IncorrectPermissionException.class, etc::failCurrentTask);
 
         tms.startTask("Omer", "Clean up", java, Role.JAVAPROGRAMMER);
         assertEquals(Status.PENDING, tms.getTaskData("Omer", "Clean up").getStatus());
         tms.startTask("Omer", "Clean up", python, Role.PYTHONPROGRAMMER);
         tms.advanceTime(1);
+        current.logout();
+        current.login(man);
+        assertThrows(IncorrectPermissionException.class, () -> etc.failCurrentTask());
+        current.logout();
+        current.login(java);
         etc.failCurrentTask();
+        assertThrows(IncorrectPermissionException.class, etc::finishCurrentTask);
+        assertThrows(IncorrectPermissionException.class, etc::failCurrentTask);
 
         assertEquals(Status.FAILED, tms.getTaskData("Omer", "Clean up").getStatus());
         assertEquals(Status.UNAVAILABLE, tms.getTaskData("Omer", "Sell beer").getStatus());
@@ -105,6 +121,11 @@ public class EndTaskControllerTest {
         assertEquals(Status.UNAVAILABLE, tms.getTaskData("Omer", "Sell beer").getStatus());
         tms.startTask("Omer", "Hire cleanup", python, Role.PYTHONPROGRAMMER);
         tms.advanceTime(2);
+        current.logout();
+        current.login(man);
+        assertThrows(IncorrectPermissionException.class, () -> etc.finishCurrentTask());
+        current.logout();
+        current.login(java);
         etc.finishCurrentTask();
         assertEquals(Status.FINISHED, tms.getTaskData("Omer", "Hire cleanup").getStatus());
         assertEquals(Status.FAILED, tms.getTaskData("Omer", "Clean up").getStatus());
@@ -120,9 +141,51 @@ public class EndTaskControllerTest {
         current.logout();
         current.login(sysadmin);
         assertTrue(etc.endTaskPreconditions());
+        assertEquals(etc.getTaskData("Omer", "Hire brewer").getStatus(), Status.FINISHED);
+        assertEquals(etc.getTaskData("Omer", "Buy ingredients").getStatus(), Status.FAILED);
+        assertEquals(etc.getTaskData("Omer", "Make beer").getStatus(), Status.FINISHED);
+        assertEquals(etc.getTaskData("Omer", "Clean up").getStatus(), Status.FAILED);
+        assertEquals(etc.getTaskData("Omer", "Sell beer").getStatus(), Status.AVAILABLE);
+        assertEquals(etc.getTaskData("Omer", "Hire cleanup").getStatus(), Status.FINISHED);
+        assertEquals(etc.getTaskData("Omer", "Hire brewer").getEndTime(), new Time(10));
+        assertEquals(etc.getTaskData("Omer", "Buy ingredients").getEndTime(), new Time(10));
+        assertEquals(etc.getTaskData("Omer", "Make beer").getEndTime(), new Time(20));
+        assertEquals(etc.getTaskData("Omer", "Clean up").getEndTime(), new Time(21));
+        assertNull(etc.getTaskData("Omer", "Sell beer").getEndTime());
+
+        assertEquals(ProjectStatus.ONGOING, etc.getProjectData("Omer").getStatus());
+        assertEquals(new Time(0), etc.getProjectData("Omer").getCreationTime());
+        assertEquals(new Time(2000), etc.getProjectData("Omer").getDueTime());
+        assertEquals("Project for the Omer brewery", etc.getProjectData("Omer").getDescription());
+
+        tms.createProject("Test", "just a test", new Time(30));
+        assertEquals(new Time(23), etc.getProjectData("Test").getCreationTime());
+        assertEquals("just a test", etc.getProjectData("Test").getDescription());
+
+
+        assertEquals(new Time(23), etc.getTaskManSystemData().getSystemTime());
+        assertEquals(2, etc.getTaskManSystemData().getProjectNames().size());
 
         current.logout();
         current.login(man);
         assertFalse(etc.endTaskPreconditions());
+        assertThrows(IncorrectPermissionException.class, etc::getTaskManSystemData);
+        assertThrows(IncorrectPermissionException.class, () -> etc.getProjectData("Omer"));
+        assertThrows(IncorrectPermissionException.class, () -> etc.getTaskData("Omer", "Hire brewer"));
+        assertThrows(IncorrectPermissionException.class, () -> etc.getTaskData("Omer", "Buy ingredients"));
+        assertThrows(IncorrectPermissionException.class, () -> etc.getTaskData("Omer", "Make beer"));
+        assertThrows(IncorrectPermissionException.class, () -> etc.getProjectData("Test"));
+
+        assertEquals(1, etc.getUserRoles().size());
+        Set twoRolesSet = new HashSet();
+        twoRolesSet.add(Role.PYTHONPROGRAMMER);
+        twoRolesSet.add(Role.JAVAPROGRAMMER);
+        User twoRoles = new User("2Roles", "2Roles", twoRolesSet);
+        current.logout();
+        current.login(twoRoles);
+        assertEquals(2, etc.getUserRoles().size());
+
+        current.logout();
+        assertEquals(0, etc.getUserRoles().size());
     }
 }
