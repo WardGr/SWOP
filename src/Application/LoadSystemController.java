@@ -39,7 +39,10 @@ public class LoadSystemController {
         return session;
     }
 
-    public void clear() throws InvalidTimeException {getTaskManSystem().clear();}
+    public void clear() throws InvalidTimeException {
+        getTaskManSystem().clear();
+        getUserManager().clearUserTasks();
+    }
 
     /**
      * @return Whether the user is logged in as a project manager
