@@ -1,12 +1,11 @@
 package Tests;
 
-import Application.LoadSystemController;
-import Application.Session;
-import Application.SessionWrapper;
+import Application.*;
 import Domain.*;
 import Domain.TaskStates.TaskProxy;
 import org.junit.Test;
 import UserInterface.LoadSystemUI;
+import org.junit.function.ThrowingRunnable;
 
 import java.util.*;
 
@@ -25,13 +24,10 @@ public class LoadSystemTest {
 
     @Test
     public void testLoadSystem() throws ProjectNotFoundException, TaskNotFoundException, LoginException {
-        /*
-        controller();
-        //checks if the old system gets discarded and the new gets loaded
+
         controller();
         ui();
 
-        */
     }
 
     @Test
@@ -106,8 +102,6 @@ public class LoadSystemTest {
         assertFalse(taskData.getUserNamesWithRole().containsKey("OlavBl"));
         assertEquals(taskData.getUserNamesWithRole().get("SamHa"), Role.JAVAPROGRAMMER);
 
-        //TODO multiple projects, started ended and remaining task in 1, testen met 2 starten dezelfde tijd
-
         //test finished task
         try {
             lsc.LoadSystem("src/Tests/jsons/finishedTask.json");
@@ -180,7 +174,7 @@ public class LoadSystemTest {
         assertEquals(projectData.getName(), "availableProject");
         assertEquals(projectData.getStatus(), ProjectStatus.ONGOING);
         assertEquals(projectData.getDescription(), "first LoadSystemTest");
-        assertEquals(projectData.getCreationTime().getHour(), 1);
+        assertEquals(projectData.getCreationTime().getHour(), 4);
         assertEquals(projectData.getCreationTime().getMinute(), 11);
         assertEquals(projectData.getDueTime().getHour(), 16);
         assertEquals(projectData.getDueTime().getMinute(), 10);
@@ -199,7 +193,7 @@ public class LoadSystemTest {
         assertEquals(projectData.getStatus(), ProjectStatus.FINISHED);
         assertEquals(projectData.getDescription(), "LoadSystemTest");
         assertEquals(projectData.getCreationTime().getHour(), 2);
-        assertEquals(projectData.getCreationTime().getMinute(), 11);
+        assertEquals(projectData.getCreationTime().getMinute(), 9);
         assertEquals(projectData.getDueTime().getHour(), 17);
         assertEquals(projectData.getDueTime().getMinute(), 10);
 
@@ -233,10 +227,43 @@ public class LoadSystemTest {
         assertEquals(taskData.getStatus(), Status.EXECUTING);
 
         //test if users are correctly loaded
-        assertTrue(taskData.getUserNamesWithRole().containsKey("JasperVH"));
+        assertTrue(taskData.getUserNamesWithRole().containsKey("SanderSc"));
         assertTrue(taskData.getUserNamesWithRole().containsKey("HannahEr"));
         assertEquals(taskData.getUserNamesWithRole().get("HannahEr"), Role.PYTHONPROGRAMMER);
-        assertEquals(taskData.getUserNamesWithRole().get("JasperVH"), Role.JAVAPROGRAMMER);
+        assertEquals(taskData.getUserNamesWithRole().get("SanderSc"), Role.SYSADMIN);
+
+        try {
+            lsc.LoadSystem("src/Tests/jsons/finishedExtra.json");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        //tests wrong file path error
+        try {
+            lsc.LoadSystem("src/Tests/jsons/InvalidLogicTest.json.json");
+        } catch (Exception e) {
+            assertTrue(e instanceof InvalidFileException);
+            assertEquals(e.getMessage(), "ERROR: File path is invalid.");
+        }
+
+        //tests invalid file logic && invalidRole exception
+        try {
+            lsc.LoadSystem("src/Tests/jsons/invalidRole.json");
+        } catch (Exception e) {
+            assertTrue(e instanceof InvalidFileException);
+            assertEquals(e.getMessage(), "ERROR: File logic is invalid so couldn't setup system.");
+        }
+
+        //tests to load the system while being logged in with invalid Role
+        session.logout();
+        session.login(userManager.getUser("WardGr", "minecraft123"));
+        try {
+            lsc.LoadSystem("src/Tests/jsons/availableTask.json");
+        } catch (Exception e) {
+            assertTrue(e instanceof IncorrectPermissionException);
+            assertEquals(e.getMessage(), "You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
+
 
     }
 
