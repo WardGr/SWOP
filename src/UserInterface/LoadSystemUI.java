@@ -1,6 +1,7 @@
 package UserInterface;
 
 import Application.IncorrectPermissionException;
+import Application.InvalidFileException;
 import Application.LoadSystemController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
@@ -34,8 +35,6 @@ public class LoadSystemUI {
                 loadSystemForm();
             } catch (IncorrectPermissionException e) {
                 System.out.println(e.getMessage());
-            } catch (InvalidTimeException e) {
-                throw new RuntimeException(e);
             }
         } else {
             System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
@@ -47,7 +46,7 @@ public class LoadSystemUI {
      *
      * @throws IncorrectPermissionException if the current user is not a project manager
      */
-    private void loadSystemForm() throws IncorrectPermissionException, InvalidTimeException {
+    private void loadSystemForm() throws IncorrectPermissionException {
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Type BACK to cancel system load at any time");
@@ -61,17 +60,8 @@ public class LoadSystemUI {
         try {
             getController().LoadSystem(path);
             System.out.println("system succesfully loaded");
-        } catch (NewTimeBeforeSystemTimeException | ParseException | TaskNotFoundException | UserNotFoundException |
-                 ProjectNameAlreadyInUseException | InvalidTimeException | IncorrectUserException |
-                 IncorrectTaskStatusException | DueBeforeSystemTimeException | ProjectNotFoundException |
-                 TaskNameAlreadyInUseException | EndTimeBeforeStartTimeException | UserAlreadyAssignedToTaskException |
-                 LoopDependencyGraphException | IncorrectRoleException | NonDeveloperRoleException |
-                 RoleNotFoundException | DueTimeBeforeCreationTimeException | ProjectNotOngoingException e) {
-            System.out.println("ERROR: invalid file logic");
-            getController().clear();
-        } catch (IOException e) {
-            System.out.println("ERROR: file not found");
-            getController().clear();
+        } catch (InvalidFileException e) {
+            System.out.println(e.getMessage());
         }
     }
 }

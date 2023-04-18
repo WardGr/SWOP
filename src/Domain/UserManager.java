@@ -77,10 +77,4 @@ public class UserManager {
     public List<User> getUsers() {
         return List.copyOf(users);
     }
-
-    public void clearUserTasks() {
-        for (User user : getUsers()){
-            user.endTask();
-        }
-    }
 }

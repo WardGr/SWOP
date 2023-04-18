@@ -41,7 +41,9 @@ public class LoadSystemController {
 
     public void clear() throws InvalidTimeException {
         getTaskManSystem().clear();
-        getUserManager().clearUserTasks();
+        for (User user : getUserManager().getUsers()) {
+            user.setTask(null);
+        }
     }
 
     /**
@@ -56,32 +58,52 @@ public class LoadSystemController {
      *
      * @param filepath String containing the filepath to the JSON holding the system information
      */
-    public void LoadSystem(String filepath) throws IncorrectPermissionException, IOException, InvalidTimeException, ParseException, UserNotFoundException, ProjectNameAlreadyInUseException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, DueBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, UserAlreadyAssignedToTaskException, LoopDependencyGraphException, IncorrectRoleException, NonDeveloperRoleException, RoleNotFoundException, DueTimeBeforeCreationTimeException, ProjectNotOngoingException {
+    public void LoadSystem(String filepath) throws IncorrectPermissionException, InvalidFileException {
         if (!loadSystemPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        JSONParser jsonParser = new JSONParser();
-        FileReader reader = new FileReader(filepath);
-        JSONObject doc = (JSONObject) jsonParser.parse(reader);
-        clear();
-        for (User user : getUserManager().getUsers()) {
-            user.setTask(null);
+        try {
+            JSONParser jsonParser = new JSONParser();
+            FileReader reader = new FileReader(filepath);
+            JSONObject doc = (JSONObject) jsonParser.parse(reader);
+            clear();
+
+            //load projects
+            JSONArray projects = (JSONArray) doc.get("projects");
+            for (Object p : projects) {
+                loadProject((JSONObject) p);
+            }
+
+            //load tasks
+            JSONArray tasks = (JSONArray) doc.get("tasks");
+            loadTasks(tasks);
+
+            //set system time
+            int systemHour = (int) (long) doc.get("systemHour");
+            int systemMinute = (int) (long) doc.get("systemMinute");
+            getTaskManSystem().advanceTime(new Time(systemHour, systemMinute));
+        } catch (ParseException | InvalidTimeException | NewTimeBeforeSystemTimeException | UserNotFoundException |
+                 ProjectNotFoundException | TaskNotFoundException | TaskNameAlreadyInUseException |
+                 IncorrectTaskStatusException | UserAlreadyAssignedToTaskException | RoleNotFoundException |
+                 LoopDependencyGraphException | IncorrectRoleException | NonDeveloperRoleException |
+                 EndTimeBeforeStartTimeException | IncorrectUserException | ProjectNotOngoingException |
+                 ProjectNameAlreadyInUseException | DueTimeBeforeCreationTimeException e) {
+
+            try {
+                clear();
+            } catch (InvalidTimeException ex) {
+                throw new RuntimeException(ex);
+            }
+            throw new InvalidFileException("ERROR: File logic is invalid so couldn't setup system.");
+
+        } catch (IOException e) {
+            try {
+                clear();
+            } catch (InvalidTimeException ex) {
+                throw new RuntimeException(ex);
+            }
+            throw new InvalidFileException("ERROR: File path is invalid.");
         }
-
-        //load projects
-        JSONArray projects = (JSONArray) doc.get("projects");
-        for (Object p : projects) {
-            loadProject((JSONObject) p);
-        }
-
-        //load tasks
-        JSONArray tasks = (JSONArray) doc.get("tasks");
-        loadTasks(tasks);
-
-        //set system time
-        int systemHour = (int) (long) doc.get("systemHour");
-        int systemMinute = (int) (long) doc.get("systemMinute");
-        getTaskManSystem().advanceTime(new Time(systemHour, systemMinute));
     }
 
     /**
