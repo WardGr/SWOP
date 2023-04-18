@@ -31,8 +31,8 @@ public class SessionWrapperTest {
         SessionWrapper wrapper = new SessionWrapper(current);
         assertEquals(ward, wrapper.getCurrentUser());
         assertEquals(2, wrapper.getRoles().size());
-        assertEquals(Role.SYSADMIN, wrapper.getRoles().toArray()[0]);
-        assertEquals(Role.JAVAPROGRAMMER, wrapper.getRoles().toArray()[1]);
+        assertTrue(wrapper.getRoles().contains(Role.SYSADMIN));
+        assertTrue(wrapper.getRoles().contains(Role.JAVAPROGRAMMER));
 
         current.logout();
         current.login(dieter);
