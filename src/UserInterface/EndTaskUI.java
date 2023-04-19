@@ -35,7 +35,7 @@ public class EndTaskUI {
         System.out.println("Do you want to finish or fail your current task? (finish/fail)");
         String answer = scanner.nextLine();
         if (answer.equals("BACK")) {
-            System.out.println("Cancelled task creation");
+            System.out.println("Cancelled ending task");
             return;
         }
 
@@ -43,7 +43,7 @@ public class EndTaskUI {
             System.out.println("Do you want to finish or fail your current task? (finish/fail)");
             answer = scanner.nextLine();
             if (answer.equals("BACK")) {
-                System.out.println("Cancelled task creation");
+                System.out.println("Cancelled ending task");
                 return;
             }
         }
