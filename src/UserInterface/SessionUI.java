@@ -48,11 +48,13 @@ public class SessionUI {
             System.out.println("Enter username:");
             String username = scanner.nextLine();
             if (username.equals("BACK")) {
+                System.out.println("Cancelled login");
                 return;
             }
             System.out.println("Enter password:");
             String password = scanner.nextLine();
             if (password.equals("BACK")) {
+                System.out.println("Cancelled login");
                 return;
             }
             try {
