@@ -1,6 +1,5 @@
 package Application;
 
-import Domain.LoginException;
 import Domain.Role;
 import Domain.User;
 import Domain.UserManager;

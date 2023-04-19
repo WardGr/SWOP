@@ -4,10 +4,6 @@ import Application.*;
 import Domain.*;
 import Domain.TaskStates.TaskProxy;
 import org.junit.Test;
-import UserInterface.LoadSystemUI;
-import org.junit.function.ThrowingRunnable;
-
-import java.util.*;
 
 import static org.junit.Assert.*;
 

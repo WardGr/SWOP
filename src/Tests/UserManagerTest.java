@@ -1,5 +1,6 @@
 package Tests;
 
+import Application.LoginException;
 import Domain.*;
 import org.junit.Before;
 import org.junit.Test;

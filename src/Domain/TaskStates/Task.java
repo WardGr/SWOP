@@ -291,7 +291,11 @@ public class Task {
      *
      * @param startTime   Time the task will start
      * @param currentUser User currently logged in
-     * @throws IncorrectUserException if the user currently logged in is not assigned to the current task
+     * @param role        Role currentuser wants to use to start this task
+     * @throws IncorrectTaskStatusException         if this task is not available
+     * @throws IncorrectRoleException               if this role is not necessary for the given task
+     * @throws IncorrectRoleException               if this role is not necessary for the given task
+     * @throws UserAlreadyAssignedToTaskException   if this user is already assigned to this task
      */
     public void start(Time startTime, User currentUser, Role role)
             throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
@@ -368,7 +372,7 @@ public class Task {
      * @param endTime                           Time at which this task should end
      * @throws IncorrectUserException           if the currently logged-in user is not assigned to this task
      * @throws IncorrectTaskStatusException     if the task is not currently EXECUTING
-     * @throws EndTimeBeforeStartTimeException  if endTime > systemTime
+     * @throws EndTimeBeforeStartTimeException  if endTime > this.startTime
      */
     public void finish(User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         if (!getCommittedUsers().contains(currentUser)) {

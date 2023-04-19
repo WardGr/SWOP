@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class AdvanceTimeUITest {
 
     @Test
-    public void testAdvanceTimeUI() throws InvalidTimeException, IOException {
+    public void testAdvanceTimeUI() throws InvalidTimeException {
         Set<Role> WardRoles = new HashSet<>();
         WardRoles.add(Role.PROJECTMANAGER);
         WardRoles.add(Role.JAVAPROGRAMMER);

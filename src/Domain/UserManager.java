@@ -1,5 +1,7 @@
 package Domain;
 
+import Application.LoginException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
