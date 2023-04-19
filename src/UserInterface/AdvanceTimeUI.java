@@ -4,6 +4,7 @@ import Application.AdvanceTimeController;
 import Application.IncorrectPermissionException;
 import Domain.InvalidTimeException;
 import Domain.NewTimeBeforeSystemTimeException;
+import Domain.Role;
 import Domain.Time;
 
 import java.util.Scanner;
@@ -34,7 +35,7 @@ public class AdvanceTimeUI {
                 System.out.println(e.getMessage());
             }
         } else {
-            System.out.println("You must be logged in with the Project Manager role or a Developer role to call this function");
+            System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role or a Developer role to call this function");
         }
     }
 
