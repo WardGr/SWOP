@@ -40,9 +40,9 @@ public class LoadSystemController {
     }
 
     public void clear() throws InvalidTimeException {
-        getTaskManSystem().clear();
+        getTaskManSystem().reset();
         for (User user : getUserManager().getUsers()) {
-            user.setTask(null);
+            user.endTask();
         }
     }
 

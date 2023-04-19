@@ -292,9 +292,9 @@ public class Task {
      * @param startTime   Time the task will start
      * @param currentUser User currently logged in
      * @param role        Role currentuser wants to use to start this task
-     * @throws IncorrectTaskStatusException         if this task is not available
-     * @throws IncorrectRoleException               if this role is not necessary for the given task
-     * @throws IncorrectRoleException               if this role is not necessary for the given task
+     * @throws IncorrectTaskStatusException         if this task is not available or pending
+     * @throws IncorrectRoleException               if this role is not necessary for the given task OR
+     *                                                 the given user does not have the given role
      * @throws UserAlreadyAssignedToTaskException   if this user is already assigned to this task
      */
     public void start(Time startTime, User currentUser, Role role)
