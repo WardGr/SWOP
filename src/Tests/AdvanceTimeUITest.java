@@ -1,6 +1,7 @@
 package Tests;
 
 import Application.AdvanceTimeController;
+import Application.IncorrectPermissionException;
 import Application.Session;
 import Application.SessionWrapper;
 import Domain.*;
@@ -10,11 +11,14 @@ import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AdvanceTimeUITest {
 
     @Test
-    public void testAdvanceTimeUI() throws InvalidTimeException {
+    public void testAdvanceTimeUI() throws InvalidTimeException, IOException, IncorrectPermissionException {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            System.setOut(new PrintStream(out));
         Set<Role> WardRoles = new HashSet<>();
         WardRoles.add(Role.PROJECTMANAGER);
         WardRoles.add(Role.JAVAPROGRAMMER);
@@ -110,125 +114,150 @@ public class AdvanceTimeUITest {
         atuiChouffe.advanceTime();
         assertEquals(new Time(150), tmsChouffe.getSystemTime());
 
-        /*
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(out));
-
-        User manager = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
-        User dev = new User("OlavBl", "peer123", Role.DEVELOPER);
-        Session session = new Session();
-        SessionWrapper sessionWrapper = new SessionWrapper(session);
-        TaskManSystem tms = new TaskManSystem(new Time(0));
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionWrapper, tms);
-        AdvanceTimeUI atui = new AdvanceTimeUI(advanceTimeController);
-
-        session.logout();
-        session.login(manager);
-        System.setIn(new ByteArrayInputStream("y\n2\n3".getBytes()));
-        atui.advanceTime();
-        assertEquals("""
-                Current system time is: 0:0
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
-                Give new system minute:
-                Time successfully updated
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        // Testing incorrect permissions on advanceTime
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("y\n5\n7".getBytes()));
-        atui.advanceTime();
+        duvel.logout();
+        atuiDuvel.advanceTime();
         assertEquals("""
-                Current system time is: 2:3
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
-                Give new system minute:
-                Time successfully updated
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        You must be logged in with the Project Manager role or a Developer role to call this function\n""".replaceAll("\n|\r\n", System.getProperty("line.separator")), out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")));
         out.reset();
-        System.setIn(new ByteArrayInputStream("y\nBACK".getBytes()));
-        atui.advanceTime();
+        duvel.login(olav);
+
+        chouffe.logout();
+        out.reset();
+        atuiChouffe.advanceTime();
         assertEquals("""
-                Current system time is: 5:7
+        You must be logged in with the Project Manager role or a Developer role to call this function\n""".replaceAll("\n|\r\n", System.getProperty("line.separator")), out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")));
+        out.reset();
+        chouffe.login(dieter);
+
+        // Tesjting chooseAdvanceMethod with wrong input
+        assertEquals(new Time(150), tmsChouffe.getSystemTime());
+
+
+        input = "advnce\nBACK\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        out.reset();
+        atuiChouffe.chooseAdvanceMethod();
+        assertEquals(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")), """
+                Current system time is: 2 hour(s), 30 minute(s)
                 Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
+                Do you want to advance the clock with a certain amount of minutes or choose a new timestamp
+                advance/new
+                Do you want to advance the time with a certain amount of minutes or choose a new timestamp
+                advance/new
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator")));
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
+                Do you want to advance the clock with a certain amount of minutes or choose a new timestamp
+                advance/new
+                Do you want to advance the time with a certain amount of minutes or choose a new timestamp
+                advance/new
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+
+        input = "nw\nnew\n22\n3\n";
+
+        input = "nw\nnew\nBACK\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        out.reset();
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
+                Type BACK to cancel advancing the system time any time
+                Do you want to advance the clock with a certain amount of minutes or choose a new timestamp
+                advance/new
+                Do you want to advance the time with a certain amount of minutes or choose a new timestamp
+                advance/new
                 Give new system hour:
                 Cancelled advancing time
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+
+        input = "hoi\nadvance\nBACK\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
         out.reset();
-        System.setIn(new ByteArrayInputStream("y\n100\nBACK".getBytes()));
-        atui.advanceTime();
-        assertEquals("""
-                Current system time is: 5:7
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
-                Give new system minute:
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
                 Cancelled advancing time
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+
+        input = "hoi\nadvance\n2\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
         out.reset();
-        System.setIn(new ByteArrayInputStream("y\n5\n60\ny\n5\n55".getBytes()));
-        atui.advanceTime();
-        assertEquals("""
-                Current system time is: 5:7
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
-                Give new system minute:
-                ERROR: the chosen time is not valid
-                Current system time is: 5:7
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
-                Give new system minute:
-                Time successfully updated
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        atuiChouffe.chooseAdvanceMethod();
+        assertEquals(new Time(152), tmsChouffe.getSystemTime());
+
+        input = "hoi\nadvance\nja\n5";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
         out.reset();
-        System.setIn(new ByteArrayInputStream("y\n5\n20\ny\n7\n55".getBytes()));
-        atui.advanceTime();
-        assertEquals("""
-                Current system time is: 5:55
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
-                Give new system minute:
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
+                Given system minute is not an integer, please try again
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+        assertEquals(new Time(157), tmsChouffe.getSystemTime());
+
+        input = "hoi\nadvance\nja\n-5\nBACK\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        out.reset();
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
                 ERROR: The chosen time is before the system time
-                Current system time is: 5:55
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
-                Give new system minute:
-                Time successfully updated
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+        assertEquals(new Time(157), tmsChouffe.getSystemTime());
 
+        input = "hoi\nnew\n-5\n-5\nBACK\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
         out.reset();
-        System.setIn(new ByteArrayInputStream("y\n7\nhoi\n58".getBytes()));
-        atui.advanceTime();
-        assertEquals("""
-                Current system time is: 7:55
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
-                Give new system minute:
-                Given system minute is not an integer, please try again
-                Time successfully updated
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
+                ERROR: the chosen time is not valid
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+        assertEquals(new Time(157), tmsChouffe.getSystemTime());
 
+        input = "hoi\nnew\n-5\n5\nBACK\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
         out.reset();
-        System.setIn(new ByteArrayInputStream("y\nhoi\n10\nhoi\n58".getBytes()));
-        atui.advanceTime();
-        assertEquals("""
-                Current system time is: 7:58
-                Type BACK to cancel advancing the system time any time
-                Do you want to advance to a specific time? (y/n)
-                Give new system hour:
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
+                ERROR: the chosen time is not valid
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+        assertEquals(new Time(157), tmsChouffe.getSystemTime());
+
+        input = "hoi\nnew\n5\n-5\nnew\n2\n38";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        out.reset();
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
+                ERROR: the chosen time is not valid
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+        assertEquals(new Time(158), tmsChouffe.getSystemTime());
+
+        input = "nw\nnew\njo\n5\n4";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        out.reset();
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
                 Given system hour is not an integer, please try again
-                Give new system minute:
-                Given system minute is not an integer, please try again
-                Time successfully updated
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+        assertEquals(new Time(304), tmsChouffe.getSystemTime());
 
-        */
+        input = "nw\nnew\n5\na\n5\n";
+        in = new ByteArrayInputStream(input.getBytes());
+        System.setIn(in);
+        out.reset();
+        atuiChouffe.chooseAdvanceMethod();
+        assertTrue(out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")).contains("""
+                Given system minute is not an integer, please try again
+                """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
+        assertEquals(new Time(305), tmsChouffe.getSystemTime());
+
     }
 }

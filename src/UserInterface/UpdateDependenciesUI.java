@@ -57,16 +57,16 @@ public class UpdateDependenciesUI {
         ProjectProxy projectData = getController().getProjectData(projectName);
 
         while (true) {
-            showRelevantTasks(projectData);
-
-            System.out.println("Give the name of the task you want to edit:");
-            String taskName = scanner.nextLine();
-            if (taskName.equals("BACK")) {
-                System.out.println("Returning to project menu...");
-                return;
-            }
-
             try {
+                showRelevantTasks(projectData);
+
+                System.out.println("Give the name of the task you want to edit:");
+                String taskName = scanner.nextLine();
+                if (taskName.equals("BACK")) {
+                    System.out.println("Returning to project menu...");
+                    return;
+                }
+
                 updateTask(projectName, taskName, scanner);
             } catch (TaskNotFoundException e) {
                 System.out.println("ERROR: Given task name could not be found, try again.");
@@ -82,7 +82,7 @@ public class UpdateDependenciesUI {
             while (true) {
                 showTaskDependencies(projectData, taskData);
 
-                System.out.println("Please put in the desired command: ");
+                System.out.println("Please put in the desired command:");
                 System.out.println("   addprev/addnext/removeprev/removenext <taskName>");
                 String fullCommand = scanner.nextLine();
                 if (fullCommand.equals("BACK")) {
@@ -96,12 +96,8 @@ public class UpdateDependenciesUI {
                 } else {
                     try {
                         switch (command[0]) {
-                            case ("addprev") -> {
-                                getController().addPreviousTask(projectName, taskName, command[1]);
-                            }
-                            case ("addnext") -> {
-                                getController().addNextTask(projectName, taskName, command[1]);
-                            }
+                            case ("addprev") -> getController().addPreviousTask(projectName, taskName, command[1]);
+                            case ("addnext") -> getController().addNextTask(projectName, taskName, command[1]);
                             case ("removeprev") -> {
                                 if (taskData.getPreviousTasksNames().contains(command[1])) {
                                     getController().removePreviousTask(projectName, taskName, command[1]);
@@ -116,7 +112,7 @@ public class UpdateDependenciesUI {
                                     System.out.println("ERROR: Given task name is not present in next tasks, try again.");
                                 }
                             }
-                            default -> System.out.println("Unrecognized command");
+                            default -> System.out.println("ERROR: Unrecognized command, try again.");
                         }
                     } catch (TaskNotFoundException e) {
                         System.out.println("ERROR: The given task could not be found, try again.");
@@ -141,31 +137,39 @@ public class UpdateDependenciesUI {
                     System.out.println(" - " + projectName);
                 }
             } catch (ProjectNotFoundException e) {
-                throw new RuntimeException(); // TODO mag echt niet gebeuren!
+                throw new RuntimeException();
             }
         }
         System.out.println();
     }
 
-    private void showRelevantTasks(ProjectProxy projectData) throws IncorrectPermissionException {
+    private void showRelevantTasks(ProjectProxy projectData) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
         System.out.println("***** (UN)AVAILABLE TASKS *****");
-        if (projectData.getActiveTasksNames().size() == 0) {
+        List<String> unAvailableTasks = projectData.getActiveTasksNames();
+        for (String taskName : projectData.getActiveTasksNames()){
+            if (getController().getTaskData(projectData.getName(), taskName).getStatus() != Status.AVAILABLE &&
+                    getController().getTaskData(projectData.getName(), taskName).getStatus() != Status.UNAVAILABLE){
+                unAvailableTasks.remove(taskName);
+            }
+        }
+        if (unAvailableTasks.size() == 0) {
             System.out.println("There are no (un)available tasks in this project");
+            System.out.println();
             return;
         }
 
-        for (String taskName : projectData.getActiveTasksNames()) {
+        for (String taskName : unAvailableTasks) {
             try {
                 System.out.println(" - " + taskName + " with status: " +
                         getController().getTaskData(projectData.getName(), taskName).getStatus().toString());
             } catch (ProjectNotFoundException | TaskNotFoundException e) {
-                throw new RuntimeException(e); // TODO mag echt niet!
+                throw new RuntimeException(e);
             }
         }
         System.out.println();
     }
 
-    private void showTaskDependencies(ProjectProxy projectData, TaskProxy taskData) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
+    private void showTaskDependencies(ProjectProxy projectData, TaskProxy taskData) {
         System.out.print("Previous tasks: ");
         if (taskData.getPreviousTasksNames().size() == 0) {
             System.out.println("There are no previous tasks.");
@@ -206,17 +210,10 @@ public class UpdateDependenciesUI {
             try {
                 return !getController().getTaskData(projectData.getName(), nextTaskName).canSafelyAddPrevTask(taskData.getName());
             } catch (ProjectNotFoundException | TaskNotFoundException | IncorrectPermissionException e) {
-                throw new RuntimeException(e); // TODO geen idee hoe anders?
+                throw new RuntimeException(e);
             }
         });
 
-        for (String nextTaskName : possibleNextTasks) {
-            if (nextTaskName.equals(taskData.getName()) ||
-                    taskData.getNextTasksNames().contains(nextTaskName) ||
-                    !getController().getTaskData(projectData.getName(), nextTaskName).canSafelyAddPrevTask(taskData.getName())) {
-                possibleNextTasks.remove(nextTaskName);
-            }
-        }
         System.out.print("Possible next tasks: ");
         if (possibleNextTasks.size() == 0) {
             System.out.println("There are no possible next tasks to add.");
