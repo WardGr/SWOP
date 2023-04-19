@@ -1,13 +1,29 @@
 package Tests;
 
+import Application.CreateProjectController;
+import Application.Session;
+import Application.SessionWrapper;
 import Domain.*;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
+import UserInterface.CreateProjectUI;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
 
 public class CreateProjectUITest {
 
     @Test
-    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException {
-        /*
+    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+
         // Setup test environment
         Time systemtime = new Time(70);
 
@@ -17,16 +33,20 @@ public class CreateProjectUITest {
         SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
 
 
-        User manager = new User("DieterVH", "computer776", Role.PROJECTMANAGER);
-        User developer = new User("SamHa", "trein123", Role.DEVELOPER);
+        HashSet<Role> roles = new HashSet<>();
+        roles.add(Role.PROJECTMANAGER);
+        User manager = new User("DieterVH", "computer776", roles);
+        roles.remove(Role.PROJECTMANAGER);
+        roles.add(Role.PYTHONPROGRAMMER);
+        User developer = new User("SamHa", "trein123", roles); // niet zeker over Role
 
 
         managerSession.login(manager);
         developerSession.login(developer);
 
         TaskManSystem taskManSystem = new TaskManSystem(systemtime);
-        taskManSystem.createProject("SimpleProject", "Cool description", systemtime, new Time(100));
-        taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, new LinkedList<>(), developer);
+        taskManSystem.createProject("SimpleProject", "Cool description", new Time(100));
+        taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, new LinkedList<>(), new HashSet<>(), new HashSet<>());
 
         CreateProjectController managerController = new CreateProjectController(managerSessionWrapper, taskManSystem);
         CreateProjectController developerController = new CreateProjectController(developerSessionWrapper, taskManSystem);
@@ -218,6 +238,7 @@ public class CreateProjectUITest {
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
+        /*
         assertEquals(2, taskManSystem.getProjectNames().size());
         assertEquals(taskManSystem.showProject("NewProject"),
                 """
@@ -228,6 +249,10 @@ public class CreateProjectUITest {
                         Status:        ongoing
                         """);
 
-        */
+
+         */
+
     }
+
+
 }

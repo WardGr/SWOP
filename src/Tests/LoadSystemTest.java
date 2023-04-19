@@ -3,7 +3,12 @@ package Tests;
 import Application.*;
 import Domain.*;
 import Domain.TaskStates.TaskProxy;
+import UserInterface.LoadSystemUI;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import static org.junit.Assert.*;
 
@@ -265,7 +270,7 @@ public class LoadSystemTest {
 
     @Test
     public void ui() throws LoginException {
-        /*
+
         LoadSystemUI lsu = new LoadSystemUI(lsc);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
@@ -278,7 +283,7 @@ public class LoadSystemTest {
         out.reset();
 
         //Tests user has right permission but wants to go back
-        manager = userManager.getUser("WardGr", "minecraft123");
+        manager = userManager.getUser("DieterVH", "computer776");
         session.login(manager);
         System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
         lsu.loadSystem();
@@ -292,7 +297,7 @@ public class LoadSystemTest {
         out.reset();
 
         //Tests when a user succesfully loads a system
-        System.setIn(new ByteArrayInputStream("src/Tests/loadTest.json\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("src/Tests/jsons/multipleProjects.json\n".getBytes()));
         lsu.loadSystem();
         assertEquals(
                 """
@@ -311,21 +316,21 @@ public class LoadSystemTest {
                         Type BACK to cancel system load at any time
                         *********** SYSTEM LOAD FORM ***********
                         please enter the path of the load file:\s
-                        ERROR: file not found
+                        ERROR: File path is invalid.
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
         out.reset();
 
-        //Tests wwhen a user gives a  file with invalid logic
-        System.setIn(new ByteArrayInputStream("src/Tests/InvalidLogicTest.json\n".getBytes()));
+        //Tests when a user gives a  file with invalid logic
+        System.setIn(new ByteArrayInputStream("src/Tests/jsons/invalidRole.json\n".getBytes()));
         lsu.loadSystem();
         assertEquals(
                 """
                         Type BACK to cancel system load at any time
                         *********** SYSTEM LOAD FORM ***********
                         please enter the path of the load file:\s
-                        ERROR: invalid file logic
+                        ERROR: File logic is invalid so couldn't setup system.
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
         out.reset();
-     */
+
     }
 }
