@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
@@ -57,12 +56,12 @@ public class TaskManSystemTest {
         assertThrows(DueBeforeSystemTimeException.class, () -> taskManSystem.createProject("", "", new Time(5)));
 
         taskManSystem.createProject("Project 1", "Test", new Time(15));
-        assertEquals(List.of("Project 1"), taskManSystem.getProjectNames());
+        assertEquals(List.of("Project 1"), taskManSystem.getTaskManSystemData().getProjectNames());
         assertNotNull(taskManSystem.getProjectData("Project 1"));
         assertThrows(ProjectNameAlreadyInUseException.class, () -> taskManSystem.createProject("Project 1", "Test", new Time(15)));
 
         taskManSystem.createProject("Project 2", "Test", new Time(15));
-        assertEquals(List.of("Project 1", "Project 2"), taskManSystem.getProjectNames());
+        assertEquals(List.of("Project 1", "Project 2"), taskManSystem.getTaskManSystemData().getProjectNames());
 
 
         taskManSystem.addTaskToProject("Project 1", "Task 1", "Test Task", new Time(10), 0, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of());
@@ -114,8 +113,8 @@ public class TaskManSystemTest {
         assertEquals(new Time(20), taskManSystem.getTaskManSystemData().getSystemTime());
         assertEquals(List.of("Project 1", "Project 2"), taskManSystem.getTaskManSystemData().getProjectNames());
 
-        taskManSystem.clear();
-        assertEquals(List.of(), taskManSystem.getProjectNames());
+        taskManSystem.reset();
+        assertEquals(List.of(), taskManSystem.getTaskManSystemData().getProjectNames());
 
     }
 }

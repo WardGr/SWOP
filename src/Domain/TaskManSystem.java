@@ -17,20 +17,34 @@ public class TaskManSystem {
     private List<Project> projects;
     private Time systemTime;
 
+    /**
+     * Initialises the system, setting the system time, alongside an empty list of projects
+     * and setting the TaskManSystemProxy
+     * @param systemTime  The initial system time (as a Time object)
+     */
     public TaskManSystem(Time systemTime) {
         this.systemTime = systemTime;
         projects = new LinkedList<>();
         taskManSystemProxy = new TaskManSystemProxy(this);
     }
 
+    /**
+     * @return  An immutable proxy of this object, containing some of this objects' details
+     */
     public TaskManSystemProxy getTaskManSystemData() {
         return taskManSystemProxy;
     }
 
+    /**
+     * @return  The current system time as a Time object
+     */
     public Time getSystemTime() {
         return systemTime;
     }
 
+    /**
+     * @param newTime The new time to set as systemtime, as a Time object
+     */
     private void setSystemTime(Time newTime) {
         this.systemTime = newTime;
     }
@@ -58,9 +72,9 @@ public class TaskManSystem {
     }
 
     /**
-     * @return List of all project names
+     * @return List of all project names, as strings
      */
-    public List<String> getProjectNames() { // todo: momenteel niet gebruikt
+    List<String> getProjectNames() {
         List<String> names = new LinkedList<>();
         for (Project project : getProjects()) {
             names.add(project.getName());
@@ -68,6 +82,13 @@ public class TaskManSystem {
         return names;
     }
 
+    /**
+     * Returns an immutable project proxy of the project with the given projectname, if it exists in the current system
+     *
+     * @param projectName                Name of the project
+     * @return                           An immutable project proxy containing the projects' details
+     * @throws ProjectNotFoundException  if projectName does not correspond to an existing project within the systen
+     */
     public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
@@ -76,6 +97,15 @@ public class TaskManSystem {
         return project.getProjectData();
     }
 
+    /**
+     * Returns an immutable task proxy of the task with the given name, inside the project of the given name
+     *
+     * @param projectName                   Project to which the given task belongs
+     * @param taskName                      Task of which to get the task proxy
+     * @return                              An immutable task proxy containing details and getters of the given task
+     * @throws TaskNotFoundException        if the given taskName does not correspond to an existing task within the given project
+     * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project within the system
+     */
     public TaskProxy getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
@@ -84,6 +114,9 @@ public class TaskManSystem {
         return project.getTaskData(taskName);
     }
 
+    /**
+     * @param newProject The project to add to the current list of projects
+     */
     private void addProject(Project newProject) {
         projects.add(newProject);
     }
@@ -113,8 +146,8 @@ public class TaskManSystem {
      * @param projectDescription Description of the project to create
      * @param startTime          Time at which the project is to start
      * @param dueTime            Time at which the project is due
-     * @throws DueBeforeSystemTimeException     if the given due time is before system time
-     * @throws ProjectNameAlreadyInUseException if the given project name is already in use
+     * @throws DueTimeBeforeCreationTimeException     if the given due time is before system time
+     * @throws ProjectNameAlreadyInUseException       if the given project name is already in use
      */
     private void createProject(
             String projectName,
@@ -216,10 +249,12 @@ public class TaskManSystem {
      * @param projectName Name of the project to which the task to start is attached
      * @param taskName    Name of the task to start
      * @param currentUser User currently logged in
-     * @throws ProjectNotFoundException     if the given project name does not correspond to an existing project
-     * @throws TaskNotFoundException        if the given task name does not correspond to an existing task within the given project
-     * @throws IncorrectUserException       if currentUser is not the user assigned to the given task
-     * @throws IncorrectTaskStatusException if the task status is not AVAILABLE
+     * @throws ProjectNotFoundException             if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException                if the given task name does not correspond to an existing task within the given project
+     * @throws IncorrectTaskStatusException         if the task status is not AVAILABLE or PENDING
+     * @throws UserAlreadyAssignedToTaskException   if the given user is already assigned to the task
+     * @throws IncorrectRoleException               if this role is not necessary for the given task OR
+     *                                                 the given user does not have the given role
      */
     public void startTask(
             String projectName,
@@ -267,10 +302,14 @@ public class TaskManSystem {
         }
     }
 
-
-    public void clear() throws InvalidTimeException {
+    /**
+     * Resets the system, removing all projects and resetting the system time to 0
+     *
+     * @post systemTime.getTotalMinutes() == 0
+     */
+    public void reset() throws InvalidTimeException {
         projects = new LinkedList<>();
-        systemTime = new Time(0, 0);
+        systemTime = new Time(0);
     }
 
 
@@ -313,6 +352,17 @@ public class TaskManSystem {
         project.failTask(taskName, user, getSystemTime());
     }
 
+    /**
+     * Adds a previous task to a given task within a given project
+     *
+     * @param projectName           The name corresponding with the project
+     * @param taskName              The name corresponding to the task which to add the previous task to
+     * @param prevTaskName          The name corresponding to the task to add as a previous task
+     * @throws ProjectNotFoundException         If the given projectName does not correspond to an existing project
+     * @throws TaskNotFoundException            If taskName or prevTaskName do not correspond to a task within the given project
+     * @throws IncorrectTaskStatusException     
+     * @throws LoopDependencyGraphException
+     */
     public void addPreviousTaskToProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {

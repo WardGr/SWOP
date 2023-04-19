@@ -66,7 +66,11 @@ public class UserManager {
         throw new LoginException("Username/password combination is incorrect");
     }
 
-    // TODO,misschien niet meer nodig met de andere checks
+    /**
+     * @param userName  Name of the user to get the User object from
+     * @return The user object corresponding to the given userName
+     * @throws UserNotFoundException if the given userName does not correspond to an existing User
+     */
     public User getUser(String userName) throws UserNotFoundException {
         for (User user : getUsers()) {
             if (user.getUsername().equals(userName)) {
@@ -76,6 +80,9 @@ public class UserManager {
         throw new UserNotFoundException();
     }
 
+    /**
+     * @return An immutable list of users
+     */
     public List<User> getUsers() {
         return List.copyOf(users);
     }

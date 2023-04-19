@@ -286,10 +286,10 @@ public class Project {
      * @param startTime   Start time of the given task
      * @param currentUser User currently logged in
      * @throws TaskNotFoundException              if the given task name does not correspond to an existing task within this project
-     * @throws IncorrectTaskStatusException       if the given task status is not currently AVAILABLE
+     * @throws IncorrectTaskStatusException       if the given task status is not currently AVAILABLE or PENDING
      * @throws UserAlreadyAssignedToTaskException if currentuser is already assigned to this task
-     * @throws IncorrectRoleException             if this role is not necessary for the given task
-     */
+     * @throws IncorrectRoleException             if this role is not necessary for the given task OR
+     *                                               the given user does not have the given role     */
     public void startTask(
             String taskName,
             Time startTime,
