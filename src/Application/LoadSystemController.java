@@ -70,13 +70,28 @@ public class LoadSystemController {
 
             //load projects
             JSONArray projects = (JSONArray) doc.get("projects");
+            TreeMap<Time, JSONArray> loadedProjects = new TreeMap<>();
             for (Object p : projects) {
-                loadProject((JSONObject) p);
+                int startHour = (int) (long) ((JSONObject) p).get("startHour");
+                int startMinute = (int) (long) ((JSONObject) p).get("startMinute");
+                Time startTime = new Time(startHour, startMinute);
+
+                if(loadedProjects.get(startTime) == null){
+                    JSONArray projectArray  = new JSONArray();
+                    loadedProjects.put(startTime, projectArray);
+                }
+                loadedProjects.get(startTime).add(p);
             }
 
             //load tasks
             JSONArray tasks = (JSONArray) doc.get("tasks");
-            loadTasks(tasks);
+            TreeMap<Time, JSONArray> startedTasks = new TreeMap<>();
+            TreeMap<Time, JSONArray> endedTasks = new TreeMap<>();
+            HashSet<JSONObject> remainingTasks = new HashSet<>();
+            for (Object t : tasks) {
+                handleTask((JSONObject) t, startedTasks, endedTasks, remainingTasks);
+            }
+            load(loadedProjects, startedTasks, endedTasks, remainingTasks);
 
             //set system time
             int systemHour = (int) (long) doc.get("systemHour");
@@ -84,10 +99,11 @@ public class LoadSystemController {
             getTaskManSystem().advanceTime(new Time(systemHour, systemMinute));
         } catch (ParseException | InvalidTimeException | NewTimeBeforeSystemTimeException | UserNotFoundException |
                  ProjectNotFoundException | TaskNotFoundException | TaskNameAlreadyInUseException |
-                 IncorrectTaskStatusException | UserAlreadyAssignedToTaskException | RoleNotFoundException |
+                 IncorrectTaskStatusException | UserAlreadyAssignedToTaskException |
+                 SessionController.RoleNotFoundException |
                  LoopDependencyGraphException | IncorrectRoleException | NonDeveloperRoleException |
                  EndTimeBeforeStartTimeException | IncorrectUserException | ProjectNotOngoingException |
-                 ProjectNameAlreadyInUseException | DueTimeBeforeCreationTimeException e) {
+                 ProjectNameAlreadyInUseException | DueTimeBeforeCreationTimeException | DueBeforeSystemTimeException e) {
 
             try {
                 clear();
@@ -111,58 +127,95 @@ public class LoadSystemController {
      *
      * @param project JSONObject containing the details of the project to create and load
      */
-    private void loadProject(JSONObject project) throws ProjectNameAlreadyInUseException, InvalidTimeException, DueTimeBeforeCreationTimeException {
+    private void startProject(JSONObject project) throws ProjectNameAlreadyInUseException, InvalidTimeException, DueBeforeSystemTimeException {
         //create the project
         String name = (String) project.get("name");
         String description = (String) project.get("description");
-        int startHour = (int) (long) project.get("startHour");
-        int startMinute = (int) (long) project.get("startMinute");
         int endHour = (int) (long) project.get("endHour");
         int endMinute = (int) (long) project.get("endMinute");
-        getTaskManSystem().createProject(name, description, new Time(startHour, startMinute), new Time(endHour, endMinute));
+
+        getTaskManSystem().createProject(name, description, new Time(endHour, endMinute));
 
     }
 
 
-    private void loadTasks(JSONArray tasks) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, NonDeveloperRoleException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException {
-        TreeMap<Time, JSONArray> startedTasks = new TreeMap<>();
-        TreeMap<Time, JSONArray> endedTasks = new TreeMap<>();
-        HashSet<JSONObject> remainingTasks = new HashSet<>();
-        for (Object t : tasks) {
-            handleTask((JSONObject) t, startedTasks, endedTasks, remainingTasks);
-        }
-        while(startedTasks.size() > 0 || endedTasks.size() > 0){
+    private void load(TreeMap<Time, JSONArray> projects, TreeMap<Time, JSONArray> startedTasks, TreeMap<Time, JSONArray> endedTasks, HashSet<JSONObject> remainingTasks ) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, SessionController.RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, NonDeveloperRoleException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException, ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException, DueBeforeSystemTimeException {
+        while(startedTasks.size() > 0 || endedTasks.size() > 0 || projects.size() > 0){
             if(startedTasks.size() == 0){
-                getTaskManSystem().advanceTime(endedTasks.firstKey());
-                for(Object e : endedTasks.firstEntry().getValue()){
-                    endTask((JSONObject) e);
+                if (endedTasks.size() == 0) {
+                    getTaskManSystem().advanceTime(projects.firstKey());
+                    for(Object p : projects.firstEntry().getValue()){
+                        startProject((JSONObject) p);
+                    }
+                    projects.pollFirstEntry();
+                } else if (projects.size() == 0 || endedTasks.firstKey().before(projects.firstKey())){
+                    getTaskManSystem().advanceTime(endedTasks.firstKey());
+                    for(Object e : endedTasks.firstEntry().getValue()){
+                        endTask((JSONObject) e);
+                    }
+                    endedTasks.pollFirstEntry();
+                } else {
+                    getTaskManSystem().advanceTime(projects.firstKey());
+                    for(Object p : projects.firstEntry().getValue()){
+                        startProject((JSONObject) p);
+                    }
+                    projects.pollFirstEntry();
                 }
-                endedTasks.pollFirstEntry();
             } else if (endedTasks.size() == 0) {
-                getTaskManSystem().advanceTime(startedTasks.firstKey());
-                for(Object s : startedTasks.firstEntry().getValue()){
-                    startTask((JSONObject) s);
+                if(projects.size() == 0 || startedTasks.firstKey().before(projects.firstKey())){
+                    getTaskManSystem().advanceTime(startedTasks.firstKey());
+                    for(Object s : startedTasks.firstEntry().getValue()){
+                        startTask((JSONObject) s);
+                    }
+                    startedTasks.pollFirstEntry();
+                }else{
+                    getTaskManSystem().advanceTime(projects.firstKey());
+                    for(Object p : projects.firstEntry().getValue()){
+                        startProject((JSONObject) p);
+                    }
+                    projects.pollFirstEntry();
                 }
-                startedTasks.pollFirstEntry();
-            } else if(startedTasks.firstKey().before(endedTasks.firstKey())){
-                getTaskManSystem().advanceTime(startedTasks.firstKey());
-                for(Object s : startedTasks.firstEntry().getValue()){
-                    startTask((JSONObject) s);
+            } else if (projects.size() == 0) {
+                if(startedTasks.firstKey().before(endedTasks.firstKey())){
+                    getTaskManSystem().advanceTime(startedTasks.firstKey());
+                    for(Object s : startedTasks.firstEntry().getValue()){
+                        startTask((JSONObject) s);
+                    }
+                    startedTasks.pollFirstEntry();
+                } else {
+                    getTaskManSystem().advanceTime(endedTasks.firstKey());
+                    for(Object e : endedTasks.firstEntry().getValue()){
+                        endTask((JSONObject) e);
+                    }
+                    endedTasks.pollFirstEntry();
                 }
-                startedTasks.pollFirstEntry();
-            } else {
-                getTaskManSystem().advanceTime(endedTasks.firstKey());
-                for(Object e : endedTasks.firstEntry().getValue()){
-                    endTask((JSONObject) e);
+            }else {
+                if(startedTasks.firstKey().before(endedTasks.firstKey()) && startedTasks.firstKey().before(projects.firstKey())){
+                    getTaskManSystem().advanceTime(startedTasks.firstKey());
+                    for(Object s : startedTasks.firstEntry().getValue()){
+                        startTask((JSONObject) s);
+                    }
+                    startedTasks.pollFirstEntry();
+                } else if (endedTasks.firstKey().before(startedTasks.firstKey()) && startedTasks.firstKey().before(projects.firstKey())) {
+                    getTaskManSystem().advanceTime(endedTasks.firstKey());
+                    for(Object e : endedTasks.firstEntry().getValue()){
+                        endTask((JSONObject) e);
+                    }
+                    endedTasks.pollFirstEntry();
+                }else {
+                    getTaskManSystem().advanceTime(projects.firstKey());
+                    for(Object p : projects.firstEntry().getValue()){
+                        startProject((JSONObject) p);
+                    }
+                    projects.pollFirstEntry();
                 }
-                endedTasks.pollFirstEntry();
+
             }
         }
 
         for(JSONObject r : remainingTasks){
             startTask(r);
         }
-        // TODO error afhandelen
     }
 
     private void handleTask(JSONObject task, Map<Time, JSONArray> started, Map<Time, JSONArray> ended, HashSet<JSONObject> remaining) throws InvalidTimeException {
@@ -190,7 +243,7 @@ public class LoadSystemController {
         }
     }
 
-    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, RoleNotFoundException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException {
+    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, SessionController.RoleNotFoundException, ProjectNotOngoingException {
         //standard task fields
         String name = (String) task.get("name");
         String description = (String) task.get("description");
@@ -243,7 +296,7 @@ public class LoadSystemController {
         }
     }
 
-    public Role findRole(String role) throws RoleNotFoundException {
+    public Role findRole(String role) throws SessionController.RoleNotFoundException {
         switch (role) {
             case "SYSADMIN" -> {
                 return Role.SYSADMIN;
@@ -254,11 +307,8 @@ public class LoadSystemController {
             case "PYTHONPROGRAMMER" -> {
                 return Role.PYTHONPROGRAMMER;
             }
-            case "PROJECTMANAGER" -> {
-                return Role.PROJECTMANAGER;
-            }
         }
-        throw new RoleNotFoundException();
+        throw new SessionController.RoleNotFoundException();
     }
 }
 

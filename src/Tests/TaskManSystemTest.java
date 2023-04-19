@@ -1,4 +1,4 @@
-/*package Tests;
+package Tests;
 
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
@@ -67,48 +67,48 @@ public class TaskManSystemTest {
 
         taskManSystem.addTaskToProject("Project 1", "Task 1", "Test Task", new Time(10), 0, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of());
         assertNotNull(taskManSystem.getTaskData("Project 1", "Task 1"));
-        assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Task 1"));
+        assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Task 1").getStatus());
 
         taskManSystem.startTask("Project 1", "Task 1", user, Role.JAVAPROGRAMMER);
-        assertEquals(Status.EXECUTING, taskManSystem.getStatus("Project 1", "Task 1"));
+        assertEquals(Status.EXECUTING, taskManSystem.getTaskData("Project 1", "Task 1").getStatus());
         taskManSystem.advanceTime(10);
         taskManSystem.failTask("Project 1", "Task 1", user);
-        assertEquals(Status.FAILED, taskManSystem.getStatus("Project 1", "Task 1"));
+        assertEquals(Status.FAILED, taskManSystem.getTaskData("Project 1", "Task 1").getStatus());
 
         assertEquals(List.of("Task 1"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         assertEquals(List.of(), taskManSystem.getProjectData("Project 1").getReplacedTasksNames());
 
         taskManSystem.replaceTaskInProject("Project 1", "Replacement Task", "Test", new Time(10), 0, "Task 1");
-        assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Replacement Task"));
+        assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Replacement Task").getStatus());
         assertEquals(List.of("Replacement Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         assertEquals(List.of("Task 1"), taskManSystem.getProjectData("Project 1").getReplacedTasksNames());
 
         taskManSystem.addTaskToProject("Project 1", "Next Task", "Test", new Time(0), 0, List.of(), Set.of(), Set.of());
         assertEquals(List.of("Replacement Task", "Next Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         taskManSystem.addNextTaskToProject("Project 1", "Task 1", "Next Task");
-        assertEquals(Status.UNAVAILABLE, taskManSystem.getStatus("Project 1", "Next Task"));
+        assertEquals(Status.UNAVAILABLE, taskManSystem.getTaskData("Project 1", "Next Task").getStatus());
 
         taskManSystem.removeNextTaskFromProject("Project 1", "Task 1", "Next Task");
-        assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Replacement Task"));
-        assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Next Task"));
+        assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Replacement Task").getStatus());
+        assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Next Task").getStatus());
         assertEquals(List.of("Replacement Task", "Next Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         assertEquals(List.of("Task 1"), taskManSystem.getProjectData("Project 1").getReplacedTasksNames());
 
         taskManSystem.addPreviousTaskToProject("Project 1", "Next Task", "Task 1");
-        assertEquals(Status.UNAVAILABLE, taskManSystem.getStatus("Project 1", "Next Task"));
+        assertEquals(Status.UNAVAILABLE, taskManSystem.getTaskData("Project 1", "Next Task").getStatus());
 
         taskManSystem.removePreviousTaskFromProject("Project 1", "Next Task", "Task 1");
-        assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Replacement Task"));
-        assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Next Task"));
+        assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Replacement Task").getStatus());
+        assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Next Task").getStatus());
         assertEquals(List.of("Replacement Task", "Next Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         assertEquals(List.of("Task 1"), taskManSystem.getProjectData("Project 1").getReplacedTasksNames());
 
         //  TODO: fix dit
         taskManSystem.startTask("Project 1", "Replacement Task", user, Role.JAVAPROGRAMMER);
-        assertEquals(Status.EXECUTING, taskManSystem.getStatus("Project 1", "Replacement Task"));
+        assertEquals(Status.EXECUTING, taskManSystem.getTaskData("Project 1", "Replacement Task").getStatus());
         taskManSystem.finishTask("Project 1", "Replacement Task", user);
-        assertEquals(Status.FINISHED, taskManSystem.getStatus("Project 1", "Replacement Task"));
-        assertEquals(Status.AVAILABLE, taskManSystem.getStatus("Project 1", "Next Task"));
+        assertEquals(Status.FINISHED, taskManSystem.getTaskData("Project 1", "Replacement Task").getStatus());
+        assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Next Task").getStatus());
 
 
         assertEquals(new Time(20), taskManSystem.getTaskManSystemData().getSystemTime());
@@ -118,4 +118,4 @@ public class TaskManSystemTest {
         assertEquals(List.of(), taskManSystem.getProjectNames());
 
     }
-}*/
+}

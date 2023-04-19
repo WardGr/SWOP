@@ -3,7 +3,7 @@
     {
       "name": "availableProject",
       "description": "first LoadSystemTest",
-      "startHour": 1,
+      "startHour": 4,
       "startMinute": 11,
       "endHour": 16,
       "endMinute": 10
@@ -12,7 +12,7 @@
       "name": "finishedProject",
       "description": "LoadSystemTest",
       "startHour": 2,
-      "startMinute": 11,
+      "startMinute": 9,
       "endHour": 17,
       "endMinute": 10
     },
@@ -20,6 +20,14 @@
       "name": "executingProject",
       "description": "LoadSystemTest",
       "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10
+    },
+    {
+      "name": "singleProject",
+      "description": "LoadSystemTest",
+      "startHour": 2,
       "startMinute": 11,
       "endHour": 16,
       "endMinute": 10
@@ -74,7 +82,7 @@
       "acceptableDeviation": 3.3,
       "dueHour": 16,
       "dueMinute": 10,
-      "startHour": 2,
+      "startHour": 4,
       "startMinute": 10,
       "endHour": null,
       "endMinute": null,
@@ -82,15 +90,15 @@
       "previousTasks": [],
       "users": [
         {
-          "user": "JasperVH",
-          "role": "JAVAPROGRAMMER"
+          "user": "SanderSc",
+          "role": "SYSADMIN"
         },
         {
           "user": "HannahEr",
           "role": "PYTHONPROGRAMMER"
         }
       ],
-      "roles": ["JAVAPROGRAMMER", "PYTHONPROGRAMMER"]
+      "roles": ["SYSADMIN", "PYTHONPROGRAMMER"]
     }
   ],
   "systemHour": 15,

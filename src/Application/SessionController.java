@@ -1,6 +1,5 @@
 package Application;
 
-import Domain.LoginException;
 import Domain.Role;
 import Domain.User;
 import Domain.UserManager;
@@ -64,5 +63,9 @@ public class SessionController {
         }
         getSession().logout();
         return true;
+    }
+
+    public static class RoleNotFoundException extends Exception{
+        public RoleNotFoundException(){super();}
     }
 }

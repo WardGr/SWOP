@@ -1,7 +1,7 @@
 package UserInterface;
 
 import Application.SessionController;
-import Domain.LoginException;
+import Application.LoginException;
 import Domain.Role;
 
 import java.util.Scanner;

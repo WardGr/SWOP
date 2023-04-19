@@ -116,7 +116,7 @@ public class TaskManSystem {
      * @throws DueBeforeSystemTimeException     if the given due time is before system time
      * @throws ProjectNameAlreadyInUseException if the given project name is already in use
      */
-    public void createProject(
+    private void createProject(
             String projectName,
             String projectDescription,
             Time startTime,
