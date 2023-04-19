@@ -3,7 +3,6 @@ package UserInterface;
 import Application.IncorrectPermissionException;
 import Application.ShowProjectsController;
 import Domain.*;
-import Domain.TaskStates.FinishedState;
 import Domain.TaskStates.FinishedStatus;
 import Domain.TaskStates.TaskProxy;
 
@@ -153,8 +152,7 @@ public class ShowProjectsUI {
         } else {
             System.out.println("There are no tasks replaced in this project.");
         }
-
-        // TODO geef de totale uitvoeringstijd !!!
+        System.out.println();
 
     }
 
@@ -246,5 +244,6 @@ public class ShowProjectsUI {
         } else {
             System.out.println("- There are no previous tasks");
         }
+        System.out.println();
     }
 }
