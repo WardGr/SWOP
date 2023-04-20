@@ -606,7 +606,7 @@ public class CreateTaskUITest {
         out.reset();
 
 
-        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\njava programmer\nsysadmin\n.\nSimpleTask\n.\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\njava programmer\nsysadmin\npython programmer\n.\nSimpleTask\n.\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -627,6 +627,309 @@ public class CreateTaskUITest {
                         You can choose from: sysadmin, java programmer, python programmer
                         Tasks that this task depends on, enter '.' to stop adding new tasks:
                         Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\njava programmer\nsysadmin\npython programmer\n.\nSimpleTask\n.\nSimpleTask\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\nsysadmin\n.\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\nsysadmin\n.\nSimpleTask\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nn\nsysadmin\n.\nSimpleTask\n.\n.\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        ERROR: Given project does not exist
+                                                
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("SimpleProject\nSimpleTask\nCool description\n3\n20\n0.3\nn\nsysadmin\n.\n.\n.\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        ERROR: The given task name is already in use
+                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n80\n0.3\nn\nsysadmin\n.\n.\n.\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        ERROR: The given minutes are not of a valid format (0-59)
+                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\nHOI\n.\n.\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        ERROR: A given previous or next task name can't be found
+                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\n.\nSimpleTask\n.\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        ERROR: One of the next tasks is not (un)available
+                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\nNewTask\n.\nNewTask\n.\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        ERROR: Given list of tasks introduces a loop
+                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        taskManSystem.createProject("Finished", "", new Time(500));
+        taskManSystem.addTaskToProject("Finished", "Task", "", new Time(5), 0.1, List.of(Role.JAVAPROGRAMMER), new HashSet<>(), new HashSet<>());
+        taskManSystem.startTask("Finished", "Task", developer, Role.JAVAPROGRAMMER);
+        taskManSystem.advanceTime(5);
+        taskManSystem.finishTask("Finished", "Task", developer);
+
+        System.setIn(new ByteArrayInputStream("Finished\nNewTask\nDescription\n3\n50\n0.3\nn\nsysadmin\n.\n.\n.\nBACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
+                        Task name:
+                        Task description:
+                        Task duration hours:
+                        Task duration minutes:
+                        Task deviation:
+                        Is this a replacement task? (y/n)
+                        Give developer roles needed for this task, end with a '.'
+                        You can choose from: sysadmin, java programmer, python programmer
+                        Tasks that this task depends on, enter '.' to stop adding new tasks:
+                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        ERROR: Project is already finished
+                        
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - SimpleProject
+                         - SimpleProject2
+                        Project name of an ongoing project to add the task to:
                         Cancelled task creation
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
