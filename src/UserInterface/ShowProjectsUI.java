@@ -16,10 +16,18 @@ public class ShowProjectsUI {
 
     private final ShowProjectsController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public ShowProjectsUI(ShowProjectsController controller) {
         this.controller = controller;
     }
 
+    /**
+     * @return This UI's controller
+     */
     private ShowProjectsController getController() {
         return controller;
     }
@@ -108,7 +116,9 @@ public class ShowProjectsUI {
     /**
      * Pretty-prints given project string
      *
-     * @param projectName TODO
+     * @param projectName Project name corresponding to the project that should be pretty-printed
+     * @throws ProjectNotFoundException         if the given projectName does not correspond to an existing project
+     * @throws IncorrectPermissionException     if the currently logged-in user is not a project manager
      */
     private void showProject(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
         ProjectData projectData = getController().getProjectData(projectName);
@@ -157,9 +167,13 @@ public class ShowProjectsUI {
     }
 
     /**
-     * Pretty-prints given task string
+     * Pretty-prints the task with given taskName in the project with given projectName
      *
-     * @param projectName TODO
+     * @param projectName   Project name of project to which the task belongs
+     * @param taskName      Task name of task which belongs to the project
+     * @throws ProjectNotFoundException         if the given projectName does not correspond to an existing project
+     * @throws TaskNotFoundException            if the given taskName does not correspond to an existing task within the given project
+     * @throws IncorrectPermissionException     if the currently logged-in user is not a project manager
      */
     private void showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         TaskData taskData = getController().getTaskData(projectName, taskName);

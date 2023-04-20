@@ -13,10 +13,18 @@ public class CreateProjectUI {
 
     private final CreateProjectController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public CreateProjectUI(CreateProjectController controller) {
         this.controller = controller;
     }
 
+    /**
+     * @return This UI's controller
+     */
     private CreateProjectController getController() {
         return controller;
     }

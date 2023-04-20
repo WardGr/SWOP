@@ -10,14 +10,25 @@ import java.util.Scanner;
 public class EndTaskUI {
     private final EndTaskController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public EndTaskUI(EndTaskController controller) {
         this.controller = controller;
     }
 
+    /**
+     * @return This UI's controller
+     */
     private EndTaskController getController() {
         return controller;
     }
 
+    /**
+     * Prints the end task form, asking the user if they want to fail or finish their current task
+     */
     public void endTask() {
         if (!getController().endTaskPreconditions()) {
             System.out.println("ERROR: You need a developer role to call this function.");
@@ -71,7 +82,9 @@ public class EndTaskUI {
         }
     }
 
-
+    /**
+     * Prints the task the current user is working on, or a message if the user is not working on any
+     */
     private void printExecutingTask() {
         System.out.print("You are currently working on task: ");
         TaskData executingTaskData = getController().getUserTaskData();

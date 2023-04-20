@@ -15,14 +15,26 @@ import java.util.stream.Collectors;
 public class StartTaskUI {
     private final StartTaskController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public StartTaskUI(StartTaskController controller) {
         this.controller = controller;
     }
 
+    /**
+     * @return This UI's controller
+     */
     private StartTaskController getController() {
         return controller;
     }
 
+    /**
+     *  Prints the start task prompt, giving the currently logged-in user the ability to start working on a task of
+     *  their choice in a project of their choice.
+     */
     public void startTask() {
         if (!getController().startTaskPreconditions()) {
             System.out.println("ERROR: You need a developer role to call this function.");
@@ -174,14 +186,18 @@ public class StartTaskUI {
             } catch (IncorrectPermissionException | IncorrectRoleException e) {
                 System.out.println("ERROR: " + e.getMessage());
             } catch (IncorrectTaskStatusException e) {
-                System.out.println("ERROR: Given state has not the right status to start");
+                System.out.println("ERROR: Given task does not have the right status to start");
             } catch (UserAlreadyAssignedToTaskException e) {
                 System.out.println("ERROR: User is already executing a task");
             }
         }
     }
 
-
+    /**
+     * Pretty-prints a list of all available or pending tasks currently in the system
+     *
+     * @throws IncorrectPermissionException if the user is not logged-in as a developer\
+     */
     private void printTasksList() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
         System.out.println("***** LIST OF AVAILABLE OR PENDING TASKS *****");
         for (String projectName : getController().getTaskManSystemData().getProjectNames()) {
@@ -208,6 +224,11 @@ public class StartTaskUI {
         System.out.println();
     }
 
+    /**
+     * Pretty-prints the given taskdata
+     *
+     * @param taskData the taskdata to pretty-print
+     */
     private void showTask(TaskData taskData) {
         System.out.println("******** TASK DETAILS ********");
 

@@ -14,6 +14,11 @@ public class SessionUI {
 
     private final SessionController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public SessionUI(SessionController controller) {
         this.controller = controller;
     }
@@ -29,6 +34,9 @@ public class SessionUI {
         }
     }
 
+    /**
+     * @return This UI's controller
+     */
     private SessionController getController() {
         return controller;
     }

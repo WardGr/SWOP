@@ -13,14 +13,25 @@ import java.util.stream.Collectors;
 public class UpdateDependenciesUI {
     private final UpdateDependenciesController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public UpdateDependenciesUI(UpdateDependenciesController controller) {
         this.controller = controller;
     }
 
+    /**
+     * @return This UI's controller
+     */
     private UpdateDependenciesController getController() {
         return controller;
     }
 
+    /**
+     * Shows the update dependency form, allowing the user to add next or previous tasks to a task of their choice
+     */
     public void updateDependencies() {
         if (!getController().updateDependenciesPreconditions()) {
             System.out.println("ERROR: You must be a project manager to call this function");
@@ -53,14 +64,22 @@ public class UpdateDependenciesUI {
         }
     }
 
+    /**
+     * Prompts the user to choose a task to update in the given project
+     *
+     * @param projectName   Name of the project within which to update the task
+     * @param scanner       Scanner object to retrieve the desired user input
+     * @throws IncorrectPermissionException if the current user is not logged in with the project manager role
+     * @throws ProjectNotFoundException     if projectName does not correspond to an existing project in the system
+     */
     private void updateProject(String projectName, Scanner scanner) throws IncorrectPermissionException, ProjectNotFoundException {
         ProjectData projectData = getController().getProjectData(projectName);
 
         while (true) {
             try {
-                showRelevantTasks(projectData);
+                printUpdateableTasks(projectData);
 
-                System.out.println("Give the name of the task you want to edit:");
+                System.out.println("Give the name of the task you want to update:");
                 String taskName = scanner.nextLine();
                 if (taskName.equals("BACK")) {
                     System.out.println("Returning to project menu...");
@@ -74,6 +93,16 @@ public class UpdateDependenciesUI {
         }
     }
 
+    /**
+     * Prompts the user to update a specific task, allowing them to add/remove previous and next tasks from it
+     *
+     * @param projectName Name of the project which the given task is a part of
+     * @param taskName    The task which dependencies to update
+     * @param scanner     Scanner object to get user input from
+     * @throws IncorrectPermissionException if the currently logged-in user is not a project manager
+     * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project within the system
+     * @throws TaskNotFoundException        if the given taskName does not correspond to an existing task within the given project
+     */
     private void updateTask(String projectName, String taskName, Scanner scanner) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
         ProjectData projectData = getController().getProjectData(projectName);
         TaskData taskData = getController().getTaskData(projectName, taskName);
@@ -126,6 +155,11 @@ public class UpdateDependenciesUI {
         }
     }
 
+    /**
+     * Pretty-prints the currently ongoing projects
+     *
+     * @throws IncorrectPermissionException if the currently logged-in user is not a project manager
+     */
     private void showOngoingProjects() throws IncorrectPermissionException {
         System.out.println("***** UNFINISHED PROJECTS *****");
         if (getController().getTaskManSystemData().getProjectNames().size() == 0) {
@@ -143,7 +177,13 @@ public class UpdateDependenciesUI {
         System.out.println();
     }
 
-    private void showRelevantTasks(ProjectData projectData) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
+    /**
+     * Prints all AVAILABLE/UNAVAILABLE tasks of the given project, which can be updated
+     *
+     * @param projectData   Data object of the project of which to print all updateable tasks
+     * @throws IncorrectPermissionException if the currently logged-in user is not a project manager
+     */
+    private void printUpdateableTasks(ProjectData projectData) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
         System.out.println("***** (UN)AVAILABLE TASKS *****");
         List<String> unAvailableTasks = projectData.getActiveTasksNames();
         for (String taskName : projectData.getActiveTasksNames()){
@@ -169,6 +209,12 @@ public class UpdateDependenciesUI {
         System.out.println();
     }
 
+    /**
+     * Prints all dependencies of the given task within the given project
+     *
+     * @param projectData Data object of the project of which the given task is a part of
+     * @param taskData    Data object of the task of which to print its dependencies
+     */
     private void showTaskDependencies(ProjectData projectData, TaskData taskData) {
         System.out.print("Previous tasks: ");
         if (taskData.getPrevTaskNames().size() == 0) {

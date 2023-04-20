@@ -16,16 +16,24 @@ public class AdvanceTimeUI {
 
     private final AdvanceTimeController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public AdvanceTimeUI(AdvanceTimeController controller) {
         this.controller = controller;
     }
 
+    /**
+     * @return This UI's controller
+     */
     private AdvanceTimeController getController() {
         return controller;
     }
 
     /**
-     * Creates the initial advancetime request, checks if the user is logged in as a project manager or developer
+     * Creates the initial advancetime request, checks if the user is logged in as a project manager or with a developer role
      */
     public void advanceTime() {
         if (getController().advanceTimePreconditions()) {
@@ -40,7 +48,10 @@ public class AdvanceTimeUI {
     }
 
     /**
-     * Advances the system time by the given input
+     * Requests the user to choose how to advance the time, giving two options:
+     *      1) Advance time by a certain amount of minutes
+     *      2) Advance time to a certain timestamp
+     * And calls the respective functions to facilitate this request
      */
     public void chooseAdvanceMethod() throws IncorrectPermissionException {
         Scanner scanner = new Scanner(System.in);
@@ -79,6 +90,12 @@ public class AdvanceTimeUI {
         }
     }
 
+    /**
+     * Advances the time by a certain amount of minutes, given by the user
+     *
+     * @param scanner Scanner object to retrieve user input
+     * @throws IncorrectPermissionException         If the currently logged-in user does not have the project manager role or any developer role
+     */
     private void advanceDuration(Scanner scanner) throws IncorrectPermissionException, InvalidTimeException, NewTimeBeforeSystemTimeException {
         System.out.println("Give amount of minutes to advance the clock with:");
 
@@ -97,10 +114,23 @@ public class AdvanceTimeUI {
                 amountMinutesString = scanner.nextLine();
             }
         }
-        getController().advanceTime(amountMinutes);
+        try {
+            getController().advanceTime(amountMinutes);
+        }
+        catch (InvalidTimeException | NewTimeBeforeSystemTimeException e) {
+            throw new RuntimeException("Time was somehow not converted properly, this is an internal bug");
+        }
         System.out.println("Time successfully updated");
     }
 
+    /**
+     * Advances the time to a new timestamp
+     *
+     * @param scanner Scanner object to retrieve user input
+     * @throws IncorrectPermissionException     if the current user is not logged in as project manager and does not have a developer role
+     * @throws InvalidTimeException             if the given minute is > 59
+     * @throws NewTimeBeforeSystemTimeException if the given time is before the current system time
+     */
     private void newTime(Scanner scanner) throws IncorrectPermissionException, InvalidTimeException, NewTimeBeforeSystemTimeException {
         System.out.println("Give new system hour:");
         String newHourString = scanner.nextLine();

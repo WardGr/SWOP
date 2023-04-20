@@ -18,6 +18,9 @@ public class UserInterface {
     private final EndTaskUI endTaskUI;
     private final UpdateDependenciesUI updateDependenciesUI;
 
+    /**
+     * Creates the main UI object, setting all its use-case UI's
+     */
     public UserInterface(
             SessionUI sessionUI,
             AdvanceTimeUI advanceTimeUI,

@@ -18,10 +18,18 @@ public class CreateTaskUI {
 
     private final CreateTaskController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public CreateTaskUI(CreateTaskController controller) {
         this.controller = controller;
     }
 
+    /**
+     * @return This UI's controller
+     */
     private CreateTaskController getController() {
         return controller;
     }
@@ -155,7 +163,7 @@ public class CreateTaskUI {
 
             if (answer.equals("y")) {
                 try {
-                    printActiveFailedTasks(projectName);
+                    printReplacableTasks(projectName);
 
                     System.out.println("This task is a replacement for task:");
                     String replaces = scanner.nextLine();
@@ -280,6 +288,9 @@ public class CreateTaskUI {
         }
     }
 
+    /**
+     * Prints all projects with the ONGOING status to the user
+     */
     private void printOngoingProjects() {
         System.out.println("-- Ongoing Projects --");
         List<String> ongoingProjectsNames = getController().getTaskManSystemData().getProjectNames();
@@ -299,7 +310,13 @@ public class CreateTaskUI {
         }
     }
 
-    private void printActiveFailedTasks(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
+    /**
+     * Prints all tasks that can be replaced
+     *
+     * @param projectName               Project name of which to print all replacable tasks
+     * @throws ProjectNotFoundException if the given projectName does not correspond to an existing project within the system
+     */
+    private void printReplacableTasks(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
         System.out.println("-- Tasks that can be replaced --");
 
         for (String taskName : getController().getProjectData(projectName).getActiveTasksNames()) {

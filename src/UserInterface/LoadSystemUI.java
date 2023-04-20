@@ -13,10 +13,18 @@ import java.util.Scanner;
 public class LoadSystemUI {
     private final LoadSystemController controller;
 
+    /**
+     * Creates a new UI object
+     *
+     * @param controller Controller with which this UI should communicate to access the domain
+     */
     public LoadSystemUI(LoadSystemController controller) {
         this.controller = controller;
     }
 
+    /**
+     * @return This UI's controller
+     */
     private LoadSystemController getController() {
         return controller;
     }
