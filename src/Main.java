@@ -1,6 +1,3 @@
-// TODO: Do we have to comment every class with @ tags as well? And what about postconditions and invariants?
-
-
 import Application.*;
 import Domain.InvalidTimeException;
 import Domain.TaskManSystem;
@@ -15,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0)); // exception thrown by the new Time
+            TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0));
             UserManager userManager = new UserManager();
             Session session = new Session();
             SessionProxy sessionProxy = new SessionProxy(session);

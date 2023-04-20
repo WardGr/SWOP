@@ -265,8 +265,6 @@ public class CreateTaskUI {
                     );
                     System.out.println("Task " + taskName + " successfully added to project " + projectName);
                     return;
-                } catch (UserNotFoundException e) {
-                    System.out.println("ERROR: Given user does not exist or is not a developer\n");
                 } catch (ProjectNotFoundException e) {
                     System.out.println("ERROR: Given project does not exist\n");
                 } catch (InvalidTimeException e) {
