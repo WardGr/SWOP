@@ -3,7 +3,7 @@ package Tests;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import org.junit.Test;
 import Application.*;
 import UserInterface.*;
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 public class CreateTaskUITest {
 
     @Test
-    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException, ProjectNotOngoingException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
 
         // Setup test environment
         Session managerSession = new Session();

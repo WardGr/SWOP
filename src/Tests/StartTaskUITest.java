@@ -6,7 +6,7 @@ import Application.StartTaskController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import UserInterface.StartTaskUI;
 import org.junit.Test;
 
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 public class StartTaskUITest {
     @Test
-    public void test() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+    public void test() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
         Session session = new Session();
         SessionWrapper sessionWrapper = new SessionWrapper(session);
 
@@ -404,23 +404,6 @@ public class StartTaskUITest {
                         Confirm? (y/n)
                         
                         Cancelled starting task Task 1
-                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
-                out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
-        out.reset();
-
-        // Testing No Roles Task
-        taskManSystem.addTaskToProject("Project 1", "No Roles Task", "Descr", new Time(20), 0.1, new LinkedList<>(), new HashSet<>(), new HashSet<>());
-        System.setIn(new ByteArrayInputStream("Project 1\nNo Roles Task\nBACK\n".getBytes()));
-        startTaskUI.startTask();
-        assertEquals(
-                """
-                        ***** LIST OF AVAILABLE OR PENDING TASKS *****
-                         - Task: Task 1, belonging to Project: Project 1
-                        
-                        Please give the project name you want to start working in:
-                        Please give the task name you want to start working on in project Project 1:
-                        You have roles: Python programmer
-                        Task requires roles: The task currently doesn't require any roles
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();

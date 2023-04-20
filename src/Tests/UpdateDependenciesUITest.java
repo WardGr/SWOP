@@ -6,7 +6,7 @@ import Application.UpdateDependenciesController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import UserInterface.UpdateDependenciesUI;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 public class UpdateDependenciesUITest {
     @Test
-    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectUserException {
+    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectUserException {
         // Setup test environment
 
         Time systemtime = new Time(0);

@@ -73,16 +73,10 @@ public class StartTaskUI {
                 }
                 System.out.print("Task requires roles: ");
                 List<Role> taskRoles = taskData.getUnfulfilledRoles();
-                if (taskRoles.size() > 0) {
-                    System.out.println(
-                            taskRoles.stream().
-                                    map(Object::toString).
-                                    collect(Collectors.joining(", ")));
-                } else {
-                    System.out.println("The task currently doesn't require any roles");
-                    return;
-                }
-
+                System.out.println(
+                        taskRoles.stream().
+                                map(Object::toString).
+                                collect(Collectors.joining(", ")));
                 Role role = null;
                 while (role == null) {
                     System.out.println("Give the role you want to fulfill in task " + taskName + ":");

@@ -5,24 +5,21 @@ import Application.Session;
 import Application.SessionWrapper;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import UserInterface.CreateProjectUI;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
 public class CreateProjectUITest {
 
     @Test
-    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
+    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException {
 
         // Setup test environment
         Time systemtime = new Time(70);
@@ -46,7 +43,7 @@ public class CreateProjectUITest {
 
         TaskManSystem taskManSystem = new TaskManSystem(systemtime);
         taskManSystem.createProject("SimpleProject", "Cool description", new Time(100));
-        taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, new LinkedList<>(), new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
 
         CreateProjectController managerController = new CreateProjectController(managerSessionWrapper, taskManSystem);
         CreateProjectController developerController = new CreateProjectController(developerSessionWrapper, taskManSystem);

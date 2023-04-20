@@ -6,7 +6,7 @@ import Application.SessionWrapper;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import UserInterface.EndTaskUI;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 
 public class EndTaskUITest {
     @Test
-    public void test() throws InvalidTimeException, UserNotFoundException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+    public void test() throws InvalidTimeException, UserNotFoundException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         //create EndTaskUi
         Session s = new Session();
         SessionWrapper sw = new SessionWrapper(s);

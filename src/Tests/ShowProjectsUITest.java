@@ -6,7 +6,7 @@ import Application.ShowProjectsController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import UserInterface.ShowProjectsUI;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ShowProjectsUITest {
     @Test
-    public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+    public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         Session session = new Session();
         SessionWrapper sessionWrapper = new SessionWrapper(session);
         TaskManSystem tsm = new TaskManSystem(new Time(0));
