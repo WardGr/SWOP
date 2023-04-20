@@ -7,6 +7,9 @@ import Domain.TaskStates.TaskData;
 
 import java.util.Scanner;
 
+/**
+ * Handles user input for the endtask use-case, requests necessary domain-level information from the EndTaskController
+ */
 public class EndTaskUI {
     private final EndTaskController controller;
 

@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Handles user input for the updatedependencies use-case, requests necessary domain-level information from the UpdateDependenciescontroller
+ */
 public class UpdateDependenciesUI {
     private final UpdateDependenciesController controller;
 

@@ -12,6 +12,9 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Handles user input for the starttask use-case, requests necessary domain-level information from the StartTaskController
+ */
 public class StartTaskUI {
     private final StartTaskController controller;
 

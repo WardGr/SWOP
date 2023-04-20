@@ -3,6 +3,9 @@ package Domain.TaskStates;
 import Domain.IncorrectTaskStatusException;
 import Domain.Status;
 
+/**
+ * Task state class governing the task transitions from the FAILED state
+ */
 public class FailedState implements TaskState {
     @Override
     public Status getStatus() {

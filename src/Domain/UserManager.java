@@ -13,6 +13,10 @@ public class UserManager {
 
     private List<User> users;
 
+    /**
+     * Initialises the UserManager object, reading the users.txt file and adding all users to the currently registered
+     * users list
+     */
     public UserManager() {
         try {
             LinkedList<User> users = new LinkedList<>();
@@ -51,7 +55,7 @@ public class UserManager {
      * @param username The username the user gave via the UI login prompt
      * @param password The password the user gave via the UI login prompt
      * @return returns the user that matches the username and password
-     * @throws UserNotFoundException if the given username and password dont correspond to a user in the db
+     * @throws LoginException if the given username/password combination does not match
      */
     public User getUser(String username, String password)
             throws LoginException {
