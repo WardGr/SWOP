@@ -3,8 +3,7 @@ package Tests;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
-import Domain.TaskStates.Task;
+import Domain.TaskStates.IllegalTaskRolesException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,7 @@ public class ProjectTest {
     }
 
     @Test
-    public void testProject() throws InvalidTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, ProjectNotOngoingException, EndTimeBeforeStartTimeException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+    public void testProject() throws InvalidTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException, EndTimeBeforeStartTimeException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
 
         assertEquals("Project 1", project.getName());
         assertEquals("", project.getDescription());
@@ -49,8 +48,8 @@ public class ProjectTest {
         assertThrows(TaskNotFoundException.class, () -> project.finishTask("", user, new Time(0)));
         assertThrows(TaskNotFoundException.class, () -> project.failTask("", user, new Time(0)));
         assertThrows(TaskNotFoundException.class, () -> project.addNextTask("", ""));
-        assertThrows(TaskNotFoundException.class, () -> project.addPreviousTask("", ""));
-        assertThrows(TaskNotFoundException.class, () -> project.removePreviousTask("", ""));
+        assertThrows(TaskNotFoundException.class, () -> project.addprevTask("", ""));
+        assertThrows(TaskNotFoundException.class, () -> project.removeprevTask("", ""));
         assertThrows(TaskNotFoundException.class, () -> project.removeNextTask("", ""));
 
         assertThrows(DueTimeBeforeCreationTimeException.class, () -> new Project("", "", new Time(10), new Time(0)));

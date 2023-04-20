@@ -17,7 +17,7 @@ public class TaskManSystemProxy {
 
     /**
      * @return A list of Strings of all project names of all projects belonging
-     *         to the corresponding TaskManSystem
+     * to the corresponding TaskManSystem
      */
     public List<String> getProjectNames() {
         return taskManSystem.getProjectNames();

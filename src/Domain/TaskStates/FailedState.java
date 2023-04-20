@@ -2,7 +2,6 @@ package Domain.TaskStates;
 
 import Domain.IncorrectTaskStatusException;
 import Domain.Status;
-import Domain.Time;
 
 public class FailedState implements TaskState {
     @Override
@@ -10,32 +9,33 @@ public class FailedState implements TaskState {
         return Status.FAILED;
     }
 
-    public void replaceTask(Task replaces, Task replacement) throws IncorrectTaskStatusException {
-        for (Task prevTask : replaces.getPreviousTasks()) {
-            prevTask.removeNextTaskDirectly(replaces);
-            replaces.removePreviousTaskDirectly(prevTask);
+    @Override
+    public void replaceTask(Task toReplace, Task replacement) throws IncorrectTaskStatusException {
+        for (Task prevTask : toReplace.getprevTasks()) {
+            prevTask.removeNextTaskDirectly(toReplace);
+            toReplace.removePrevTaskDirectly(prevTask);
 
             prevTask.addNextTaskDirectly(replacement);
-            replacement.addPreviousTaskDirectly(prevTask);
+            replacement.addPrevTaskDirectly(prevTask);
         }
-        for (Task nextTask : replaces.getNextTasks()) {
-            nextTask.removePreviousTaskDirectly(replaces);
-            replaces.removeNextTaskDirectly(nextTask);
+        for (Task nextTask : toReplace.getNextTasks()) {
+            nextTask.removePrevTaskDirectly(toReplace);
+            toReplace.removeNextTaskDirectly(nextTask);
 
-            nextTask.addPreviousTaskDirectly(replacement);
+            nextTask.addPrevTaskDirectly(replacement);
             replacement.addNextTaskDirectly(nextTask);
         }
 
-        replacement.setProjectName(replaces.getProjectName());
+        replacement.setProjectName(toReplace.getProjectName());
 
-        replaces.setReplacementTask(replacement);
-        replacement.setReplacesTask(replaces);
+        toReplace.setReplacementTask(replacement);
+        replacement.setReplacesTask(toReplace);
 
         replacement.updateAvailability();
 
         try {
-            replacement.setRequiredRoles(replaces.getRequiredRoles());
-        } catch (NonDeveloperRoleException e) {
+            replacement.setRequiredRoles(toReplace.getRequiredRoles());
+        } catch (IllegalTaskRolesException e) {
             throw new RuntimeException(e);
         }
     }

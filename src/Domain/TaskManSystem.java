@@ -1,11 +1,13 @@
 package Domain;
 
+import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
 import Domain.TaskStates.TaskProxy;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Central domain-level system class, keeps track of system time and all projects, first point of entry into the domain
@@ -20,7 +22,8 @@ public class TaskManSystem {
     /**
      * Initialises the system, setting the system time, alongside an empty list of projects
      * and setting the TaskManSystemProxy
-     * @param systemTime  The initial system time (as a Time object)
+     *
+     * @param systemTime The initial system time (as a Time object)
      */
     public TaskManSystem(Time systemTime) {
         this.systemTime = systemTime;
@@ -29,14 +32,14 @@ public class TaskManSystem {
     }
 
     /**
-     * @return  An immutable proxy of this object, containing some of this objects' details
+     * @return An immutable proxy of this object, containing some of this objects' details
      */
     public TaskManSystemProxy getTaskManSystemData() {
         return taskManSystemProxy;
     }
 
     /**
-     * @return  The current system time as a Time object
+     * @return The current system time as a Time object
      */
     public Time getSystemTime() {
         return systemTime;
@@ -85,9 +88,9 @@ public class TaskManSystem {
     /**
      * Returns an immutable project proxy of the project with the given projectname, if it exists in the current system
      *
-     * @param projectName                Name of the project
-     * @return                           An immutable project proxy containing the projects' details
-     * @throws ProjectNotFoundException  if projectName does not correspond to an existing project within the systen
+     * @param projectName Name of the project
+     * @return An immutable project proxy containing the projects' details
+     * @throws ProjectNotFoundException if projectName does not correspond to an existing project within the systen
      */
     public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException {
         Project project = getProject(projectName);
@@ -100,11 +103,11 @@ public class TaskManSystem {
     /**
      * Returns an immutable task proxy of the task with the given name, inside the project of the given name
      *
-     * @param projectName                   Project to which the given task belongs
-     * @param taskName                      Task of which to get the task proxy
-     * @return                              An immutable task proxy containing details and getters of the given task
-     * @throws TaskNotFoundException        if the given taskName does not correspond to an existing task within the given project
-     * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project within the system
+     * @param projectName Project to which the given task belongs
+     * @param taskName    Task of which to get the task proxy
+     * @return An immutable task proxy containing details and getters of the given task
+     * @throws TaskNotFoundException    if the given taskName does not correspond to an existing task within the given project
+     * @throws ProjectNotFoundException if the given projectName does not correspond to an existing project within the system
      */
     public TaskProxy getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
         Project project = getProject(projectName);
@@ -133,8 +136,7 @@ public class TaskManSystem {
     public void createProject(String projectName, String projectDescription, Time dueTime) throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
         try {
             createProject(projectName, projectDescription, getSystemTime(), dueTime);
-        }
-        catch (DueTimeBeforeCreationTimeException e) {
+        } catch (DueTimeBeforeCreationTimeException e) {
             throw new DueBeforeSystemTimeException();
         }
     }
@@ -146,8 +148,8 @@ public class TaskManSystem {
      * @param projectDescription Description of the project to create
      * @param startTime          Time at which the project is to start
      * @param dueTime            Time at which the project is due
-     * @throws DueTimeBeforeCreationTimeException     if the given due time is before system time
-     * @throws ProjectNameAlreadyInUseException       if the given project name is already in use
+     * @throws DueTimeBeforeCreationTimeException if the given due time is before system time
+     * @throws ProjectNameAlreadyInUseException   if the given project name is already in use
      */
     private void createProject(
             String projectName,
@@ -189,10 +191,10 @@ public class TaskManSystem {
             Time durationTime,
             double deviation,
             List<Role> roles,
-            Set<String> previousTasks,
+            Set<String> prevTasks,
             Set<String> nextTasks
     )
-            throws ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, ProjectNotOngoingException {
+            throws ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -203,7 +205,7 @@ public class TaskManSystem {
                 durationTime,
                 deviation,
                 roles,
-                previousTasks,
+                prevTasks,
                 nextTasks
         );
     }
@@ -217,9 +219,9 @@ public class TaskManSystem {
      * @param description  Description of the task to create
      * @param durationTime Duration of the task to create
      * @param deviation    Accepted deviation of the task to create
-     * @throws ProjectNotFoundException       if the given project name does not correspond to an existing project
-     * @throws TaskNotFoundException          if the given task name does not correspond to a task within the given project
-     * @throws TaskNameAlreadyInUseException  if the task name to use for the new task is already in use by another task within the project
+     * @throws ProjectNotFoundException      if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException         if the given task name does not correspond to a task within the given project
+     * @throws TaskNameAlreadyInUseException if the task name to use for the new task is already in use by another task within the project
      */
     public void replaceTaskInProject(
             String projectName,
@@ -249,12 +251,12 @@ public class TaskManSystem {
      * @param projectName Name of the project to which the task to start is attached
      * @param taskName    Name of the task to start
      * @param currentUser User currently logged in
-     * @throws ProjectNotFoundException             if the given project name does not correspond to an existing project
-     * @throws TaskNotFoundException                if the given task name does not correspond to an existing task within the given project
-     * @throws IncorrectTaskStatusException         if the task status is not AVAILABLE or PENDING
-     * @throws UserAlreadyAssignedToTaskException   if the given user is already assigned to the task
-     * @throws IncorrectRoleException               if this role is not necessary for the given task OR
-     *                                                 the given user does not have the given role
+     * @throws ProjectNotFoundException           if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException              if the given task name does not correspond to an existing task within the given project
+     * @throws IncorrectTaskStatusException       if the task status is not AVAILABLE or PENDING
+     * @throws UserAlreadyAssignedToTaskException if the given user is already assigned to the task
+     * @throws IncorrectRoleException             if this role is not necessary for the given task OR
+     *                                            the given user does not have the given role
      */
     public void startTask(
             String projectName,
@@ -319,10 +321,10 @@ public class TaskManSystem {
      * @param projectName Name of the project to which the task to end is attached
      * @param taskName    Name of the task to end
      * @param user        User currently logged in
-     * @throws ProjectNotFoundException         if the given project name does not correspond to an existing project
-     * @throws TaskNotFoundException            if the given task name does not correspond to an existing task within the given project
-     * @throws IncorrectUserException           if currentUser is not the user assigned to the given task
-     * @throws IncorrectTaskStatusException     if the task status is not EXECUTING
+     * @throws ProjectNotFoundException     if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException        if the given task name does not correspond to an existing task within the given project
+     * @throws IncorrectUserException       if currentUser is not the user assigned to the given task
+     * @throws IncorrectTaskStatusException if the task status is not EXECUTING
      */
     public void finishTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Project project = getProject(projectName);
@@ -339,10 +341,10 @@ public class TaskManSystem {
      * @param projectName Name of the project to which the task to end is attached
      * @param taskName    Name of the task to end
      * @param user        User currently logged in
-     * @throws ProjectNotFoundException         if the given project name does not correspond to an existing project
-     * @throws TaskNotFoundException            if the given task name does not correspond to an existing task within the given project
-     * @throws IncorrectUserException           if currentUser is not the user assigned to the given task
-     * @throws IncorrectTaskStatusException     if the task status is not EXECUTING
+     * @throws ProjectNotFoundException     if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException        if the given task name does not correspond to an existing task within the given project
+     * @throws IncorrectUserException       if currentUser is not the user assigned to the given task
+     * @throws IncorrectTaskStatusException if the task status is not EXECUTING
      */
     public void failTask(String projectName, String taskName, User user) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Project project = getProject(projectName);
@@ -355,22 +357,33 @@ public class TaskManSystem {
     /**
      * Adds a previous task to a given task within a given project
      *
-     * @param projectName           The name corresponding with the project
-     * @param taskName              The name corresponding to the task which to add the previous task to
-     * @param prevTaskName          The name corresponding to the task to add as a previous task
-     * @throws ProjectNotFoundException         If the given projectName does not correspond to an existing project
-     * @throws TaskNotFoundException            If taskName or prevTaskName do not correspond to a task within the given project
-     * @throws IncorrectTaskStatusException     
-     * @throws LoopDependencyGraphException
+     * @param projectName  The name corresponding with the project
+     * @param taskName     The name corresponding to the task which to add the previous task to
+     * @param prevTaskName The name corresponding to the task to add as a previous task
+     * @throws ProjectNotFoundException     If the given projectName does not correspond to an existing project
+     * @throws TaskNotFoundException        If taskName or prevTaskName do not correspond to a task within the given project
+     * @throws IncorrectTaskStatusException if the status of the taskName task is not available or unavailable
+     * @throws LoopDependencyGraphException if adding this previous task create a loop in the dependency graph
      */
-    public void addPreviousTaskToProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
+    public void addprevTaskToProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
-        project.addPreviousTask(taskName, prevTaskName);
+        project.addprevTask(taskName, prevTaskName);
     }
 
+    /**
+     * Adds a task as a next task to the given task in the given project
+     *
+     * @param projectName  The name of the project
+     * @param taskName     The name of the task to add the next task to
+     * @param nextTaskName The name of the next task
+     * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task within the given project
+     * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project
+     * @throws IncorrectTaskStatusException if taskName is not available or unavailable
+     * @throws LoopDependencyGraphException if adding this task causes a loop in the dependency graph of the given project
+     */
     public void addNextTaskToProject(String projectName, String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
@@ -379,14 +392,36 @@ public class TaskManSystem {
         project.addNextTask(taskName, nextTaskName);
     }
 
-    public void removePreviousTaskFromProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
+    /**
+     * Removes a task from the prevTasks list of a given task in the project, respecting the rules of the dependency graph
+     *
+     * @param taskName     Name of the task to remove the previous task from
+     * @param prevTaskName Name of the previous task to add
+     * @param projectName  Name of the project to add the task to
+     * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project
+     * @throws TaskNotFoundException        if taskName or prevTaskName do not correspond to an existing task within this project
+     * @throws IncorrectTaskStatusException if the given task is not available or unavailable
+     * @post if prevTaskName is the last previous task in taskName, then sets the status of taskName to AVAILABLE
+     */
+    public void removeprevTaskFromProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
-        project.removePreviousTask(taskName, prevTaskName);
+        project.removeprevTask(taskName, prevTaskName);
     }
 
+    /**
+     * Removes a task from the nextTasks list of a given task in a given project, respecting the rules of the dependency graph
+     *
+     * @param taskName     Name of the task to remove the next task from
+     * @param projectName  Name of the project to add the next task to
+     * @param nextTaskName Name of the next task to add
+     * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task within this project
+     * @throws IncorrectTaskStatusException if the given task is not available or unavailable
+     * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project
+     * @post if nextTaskName is AVAILABLE then sets nextTaskName to UNAVAILABLE
+     */
     public void removeNextTaskFromProject(String projectName, String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {

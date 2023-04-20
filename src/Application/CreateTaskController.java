@@ -2,7 +2,7 @@ package Application;
 
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.TaskProxy;
 
 import java.util.List;
@@ -59,7 +59,7 @@ public class CreateTaskController {
      * @param durationMinute Minutes of the new tasks' duration, given by the user
      * @param deviation      Acceptable deviation from the given duration, given by the user as a percentage
      * @param user           Name of the user this task is allocated to
-     * @param previousTasks  List of names of tasks that should be completed before this one, given by the user
+     * @param prevTasks  List of names of tasks that should be completed before this one, given by the user
      * @throws ProjectNotFoundException      If the given project name does not correspond to an existing project
      * @throws InvalidTimeException          If durationMinute > 59 or durationMinute < 0
      * @throws TaskNotFoundException         If any of the previous tasks do not correspond to an existing task
@@ -74,9 +74,9 @@ public class CreateTaskController {
             Time durationTime,
             double deviation,
             List<Role> roles,
-            Set<String> previousTasks,
+            Set<String> prevTasks,
             Set<String> nextTasks
-    ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, ProjectNotOngoingException {
+    ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, UserNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
@@ -88,7 +88,7 @@ public class CreateTaskController {
                 durationTime,
                 deviation,
                 roles,
-                previousTasks,
+                prevTasks,
                 nextTasks
         );
     }

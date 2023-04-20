@@ -2,6 +2,9 @@ package Domain.TaskStates;
 
 import Domain.*;
 
+/**
+ * Task state class governing the task transitions from the AVAILABLE state
+ */
 public class AvailableState implements TaskState {
 
     @Override
@@ -14,7 +17,7 @@ public class AvailableState implements TaskState {
         if (!task.getUnfulfilledRoles().contains(role)) {
             throw new IncorrectRoleException("Given role is not required in the task");
         }
-        for (Task prevTask : task.getPreviousTasks()) {
+        for (Task prevTask : task.getprevTasks()) {
             if (prevTask.getEndTime().after(startTime)) {
                 throw new IncorrectTaskStatusException("Start time is before end time previous task");
             }
@@ -29,6 +32,7 @@ public class AvailableState implements TaskState {
             task.setState(new PendingState());
         }
     }
+
     @Override
     public String toString() {
         return "available";
@@ -36,17 +40,17 @@ public class AvailableState implements TaskState {
 
     @Override
     public void updateAvailability(Task task) {
-        for (Task previousTask : task.getPreviousTasks()) {
-            previousTask.updateAvailabilityNextTask(task);
-            // Set this tasks' state to unavailable if previousTask is not finished
+        for (Task prevTask : task.getprevTasks()) {
+            prevTask.updateAvailabilityNextTask(task);
+            // Set this tasks' state to unavailable if prevTask is not finished
         }
     }
 
     @Override
-    public void addPreviousTask(Task task, Task previousTask) throws LoopDependencyGraphException {
-        if (canSafelyAddPrevTask(task, previousTask)) {
-            task.addPreviousTaskDirectly(previousTask);
-            previousTask.addNextTaskDirectly(task);
+    public void addPrevTask(Task task, Task prevTask) throws LoopDependencyGraphException {
+        if (canSafelyAddPrevTask(task, prevTask)) {
+            task.addPrevTaskDirectly(prevTask);
+            prevTask.addNextTaskDirectly(task);
         } else {
             throw new LoopDependencyGraphException();
         }
@@ -54,9 +58,9 @@ public class AvailableState implements TaskState {
     }
 
     @Override
-    public void removePreviousTask(Task task, Task previousTask) {
-        task.removePreviousTaskDirectly(previousTask);
-        previousTask.removeNextTaskDirectly(task);
+    public void removePrevTask(Task task, Task prevTask) {
+        task.removePrevTaskDirectly(prevTask);
+        prevTask.removeNextTaskDirectly(task);
         updateAvailability(task);
     }
 

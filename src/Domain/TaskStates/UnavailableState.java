@@ -2,14 +2,17 @@ package Domain.TaskStates;
 
 import Domain.Status;
 
+/**
+ * Task state class governing the task transitions from the UNAVAILABLE state
+ */
 public class UnavailableState implements TaskState {
 
     @Override
     public void updateAvailability(Task task) {
         task.setState(new AvailableState());
-        for (Task previousTask : task.getPreviousTasks()) {
-            previousTask.updateAvailabilityNextTask(task);
-            // Set this tasks' state to unavailable if previousTask is not finished
+        for (Task prevTask : task.getprevTasks()) {
+            prevTask.updateAvailabilityNextTask(task);
+            // Set this tasks' state to unavailable if prevTask is not finished
         }
     }
 
@@ -19,19 +22,19 @@ public class UnavailableState implements TaskState {
     }
 
 
-    public void addPreviousTask(Task task, Task previousTask) throws LoopDependencyGraphException {
-        if (canSafelyAddPrevTask(task, previousTask)) {
-            task.addPreviousTaskDirectly(previousTask);
-            previousTask.addNextTaskDirectly(task);
+    public void addPrevTask(Task task, Task prevTask) throws LoopDependencyGraphException {
+        if (canSafelyAddPrevTask(task, prevTask)) {
+            task.addPrevTaskDirectly(prevTask);
+            prevTask.addNextTaskDirectly(task);
         } else {
             throw new LoopDependencyGraphException();
         }
         updateAvailability(task);
     }
 
-    public void removePreviousTask(Task task, Task previousTask) {
-        task.removePreviousTaskDirectly(previousTask);
-        previousTask.removeNextTaskDirectly(task);
+    public void removePrevTask(Task task, Task prevTask) {
+        task.removePrevTaskDirectly(prevTask);
+        prevTask.removeNextTaskDirectly(task);
         updateAvailability(task);
     }
 

@@ -4,7 +4,7 @@ import Application.*;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public class CreateTaskControllerTest {
 
     @Test
-    public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+    public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         Session wardsSession = new Session();
         SessionWrapper omerWrapper = new SessionWrapper(wardsSession);
         Set wardsRoles = new HashSet();

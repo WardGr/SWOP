@@ -1,7 +1,13 @@
 package Domain.TaskStates;
 
-import Domain.*;
+import Domain.EndTimeBeforeStartTimeException;
+import Domain.IncorrectTaskStatusException;
+import Domain.Status;
+import Domain.Time;
 
+/**
+ * Task state class governing the task transitions from the EXECUTING state
+ */
 public class ExecutingState implements TaskState {
 
     @Override

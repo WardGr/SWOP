@@ -5,7 +5,11 @@ import Domain.*;
 import java.util.*;
 
 /**
- * Keeps track of a task, including a list of tasks that should complete before it and which tasks it should come before
+ * Keeps track of a task, including:
+ * a list of tasks that should complete before it
+ * a list of tasks that it should be finished before
+ * a list of users currently committed to the task, alongside their role
+ * a list of roles required to finish the task
  */
 public class Task {
 
@@ -18,16 +22,16 @@ public class Task {
     private Task replacementTask;
     private Task replacesTask;
 
-    private Set<Task> previousTasks;
-    private Set<Task> nextTasks;
+    private final Set<Task> prevTasks;
+    private final Set<Task> nextTasks;
 
     private TimeSpan timeSpan;
 
     private List<Role> requiredRoles;
 
-    private Map<User, Role> committedUsers;
+    private final Map<User, Role> committedUsers;
 
-    private TaskProxy taskProxy;
+    private final TaskProxy taskProxy;
 
     private String projectName;
 
@@ -53,7 +57,7 @@ public class Task {
 
         this.committedUsers = new HashMap<>();
 
-        this.previousTasks = new HashSet<>();
+        this.prevTasks = new HashSet<>();
         this.nextTasks = new HashSet<>();
 
         this.taskProxy = new TaskProxy(this);
@@ -75,7 +79,7 @@ public class Task {
      * @param projectName         Project this task belongs to
      * @throws IncorrectTaskStatusException if a next task is not available nor unavailable (e.g. it is executing)
      * @throws LoopDependencyGraphException if adding this task results in a loop in the dependency graph of tasks
-     * @throws NonDeveloperRoleException    // TODO: wanneer wordt deze gegooit??
+     * @throws IllegalTaskRolesException    if any of the given roles is not a developer role, or the given set of roles is empty
      */
     public Task(String name,
                 String description,
@@ -84,8 +88,10 @@ public class Task {
                 List<Role> roles,
                 Set<Task> prevTasks,
                 Set<Task> nextTasks,
-                String projectName) throws IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException {
-        // TODO check if roles not empty!
+                String projectName) throws IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException {
+        if (roles.size() == 0) {
+            throw new IllegalTaskRolesException("Set of roles should not be empty");
+        }
 
         this.name = name;
         this.description = description;
@@ -94,7 +100,7 @@ public class Task {
 
         this.committedUsers = new HashMap<>();
 
-        this.previousTasks = new HashSet<>();
+        this.prevTasks = new HashSet<>();
         this.nextTasks = new HashSet<>();
 
         this.taskProxy = new TaskProxy(this);
@@ -105,58 +111,88 @@ public class Task {
 
         try {
             for (Task prevTask : prevTasks) {
-                addPreviousTask(prevTask);
+                addprevTask(prevTask);
             }
             for (Task nextTask : nextTasks) {
-                nextTask.addPreviousTask(this);
+                nextTask.addprevTask(this);
             }
         } catch (LoopDependencyGraphException e) {
-            clearPreviousTasks();
+            clearprevTasks();
             clearNextTasks();
             throw new LoopDependencyGraphException();
         } catch (IncorrectTaskStatusException e) {
-            clearPreviousTasks();
+            clearprevTasks();
             clearNextTasks();
             throw new IncorrectTaskStatusException("One of the next tasks is not (un)available");
         }
     }
 
+    /**
+     * @return A read-only proxy of this task, containing certain details of the task
+     */
     public TaskProxy getTaskProxy() {
         return taskProxy;
     }
 
+    /**
+     * @return A string with the name of the project this task is part of
+     */
     String getProjectName() {
         return projectName;
     }
 
+    /**
+     * @param projectName The name of the project to replace the current project with
+     */
     void setProjectName(String projectName) {
         this.projectName = projectName;
     }
 
+    /**
+     * @return A string containing the name of this task
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return A string containing the description of this task
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * @return This tasks' acceptable deviation from the estimated duration
+     */
     double getAcceptableDeviation() {
         return acceptableDeviation;
     }
 
+    /**
+     * @return A time object representing this tasks' estimated duration
+     */
     Time getEstimatedDuration() {
         return estimatedDuration;
     }
 
+    /**
+     * @return This tasks' state
+     */
     TaskState getState() {
         return state;
     }
 
+    /**
+     * @param state The state to replace this tasks' state with
+     */
     void setState(TaskState state) {
         this.state = state;
     }
 
+    /**
+     * @return Status enum depicting this tasks' internal state
+     */
     public Status getStatus() {
         return getState().getStatus();
     }
@@ -168,6 +204,9 @@ public class Task {
         return replacementTask;
     }
 
+    /**
+     * @param replacementTask The task to set as this tasks' replacementTask
+     */
     void setReplacementTask(Task replacementTask) {
         this.replacementTask = replacementTask;
     }
@@ -179,49 +218,83 @@ public class Task {
         return replacesTask;
     }
 
+    /**
+     * @param replacesTask The task this task replaces
+     */
     void setReplacesTask(Task replacesTask) {
         this.replacesTask = replacesTask;
     }
 
+    /**
+     * @return TimeSpan object that depicts this tasks' time between start and end time
+     */
     TimeSpan getTimeSpan() {
         return timeSpan;
     }
 
+    /**
+     * @param startTime The start time of this task
+     */
     private void setTimeSpan(Time startTime) {
         this.timeSpan = new TimeSpan(startTime);
     }
 
+    /**
+     * @return A mutable list of roles this task requires before it can be executed
+     */
     List<Role> getRequiredRoles() {
         return new LinkedList<>(requiredRoles);
     }
 
+    /**
+     * Sets the roles required for this task to execute
+     *
+     * @param roles The new required roles
+     * @throws IllegalTaskRolesException if one of the given roles is not a developer role
+     */
+    void setRequiredRoles(List<Role> roles) throws IllegalTaskRolesException {
+        for (Role role : roles) {
+            if (role != Role.SYSADMIN && role != Role.JAVAPROGRAMMER && role != Role.PYTHONPROGRAMMER) {
+                throw new IllegalTaskRolesException("One of the given roles is not a developer role");
+            }
+        }
+        this.requiredRoles = new LinkedList<>(roles);
+    }
+
+    /**
+     * @return This tasks' finishedstatus (early, on time, delayed)
+     * @throws IncorrectTaskStatusException if this task is not Finished
+     */
     FinishedStatus getFinishedStatus() throws IncorrectTaskStatusException {
         return getState().getFinishedStatus(this);
     }
 
+    /**
+     * @return A list of all roles that still need to be fulfilled for this task to be able to execute
+     */
     List<Role> getUnfulfilledRoles() {
         List<Role> unfulfilledRoles = getRequiredRoles();
         unfulfilledRoles.removeAll(getUsersWithRole().values());
         return unfulfilledRoles;
     }
 
-    void setRequiredRoles(List<Role> roles) throws NonDeveloperRoleException {
-        for (Role role : roles) {
-            if (role != Role.SYSADMIN && role != Role.JAVAPROGRAMMER && role != Role.PYTHONPROGRAMMER) {
-                throw new NonDeveloperRoleException();
-            }
-        }
-        this.requiredRoles = new LinkedList<>(roles);
-    }
-
+    /**
+     * @return A set of all users, as User objects, that are committed to this task
+     */
     Set<User> getCommittedUsers() {
         return new HashSet<>(getUsersWithRole().keySet());
     }
 
+    /**
+     * @return A map of all committed users, as User objects, mapped to their roles
+     */
     private Map<User, Role> getUsersWithRole() {
         return committedUsers;
     }
 
+    /**
+     * @return A map of all names of committed users mapped to their roles
+     */
     Map<String, Role> getUserNamesWithRole() {
         Map<String, Role> userNamesWithRole = new HashMap<>();
         getUsersWithRole().forEach((user, role) -> userNamesWithRole.put(user.getUsername(), role));
@@ -231,8 +304,8 @@ public class Task {
     /**
      * @return Mutable list of all tasks that should be completed before this task
      */
-    List<Task> getPreviousTasks() {
-        return new LinkedList<>(previousTasks);
+    List<Task> getprevTasks() {
+        return new LinkedList<>(prevTasks);
     }
 
     /**
@@ -284,18 +357,16 @@ public class Task {
     }
 
 
-    // TODO: Alle @throws nog is nakijken
-
     /**
      * Changes the current task to executing status and sets the start time
      *
      * @param startTime   Time the task will start
      * @param currentUser User currently logged in
      * @param role        Role currentuser wants to use to start this task
-     * @throws IncorrectTaskStatusException         if this task is not available or pending
-     * @throws IncorrectRoleException               if this role is not necessary for the given task OR
-     *                                                 the given user does not have the given role
-     * @throws UserAlreadyAssignedToTaskException   if this user is already assigned to this task
+     * @throws IncorrectTaskStatusException       if this task is not available or pending
+     * @throws IncorrectRoleException             if this role is not necessary for the given task OR
+     *                                            the given user does not have the given role
+     * @throws UserAlreadyAssignedToTaskException if this user is already assigned to this task
      */
     public void start(Time startTime, User currentUser, Role role)
             throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
@@ -315,6 +386,9 @@ public class Task {
         getState().replaceTask(this, replacement);
     }
 
+    /**
+     * @return A list containing this task and all tasks that are directly and indirectly dependent on this task as a next task
+     */
     Set<Task> getAllNextTasks() {
         Set<Task> nextTasks = new HashSet<>();
         nextTasks.add(this);
@@ -324,44 +398,89 @@ public class Task {
         return nextTasks;
     }
 
-    void addPreviousTaskDirectly(Task prevTask) {
-        previousTasks.add(prevTask);
+    /**
+     * Adds the given previous task to this tasks' list of previous tasks
+     *
+     * @param prevTask The task to add to this tasks' previoustasks
+     */
+    void addPrevTaskDirectly(Task prevTask) {
+        prevTasks.add(prevTask);
     }
 
+    /**
+     * Adds the given next task to this tasks' list of next tasks
+     *
+     * @param nextTask The task to add to this tasks' nextTasks
+     */
     void addNextTaskDirectly(Task nextTask) {
         nextTasks.add(nextTask);
     }
 
-    void removePreviousTaskDirectly(Task previousTask) {
-        previousTasks.remove(previousTask);
+    /**
+     * Removes the given previous task from this tasks' list of previous tasks
+     *
+     * @param prevTask task to remove from this tasks' list of previous tasks
+     */
+    void removePrevTaskDirectly(Task prevTask) {
+        prevTasks.remove(prevTask);
     }
 
+    /**
+     * Removes the given next task from this tasks' list of previous tasks
+     *
+     * @param nextTask task to remove from this tasks' next tasks
+     */
     void removeNextTaskDirectly(Task nextTask) {
         nextTasks.remove(nextTask);
     }
 
-    private void clearPreviousTasks() throws IncorrectTaskStatusException {
-        for (Task prevTask : getPreviousTasks()) {
-            getState().removePreviousTask(this, prevTask);
+    /**
+     * Removes all previous tasks from this tasks' list of previous tasks and sets the involved tasks' states accordingly
+     *
+     * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
+     */
+    private void clearprevTasks() throws IncorrectTaskStatusException {
+        for (Task prevTask : getprevTasks()) {
+            getState().removePrevTask(this, prevTask);
         }
     }
 
+    /**
+     * Removes all next tasks from this tasks' list of next tasks and sets the involved tasks' states accordingly
+     *
+     * @throws IncorrectTaskStatusException if the current task is not AVAILABLE or UNAVAILABLE
+     */
     private void clearNextTasks() throws IncorrectTaskStatusException {
         for (Task nextTask : getNextTasks()) {
-            nextTask.getState().removePreviousTask(nextTask, this);
+            nextTask.getState().removePrevTask(nextTask, this);
         }
     }
 
+    /**
+     * Unassigns a user from a pending task
+     *
+     * @param user User to unassign from this task
+     * @throws IncorrectTaskStatusException if this task is not PENDING
+     */
     public void unassignUser(User user) throws IncorrectTaskStatusException {
         getState().unassignUser(this, user);
     }
 
-
+    /**
+     * Removes a committed user from this task
+     *
+     * @param user user to remove
+     */
     void uncommitUser(User user) {
         committedUsers.remove(user);
     }
 
-
+    /**
+     * Adds a committed user to this task
+     *
+     * @param user user to add
+     * @param role role to commit this user with
+     */
     void commitUser(User user, Role role) {
         committedUsers.put(user, role);
     }
@@ -369,10 +488,10 @@ public class Task {
     /**
      * Finishes this task, giving it the FINISHED status, and updating all tasks that require this task to be completed
      *
-     * @param endTime                           Time at which this task should end
-     * @throws IncorrectUserException           if the currently logged-in user is not assigned to this task
-     * @throws IncorrectTaskStatusException     if the task is not currently EXECUTING
-     * @throws EndTimeBeforeStartTimeException  if endTime > this.startTime
+     * @param endTime Time at which this task should end
+     * @throws IncorrectUserException          if the currently logged-in user is not assigned to this task
+     * @throws IncorrectTaskStatusException    if the task is not currently EXECUTING
+     * @throws EndTimeBeforeStartTimeException if endTime > this.startTime
      */
     public void finish(User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         if (!getCommittedUsers().contains(currentUser)) {
@@ -390,10 +509,10 @@ public class Task {
     /**
      * Finishes this task, giving it the FAILED status, and updating all tasks that require this task to be completed
      *
-     * @param endTime                           Time at which this task should end
-     * @throws IncorrectUserException           if the currently logged-in user is not assigned to this task
-     * @throws IncorrectTaskStatusException     if the task is not currently EXECUTING
-     * @throws EndTimeBeforeStartTimeException  if endTime > systemTime
+     * @param endTime Time at which this task should end
+     * @throws IncorrectUserException          if the currently logged-in user is not assigned to this task
+     * @throws IncorrectTaskStatusException    if the task is not currently EXECUTING
+     * @throws EndTimeBeforeStartTimeException if endTime > systemTime
      */
     public void fail(User currentUser, Time endTime) throws IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         if (!getCommittedUsers().contains(currentUser)) {
@@ -406,31 +525,73 @@ public class Task {
         }
     }
 
+    /**
+     * Updates this tasks' availability, setting it to AVAILABLE or UNAVAILABLE according to its' previous tasks
+     *
+     * @throws IncorrectTaskStatusException if the task is not AVAILABLE or UNAVAILABLE
+     */
     void updateAvailability() throws IncorrectTaskStatusException {
         getState().updateAvailability(this);
     }
 
+    /**
+     * Updates the next tasks' availability according to the current tasks' status, setting it to UNAVAILABLE if the current task is not finished
+     *
+     * @param nextTask task whose availability to update
+     */
     void updateAvailabilityNextTask(Task nextTask) {
-        getState().updateAvailabilityNextTask(nextTask);
+        getState().updateAvailabilityNextTask(this, nextTask);
     }
 
-    public void addPreviousTask(Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
-        getState().addPreviousTask(this, prevTask);
+    /**
+     * Adds the given previous task as a previous task to this task, updating the involved tasks' states according to the system rules
+     *
+     * @param prevTask Task to  add as previous task
+     * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
+     * @throws LoopDependencyGraphException if adding this task would cause a loop in the dependency graph of the project this task belongs to
+     */
+    public void addprevTask(Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
+        getState().addPrevTask(this, prevTask);
     }
 
-    boolean canSafelyAddPrevTask(String prevTask) {
+    /**
+     * Checks if adding this task as a previous task would cause a loop in the dependency graph of the project this task belongs to
+     *
+     * @param prevTask Name of the task to test adding
+     * @return true if adding (the task corresponding to) prevTask does not introduce a loop in the dependency graph, false otherwise
+     */
+    boolean canSafelyAddprevTask(String prevTask) {
         return getState().canSafelyAddPrevTask(this, prevTask);
     }
 
+    /**
+     * Adds the given task as a next task to this task, updating the involved tasks' states according to the system rules
+     *
+     * @param nextTask Task to add as next task to this task
+     * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
+     * @throws LoopDependencyGraphException if adding this task would cause a loop in the dependency graph
+     */
     public void addNextTask(Task nextTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
-        nextTask.addPreviousTask(this);
+        nextTask.addprevTask(this);
     }
 
-    public void removePreviousTask(Task prevTask) throws IncorrectTaskStatusException {
-        getState().removePreviousTask(this, prevTask);
+    /**
+     * Removes the given previous task from this task, updating the involved tasks' states according to the system rules
+     *
+     * @param prevTask Task to remove as previous task
+     * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
+     */
+    public void removeprevTask(Task prevTask) throws IncorrectTaskStatusException {
+        getState().removePrevTask(this, prevTask);
     }
 
+    /**
+     * Removes the given next task from this task, updating the involved tasks' states according to the system rules
+     *
+     * @param nextTask Task to remove as next task
+     * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
+     */
     public void removeNextTask(Task nextTask) throws IncorrectTaskStatusException {
-        nextTask.removePreviousTask(this);
+        nextTask.removeprevTask(this);
     }
 }

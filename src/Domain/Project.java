@@ -1,7 +1,6 @@
 package Domain;
 
 import Domain.TaskStates.*;
-import Domain.TaskStates.Task;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -174,9 +173,9 @@ public class Project {
             Time duration,
             double deviation,
             List<Role> roles,
-            Set<String> previousTasksNames,
+            Set<String> prevTasksNames,
             Set<String> nextTasksNames
-    ) throws TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, ProjectNotOngoingException {
+    ) throws TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException {
         if (getTask(taskName) != null) {
             throw new TaskNameAlreadyInUseException();
         }
@@ -185,13 +184,13 @@ public class Project {
             throw new ProjectNotOngoingException();
         }
 
-        Set<Task> previousTasks = new HashSet<>();
-        for (String previousTaskName : previousTasksNames) {
-            Task task = getTask(previousTaskName);
+        Set<Task> prevTasks = new HashSet<>();
+        for (String prevTaskName : prevTasksNames) {
+            Task task = getTask(prevTaskName);
             if (task == null) {
                 throw new TaskNotFoundException();
             }
-            previousTasks.add(task);
+            prevTasks.add(task);
         }
         Set<Task> nextTasks = new HashSet<>();
         for (String nextTaskName : nextTasksNames) {
@@ -202,7 +201,7 @@ public class Project {
             nextTasks.add(task);
         }
 
-        addTask(new Task(taskName, description, duration, deviation, roles, previousTasks, nextTasks, getName()));
+        addTask(new Task(taskName, description, duration, deviation, roles, prevTasks, nextTasks, getName()));
     }
 
     /**
@@ -237,9 +236,9 @@ public class Project {
      * @param duration    Duration of the new task
      * @param deviation   Accepted deviation of the new task
      * @param replaces    Name of the task to replace
-     * @throws TaskNotFoundException          if the task corresponding to "replaces" does not exist
-     * @throws TaskNameAlreadyInUseException  if the given taskName is already in use in this project
-     * @throws IncorrectTaskStatusException   if the task to replace is not failed
+     * @throws TaskNotFoundException         if the task corresponding to "replaces" does not exist
+     * @throws TaskNameAlreadyInUseException if the given taskName is already in use in this project
+     * @throws IncorrectTaskStatusException  if the task to replace is not failed
      */
     public void replaceTask(
             String taskName,
@@ -289,7 +288,8 @@ public class Project {
      * @throws IncorrectTaskStatusException       if the given task status is not currently AVAILABLE or PENDING
      * @throws UserAlreadyAssignedToTaskException if currentuser is already assigned to this task
      * @throws IncorrectRoleException             if this role is not necessary for the given task OR
-     *                                               the given user does not have the given role     */
+     *                                            the given user does not have the given role
+     */
     public void startTask(
             String taskName,
             Time startTime,
@@ -308,13 +308,13 @@ public class Project {
     /**
      * Ends the given task and sets its status to FINISHED
      *
-     * @param taskName    Name of the status to end
-     * @param endTime     Time at which the task was/will be finished/failed
-     * @param user        User currently logged in
-     * @throws TaskNotFoundException            if taskName does not correspond to an existing task
-     * @throws IncorrectUserException           if currentUser is not the user assigned to this task
-     * @throws IncorrectTaskStatusException     if the given task status is not EXECUTING
-     * @throws EndTimeBeforeStartTimeException  if the given endTime is before the tasks' start time
+     * @param taskName Name of the status to end
+     * @param endTime  Time at which the task was/will be finished/failed
+     * @param user     User currently logged in
+     * @throws TaskNotFoundException           if taskName does not correspond to an existing task
+     * @throws IncorrectUserException          if currentUser is not the user assigned to this task
+     * @throws IncorrectTaskStatusException    if the given task status is not EXECUTING
+     * @throws EndTimeBeforeStartTimeException if the given endTime is before the tasks' start time
      */
     public void finishTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Task task = getTask(taskName);
@@ -329,13 +329,13 @@ public class Project {
     /**
      * Ends the given task and sets its status to FAILED
      *
-     * @param taskName    Name of the status to end
-     * @param endTime     Time at which the task was/will be finished/failed
-     * @param user        User currently logged in
-     * @throws TaskNotFoundException            if taskName does not correspond to an existing task
-     * @throws IncorrectUserException           if currentUser is not the user assigned to this task
-     * @throws IncorrectTaskStatusException     if the given task status is not EXECUTING
-     * @throws EndTimeBeforeStartTimeException  if the given endTime is before the tasks' start time
+     * @param taskName Name of the status to end
+     * @param endTime  Time at which the task was/will be finished/failed
+     * @param user     User currently logged in
+     * @throws TaskNotFoundException           if taskName does not correspond to an existing task
+     * @throws IncorrectUserException          if currentUser is not the user assigned to this task
+     * @throws IncorrectTaskStatusException    if the given task status is not EXECUTING
+     * @throws EndTimeBeforeStartTimeException if the given endTime is before the tasks' start time
      */
     public void failTask(String taskName, User user, Time endTime) throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
         Task task = getTask(taskName);
@@ -349,7 +349,7 @@ public class Project {
      * Updates this projects' status
      *
      * @post if all tasks are finished then set this' status to FINISHED,
-     *       else set this' status to ONGOING
+     * else set this' status to ONGOING
      */
     private void updateProjectStatus() {
         setStatus(ProjectStatus.FINISHED);
@@ -361,32 +361,32 @@ public class Project {
     }
 
     /**
-     * Adds a task to the previousTasks list of a given task in the project, respecting the rules of the dependency graph
+     * Adds a task to the prevTasks list of a given task in the project, respecting the rules of the dependency graph
      *
-     * @param taskName      Name of the task to add a previous task to
-     * @param prevTaskName  Name of the task to add to the list of previousTasks
-     * @throws TaskNotFoundException         if taskName or prevTaskName do not correspond to an existing task in this project
-     * @throws IncorrectTaskStatusException  if taskName does not correspond to a task that is AVAILABLE or UNAVAILABLE
-     * @throws LoopDependencyGraphException  if adding this previous task would create a loop in the dependency graph of this projects' tasks
+     * @param taskName     Name of the task to add a previous task to
+     * @param prevTaskName Name of the task to add to the list of prevTasks
+     * @throws TaskNotFoundException        if taskName or prevTaskName do not correspond to an existing task in this project
+     * @throws IncorrectTaskStatusException if taskName does not correspond to a task that is AVAILABLE or UNAVAILABLE
+     * @throws LoopDependencyGraphException if adding this previous task would create a loop in the dependency graph of this projects' tasks
      * @post if the task corresponding to taskName is AVAILABLE, then sets taskName's status to UNAVAILABLE
      */
-    public void addPreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+    public void addprevTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         Task task = getTask(taskName);
         Task prevTask = getTask(prevTaskName);
         if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
         }
-        task.addPreviousTask(prevTask);
+        task.addprevTask(prevTask);
     }
 
     /**
      * Adds a task to the nextTasks list of a given task in the project, respecting the rules of the dependency graph
      *
-     * @param taskName      Name of the task to add a next task to
-     * @param nextTaskName  Name of the task to add to the list of nextTasks
-     * @throws TaskNotFoundException         if taskName or nextTaskName do not correspond to an existing task in this project
-     * @throws IncorrectTaskStatusException  if taskName does not correspond to a task that is AVAILABLE or UNAVAILABLE
-     * @throws LoopDependencyGraphException  if adding this next task would create a loop in the dependency graph of this projects' tasks
+     * @param taskName     Name of the task to add a next task to
+     * @param nextTaskName Name of the task to add to the list of nextTasks
+     * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task in this project
+     * @throws IncorrectTaskStatusException if taskName does not correspond to a task that is AVAILABLE or UNAVAILABLE
+     * @throws LoopDependencyGraphException if adding this next task would create a loop in the dependency graph of this projects' tasks
      * @post if the task corresponding to taskName is AVAILABLE, then sets taskName's status to UNAVAILABLE
      */
     public void addNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
@@ -399,31 +399,31 @@ public class Project {
     }
 
     /**
-     * Removes a task from the previousTasks list of a given task in the project, respecting the rules of the dependency graph
+     * Removes a task from the prevTasks list of a given task in the project, respecting the rules of the dependency graph
      *
-     * @param taskName      Name of the task to remove the previous task from
-     * @param prevTaskName  Name of the previous task to add
-     * @throws TaskNotFoundException          if taskName or prevTaskName do not correspond to an existing task within this project
-     * @throws IncorrectTaskStatusException   if the given task is not available or unavailable
+     * @param taskName     Name of the task to remove the previous task from
+     * @param prevTaskName Name of the previous task to add
+     * @throws TaskNotFoundException        if taskName or prevTaskName do not correspond to an existing task within this project
+     * @throws IncorrectTaskStatusException if the given task is not available or unavailable
      * @post if prevTaskName is the last previous task in taskName, then sets the status of taskName to AVAILABLE
      */
-    public void removePreviousTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+    public void removeprevTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
         Task task = getTask(taskName);
         Task prevTask = getTask(prevTaskName);
         if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
         }
-        task.removePreviousTask(prevTask);
+        task.removeprevTask(prevTask);
     }
 
     /**
      * Removes a task from the nextTasks list of a given task in the project, respecting the rules of the dependency graph
      *
-     * @param taskName      Name of the task to remove the next task from
-     * @param nextTaskName  Name of the next task to add
-     * @throws TaskNotFoundException          if taskName or nextTaskName do not correspond to an existing task within this project
-     * @throws IncorrectTaskStatusException   if the given task is not available or unavailable
-     * @post  if nextTaskName is AVAILABLE then sets nextTaskName to UNAVAILABLE
+     * @param taskName     Name of the task to remove the next task from
+     * @param nextTaskName Name of the next task to add
+     * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task within this project
+     * @throws IncorrectTaskStatusException if the given task is not available or unavailable
+     * @post if nextTaskName is AVAILABLE then sets nextTaskName to UNAVAILABLE
      */
     public void removeNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
         Task task = getTask(taskName);

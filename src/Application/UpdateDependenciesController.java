@@ -25,11 +25,11 @@ public class UpdateDependenciesController {
         return (getSession().getRoles().contains(Role.PROJECTMANAGER));
     }
 
-    public void addPreviousTask(String projectName, String taskName, String prevTaskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+    public void addPrevTask(String projectName, String taskName, String prevTaskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         if (!updateDependenciesPreconditions()) {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
-        getTaskManSystem().addPreviousTaskToProject(projectName, taskName, prevTaskName);
+        getTaskManSystem().addprevTaskToProject(projectName, taskName, prevTaskName);
     }
 
     public void addNextTask(String projectName, String taskName, String nextTaskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
@@ -39,11 +39,11 @@ public class UpdateDependenciesController {
         getTaskManSystem().addNextTaskToProject(projectName, taskName, nextTaskName);
     }
 
-    public void removePreviousTask(String projectName, String taskName, String prevTaskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+    public void removePrevTask(String projectName, String taskName, String prevTaskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         if (!updateDependenciesPreconditions()) {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
-        getTaskManSystem().removePreviousTaskFromProject(projectName, taskName, prevTaskName);
+        getTaskManSystem().removeprevTaskFromProject(projectName, taskName, prevTaskName);
     }
 
     public void removeNextTask(String projectName, String taskName, String nextTaskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
