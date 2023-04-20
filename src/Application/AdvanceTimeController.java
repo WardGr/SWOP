@@ -12,6 +12,12 @@ public class AdvanceTimeController {
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
 
+    /**
+     * Creates this controller object
+     *
+     * @param session           The current session to set as active session
+     * @param taskManSystem     The system object to set as current system
+     */
     public AdvanceTimeController(
             SessionProxy session,
             TaskManSystem taskManSystem
@@ -20,10 +26,16 @@ public class AdvanceTimeController {
         this.taskManSystem = taskManSystem;
     }
 
+    /**
+     * @return  The session data object with currently logged-in user
+     */
     private SessionProxy getSession() {
         return session;
     }
 
+    /**
+     * @return  The object containing the current taskmanager system
+     */
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
     }
@@ -49,7 +61,6 @@ public class AdvanceTimeController {
      *
      * @param newTime time given by the user for the new time
      * @throws IncorrectPermissionException     if the user is not logged in as project manager
-     * @throws InvalidTimeException             if newMinute > 59 or < 0
      * @throws NewTimeBeforeSystemTimeException if the given time is before the system time (can only ADVANCE time)
      */
     public void setNewTime(Time newTime) throws IncorrectPermissionException, NewTimeBeforeSystemTimeException {

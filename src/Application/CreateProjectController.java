@@ -10,6 +10,12 @@ public class CreateProjectController {
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
 
+    /**
+     * Creates this controller object
+     *
+     * @param session           The current session to set as active session
+     * @param taskManSystem     The system object to set as current system
+     */
     public CreateProjectController(
             SessionProxy session,
             TaskManSystem taskManSystem
@@ -18,10 +24,18 @@ public class CreateProjectController {
         this.taskManSystem = taskManSystem;
     }
 
+    /**
+     * @return  The session data object with currently logged-in user
+     */
     private SessionProxy getSession() {
         return session;
     }
 
+
+    /**
+     *
+     * @return  The object containing the current taskmanager system
+     */
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
     }

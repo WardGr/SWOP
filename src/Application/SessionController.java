@@ -14,6 +14,12 @@ public class SessionController {
     private final Session session;
     private final UserManager userManager;
 
+    /**
+     * Creates this controller object
+     *
+     * @param session           The current session to set as active session
+     * @param userManager       Object managing all users in the system
+     */
     public SessionController(
             Session session,
             UserManager userManager
@@ -22,14 +28,23 @@ public class SessionController {
         this.userManager = userManager;
     }
 
+    /**
+     * @return  The Session object with currently logged-in user
+     */
     private Session getSession() {
         return session;
     }
 
+    /**
+     * @return  Returns the object that manages all users
+     */
     private UserManager getUserManager() {
         return userManager;
     }
 
+    /**
+     * @return  true if user is not logged in, false otherwise
+     */
     public boolean loginPrecondition() {
         return !getSession().isLoggedIn();
     }

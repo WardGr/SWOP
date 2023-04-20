@@ -36,10 +36,8 @@ public class CreateTaskUITest {
 
         TaskManSystem taskManSystem = new TaskManSystem(new Time(0));
 
-        UserManager userManager = new UserManager();
-
-        CreateTaskController managerController = new CreateTaskController(managerSessionProxy, taskManSystem, userManager);
-        CreateTaskController developerController = new CreateTaskController(developerSessionProxy, taskManSystem, userManager);
+        CreateTaskController managerController = new CreateTaskController(managerSessionProxy, taskManSystem);
+        CreateTaskController developerController = new CreateTaskController(developerSessionProxy, taskManSystem);
 
         CreateTaskUI developerUI = new CreateTaskUI(developerController);
         CreateTaskUI managerUI = new CreateTaskUI(managerController);

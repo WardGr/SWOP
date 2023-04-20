@@ -237,7 +237,7 @@ public class CreateProjectUITest {
 
         /*
         assertEquals(2, taskManSystem.getProjectNames().size());
-        assertEquals(taskManSystem.showProject("NewProject"),
+        assertEquals(taskManSystem.getProjectData("NewProject"),
                 """
                         Project Name:  NewProject
                         Description:   COOLo

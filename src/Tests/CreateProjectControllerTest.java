@@ -37,9 +37,7 @@ public class CreateProjectControllerTest {
         User false1 = new User("false1", "false1", falseRoles);
         wardsSession.login(false1);
         assertFalse(cpc.createProjectPreconditions());
-        assertThrows(IncorrectPermissionException.class, () -> {
-            cpc.createProject("Omer", "Brew omer beer", new Time(30));
-        });
+        assertThrows(IncorrectPermissionException.class, () -> cpc.createProject("Omer", "Brew omer beer", new Time(30)));
 
         wardsSession.logout();
 
@@ -48,9 +46,7 @@ public class CreateProjectControllerTest {
         User false2 = new User("false2", "false2", falseRoles);
         wardsSession.login(false2);
         assertFalse(cpc.createProjectPreconditions());
-        assertThrows(IncorrectPermissionException.class, () -> {
-            cpc.createProject("Omer", "Brew omer beer", new Time(30));
-        });
+        assertThrows(IncorrectPermissionException.class, () -> cpc.createProject("Omer", "Brew omer beer", new Time(30)));
 
         wardsSession.logout();
 
@@ -59,9 +55,7 @@ public class CreateProjectControllerTest {
         User false3 = new User("false3", "false3", falseRoles);
         wardsSession.login(false3);
         assertFalse(cpc.createProjectPreconditions());
-        assertThrows(IncorrectPermissionException.class, () -> {
-            cpc.createProject("Omer", "Brew omer beer", new Time(30));
-        });
+        assertThrows(IncorrectPermissionException.class, () -> cpc.createProject("Omer", "Brew omer beer", new Time(30)));
 
         ;
         wardsSession.login(ward);
@@ -69,21 +63,10 @@ public class CreateProjectControllerTest {
         cpc.createProject("Omer", "Brew omer beer", new Time(30));
         cpc.createProject("LeFort", "Brew Tripel LeFort", new Time(60));
 
-        assertThrows(ProjectNameAlreadyInUseException.class, () -> {
-            cpc.createProject("Omer", "Brew omer beer", new Time(40));
-        });
-
-        assertThrows(DueBeforeSystemTimeException.class, () -> {
-            cpc.createProject("Duvel", "Brew duvel beer", new Time(11));
-        });
-
-        assertThrows(DueBeforeSystemTimeException.class, () -> {
-            cpc.createProject("Duvel", "Brew duvel beer", new Time(10));
-        });
-
-        assertThrows(ProjectNameAlreadyInUseException.class, () -> {
-            cpc.createProject("LeFort", "Drink a LeFort Tripel ;)", new Time(22));
-        });
+        assertThrows(ProjectNameAlreadyInUseException.class, () -> cpc.createProject("Omer", "Brew omer beer", new Time(40)));
+        assertThrows(DueBeforeSystemTimeException.class, () -> cpc.createProject("Duvel", "Brew duvel beer", new Time(11)));
+        assertThrows(DueBeforeSystemTimeException.class, () -> cpc.createProject("Duvel", "Brew duvel beer", new Time(10)));
+        assertThrows(ProjectNameAlreadyInUseException.class, () -> cpc.createProject("LeFort", "Drink a LeFort Tripel ;)", new Time(22)));
 
 
 

@@ -13,18 +13,30 @@ public class Session {
 
     private User currentUser;
 
+    /**
+     * Creates an empty session
+     */
     public Session() {
         this.currentUser = null;
     }
 
+    /**
+     * @return Returns the current user logged in
+     */
     public User getCurrentUser() {
         return currentUser;
     }
 
+    /**
+     * @param user New user to set as current user
+     */
     private void setCurrentUser(User user) {
         this.currentUser = user;
     }
 
+    /**
+     * @return Set of roles the currently logged-in user has, or an empty set if there is no such user
+     */
     public Set<Role> getRoles() {
         if (getCurrentUser() == null) {
             return new HashSet<>();

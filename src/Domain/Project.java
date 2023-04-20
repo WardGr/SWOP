@@ -370,7 +370,7 @@ public class Project {
      * @throws LoopDependencyGraphException if adding this previous task would create a loop in the dependency graph of this projects' tasks
      * @post if the task corresponding to taskName is AVAILABLE, then sets taskName's status to UNAVAILABLE
      */
-    public void addprevTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+    public void addPrevTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         Task task = getTask(taskName);
         Task prevTask = getTask(prevTaskName);
         if (task == null || prevTask == null) {
@@ -385,9 +385,9 @@ public class Project {
      * @param taskName     Name of the task to add a next task to
      * @param nextTaskName Name of the task to add to the list of nextTasks
      * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task in this project
-     * @throws IncorrectTaskStatusException if taskName does not correspond to a task that is AVAILABLE or UNAVAILABLE
+     * @throws IncorrectTaskStatusException if nextTaskName does not correspond to a task that is AVAILABLE or UNAVAILABLE
      * @throws LoopDependencyGraphException if adding this next task would create a loop in the dependency graph of this projects' tasks
-     * @post if the task corresponding to taskName is AVAILABLE, then sets taskName's status to UNAVAILABLE
+     * @post if the task corresponding to nextTaskName is AVAILABLE, then sets taskName's status to UNAVAILABLE
      */
     public void addNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         Task task = getTask(taskName);
@@ -404,10 +404,10 @@ public class Project {
      * @param taskName     Name of the task to remove the previous task from
      * @param prevTaskName Name of the previous task to add
      * @throws TaskNotFoundException        if taskName or prevTaskName do not correspond to an existing task within this project
-     * @throws IncorrectTaskStatusException if the given task is not available or unavailable
+     * @throws IncorrectTaskStatusException if the taskName is not AVILABLE or UNAVAILABLE
      * @post if prevTaskName is the last previous task in taskName, then sets the status of taskName to AVAILABLE
      */
-    public void removeprevTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+    public void removePrevTask(String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
         Task task = getTask(taskName);
         Task prevTask = getTask(prevTaskName);
         if (task == null || prevTask == null) {
@@ -422,8 +422,8 @@ public class Project {
      * @param taskName     Name of the task to remove the next task from
      * @param nextTaskName Name of the next task to add
      * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task within this project
-     * @throws IncorrectTaskStatusException if the given task is not available or unavailable
-     * @post if nextTaskName is AVAILABLE then sets nextTaskName to UNAVAILABLE
+     * @throws IncorrectTaskStatusException if nextTaskName is not AVAILABLE or UNAVAILABLE
+     * @post if taskName is the last previous task of nextTaskName, then sets the status of nextTask to AVAILABLE
      */
     public void removeNextTask(String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException {
         Task task = getTask(taskName);

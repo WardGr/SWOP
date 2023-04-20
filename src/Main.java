@@ -24,7 +24,7 @@ public class Main {
             AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem);
             CreateProjectController createProjectController = new CreateProjectController(sessionProxy, taskManSystem);
             ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
-            CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem, userManager);
+            CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem);
             LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager);
             StartTaskController startTaskController = new StartTaskController(sessionProxy, taskManSystem);
             EndTaskController endTaskController = new EndTaskController(sessionProxy, taskManSystem);

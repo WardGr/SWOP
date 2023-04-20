@@ -48,8 +48,8 @@ public class ProjectTest {
         assertThrows(TaskNotFoundException.class, () -> project.finishTask("", user, new Time(0)));
         assertThrows(TaskNotFoundException.class, () -> project.failTask("", user, new Time(0)));
         assertThrows(TaskNotFoundException.class, () -> project.addNextTask("", ""));
-        assertThrows(TaskNotFoundException.class, () -> project.addprevTask("", ""));
-        assertThrows(TaskNotFoundException.class, () -> project.removeprevTask("", ""));
+        assertThrows(TaskNotFoundException.class, () -> project.addPrevTask("", ""));
+        assertThrows(TaskNotFoundException.class, () -> project.removePrevTask("", ""));
         assertThrows(TaskNotFoundException.class, () -> project.removeNextTask("", ""));
 
         assertThrows(DueTimeBeforeCreationTimeException.class, () -> new Project("", "", new Time(10), new Time(0)));

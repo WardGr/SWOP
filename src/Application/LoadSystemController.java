@@ -21,25 +21,43 @@ public class LoadSystemController {
     private final TaskManSystem taskManSystem;
     private final SessionProxy session;
 
+    /**
+     * Creates this controller object
+     *
+     * @param session           The current session to set as active session
+     * @param taskManSystem     The system class to set as current system
+     * @param userManager       The class managing all users in the system
+     */
     public LoadSystemController(SessionProxy session, TaskManSystem taskManSystem, UserManager userManager) {
         this.session = session;
         this.taskManSystem = taskManSystem;
         this.userManager = userManager;
     }
 
+    /**
+     * @return  The current user manager object
+     */
     private UserManager getUserManager() {
         return userManager;
     }
 
+    /**
+     * @return  The object containing the current taskmanager system
+     */
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
     }
-
+    /**
+     * @return  The session data object with currently logged-in user
+     */
     private SessionProxy getSession() {
         return session;
     }
 
-    public void clear() throws InvalidTimeException {
+    /**
+     * Resets the taskmansystem (clearing all projects and setting the time to 0) and ends all tasks for every user
+     */
+    private void clear() throws InvalidTimeException {
         getTaskManSystem().reset();
         for (User user : getUserManager().getUsers()) {
             user.endTask();
@@ -54,7 +72,7 @@ public class LoadSystemController {
     }
 
     /**
-     * Loads in a JSON file that holds project information at the given filepath
+     * Loads in a JSON file that holds project information (tasks, projects, systemtime, ...) at the given filepath
      *
      * @param filepath String containing the filepath to the JSON holding the system information
      */
@@ -138,7 +156,28 @@ public class LoadSystemController {
 
     }
 
-
+    /**
+     * Loads in all the projects and tasks from the given JSONObjects, in chronological order
+     *
+     * @param projects          A treemap, sorted on start time, containing all projects to be loaded
+     * @param startedTasks      A treemap, sorted on start time, containing all started tasks to be loaded
+     * @param endedTasks        A treemap, sorted on end time, containing all ended tasks to be loaded
+     * @param remainingTasks    A set containing the tasks that have not started or ended yet
+     * @throws InvalidTimeException                     If any time object has negative hours or minutes, or minutes above 59
+     * @throws NewTimeBeforeSystemTimeException         If creating a task before systemtime
+     * @throws TaskNameAlreadyInUseException            If a two or more tasks in any of the tasks maps/set share a name
+     * @throws UserAlreadyAssignedToTaskException       If a user is assigned to the same task twice
+     * @throws SessionController.RoleNotFoundException  If a role string does not correspond to an existing role enum
+     * @throws LoopDependencyGraphException             If there is a loop in the dependency graph of the projects
+     * @throws IncorrectRoleException                   If a user is assigned to a task with a role that this task does not need
+     * @throws IllegalTaskRolesException                If attempting to create a task without roles, or roles containing non-developer roles
+     * @throws EndTimeBeforeStartTimeException          If the end-time of any of the tasks is after its start time
+     * @throws IncorrectUserException                   If attempting to finish or end a task that is not assigned to the given user
+     * @throws ProjectNotOngoingException               If adding a task to a project that is already finbished
+     * @throws ProjectNameAlreadyInUseException         If any project in the projects treemap share a name
+     * @throws DueTimeBeforeCreationTimeException       If a tasks' due time is before its creation time
+     * @throws DueBeforeSystemTimeException             If a tasks' due time is before the system time at creation
+     */
     private void load(TreeMap<Time, JSONArray> projects, TreeMap<Time, JSONArray> startedTasks, TreeMap<Time, JSONArray> endedTasks, HashSet<JSONObject> remainingTasks ) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, SessionController.RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, IllegalTaskRolesException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException, ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException, DueBeforeSystemTimeException {
         while(startedTasks.size() > 0 || endedTasks.size() > 0 || projects.size() > 0){
             if(startedTasks.size() == 0){
@@ -218,6 +257,16 @@ public class LoadSystemController {
         }
     }
 
+    /**
+     * Populates the task maps and sets from the given JSONObject
+     *
+     * @param task       The JSONObject to extract the tasks from
+     * @param started    Map of tasks to add all started tasks to
+     * @param ended      Map of tasks to add all ended tasks to
+     * @param remaining  Map of tasks to add all tasks not started/ended to
+     *
+     * @throws InvalidTimeException if any time in the JSONObject contains a negative integer or a minute field > 59
+     */
     private void handleTask(JSONObject task, Map<Time, JSONArray> started, Map<Time, JSONArray> ended, HashSet<JSONObject> remaining) throws InvalidTimeException {
         if(task.get("startHour") == null | task.get("startMinute") == null){
             remaining.add(task);
@@ -243,6 +292,23 @@ public class LoadSystemController {
         }
     }
 
+    /**
+     * Adds a task to the task manager system from the given JSONObject
+     *
+     * @param task the given JSONObject containing task information
+     * @throws UserNotFoundException                        If the username in the JSONObject does not correspond to an existing username
+     * @throws InvalidTimeException                         If a time set in the JSONObject has negative integers or has > 59 minutes
+     * @throws ProjectNotFoundException                     If the projectname in the JSONObject does not correspond to an existing project
+     * @throws TaskNotFoundException                        If the taskname in the JSONObject does not correspond to an existing task
+     * @throws TaskNameAlreadyInUseException                If the taskname in the JSONObject is already in use by another loaded task
+     * @throws IncorrectTaskStatusException                 If the task is not AVAILABLE/UNAVAILABLE while adding, or AVAILABLE while starting
+     * @throws LoopDependencyGraphException                 If adding  this task causes a loop in the dependency graph
+     * @throws IllegalTaskRolesException                    If the roles in the JSONObject are empty, or contain non-developer roles
+     * @throws UserAlreadyAssignedToTaskException           If the given user in the JSONObject is already assigned to this task
+     * @throws IncorrectRoleException                       If the given user in the JSONObject does not have the given role, or
+     * @throws SessionController.RoleNotFoundException      If a role in the JSONObject could not be parsed to an existing role
+     * @throws ProjectNotOngoingException                   If the project the task belongs to is not ongoing
+     */
     private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, SessionController.RoleNotFoundException, ProjectNotOngoingException {
         //standard task fields
         String name = (String) task.get("name");
@@ -275,6 +341,18 @@ public class LoadSystemController {
         }
     }
 
+    /**
+     * Ends the task depicted by the given JSONObject
+     *
+     * @param task the given JSONObject containing task information
+     * @throws InvalidTimeException             If a time set in the JSONObject has negative integers or has > 59 minutes
+     * @throws ProjectNotFoundException         If the projectname in the JSONObject does not correspond to an existing project
+     * @throws EndTimeBeforeStartTimeException  If the current systemtime is before the tasks' start time
+     * @throws TaskNotFoundException            If the task corresponding to the given taskname is not an existing task in the system
+     * @throws IncorrectTaskStatusException     If the given task is not EXECUTING
+     * @throws IncorrectUserException           If the given user is not assigned to this task
+     * @throws UserNotFoundException            If the given user is not a user registered at the system
+     */
     public void endTask(JSONObject task) throws InvalidTimeException, ProjectNotFoundException, EndTimeBeforeStartTimeException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, UserNotFoundException {
         //standard task fields
         String name = (String) task.get("name");
@@ -296,6 +374,13 @@ public class LoadSystemController {
         }
     }
 
+    /**
+     * Parses the role field of the JSONObject
+     *
+     * @param   role  String to parse as a Role enum
+     * @return  Role Enum corresponding to the given role
+     * @throws SessionController.RoleNotFoundException if the given String does not correspond to an existing role
+     */
     public Role findRole(String role) throws SessionController.RoleNotFoundException {
         switch (role) {
             case "SYSADMIN" -> {

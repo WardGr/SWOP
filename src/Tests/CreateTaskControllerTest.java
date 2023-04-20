@@ -28,7 +28,7 @@ public class CreateTaskControllerTest {
         wardsSession.login(ward);
         TaskManSystem tms = new TaskManSystem(new Time(12));
 
-        CreateTaskController ctc = new CreateTaskController(omerWrapper, tms, new UserManager());
+        CreateTaskController ctc = new CreateTaskController(omerWrapper, tms);
 
         assertTrue(ctc.createTaskPreconditions());
 
