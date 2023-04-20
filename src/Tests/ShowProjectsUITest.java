@@ -1,18 +1,32 @@
 package Tests;
 
+import Application.Session;
+import Application.SessionWrapper;
+import Application.ShowProjectsController;
 import Domain.*;
+import Domain.TaskStates.IncorrectRoleException;
+import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.NonDeveloperRoleException;
+import UserInterface.ShowProjectsUI;
 import org.junit.Test;
 
-// TODO: DEZE BOEL FAILT, OMDAT TASKS NU OP EEN ANDERE MANIER FINISHEN, DA MOET NOG GEIMPLEMENTEERD WORDEN
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+
 public class ShowProjectsUITest {
     @Test
-    public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException {
-        /*
+    public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         Session session = new Session();
         SessionWrapper sessionWrapper = new SessionWrapper(session);
         TaskManSystem tsm = new TaskManSystem(new Time(0));
-        User manager = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
-        User dev = new User("OlavBl", "753", Role.DEVELOPER);
+        User manager = new User("WardGr", "minecraft123", Set.of(Role.PROJECTMANAGER));
+        User dev = new User("OlavBl", "753", Set.of(Role.PYTHONPROGRAMMER));
 
         ShowProjectsController showProjectsController = new ShowProjectsController(sessionWrapper, tsm);
 
@@ -23,7 +37,9 @@ public class ShowProjectsUITest {
         session.login(dev);
         out.reset();
         ui.showProjects();
-        assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
+        assertEquals("""
+                        You must be logged in with the project manager role to call this function\r
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -39,13 +55,43 @@ public class ShowProjectsUITest {
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
+
         tsm.createProject("Project1", "Description1", new Time(100));
         tsm.createProject("Project2", "Description2", new Time(100));
-        tsm.addTaskToProject("Project1", "Task1", "Description1", new Time(100), 5, new LinkedList<>(), dev);
-        LinkedList task = new LinkedList<>();
-        task.add("Task1");
-        tsm.addTaskToProject("Project1", "otherTask", "This is a followup task", new Time(100), 5, task, dev);
-        tsm.addTaskToProject("Project2", "Task2", "Description2", new Time(100), 5, new LinkedList<>(), dev);
+
+        System.setIn(new ByteArrayInputStream("Project2\nBACK\nBACK".getBytes()));
+        ui.showProjects();
+        assertEquals("""
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                ******** PROJECT DETAILS ********
+                Project Name:  Project2
+                Description:   Description2
+                Creation Time: 0 hour(s), 0 minute(s)
+                Due Time:      1 hour(s), 40 minute(s)
+                Status:        ongoing
+                                
+                Tasks:
+                There are no active tasks attached to this project.
+                
+                Replaced Tasks:
+                There are no tasks replaced in this project.
+                                
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        tsm.addTaskToProject("Project1", "Task1", "Description1", new Time(100), 5, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
+        tsm.addTaskToProject("Project1", "otherTask", "This is a followup task", new Time(100), 5, List.of(Role.PYTHONPROGRAMMER) , Set.of("Task1"), new HashSet<>());
+        tsm.addTaskToProject("Project2", "Task2", "Description2", new Time(100), 5, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
 
         out.reset();
         System.setIn(new ByteArrayInputStream("BACK".getBytes()));
@@ -53,8 +99,8 @@ public class ShowProjectsUITest {
         assertEquals("""
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: ongoing
                 Project1, status: ongoing
+                Project2, status: ongoing
                 Type the name of a project to see more details:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -64,24 +110,27 @@ public class ShowProjectsUITest {
         assertEquals("""
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: ongoing
                 Project1, status: ongoing
+                Project2, status: ongoing
                 Type the name of a project to see more details:
                 ******** PROJECT DETAILS ********
                 Project Name:  Project2
                 Description:   Description2
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      1 hours, 40 minutes
+                Creation Time: 0 hour(s), 0 minute(s)
+                Due Time:      1 hour(s), 40 minute(s)
                 Status:        ongoing
                                 
                 Tasks:
                 1. Task2
+                
+                Replaced Tasks:
+                There are no tasks replaced in this project.
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: ongoing
                 Project1, status: ongoing
+                Project2, status: ongoing
                 Type the name of a project to see more details:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -91,15 +140,51 @@ public class ShowProjectsUITest {
         assertEquals("""
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: ongoing
                 Project1, status: ongoing
+                Project2, status: ongoing
                 Type the name of a project to see more details:
                 The given project could not be found
                                 
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: ongoing
                 Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        tsm.startTask("Project2", "Task2", dev, Role.PYTHONPROGRAMMER);
+        tsm.advanceTime(5);
+        tsm.failTask("Project2", "Task2", dev);
+        tsm.replaceTaskInProject("Project2", "Task2 Replacement", "replaces Task 2", new Time(5), 0.2, "Task2");
+
+        // Test Replacement Tasks in Project
+        System.setIn(new ByteArrayInputStream("Project2\nBACK\nBACK".getBytes()));
+        ui.showProjects();
+        assertEquals("""
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                ******** PROJECT DETAILS ********
+                Project Name:  Project2
+                Description:   Description2
+                Creation Time: 0 hour(s), 0 minute(s)
+                Due Time:      1 hour(s), 40 minute(s)
+                Status:        ongoing
+                                
+                Tasks:
+                1. Task2 Replacement
+                
+                Replaced Tasks:
+                1. Task2 - Replaced by: Task2 Replacement
+                                
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
                 Type the name of a project to see more details:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -110,437 +195,316 @@ public class ShowProjectsUITest {
         assertEquals("""
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: ongoing
                 Project1, status: ongoing
+                Project2, status: ongoing
                 Type the name of a project to see more details:
                 ******** PROJECT DETAILS ********
                 Project Name:  Project2
                 Description:   Description2
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      1 hours, 40 minutes
+                Creation Time: 0 hour(s), 0 minute(s)
+                Due Time:      1 hour(s), 40 minute(s)
                 Status:        ongoing
-                                
+                
                 Tasks:
-                1. Task2
+                1. Task2 Replacement
+                                
+                Replaced Tasks:
+                1. Task2 - Replaced by: Task2 Replacement
                                 
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 The given task could not be found, please try again
-                
+                                
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: ongoing
                 Project1, status: ongoing
-                Type the name of a project to see more details:     
+                Project2, status: ongoing
+                Type the name of a project to see more details:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-
-        tsm.startTask("Project2", "Task2", new Time(200), dev);
-        tsm.advanceTime(new Time(300));
-
-        // TODO: dit geeft een error omdat tasks nu nimeer automatisch finishen met advanceTime, moeten dus onze tests beetje aanpassen
-        tsm.endTask("Project2", "Task2", Status.FINISHED, new Time(1000), dev);
-        tsm.advanceTime(new Time(2000));
-        System.setIn(new ByteArrayInputStream("Project2\nBACK\nBACK".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nBACK\nBACK".getBytes()));
         ui.showProjects();
         assertEquals("""
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: finished
                 Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                ******** PROJECT DETAILS ********
+                Project Name:  Project1
+                Description:   Description1
+                Creation Time: 0 hour(s), 0 minute(s)
+                Due Time:      1 hour(s), 40 minute(s)
+                Status:        ongoing
+                                
+                Tasks:
+                1. Task1
+                2. otherTask
+                                
+                Replaced Tasks:
+                There are no tasks replaced in this project.
+                        
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                ******** TASK DETAILS ********
+                Task Name:            Task1
+                Belonging to project: Project1
+                Description:          Description1
+                Estimated Duration:   1 hour(s), 40 minute(s)
+                Accepted Deviation:   5.0
+                Status:               available
+                        
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                        
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
+                        
+                Unfulfilled roles:
+                - Python programmer
+                                
+                Committed users:
+                No users are committed to this task.
+                        
+                Next tasks:
+                1. otherTask
+                Previous tasks:
+                - There are no previous tasks
+                        
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                ******** TASK DETAILS ********
+                Task Name:            otherTask
+                Belonging to project: Project1
+                Description:          This is a followup task
+                Estimated Duration:   1 hour(s), 40 minute(s)
+                Accepted Deviation:   5.0
+                Status:               unavailable
+                        
+                Replacement Task:   No replacement task
+                Replaces Task:      Replaces no tasks
+                        
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
+                        
+                Unfulfilled roles:
+                - Python programmer
+                                
+                Committed users:
+                No users are committed to this task.
+                        
+                Next tasks:
+                - There are no next tasks
+                Previous tasks:
+                1. Task1
+                        
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("Project2\nTask2\nTask2 Replacement\nBACK\nBACK".getBytes()));
+        ui.showProjects();
+        assertEquals("""
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
                 Type the name of a project to see more details:
                 ******** PROJECT DETAILS ********
                 Project Name:  Project2
                 Description:   Description2
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      1 hours, 40 minutes
+                Creation Time: 0 hour(s), 0 minute(s)
+                Due Time:      1 hour(s), 40 minute(s)
+                Status:        ongoing
+                                
+                Tasks:
+                1. Task2 Replacement
+                                
+                Replaced Tasks:
+                1. Task2 - Replaced by: Task2 Replacement
+                        
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                ******** TASK DETAILS ********
+                Task Name:            Task2
+                Belonging to project: Project2
+                Description:          Description2
+                Estimated Duration:   1 hour(s), 40 minute(s)
+                Accepted Deviation:   5.0
+                Status:               failed
+                        
+                Replacement Task:   Task2 Replacement
+                Replaces Task:      Replaces no tasks
+                        
+                Start Time:         0 hour(s), 0 minute(s)
+                End Time:           0 hour(s), 5 minute(s)
+                        
+                Unfulfilled roles:
+                - Python programmer
+                                
+                Committed users:
+                No users are committed to this task.
+                        
+                Next tasks:
+                - There are no next tasks
+                Previous tasks:
+                - There are no previous tasks
+                        
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                ******** TASK DETAILS ********
+                Task Name:            Task2 Replacement
+                Belonging to project: Project2
+                Description:          replaces Task 2
+                Estimated Duration:   0 hour(s), 5 minute(s)
+                Accepted Deviation:   0.2
+                Status:               available
+                        
+                Replacement Task:   No replacement task
+                Replaces Task:      Task2
+                        
+                Start Time:         Task has not started yet
+                End Time:           Task has not ended yet
+                        
+                Unfulfilled roles:
+                - Python programmer
+                                
+                Committed users:
+                No users are committed to this task.
+                        
+                Next tasks:
+                - There are no next tasks
+                Previous tasks:
+                - There are no previous tasks
+                        
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        tsm.startTask("Project2", "Task2 Replacement", dev, Role.PYTHONPROGRAMMER);
+
+        System.setIn(new ByteArrayInputStream("Project2\nTask2 Replacement\nBACK\nBACK".getBytes()));
+        ui.showProjects();
+        assertEquals("""
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                ******** PROJECT DETAILS ********
+                Project Name:  Project2
+                Description:   Description2
+                Creation Time: 0 hour(s), 0 minute(s)
+                Due Time:      1 hour(s), 40 minute(s)
+                Status:        ongoing
+                                
+                Tasks:
+                1. Task2 Replacement
+                                
+                Replaced Tasks:
+                1. Task2 - Replaced by: Task2 Replacement
+                
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                ******** TASK DETAILS ********
+                Task Name:            Task2 Replacement
+                Belonging to project: Project2
+                Description:          replaces Task 2
+                Estimated Duration:   0 hour(s), 5 minute(s)
+                Accepted Deviation:   0.2
+                Status:               executing
+                        
+                Replacement Task:   No replacement task
+                Replaces Task:      Task2
+                        
+                Start Time:         0 hour(s), 5 minute(s)
+                End Time:           Task has not ended yet
+                        
+                Unfulfilled roles:
+                All roles are filled in.
+                                
+                Committed users:
+                - OlavBl as Python programmer
+                        
+                Next tasks:
+                - There are no next tasks
+                Previous tasks:
+                - There are no previous tasks
+                        
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: ongoing
+                Type the name of a project to see more details:
+                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        tsm.advanceTime(15);
+        tsm.finishTask("Project2", "Task2 Replacement", dev);
+
+        System.setIn(new ByteArrayInputStream("Project2\nTask2 Replacement\nBACK\nBACK".getBytes()));
+        ui.showProjects();
+        assertEquals("""
+                Type "BACK" to cancel
+                ********* PROJECTS *********
+                Project1, status: ongoing
+                Project2, status: finished
+                Type the name of a project to see more details:
+                ******** PROJECT DETAILS ********
+                Project Name:  Project2
+                Description:   Description2
+                Creation Time: 0 hour(s), 0 minute(s)
+                Due Time:      1 hour(s), 40 minute(s)
                 Status:        finished
                                 
                 Tasks:
-                1. Task2
+                1. Task2 Replacement
                                 
+                Replaced Tasks:
+                1. Task2 - Replaced by: Task2 Replacement
+                
+                Type the name of a task to see more details, or type "BACK" to choose another project:
+                ******** TASK DETAILS ********
+                Task Name:            Task2 Replacement
+                Belonging to project: Project2
+                Description:          replaces Task 2
+                Estimated Duration:   0 hour(s), 5 minute(s)
+                Accepted Deviation:   0.2
+                Status:               finished
+                   Finished:          delayed
+                        
+                Replacement Task:   No replacement task
+                Replaces Task:      Task2
+                        
+                Start Time:         0 hour(s), 5 minute(s)
+                End Time:           0 hour(s), 20 minute(s)
+                        
+                Unfulfilled roles:
+                - Python programmer
+                                
+                Committed users:
+                No users are committed to this task.
+                        
+                Next tasks:
+                - There are no next tasks
+                Previous tasks:
+                - There are no previous tasks
+                        
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
                 ********* PROJECTS *********
-                Project2, status: finished
                 Project1, status: ongoing
+                Project2, status: finished
                 Type the name of a project to see more details:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nBACK\nBACK".getBytes()));
-        ui.showProjects();
-        assertEquals("""
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                ******** PROJECT DETAILS ********
-                Project Name:  Project1
-                Description:   Description1
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      1 hours, 40 minutes
-                Status:        ongoing
-                                
-                Tasks:
-                1. Task1
-                2. otherTask
-                        
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          Task1
-                Description:        Description1
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             available
-                        
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                        
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
-                        
-                User:               OlavBl
-                        
-                Next tasks:
-                1.otherTask
-                Previous tasks:
-                        
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          otherTask
-                Description:        This is a followup task
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             unavailable
-                        
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                        
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
-                        
-                User:               OlavBl
-                        
-                Next tasks:
-                Previous tasks:
-                1.Task1
-                        
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
-        out.reset();
-        System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nBACK\nBACK".getBytes()));
-        ui.showProjects();
-        assertEquals("""
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                ******** PROJECT DETAILS ********
-                Project Name:  Project1
-                Description:   Description1
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      1 hours, 40 minutes
-                Status:        ongoing
-                                
-                Tasks:
-                1. Task1
-                2. otherTask
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          Task1
-                Description:        Description1
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             available
-                                
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                                
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                1.otherTask
-                Previous tasks:
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          otherTask
-                Description:        This is a followup task
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             unavailable
-                                
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                                
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                Previous tasks:
-                1.Task1
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
-        out.reset();
-        tsm.startTask("Project1", "Task1", new Time(88999), dev);
-        tsm.advanceTime(new Time(99000));
-
-        System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nBACK\nBACK".getBytes()));
-        ui.showProjects();
-        assertEquals("""
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                ******** PROJECT DETAILS ********
-                Project Name:  Project1
-                Description:   Description1
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      1 hours, 40 minutes
-                Status:        ongoing
-                                
-                Tasks:
-                1. Task1
-                2. otherTask
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          Task1
-                Description:        Description1
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             executing
-                                
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                                
-                Start Time:         1483 hours, 19 minutes
-                End Time:           No end time set
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                1.otherTask
-                Previous tasks:
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          otherTask
-                Description:        This is a followup task
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             unavailable
-                                
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                                
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                Previous tasks:
-                1.Task1
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
-        out.reset();
-
-        System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nBACK\nBACK".getBytes()));
-        tsm.endTask("Project1", "Task1", Status.FINISHED, new Time(89002), dev);
-        tsm.advanceTime(new Time(100000));
-
-        System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nBACK\nBACK".getBytes()));
-        ui.showProjects();
-        assertEquals("""
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                ******** PROJECT DETAILS ********
-                Project Name:  Project1
-                Description:   Description1
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      1 hours, 40 minutes
-                Status:        ongoing
-                                
-                Tasks:
-                1. Task1
-                2. otherTask
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          Task1
-                Description:        Description1
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             finished, on time
-                                                   
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                                                   
-                Start Time:         1483 hours, 19 minutes
-                End Time:           1483 hours, 22 minutes
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                1.otherTask
-                Previous tasks:
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          otherTask
-                Description:        This is a followup task
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             available
-                                
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                                
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                Previous tasks:
-                1.Task1
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
-        out.reset();
-
-        tsm.startTask("Project1", "otherTask", new Time(89003), dev);
-        tsm.advanceTime(new Time(110000));
-        tsm.endTask("Project1", "otherTask", Status.FAILED, new Time(89004), dev);
-        tsm.replaceTaskInProject("Project1", "replaceMentTask", "Task to replace otherTask", new Time(1000), .0001, "otherTask");
-
-        System.setIn(new ByteArrayInputStream("Project1\nTask1\notherTask\nreplaceMentTask\nBACK\nBACK".getBytes()));
-        ui.showProjects();
-        assertEquals("""
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                ******** PROJECT DETAILS ********
-                Project Name:  Project1
-                Description:   Description1
-                Creation Time: 0 hours, 0 minutes
-                Due Time:      1 hours, 40 minutes
-                Status:        ongoing
-                                
-                Tasks:
-                1. Task1
-                2. replaceMentTask
-                               
-                Tasks that have been replaced:
-                1. otherTask, replaced by task: replaceMentTask
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          Task1
-                Description:        Description1
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             finished, on time
-                                                   
-                Replacement Task:   No replacement task
-                Replaces Task:      Replaces no tasks
-                                                   
-                Start Time:         1483 hours, 19 minutes
-                End Time:           1483 hours, 22 minutes
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                1.replaceMentTask
-                Previous tasks:
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          otherTask
-                Description:        This is a followup task
-                Estimated Duration: 1 hours, 40 minutes
-                Accepted Deviation: 5.0
-                Status:             failed
-                                
-                Replacement Task:   replaceMentTask
-                Replaces Task:      Replaces no tasks
-                                
-                Start Time:         1483 hours, 23 minutes
-                End Time:           1483 hours, 24 minutes
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                Previous tasks:
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                ******** TASK DETAILS ********
-                Task Name:          replaceMentTask
-                Description:        Task to replace otherTask
-                Estimated Duration: 16 hours, 40 minutes
-                Accepted Deviation: 1.0E-4
-                Status:             available
-                                
-                Replacement Task:   No replacement task
-                Replaces Task:      otherTask
-                                
-                Start Time:         Task has not started yet
-                End Time:           Task has not ended yet
-                                
-                User:               OlavBl
-                                
-                Next tasks:
-                Previous tasks:
-                1.Task1
-                                
-                Type the name of a task to see more details, or type "BACK" to choose another project:
-                Type "BACK" to cancel
-                ********* PROJECTS *********
-                Project2, status: finished
-                Project1, status: ongoing
-                Type the name of a project to see more details:
-                """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
-        out.reset();
-
-        */
     }
 }

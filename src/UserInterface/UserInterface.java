@@ -86,19 +86,17 @@ public class UserInterface {
      */
     private void printHelp() {
         System.out.println("Available commands:");
-        System.out.println("help:          Prints this message");
-        System.out.println("login:         Shows the login prompt");
-        System.out.println("logout:        Logs out");
-        System.out.println("shutdown:      Exits the system");
-        System.out.println("showprojects:  Shows a list of all current projects");
-        System.out.println("createproject: Shows the project creation prompt and creates a project");
-        System.out.println("createtask:    Shows the task creation prompt to add a task to a project");
-        System.out.println("updatetask:    Shows the update task prompt to update a tasks' information/status");
-        System.out.println("advancetime:   Allows the user to modify the system time");
-        System.out.println("loadsystem:    Allows the user to load projects and tasks into the system");
-        // TODO
-        System.out.println("starttask");
-        System.out.println("endtask");
-        System.out.println("updatedependencies");
+        System.out.println("help:               Prints this message");
+        System.out.println("login:              Shows the login prompt");
+        System.out.println("logout:             Logs out");
+        System.out.println("shutdown:           Exits the system");
+        System.out.println("showprojects:       Shows a list of all current projects");
+        System.out.println("createproject:      Shows the project creation prompt and creates a project");
+        System.out.println("createtask:         Shows the task creation prompt to add a task to a project");
+        System.out.println("advancetime:        Allows the user to modify the system time");
+        System.out.println("loadsystem:         Allows the user to load projects and tasks into the system");
+        System.out.println("starttask:          Allows the user to start a task");
+        System.out.println("endtask:            Allows the user to end a task");
+        System.out.println("updatedependencies: Allows the user to update the dependencies of a task");
     }
 }

@@ -152,8 +152,7 @@ public class ShowProjectsUI {
         } else {
             System.out.println("There are no tasks replaced in this project.");
         }
-
-        // TODO geef de totale uitvoeringstijd !!!
+        System.out.println();
 
     }
 
@@ -245,5 +244,6 @@ public class ShowProjectsUI {
         } else {
             System.out.println("- There are no previous tasks");
         }
+        System.out.println();
     }
 }

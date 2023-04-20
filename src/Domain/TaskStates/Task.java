@@ -274,7 +274,9 @@ public class Task {
      */
     List<Role> getUnfulfilledRoles() {
         List<Role> unfulfilledRoles = getRequiredRoles();
-        unfulfilledRoles.removeAll(getUsersWithRole().values());
+        for (Role role : getUsersWithRole().values()){
+            unfulfilledRoles.remove(role);
+        }
         return unfulfilledRoles;
     }
 
