@@ -24,7 +24,7 @@ public class TimeSpan {
         try {
             return getEndTime().subtract(getStartTime());
         } catch (InvalidTimeException e) {
-            throw new RuntimeException(e); // TODO: deze exception zou nooit kunnen volgens invarianten
+            throw new RuntimeException(e);
         }
     }
 
@@ -38,8 +38,8 @@ public class TimeSpan {
     /**
      * Sets the endTime of this TimeSpan object
      *
-     * @param endTime                           Time object to set as new endtime
-     * @throws EndTimeBeforeStartTimeException  if the given endtime is before this objects' start time
+     * @param endTime Time object to set as new endtime
+     * @throws EndTimeBeforeStartTimeException if the given endtime is before this objects' start time
      */
     public void setEndTime(Time endTime) throws EndTimeBeforeStartTimeException {
         if (endTime != null && getStartTime() != null && endTime.before(getStartTime())) {
@@ -57,8 +57,9 @@ public class TimeSpan {
 
     /**
      * Overwrites this TimeSpan objects' startTime
-     * @param startTime                         The new startTime to set
-     * @throws EndTimeBeforeStartTimeException  if the given startTime is after the current endTime
+     *
+     * @param startTime The new startTime to set
+     * @throws EndTimeBeforeStartTimeException if the given startTime is after the current endTime
      */
     public void setStartTime(Time startTime) throws EndTimeBeforeStartTimeException {
         if (startTime != null && getEndTime() != null && getEndTime().before(startTime)) {

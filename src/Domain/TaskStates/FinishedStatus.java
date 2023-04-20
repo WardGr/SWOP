@@ -1,7 +1,7 @@
 package Domain.TaskStates;
 
 /**
- * Different statuses a finished project can be in, depending on it's timing
+ * Different statuses a finished task can be in, depending on when it is due and when it was finished
  */
 public enum FinishedStatus {
     EARLY {

@@ -21,9 +21,9 @@ public class User {
     /**
      * Creates a new User object with the given
      *
-     * @param username  Username of the new User
-     * @param password  Password of the new User
-     * @param roles     Set of roles of the new User
+     * @param username Username of the new User
+     * @param password Password of the new User
+     * @param roles    Set of roles of the new User
      * @throws IllegalArgumentException if the given username, password or set of roles are null, or if the set of roles is empty
      */
     public User(String username, String password, Set<Role> roles) {
@@ -83,10 +83,11 @@ public class User {
 
     /**
      * Assigns a new task to this user
+     *
      * @param task The task to assign to this user
      * @param role The role this user wants to use for the task
-     * @throws IncorrectRoleException               if the user does not have the given role
-     * @throws UserAlreadyAssignedToTaskException   if the user is already assigned to the task
+     * @throws IncorrectRoleException             if the user does not have the given role
+     * @throws UserAlreadyAssignedToTaskException if the user is already assigned to the task
      */
     public void assignTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         if (!getRoles().contains(role)) {

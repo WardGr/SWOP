@@ -10,8 +10,9 @@ public class Time implements Comparable<Time> {
 
     /**
      * Creates a new time object with the given hours and minutes
-     * @param hour      Hours to set this Time object to
-     * @param minute    Minutes to set this Time object to
+     *
+     * @param hour   Hours to set this Time object to
+     * @param minute Minutes to set this Time object to
      * @throws InvalidTimeException if hour < 0 or minute < 0 or minute > 59
      */
     public Time(int hour, int minute) throws InvalidTimeException {
@@ -25,9 +26,8 @@ public class Time implements Comparable<Time> {
     /**
      * Creates a new Time object, calculated from the given total minutes
      *
-     * @param totalMinutes           The total amount of minutes this Time object must represent
-     * @throws InvalidTimeException  if totalMinutes < 0
-     *
+     * @param totalMinutes The total amount of minutes this Time object must represent
+     * @throws InvalidTimeException if totalMinutes < 0
      * @post getHour() == totalMinutes / 60
      * @post getMinute() == totalMinutes % 60
      */
@@ -63,8 +63,8 @@ public class Time implements Comparable<Time> {
     /**
      * Checks if the given Time object depicts a time before or after this object
      *
-     * @param time  The time object to compare to this object
-     * @return      true if the given time is before this objects time
+     * @param time The time object to compare to this object
+     * @return true if the given time is before this objects time
      */
     public boolean before(Time time) {
         return this.compareTo(time) < 0;
@@ -73,8 +73,8 @@ public class Time implements Comparable<Time> {
     /**
      * Checks if the given Time object depicts a time before or after this object
      *
-     * @param time  The time object to compare to this object
-     * @return      true if the given time is before this objects time
+     * @param time The time object to compare to this object
+     * @return true if the given time is before this objects time
      */
     public boolean after(Time time) {
         return this.compareTo(time) > 0;
@@ -91,7 +91,7 @@ public class Time implements Comparable<Time> {
     /**
      * @param obj Object to compare
      * @return false if obj is not a Time object or obj.getTotalMinutes() != getTotalMinutes(),
-     *               else true
+     * else true
      */
     @Override
     public boolean equals(Object obj) {
@@ -111,8 +111,8 @@ public class Time implements Comparable<Time> {
      *
      * @param other the Time object to be compared.
      * @return -1 if this.getTotalMinutes() < other.getTotalMinutes()
-     *          0 if this.getTotalMinutes() == other.getTotalMinutes()
-     *          1 if this.getTotalMinutes() > other.getTotalMinutes()
+     * 0 if this.getTotalMinutes() == other.getTotalMinutes()
+     * 1 if this.getTotalMinutes() > other.getTotalMinutes()
      */
     @Override
     public int compareTo(Time other) {

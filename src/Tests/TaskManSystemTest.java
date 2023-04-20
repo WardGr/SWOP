@@ -3,7 +3,7 @@ package Tests;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ public class TaskManSystemTest {
     }
 
     @Test
-    public void testTaskManSystem() throws InvalidTimeException, NewTimeBeforeSystemTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+    public void testTaskManSystem() throws InvalidTimeException, NewTimeBeforeSystemTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
 
         assertNotNull(taskManSystem.getTaskManSystemData());
         assertEquals(new Time(0), taskManSystem.getSystemTime());
@@ -44,9 +44,9 @@ public class TaskManSystemTest {
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.startTask("", "", user, Role.SYSADMIN));
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.addTaskToProject("", "", "", new Time(0), 0, List.of(), Set.of(), Set.of()));
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.addNextTaskToProject("", "", ""));
-        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.addPreviousTaskToProject("", "", ""));
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.addprevTaskToProject("", "", ""));
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.removeNextTaskFromProject("", "", ""));
-        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.removePreviousTaskFromProject("", "", ""));
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.removeprevTaskFromProject("", "", ""));
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.replaceTaskInProject("", "", "", new Time(0), 0, ""));
 
         assertThrows(NewTimeBeforeSystemTimeException.class, () -> taskManSystem.advanceTime(-1));
@@ -82,7 +82,7 @@ public class TaskManSystemTest {
         assertEquals(List.of("Replacement Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         assertEquals(List.of("Task 1"), taskManSystem.getProjectData("Project 1").getReplacedTasksNames());
 
-        taskManSystem.addTaskToProject("Project 1", "Next Task", "Test", new Time(0), 0, List.of(), Set.of(), Set.of());
+        taskManSystem.addTaskToProject("Project 1", "Next Task", "Test", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of());
         assertEquals(List.of("Replacement Task", "Next Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         taskManSystem.addNextTaskToProject("Project 1", "Task 1", "Next Task");
         assertEquals(Status.UNAVAILABLE, taskManSystem.getTaskData("Project 1", "Next Task").getStatus());
@@ -93,10 +93,10 @@ public class TaskManSystemTest {
         assertEquals(List.of("Replacement Task", "Next Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());
         assertEquals(List.of("Task 1"), taskManSystem.getProjectData("Project 1").getReplacedTasksNames());
 
-        taskManSystem.addPreviousTaskToProject("Project 1", "Next Task", "Task 1");
+        taskManSystem.addprevTaskToProject("Project 1", "Next Task", "Task 1");
         assertEquals(Status.UNAVAILABLE, taskManSystem.getTaskData("Project 1", "Next Task").getStatus());
 
-        taskManSystem.removePreviousTaskFromProject("Project 1", "Next Task", "Task 1");
+        taskManSystem.removeprevTaskFromProject("Project 1", "Next Task", "Task 1");
         assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Replacement Task").getStatus());
         assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Project 1", "Next Task").getStatus());
         assertEquals(List.of("Replacement Task", "Next Task"), taskManSystem.getProjectData("Project 1").getActiveTasksNames());

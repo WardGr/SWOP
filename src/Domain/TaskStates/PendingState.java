@@ -2,6 +2,9 @@ package Domain.TaskStates;
 
 import Domain.*;
 
+/**
+ * Task state class governing the task transitions from the PENDING state
+ */
 public class PendingState implements TaskState {
 
     @Override
@@ -9,7 +12,7 @@ public class PendingState implements TaskState {
         if (!task.getUnfulfilledRoles().contains(role)) {
             throw new IncorrectRoleException("Given role is not required in this task");
         }
-        for (Task prevTask : task.getPreviousTasks()) {
+        for (Task prevTask : task.getprevTasks()) {
             if (prevTask.getEndTime() == null || prevTask.getEndTime().after(startTime)) {
                 throw new IncorrectTaskStatusException("Start time is before end time previous task");
             }

@@ -4,7 +4,7 @@ import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 
 import java.util.*;
 
@@ -210,17 +210,17 @@ public class CreateTaskUI {
                 }
 
                 System.out.println("Tasks that this task depends on, enter '.' to stop adding new tasks:");
-                String previousTask = scanner.nextLine();
-                if (previousTask.equals("BACK")) {
+                String prevTask = scanner.nextLine();
+                if (prevTask.equals("BACK")) {
                     System.out.println("Cancelled task creation");
                     return;
                 }
 
-                Set<String> previousTasks = new HashSet<>();
-                while (!previousTask.equals(".")) {
-                    previousTasks.add(previousTask);
-                    previousTask = scanner.nextLine();
-                    if (previousTask.equals("BACK")) {
+                Set<String> prevTasks = new HashSet<>();
+                while (!prevTask.equals(".")) {
+                    prevTasks.add(prevTask);
+                    prevTask = scanner.nextLine();
+                    if (prevTask.equals("BACK")) {
                         System.out.println("Cancelled task creation");
                         return;
                     }
@@ -252,7 +252,7 @@ public class CreateTaskUI {
                             new Time(durationHour, durationMinutes),
                             deviation,
                             roles,
-                            previousTasks,
+                            prevTasks,
                             nextTasks
                     );
                     System.out.println("Task " + taskName + " successfully added to project " + projectName);
@@ -271,7 +271,7 @@ public class CreateTaskUI {
                     System.out.println("ERROR: " + e.getMessage() + '\n');
                 } catch (LoopDependencyGraphException e) {
                     System.out.println("ERROR: Given list of tasks introduces a loop\n");
-                } catch (NonDeveloperRoleException e) {
+                } catch (IllegalTaskRolesException e) {
                     System.out.println("ERROR: One of the given roles is not a developer role (Python programmer, Java programmer or system administrator)\n");
                 } catch (ProjectNotOngoingException e) {
                     System.out.println("ERROR: Project is already finished\n");

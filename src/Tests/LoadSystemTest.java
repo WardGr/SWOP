@@ -59,7 +59,7 @@ public class LoadSystemTest {
         assertEquals(taskData.getDescription(), "first LoadSystemTask");
         //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
         assertEquals(taskData.getNextTasksNames().size(), 0);
-        assertEquals(taskData.getPreviousTasksNames().size(), 0);
+        assertEquals(taskData.getPrevTaskNames().size(), 0);
         assertEquals(taskData.getProjectName(), "availableProject");
         assertNull(taskData.getReplacesTaskName());
         assertEquals(taskData.getEstimatedDuration().getHour(), 16);
@@ -145,7 +145,7 @@ public class LoadSystemTest {
         projectData = taskManSystem.getProjectData("replaceProject");
         assertTrue(projectData.getReplacedTasksNames().contains("replacedTask"));
 
-        //test adding previousTask
+        //test adding prevTask
         try {
             lsc.LoadSystem("src/Tests/jsons/previousTask.json");
         } catch (Exception e) {
@@ -156,8 +156,8 @@ public class LoadSystemTest {
         assertTrue(taskData.getNextTasksNames().contains("nextTask"));
         taskData = taskManSystem.getTaskData("previousProject", "nextTask");
         assertEquals(taskData.getStatus(), Status.UNAVAILABLE);
-        assertTrue(taskData.getPreviousTasksNames().contains("previousTask"));
-        assertEquals(taskData.getPreviousTasksNames().size(), 1);
+        assertTrue(taskData.getPrevTaskNames().contains("previousTask"));
+        assertEquals(taskData.getPrevTaskNames().size(), 1);
         assertEquals(taskData.getNextTasksNames().size(), 0);
 
         //testing loading multiple projects from 1 file
@@ -204,7 +204,7 @@ public class LoadSystemTest {
         assertEquals(taskData.getDescription(), "first LoadSystemTask");
         //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
         assertEquals(taskData.getNextTasksNames().size(), 0);
-        assertEquals(taskData.getPreviousTasksNames().size(), 0);
+        assertEquals(taskData.getPrevTaskNames().size(), 0);
         assertEquals(taskData.getProjectName(), "availableProject");
         assertNull(taskData.getReplacesTaskName());
         assertEquals(taskData.getEstimatedDuration().getHour(), 16);

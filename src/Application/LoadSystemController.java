@@ -3,7 +3,7 @@ package Application;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -101,7 +101,7 @@ public class LoadSystemController {
                  ProjectNotFoundException | TaskNotFoundException | TaskNameAlreadyInUseException |
                  IncorrectTaskStatusException | UserAlreadyAssignedToTaskException |
                  SessionController.RoleNotFoundException |
-                 LoopDependencyGraphException | IncorrectRoleException | NonDeveloperRoleException |
+                 LoopDependencyGraphException | IncorrectRoleException | IllegalTaskRolesException |
                  EndTimeBeforeStartTimeException | IncorrectUserException | ProjectNotOngoingException |
                  ProjectNameAlreadyInUseException | DueTimeBeforeCreationTimeException | DueBeforeSystemTimeException e) {
 
@@ -139,7 +139,7 @@ public class LoadSystemController {
     }
 
 
-    private void load(TreeMap<Time, JSONArray> projects, TreeMap<Time, JSONArray> startedTasks, TreeMap<Time, JSONArray> endedTasks, HashSet<JSONObject> remainingTasks ) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, SessionController.RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, NonDeveloperRoleException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException, ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException, DueBeforeSystemTimeException {
+    private void load(TreeMap<Time, JSONArray> projects, TreeMap<Time, JSONArray> startedTasks, TreeMap<Time, JSONArray> endedTasks, HashSet<JSONObject> remainingTasks ) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, SessionController.RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, IllegalTaskRolesException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException, ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException, DueBeforeSystemTimeException {
         while(startedTasks.size() > 0 || endedTasks.size() > 0 || projects.size() > 0){
             if(startedTasks.size() == 0){
                 if (endedTasks.size() == 0) {
@@ -243,7 +243,7 @@ public class LoadSystemController {
         }
     }
 
-    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, SessionController.RoleNotFoundException, ProjectNotOngoingException {
+    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, SessionController.RoleNotFoundException, ProjectNotOngoingException {
         //standard task fields
         String name = (String) task.get("name");
         String description = (String) task.get("description");

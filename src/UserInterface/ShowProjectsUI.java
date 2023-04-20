@@ -236,9 +236,9 @@ public class ShowProjectsUI {
 
 
         System.out.println("Previous tasks:");
-        if (taskData.getPreviousTasksNames().size() > 0) {
+        if (taskData.getPrevTaskNames().size() > 0) {
             int i = 1;
-            for (String prevTaskName : taskData.getPreviousTasksNames()) {
+            for (String prevTaskName : taskData.getPrevTaskNames()) {
                 System.out.println(i++ + ". " + prevTaskName);
             }
         } else {

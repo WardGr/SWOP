@@ -7,7 +7,7 @@ import Application.SessionWrapper;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.IllegalTaskRolesException;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class EndTaskControllerTest {
     @Test
-    public void test() throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, TaskNameAlreadyInUseException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectPermissionException, IncorrectUserException {
+    public void test() throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, TaskNameAlreadyInUseException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectPermissionException, IncorrectUserException {
         Set<Role> javaRole = new HashSet<>();
         javaRole.add(Role.JAVAPROGRAMMER);
         Set<Role> pythonRole = new HashSet<>();

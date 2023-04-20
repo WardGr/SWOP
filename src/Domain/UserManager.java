@@ -67,7 +67,7 @@ public class UserManager {
     }
 
     /**
-     * @param userName  Name of the user to get the User object from
+     * @param userName Name of the user to get the User object from
      * @return The user object corresponding to the given userName
      * @throws UserNotFoundException if the given userName does not correspond to an existing User
      */
