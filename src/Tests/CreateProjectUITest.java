@@ -243,7 +243,7 @@ public class CreateProjectUITest {
         assertEquals(taskManSystem.showProject("NewProject"),
                 """
                         Project Name:  NewProject
-                        Description:   COOL
+                        Description:   COOLo
                         Creation Time: 1 hours, 10 minutes
                         Due Time:      2 hours, 0 minutes
                         Status:        ongoing
