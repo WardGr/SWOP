@@ -49,7 +49,7 @@ public class UpdateDependenciesUI {
 
                 showOngoingProjects();
 
-                System.out.println("Give the name of the project you want to edit:");
+                System.out.println("Give the name of the project you want to update:");
                 String projectName = scanner.nextLine();
                 if (projectName.equals("BACK")) {
                     System.out.println("Quiting updating task dependencies");

@@ -57,7 +57,7 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          --- There are no unfinished projects in the system
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -82,7 +82,7 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                         out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -97,14 +97,14 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         ERROR: The given project name could not be found.
                         You can always use 'BACK' to return to previous menu
                         
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -119,25 +119,25 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         ***** (UN)AVAILABLE TASKS *****
                          - Task 1 with status: available
                          - Task 2 with status: available
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         ERROR: Given task name could not be found, try again.
                         ***** (UN)AVAILABLE TASKS *****
                          - Task 1 with status: available
                          - Task 2 with status: available
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
                                                 
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                                                 
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -152,12 +152,12 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                                                 
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         ***** (UN)AVAILABLE TASKS *****
                          - Task 1 with status: available
                          - Task 2 with status: available
                                                 
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Previous tasks: There are no previous tasks.
                         Next tasks: There are no next tasks.
                         Possible previous tasks: Task 2
@@ -175,14 +175,14 @@ public class UpdateDependenciesUITest {
                          - Task 1 with status: available
                          - Task 2 with status: unavailable
                                                 
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
                                                 
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                                                 
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -197,12 +197,12 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         ***** (UN)AVAILABLE TASKS *****
                          - Task 1 with status: available
                          - Task 2 with status: unavailable
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Previous tasks: There are no previous tasks.
                         Next tasks: Task 2
                         Possible previous tasks: There are no possible previous tasks to add.
@@ -220,14 +220,14 @@ public class UpdateDependenciesUITest {
                          - Task 1 with status: available
                          - Task 2 with status: available
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
                         
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -242,12 +242,12 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         ***** (UN)AVAILABLE TASKS *****
                          - Task 1 with status: available
                          - Task 2 with status: available
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Previous tasks: There are no previous tasks.
                         Next tasks: There are no next tasks.
                         Possible previous tasks: Task 1
@@ -265,14 +265,14 @@ public class UpdateDependenciesUITest {
                          - Task 1 with status: available
                          - Task 2 with status: unavailable
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
                         
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -287,12 +287,12 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         ***** (UN)AVAILABLE TASKS *****
                          - Task 1 with status: available
                          - Task 2 with status: unavailable
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Previous tasks: Task 1
                         Next tasks: There are no next tasks.
                         Possible previous tasks: There are no possible previous tasks to add.
@@ -346,14 +346,14 @@ public class UpdateDependenciesUITest {
                          - Task 1 with status: available
                          - Task 2 with status: unavailable
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
                         
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -368,12 +368,12 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         ***** (UN)AVAILABLE TASKS *****
                          - Task 1 with status: available
                          - Task 2 with status: unavailable
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Previous tasks: Task 1
                         Next tasks: There are no next tasks.
                         Possible previous tasks: There are no possible previous tasks to add.
@@ -391,14 +391,14 @@ public class UpdateDependenciesUITest {
                          - Task 1 with status: available
                          - Task 2 with status: available
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
                         
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                         
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
@@ -419,23 +419,23 @@ public class UpdateDependenciesUITest {
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                                                 
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         ***** (UN)AVAILABLE TASKS *****
                         There are no (un)available tasks in this project
                         
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         ERROR: Chosen task is not (un)available
                         ***** (UN)AVAILABLE TASKS *****
                         There are no (un)available tasks in this project
                                                 
-                        Give the name of the task you want to edit:
+                        Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
                                                 
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
                                                 
-                        Give the name of the project you want to edit:
+                        Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
