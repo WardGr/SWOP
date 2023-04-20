@@ -3,7 +3,7 @@ package Tests;
 import Application.EndTaskController;
 import Application.IncorrectPermissionException;
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
@@ -45,7 +45,7 @@ public class EndTaskControllerTest {
         tms.addTaskToProject("Omer", "Buy ingredients", "Get ingredients for the beer", new Time(2), .3, roles, new HashSet<>(), new HashSet<>());
 
 
-        SessionWrapper wrapper = new SessionWrapper(current);
+        SessionProxy wrapper = new SessionProxy(current);
 
         EndTaskController etc = new EndTaskController(wrapper, tms);
         assertEquals(Status.AVAILABLE, tms.getTaskData("Omer", "Hire brewer").getStatus());

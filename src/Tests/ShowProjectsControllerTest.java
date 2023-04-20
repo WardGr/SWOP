@@ -12,9 +12,9 @@ public class ShowProjectsControllerTest {
         Time systemtime = new Time(0);
 
         Session managerSession = new Session();
-        SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
+        SessionProxy managerSessionWrapper = new SessionProxy(managerSession);
         Session developerSession = new Session();
-        SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
+        SessionProxy developerSessionWrapper = new SessionProxy(developerSession);
         User manager = new User("DieterVH", "computer776", Role.PROJECTMANAGER);
         User developer = new User("SamHa", "trein123", Role.DEVELOPER);
 

@@ -2,24 +2,24 @@ package Application;
 
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 import Domain.UserAlreadyAssignedToTaskException;
 
 import java.util.Set;
 
 public class StartTaskController {
-    private final SessionWrapper session;
+    private final SessionProxy session;
     private final TaskManSystem taskManSystem;
 
     public StartTaskController(
-            SessionWrapper session,
+            SessionProxy session,
             TaskManSystem taskManSystem
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
     }
 
-    private SessionWrapper getSession() {
+    private SessionProxy getSession() {
         return session;
     }
 
@@ -33,7 +33,7 @@ public class StartTaskController {
                 getSession().getRoles().contains(Role.SYSADMIN));
     }
 
-    public TaskProxy getUserTaskData() {
+    public TaskData getUserTaskData() {
         return getSession().getCurrentUser().getTaskData();
     }
 
@@ -45,21 +45,21 @@ public class StartTaskController {
     }
 
 
-    public TaskManSystemProxy getTaskManSystemData() throws IncorrectPermissionException {
+    public TaskManSystemData getTaskManSystemData() throws IncorrectPermissionException {
         if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         return getTaskManSystem().getTaskManSystemData();
     }
 
-    public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
+    public ProjectData getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
         if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         return getTaskManSystem().getProjectData(projectName);
     }
 
-    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }

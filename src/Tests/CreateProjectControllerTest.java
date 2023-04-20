@@ -3,7 +3,7 @@ package Tests;
 import Application.CreateProjectController;
 import Application.IncorrectPermissionException;
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Domain.DueBeforeSystemTimeException;
 import Domain.*;
 import org.junit.Test;
@@ -17,7 +17,7 @@ public class CreateProjectControllerTest {
     @Test
     public void testCreateProjectController() throws ProjectNameAlreadyInUseException, InvalidTimeException, DueBeforeSystemTimeException, IncorrectPermissionException, NewTimeBeforeSystemTimeException {
         Session wardsSession = new Session();
-        SessionWrapper omerWrapper = new SessionWrapper(wardsSession);
+        SessionProxy omerWrapper = new SessionProxy(wardsSession);
         Set wardsRoles = new HashSet();
         wardsRoles.add(Role.PROJECTMANAGER);
         wardsRoles.add(Role.JAVAPROGRAMMER);
@@ -92,7 +92,7 @@ public class CreateProjectControllerTest {
         User brewer = new User("OlavBl", "peer123", Role.DEVELOPER);
         User boss = new User("WardGr", "minecraft123", Role.PROJECTMANAGER);
         Session omer = new Session();
-        SessionWrapper omerWrapper = new SessionWrapper(omer);
+        SessionProxy omerWrapper = new SessionProxy(omer);
         omer.login(brewer);
 
         TaskManSystem tms = new TaskManSystem(new Time(0));

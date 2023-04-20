@@ -19,19 +19,19 @@ public class UserInterfaceTest {
         TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0)); // exception thrown by the new Time
         UserManager userManager = new UserManager();
         Session session = new Session();
-        SessionWrapper sessionWrapper = new SessionWrapper(session);
+        SessionProxy sessionProxy = new SessionProxy(session);
 
         SessionController sessionController = new SessionController(session, userManager);
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionWrapper, taskManSystem);
-        CreateProjectController createProjectController = new CreateProjectController(sessionWrapper, taskManSystem);
-        ShowProjectsController showProjectsController = new ShowProjectsController(sessionWrapper, taskManSystem);
-        CreateTaskController createTaskController = new CreateTaskController(sessionWrapper, taskManSystem, userManager);
-        LoadSystemController loadSystemController = new LoadSystemController(sessionWrapper, taskManSystem, userManager);
-        StartTaskController startTaskController = new StartTaskController(sessionWrapper, taskManSystem);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem);
+        CreateProjectController createProjectController = new CreateProjectController(sessionProxy, taskManSystem);
+        ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
+        CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem, userManager);
+        LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager);
+        StartTaskController startTaskController = new StartTaskController(sessionProxy, taskManSystem);
         StartTaskUI startTaskUI = new StartTaskUI(startTaskController);
-        EndTaskController endTaskController = new EndTaskController(sessionWrapper, taskManSystem);
+        EndTaskController endTaskController = new EndTaskController(sessionProxy, taskManSystem);
         EndTaskUI endTaskUI = new EndTaskUI(endTaskController);
-        UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionWrapper, taskManSystem);
+        UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionProxy, taskManSystem);
         UpdateDependenciesUI updateDependenciesUI = new UpdateDependenciesUI(updateDependenciesController);
 
         SessionUI sessionUI = new SessionUI(sessionController);

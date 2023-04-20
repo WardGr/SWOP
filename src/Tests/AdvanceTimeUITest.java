@@ -3,7 +3,7 @@ package Tests;
 import Application.AdvanceTimeController;
 import Application.IncorrectPermissionException;
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Domain.*;
 import UserInterface.AdvanceTimeUI;
 import org.junit.Test;
@@ -45,9 +45,9 @@ public class AdvanceTimeUITest {
         TaskManSystem tmsDuvel = new TaskManSystem(new Time(17));
         TaskManSystem tmsChouffe = new TaskManSystem(new Time(63));
 
-        AdvanceTimeController atcOmer = new AdvanceTimeController(new SessionWrapper(omer), tmsOmer);
-        AdvanceTimeController atcDuvel = new AdvanceTimeController(new SessionWrapper(duvel), tmsDuvel);
-        AdvanceTimeController atcChouffe = new AdvanceTimeController(new SessionWrapper(chouffe), tmsChouffe);
+        AdvanceTimeController atcOmer = new AdvanceTimeController(new SessionProxy(omer), tmsOmer);
+        AdvanceTimeController atcDuvel = new AdvanceTimeController(new SessionProxy(duvel), tmsDuvel);
+        AdvanceTimeController atcChouffe = new AdvanceTimeController(new SessionProxy(chouffe), tmsChouffe);
 
         AdvanceTimeUI atuiOmer = new AdvanceTimeUI(atcOmer);
         AdvanceTimeUI atuiDuvel = new AdvanceTimeUI(atcDuvel);

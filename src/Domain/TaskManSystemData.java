@@ -3,15 +3,15 @@ package Domain;
 import java.util.List;
 
 /**
- * Immutable proxy for TaskManSystem
+ * Read-only data class for TaskManSystem
  */
-public class TaskManSystemProxy {
+public class TaskManSystemData {
     private final TaskManSystem taskManSystem;
 
     /**
-     * @param tms The TaskManSystem object this is a proxy of
+     * @param tms The TaskManSystem object this data belongs to
      */
-    public TaskManSystemProxy(TaskManSystem tms) {
+    public TaskManSystemData(TaskManSystem tms) {
         taskManSystem = tms;
     }
 

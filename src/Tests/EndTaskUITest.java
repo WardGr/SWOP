@@ -2,7 +2,7 @@ package Tests;
 
 import Application.EndTaskController;
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
@@ -23,7 +23,7 @@ public class EndTaskUITest {
     public void test() throws InvalidTimeException, UserNotFoundException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         //create EndTaskUi
         Session s = new Session();
-        SessionWrapper sw = new SessionWrapper(s);
+        SessionProxy sw = new SessionProxy(s);
         TaskManSystem tms = new TaskManSystem(new Time(0, 0));
         EndTaskController ec = new EndTaskController(sw, tms);
         EndTaskUI etui = new EndTaskUI(ec);

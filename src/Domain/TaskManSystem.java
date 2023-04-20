@@ -3,7 +3,7 @@ package Domain;
 import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,27 +15,27 @@ import java.util.Set;
  */
 public class TaskManSystem {
 
-    private final TaskManSystemProxy taskManSystemProxy;
+    private final TaskManSystemData taskManSystemData;
     private List<Project> projects;
     private Time systemTime;
 
     /**
      * Initialises the system, setting the system time, alongside an empty list of projects
-     * and setting the TaskManSystemProxy
+     * and setting the TaskManSystemData
      *
      * @param systemTime The initial system time (as a Time object)
      */
     public TaskManSystem(Time systemTime) {
         this.systemTime = systemTime;
         projects = new LinkedList<>();
-        taskManSystemProxy = new TaskManSystemProxy(this);
+        taskManSystemData = new TaskManSystemData(this);
     }
 
     /**
      * @return An immutable proxy of this object, containing some of this objects' details
      */
-    public TaskManSystemProxy getTaskManSystemData() {
-        return taskManSystemProxy;
+    public TaskManSystemData getTaskManSystemData() {
+        return taskManSystemData;
     }
 
     /**
@@ -92,7 +92,7 @@ public class TaskManSystem {
      * @return An immutable project proxy containing the projects' details
      * @throws ProjectNotFoundException if projectName does not correspond to an existing project within the systen
      */
-    public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException {
+    public ProjectData getProjectData(String projectName) throws ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
@@ -109,7 +109,7 @@ public class TaskManSystem {
      * @throws TaskNotFoundException    if the given taskName does not correspond to an existing task within the given project
      * @throws ProjectNotFoundException if the given projectName does not correspond to an existing project within the system
      */
-    public TaskProxy getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
+    public TaskData getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();

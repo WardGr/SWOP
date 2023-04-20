@@ -1,7 +1,7 @@
 package Tests;
 
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Application.StartTaskController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
@@ -14,7 +14,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,11 +23,11 @@ public class StartTaskUITest {
     @Test
     public void test() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
         Session session = new Session();
-        SessionWrapper sessionWrapper = new SessionWrapper(session);
+        SessionProxy sessionProxy = new SessionProxy(session);
 
         TaskManSystem taskManSystem = new TaskManSystem(new Time(0));
 
-        StartTaskController controller = new StartTaskController(sessionWrapper, taskManSystem);
+        StartTaskController controller = new StartTaskController(sessionProxy, taskManSystem);
         StartTaskUI startTaskUI = new StartTaskUI(controller);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));

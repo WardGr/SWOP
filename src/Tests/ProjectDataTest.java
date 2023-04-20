@@ -13,7 +13,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-public class ProjectProxyTest {
+public class ProjectDataTest {
     @Test
     public void test() throws InvalidTimeException, DueTimeBeforeCreationTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
         // Testing without replaces
@@ -26,14 +26,14 @@ public class ProjectProxyTest {
         omer.addNextTask("Hire brewer", "Brew beer");
         omer.addNewTask("Sell beer", "Sell the beer", new Time(10), 0.3, roles, new HashSet<>(), new HashSet<>());
         omer.addNextTask("Brew beer", "Sell beer");
-        ProjectProxy projectProxy = new ProjectProxy(omer);
+        ProjectData projectData = new ProjectData(omer);
 
-        assertEquals("Omer Brewery", projectProxy.getName());
-        assertEquals("Process of the Omer brewery", projectProxy.getDescription());
-        assertEquals(new Time(13), projectProxy.getCreationTime());
-        assertEquals(new Time(20), projectProxy.getDueTime());
-        assertEquals(3, projectProxy.getActiveTasksNames().size());
-        assertEquals(0, projectProxy.getReplacedTasksNames().size());
+        assertEquals("Omer Brewery", projectData.getName());
+        assertEquals("Process of the Omer brewery", projectData.getDescription());
+        assertEquals(new Time(13), projectData.getCreationTime());
+        assertEquals(new Time(20), projectData.getDueTime());
+        assertEquals(3, projectData.getActiveTasksNames().size());
+        assertEquals(0, projectData.getReplacedTasksNames().size());
 
         Set javaRoles = new HashSet();
         javaRoles.add(Role.JAVAPROGRAMMER);
@@ -42,31 +42,31 @@ public class ProjectProxyTest {
         pythonRoles.add(Role.PYTHONPROGRAMMER);
         User python = new User("Python", "Python", pythonRoles);
 
-        assertEquals(ProjectStatus.ONGOING, projectProxy.getStatus());
+        assertEquals(ProjectStatus.ONGOING, projectData.getStatus());
 
         omer.startTask("Hire brewer", new Time(14), java, Role.JAVAPROGRAMMER);
         omer.startTask("Hire brewer", new Time(15), python, Role.PYTHONPROGRAMMER);
         omer.finishTask("Hire brewer", java,  new Time(16));
 
-        assertEquals(ProjectStatus.ONGOING, projectProxy.getStatus());
-        assertEquals(3, projectProxy.getActiveTasksNames().size());
-        assertEquals(0, projectProxy.getReplacedTasksNames().size());
+        assertEquals(ProjectStatus.ONGOING, projectData.getStatus());
+        assertEquals(3, projectData.getActiveTasksNames().size());
+        assertEquals(0, projectData.getReplacedTasksNames().size());
 
         omer.startTask("Brew beer", new Time(17), java, Role.JAVAPROGRAMMER);
         omer.startTask("Brew beer", new Time(17), python, Role.PYTHONPROGRAMMER);
         omer.finishTask("Brew beer", python,  new Time(19));
 
-        assertEquals(ProjectStatus.ONGOING, projectProxy.getStatus());
-        assertEquals(3, projectProxy.getActiveTasksNames().size());
-        assertEquals(0, projectProxy.getReplacedTasksNames().size());
+        assertEquals(ProjectStatus.ONGOING, projectData.getStatus());
+        assertEquals(3, projectData.getActiveTasksNames().size());
+        assertEquals(0, projectData.getReplacedTasksNames().size());
 
         omer.startTask("Sell beer", new Time(19), java, Role.JAVAPROGRAMMER);
         omer.startTask("Sell beer", new Time(19), python, Role.PYTHONPROGRAMMER);
         omer.finishTask("Sell beer", python,  new Time(20));
 
-        assertEquals(ProjectStatus.FINISHED, projectProxy.getStatus());
-        assertEquals(3, projectProxy.getActiveTasksNames().size());
-        assertEquals(0, projectProxy.getReplacedTasksNames().size());
+        assertEquals(ProjectStatus.FINISHED, projectData.getStatus());
+        assertEquals(3, projectData.getActiveTasksNames().size());
+        assertEquals(0, projectData.getReplacedTasksNames().size());
 
 
         // Testing with replaces
@@ -77,42 +77,42 @@ public class ProjectProxyTest {
         Duvel.addNewTask("Hire destiller", "Hire a suitable destiller", new Time(5), .2, roles, new HashSet<>(), new HashSet<>());
         Duvel.addNewTask("Distill beer", "Have the destiller distill our delicious beer", new Time(30), 0.5, roles, new HashSet<>(), new HashSet<>());
         Duvel.addNewTask("Bottle beer", "Bottle the beer", new Time(10), 0.3, roles, new HashSet<>(), new HashSet<>());
-        ProjectProxy projectProxyDuvel = new ProjectProxy(Duvel);
+        ProjectData projectDataDuvel = new ProjectData(Duvel);
 
-        assertEquals("Duvel Moortgat", projectProxyDuvel.getName());
-        assertEquals("Distillery of the Duvel Barrel aged beer", projectProxyDuvel.getDescription());
-        assertEquals(new Time(2), projectProxyDuvel.getCreationTime());
-        assertEquals(new Time(50), projectProxyDuvel.getDueTime());
-        assertEquals(3, projectProxyDuvel.getActiveTasksNames().size());
-        assertEquals(0, projectProxyDuvel.getReplacedTasksNames().size());
+        assertEquals("Duvel Moortgat", projectDataDuvel.getName());
+        assertEquals("Distillery of the Duvel Barrel aged beer", projectDataDuvel.getDescription());
+        assertEquals(new Time(2), projectDataDuvel.getCreationTime());
+        assertEquals(new Time(50), projectDataDuvel.getDueTime());
+        assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
+        assertEquals(0, projectDataDuvel.getReplacedTasksNames().size());
 
         Duvel.startTask("Hire destiller", new Time(14), java, Role.JAVAPROGRAMMER);
         Duvel.failTask("Hire destiller", java, new Time(15));
         Duvel.replaceTask("Steal destiller", "Get chouffe destiller to work for us", new Time(3), .1, "Hire destiller");
 
-        assertEquals(3, projectProxyDuvel.getActiveTasksNames().size());
-        assertEquals(1, projectProxyDuvel.getReplacedTasksNames().size());
+        assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
+        assertEquals(1, projectDataDuvel.getReplacedTasksNames().size());
 
 
-        assertTrue(projectProxyDuvel.getActiveTasksNames().contains("Steal destiller"));
-        assertFalse(projectProxyDuvel.getActiveTasksNames().contains("Hire destiller"));
-        assertTrue(projectProxyDuvel.getReplacedTasksNames().contains("Hire destiller"));
+        assertTrue(projectDataDuvel.getActiveTasksNames().contains("Steal destiller"));
+        assertFalse(projectDataDuvel.getActiveTasksNames().contains("Hire destiller"));
+        assertTrue(projectDataDuvel.getReplacedTasksNames().contains("Hire destiller"));
 
-        assertEquals(ProjectStatus.ONGOING, projectProxyDuvel.getStatus());
+        assertEquals(ProjectStatus.ONGOING, projectDataDuvel.getStatus());
 
         Duvel.startTask("Steal destiller", new Time(16), java, Role.JAVAPROGRAMMER);
         Duvel.finishTask("Steal destiller", java, new Time(19));
 
-        assertEquals(3, projectProxyDuvel.getActiveTasksNames().size());
-        assertEquals(1, projectProxyDuvel.getReplacedTasksNames().size());
-        assertEquals(ProjectStatus.ONGOING, projectProxyDuvel.getStatus());
+        assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
+        assertEquals(1, projectDataDuvel.getReplacedTasksNames().size());
+        assertEquals(ProjectStatus.ONGOING, projectDataDuvel.getStatus());
 
         Duvel.startTask("Distill beer", new Time(19), java, Role.JAVAPROGRAMMER);
         Duvel.finishTask("Distill beer", java, new Time(40));
 
-        assertEquals(3, projectProxyDuvel.getActiveTasksNames().size());
-        assertEquals(1, projectProxyDuvel.getReplacedTasksNames().size());
-        assertEquals(ProjectStatus.ONGOING, projectProxyDuvel.getStatus());
+        assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
+        assertEquals(1, projectDataDuvel.getReplacedTasksNames().size());
+        assertEquals(ProjectStatus.ONGOING, projectDataDuvel.getStatus());
 
         Duvel.startTask("Bottle beer", new Time(40), java, Role.JAVAPROGRAMMER);
         Duvel.failTask("Bottle beer", java, new Time(45)); // woops, the bottle broke!
@@ -121,13 +121,13 @@ public class ProjectProxyTest {
         Duvel.startTask("Bottle beer 2", new Time(45), java, Role.JAVAPROGRAMMER);
         Duvel.finishTask("Bottle beer 2", java, new Time(50));
 
-        assertEquals(3, projectProxyDuvel.getActiveTasksNames().size());
-        assertEquals(2, projectProxyDuvel.getReplacedTasksNames().size());
-        assertEquals(ProjectStatus.FINISHED, projectProxyDuvel.getStatus());
+        assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
+        assertEquals(2, projectDataDuvel.getReplacedTasksNames().size());
+        assertEquals(ProjectStatus.FINISHED, projectDataDuvel.getStatus());
 
-        assertTrue(projectProxyDuvel.getActiveTasksNames().contains("Bottle beer 2"));
-        assertFalse(projectProxyDuvel.getActiveTasksNames().contains("Bottle beer"));
-        assertTrue(projectProxyDuvel.getReplacedTasksNames().contains("Bottle beer"));
-        assertFalse(projectProxyDuvel.getReplacedTasksNames().contains("Bottle beer 2"));
+        assertTrue(projectDataDuvel.getActiveTasksNames().contains("Bottle beer 2"));
+        assertFalse(projectDataDuvel.getActiveTasksNames().contains("Bottle beer"));
+        assertTrue(projectDataDuvel.getReplacedTasksNames().contains("Bottle beer"));
+        assertFalse(projectDataDuvel.getReplacedTasksNames().contains("Bottle beer 2"));
     }
 }

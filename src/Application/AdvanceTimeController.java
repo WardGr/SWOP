@@ -9,18 +9,18 @@ import java.util.Set;
  */
 public class AdvanceTimeController {
 
-    private final SessionWrapper session;
+    private final SessionProxy session;
     private final TaskManSystem taskManSystem;
 
     public AdvanceTimeController(
-            SessionWrapper session,
+            SessionProxy session,
             TaskManSystem taskManSystem
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
     }
 
-    private SessionWrapper getSession() {
+    private SessionProxy getSession() {
         return session;
     }
 

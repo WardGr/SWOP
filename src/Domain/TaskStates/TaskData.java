@@ -10,22 +10,22 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Immutable wrapper for task, with some extra functionality
+ * Read-only data class for task, with some extra functionality
  */
-public class TaskProxy {
+public class TaskData {
     private final Task task;
 
     /**
-     * Creates a new task proxy object with the given task
+     * Creates a new read-only task data object with the given task
      *
-     * @param task the task of which to create a task proxy
+     * @param task the task of which to create a task data class
      */
-    public TaskProxy(Task task) {
+    public TaskData(Task task) {
         this.task = task;
     }
 
     /**
-     * @return The task this proxy represents
+     * @return The task this data represents
      */
     private Task getTask() {
         return task;
@@ -75,7 +75,7 @@ public class TaskProxy {
     }
 
     /**
-     * @return A string depicting the name of the task that replaces this proxy's task
+     * @return A string depicting the name of the task that replaces this task
      */
     public String getReplacementTaskName() {
         if (getTask().getReplacementTask() == null) {
@@ -86,7 +86,7 @@ public class TaskProxy {
     }
 
     /**
-     * @return A string depicting the name of the task that this proxy's task replaces
+     * @return A string depicting the name of the task that the task replaces
      */
     public String getReplacesTaskName() {
         if (getTask().getReplacesTask() == null) {
@@ -97,7 +97,7 @@ public class TaskProxy {
     }
 
     /**
-     * @return A list of the names of all previous tasks of this proxy's task
+     * @return A list of the names of all previous tasks of the task
      */
     public List<String> getPrevTaskNames() {
         List<String> prevTasksNames = new LinkedList<>();
@@ -108,7 +108,7 @@ public class TaskProxy {
     }
 
     /**
-     * @return A list of the names of all next tasks of this proxy's task
+     * @return A list of the names of all next tasks of the task
      */
     public List<String> getNextTasksNames() {
         List<String> nextTasksNames = new LinkedList<>();
@@ -147,14 +147,14 @@ public class TaskProxy {
     }
 
     /**
-     * @return A String depicting this proxy's tasks' projects' name
+     * @return A String depicting this tasks' projects' name
      */
     public String getProjectName() {
         return getTask().getProjectName();
     }
 
     /**
-     * Checks if it is safe to add (the task corresponding to) the given prevTask as previous task to this proxy's task
+     * Checks if it is safe to add (the task corresponding to) the given prevTask as previous task to this task
      * without introducing loops in the dependency graph
      *
      * @param prevTask Name of the task corresponding to the task to check

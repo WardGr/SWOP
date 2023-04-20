@@ -8,10 +8,10 @@ import java.util.Set;
 /**
  * Read-only wrapper class for Session object, encapsulating the Session object
  */
-public class SessionWrapper {
+public class SessionProxy {
     private final Session session;
 
-    public SessionWrapper(Session session) {
+    public SessionProxy(Session session) {
         this.session = session;
     }
 

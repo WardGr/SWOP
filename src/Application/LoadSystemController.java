@@ -19,9 +19,9 @@ import java.util.*;
 public class LoadSystemController {
     private final UserManager userManager;
     private final TaskManSystem taskManSystem;
-    private final SessionWrapper session;
+    private final SessionProxy session;
 
-    public LoadSystemController(SessionWrapper session, TaskManSystem taskManSystem, UserManager userManager) {
+    public LoadSystemController(SessionProxy session, TaskManSystem taskManSystem, UserManager userManager) {
         this.session = session;
         this.taskManSystem = taskManSystem;
         this.userManager = userManager;
@@ -35,7 +35,7 @@ public class LoadSystemController {
         return taskManSystem;
     }
 
-    private SessionWrapper getSession() {
+    private SessionProxy getSession() {
         return session;
     }
 

@@ -15,7 +15,7 @@ public class UpdateDependenciesControllerTest {
     @Test
     public void testUpdateDependenciesController() throws InvalidTimeException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException, LoopDependencyGraphException, ProjectNotOngoingException, IllegalTaskRolesException {
         Session omer = new Session();
-        SessionWrapper omerWrapper = new SessionWrapper(omer);
+        SessionProxy omerWrapper = new SessionProxy(omer);
         TaskManSystem tms = new TaskManSystem(new Time(11));
         User ward = new User("Ward", "ward123", Set.of(Role.JAVAPROGRAMMER, Role.PROJECTMANAGER));
 

@@ -18,7 +18,7 @@ public class Project {
     private final String description;
     private final Time creationTime;
     private final Time dueTime;
-    private final ProjectProxy projectProxy;
+    private final ProjectData projectData;
     private ProjectStatus status;
 
     public Project(String name, String description, Time creationTime, Time dueTime)
@@ -32,7 +32,7 @@ public class Project {
         this.description = description;
         this.creationTime = creationTime;
         this.dueTime = dueTime;
-        this.projectProxy = new ProjectProxy(this);
+        this.projectData = new ProjectData(this);
         this.status = ProjectStatus.ONGOING;
     }
 
@@ -103,8 +103,8 @@ public class Project {
     /**
      * @return A read-only project proxy that contains project data and getters
      */
-    public ProjectProxy getProjectData() {
-        return projectProxy;
+    public ProjectData getProjectData() {
+        return projectData;
     }
 
     /**
@@ -112,7 +112,7 @@ public class Project {
      * @return A read-only task proxy that contains task data and getters
      * @throws TaskNotFoundException if the taskname does not correspond to a task inside this project
      */
-    public TaskProxy getTaskData(String taskName) throws TaskNotFoundException {
+    public TaskData getTaskData(String taskName) throws TaskNotFoundException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();

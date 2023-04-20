@@ -1,7 +1,7 @@
 package Tests;
 
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Application.UpdateDependenciesController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
@@ -27,9 +27,9 @@ public class UpdateDependenciesUITest {
         Time systemtime = new Time(0);
 
         Session managerSession = new Session();
-        SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
+        SessionProxy managerSessionProxy = new SessionProxy(managerSession);
         Session developerSession = new Session();
-        SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
+        SessionProxy developerSessionProxy = new SessionProxy(developerSession);
 
         User manager = new User("DieterVH", "computer776", Set.of(Role.PROJECTMANAGER));
         User developer = new User("SamHa", "trein123", Set.of(Role.PYTHONPROGRAMMER));
@@ -39,8 +39,8 @@ public class UpdateDependenciesUITest {
 
         TaskManSystem taskManSystem = new TaskManSystem(systemtime);
 
-        UpdateDependenciesController developerController = new UpdateDependenciesController(developerSessionWrapper, taskManSystem);
-        UpdateDependenciesController managerController = new UpdateDependenciesController(managerSessionWrapper, taskManSystem);
+        UpdateDependenciesController developerController = new UpdateDependenciesController(developerSessionProxy, taskManSystem);
+        UpdateDependenciesController managerController = new UpdateDependenciesController(managerSessionProxy, taskManSystem);
 
         UpdateDependenciesUI developerUI = new UpdateDependenciesUI(developerController);
         UpdateDependenciesUI managerUI = new UpdateDependenciesUI(managerController);

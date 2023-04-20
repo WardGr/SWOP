@@ -7,18 +7,18 @@ import Domain.*;
  */
 public class CreateProjectController {
 
-    private final SessionWrapper session;
+    private final SessionProxy session;
     private final TaskManSystem taskManSystem;
 
     public CreateProjectController(
-            SessionWrapper session,
+            SessionProxy session,
             TaskManSystem taskManSystem
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
     }
 
-    private SessionWrapper getSession() {
+    private SessionProxy getSession() {
         return session;
     }
 

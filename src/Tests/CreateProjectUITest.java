@@ -2,7 +2,7 @@ package Tests;
 
 import Application.CreateProjectController;
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.IllegalTaskRolesException;
@@ -25,9 +25,9 @@ public class CreateProjectUITest {
         Time systemtime = new Time(70);
 
         Session managerSession = new Session();
-        SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
+        SessionProxy managerSessionProxy = new SessionProxy(managerSession);
         Session developerSession = new Session();
-        SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
+        SessionProxy developerSessionProxy = new SessionProxy(developerSession);
 
 
         HashSet<Role> roles = new HashSet<>();
@@ -45,8 +45,8 @@ public class CreateProjectUITest {
         taskManSystem.createProject("SimpleProject", "Cool description", new Time(100));
         taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
 
-        CreateProjectController managerController = new CreateProjectController(managerSessionWrapper, taskManSystem);
-        CreateProjectController developerController = new CreateProjectController(developerSessionWrapper, taskManSystem);
+        CreateProjectController managerController = new CreateProjectController(managerSessionProxy, taskManSystem);
+        CreateProjectController developerController = new CreateProjectController(developerSessionProxy, taskManSystem);
 
         CreateProjectUI developerUI = new CreateProjectUI(developerController);
         CreateProjectUI managerUI = new CreateProjectUI(managerController);

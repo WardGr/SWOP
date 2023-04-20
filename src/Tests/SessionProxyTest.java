@@ -1,6 +1,6 @@
 package Tests;
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Domain.*;
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class SessionWrapperTest {
+public class SessionProxyTest {
 
     @Test
     public void test() {
@@ -28,7 +28,7 @@ public class SessionWrapperTest {
         Session current = new Session();
         current.login(ward);
 
-        SessionWrapper wrapper = new SessionWrapper(current);
+        SessionProxy wrapper = new SessionProxy(current);
         assertEquals(ward, wrapper.getCurrentUser());
         assertEquals(2, wrapper.getRoles().size());
         assertTrue(wrapper.getRoles().contains(Role.SYSADMIN));

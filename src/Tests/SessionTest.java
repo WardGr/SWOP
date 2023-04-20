@@ -1,7 +1,7 @@
 package Tests;
 
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Domain.Role;
 import Domain.User;
 import org.junit.Before;
@@ -77,14 +77,14 @@ public class SessionTest {
         assertEquals(brewerRoles, bossManSession.getRoles());
         assertTrue(bossManSession.isLoggedIn());
 
-        SessionWrapper sessionWrapper1 = new SessionWrapper(brewerSession);
-        assertTrue(sessionWrapper1.getRoles().isEmpty());
-        assertNull(sessionWrapper1.getCurrentUser());
+        SessionProxy sessionProxy1 = new SessionProxy(brewerSession);
+        assertTrue(sessionProxy1.getRoles().isEmpty());
+        assertNull(sessionProxy1.getCurrentUser());
 
         brewerSession.login(brewer);
-        SessionWrapper sessionWrapper2 = new SessionWrapper(brewerSession);
-        assertEquals(sessionWrapper2.getRoles(), brewerRoles);
-        assertEquals(sessionWrapper2.getCurrentUser(), brewer);
+        SessionProxy sessionProxy2 = new SessionProxy(brewerSession);
+        assertEquals(sessionProxy2.getRoles(), brewerRoles);
+        assertEquals(sessionProxy2.getCurrentUser(), brewer);
 
 
     }

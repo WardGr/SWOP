@@ -1,23 +1,23 @@
 package Application;
 
 import Domain.*;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.Set;
 
 public class EndTaskController {
-    private final SessionWrapper session;
+    private final SessionProxy session;
     private final TaskManSystem taskManSystem;
 
     public EndTaskController(
-            SessionWrapper session,
+            SessionProxy session,
             TaskManSystem taskManSystem
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
     }
 
-    private SessionWrapper getSession() {
+    private SessionProxy getSession() {
         return session;
     }
 
@@ -31,7 +31,7 @@ public class EndTaskController {
                 getSession().getRoles().contains(Role.SYSADMIN));
     }
 
-    public TaskProxy getUserTaskData() {
+    public TaskData getUserTaskData() {
         return getSession().getCurrentUser().getTaskData();
     }
 
@@ -39,7 +39,7 @@ public class EndTaskController {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
-        TaskProxy userTaskData = getUserTaskData();
+        TaskData userTaskData = getUserTaskData();
         if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING) {
             throw new IncorrectPermissionException("You are not executing a task");
         }
@@ -50,28 +50,28 @@ public class EndTaskController {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
-        TaskProxy userTaskData = getUserTaskData();
+        TaskData userTaskData = getUserTaskData();
         if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING) {
             throw new IncorrectPermissionException("You are not executing a task");
         }
         getTaskManSystem().failTask(userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
     }
 
-    public TaskManSystemProxy getTaskManSystemData() throws IncorrectPermissionException {
+    public TaskManSystemData getTaskManSystemData() throws IncorrectPermissionException {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         return getTaskManSystem().getTaskManSystemData();
     }
 
-    public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
+    public ProjectData getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         return getTaskManSystem().getProjectData(projectName);
     }
 
-    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }

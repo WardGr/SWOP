@@ -40,7 +40,7 @@ public class StartTaskControllerTest {
         roles.add(Role.PYTHONPROGRAMMER);
         tms.addTaskToProject("Omer", "Hire brewer", "Get suitable brewer", new Time(10), .3, roles, new HashSet<>(), new HashSet<>());
 
-        SessionWrapper wrapper = new SessionWrapper(current);
+        SessionProxy wrapper = new SessionProxy(current);
 
         assertEquals(Status.AVAILABLE, tms.getTaskData("Omer", "Hire brewer").getStatus());
 

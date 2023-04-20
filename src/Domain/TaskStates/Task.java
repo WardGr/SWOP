@@ -31,7 +31,7 @@ public class Task {
 
     private final Map<User, Role> committedUsers;
 
-    private final TaskProxy taskProxy;
+    private final TaskData taskData;
 
     private String projectName;
 
@@ -60,7 +60,7 @@ public class Task {
         this.prevTasks = new HashSet<>();
         this.nextTasks = new HashSet<>();
 
-        this.taskProxy = new TaskProxy(this);
+        this.taskData = new TaskData(this);
 
         this.state = new AvailableState();
     }
@@ -103,7 +103,7 @@ public class Task {
         this.prevTasks = new HashSet<>();
         this.nextTasks = new HashSet<>();
 
-        this.taskProxy = new TaskProxy(this);
+        this.taskData = new TaskData(this);
 
         setState(new AvailableState());
         setRequiredRoles(roles);
@@ -130,8 +130,8 @@ public class Task {
     /**
      * @return A read-only proxy of this task, containing certain details of the task
      */
-    public TaskProxy getTaskProxy() {
-        return taskProxy;
+    public TaskData getTaskProxy() {
+        return taskData;
     }
 
     /**

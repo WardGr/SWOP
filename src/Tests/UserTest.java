@@ -3,7 +3,7 @@ package Tests;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.Task;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,8 +12,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -29,17 +27,17 @@ public class UserTest {
     private Task task2;
 
     @Mock
-    private TaskProxy taskProxy;
+    private TaskData taskData;
 
     @Mock
-    private TaskProxy taskProxy2;
+    private TaskData taskData2;
 
     @Before
     public void setUp() {
-        // See startTask, taskProxy moet PENDING status returnen.
-        Mockito.when(task.getTaskProxy()).thenReturn(taskProxy);
-        Mockito.when(task2.getTaskProxy()).thenReturn(taskProxy2);
-        Mockito.when(taskProxy.getStatus()).thenReturn(Status.EXECUTING);
+        // See startTask, taskData moet PENDING status returnen.
+        Mockito.when(task.getTaskProxy()).thenReturn(taskData);
+        Mockito.when(task2.getTaskProxy()).thenReturn(taskData2);
+        Mockito.when(taskData.getStatus()).thenReturn(Status.EXECUTING);
     }
 
     @Test
@@ -82,11 +80,11 @@ public class UserTest {
 
         assertThrows(UserAlreadyAssignedToTaskException.class, () -> jonathan.assignTask(task, Role.PROJECTMANAGER));
 
-        Mockito.when(taskProxy.getStatus()).thenReturn(Status.PENDING);
+        Mockito.when(taskData.getStatus()).thenReturn(Status.PENDING);
         jonathan.assignTask(task2, Role.PROJECTMANAGER);
         // This should unassign jonathan to the pending task, and assign task as its current task
 
-        assertEquals(taskProxy2, jonathan.getTaskData());
+        assertEquals(taskData2, jonathan.getTaskData());
 
 
         jonathan.endTask();

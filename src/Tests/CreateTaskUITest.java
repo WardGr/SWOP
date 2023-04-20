@@ -24,9 +24,9 @@ public class CreateTaskUITest {
 
         // Setup test environment
         Session managerSession = new Session();
-        SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
+        SessionProxy managerSessionProxy = new SessionProxy(managerSession);
         Session developerSession = new Session();
-        SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
+        SessionProxy developerSessionProxy = new SessionProxy(developerSession);
         User manager = new User("DieterVH", "computer776", Set.of(Role.PROJECTMANAGER));
         User developer = new User("SamHa", "trein123", Set.of(Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER));
         User developer2 = new User("SamHa2", "trein123", Set.of(Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER));
@@ -38,8 +38,8 @@ public class CreateTaskUITest {
 
         UserManager userManager = new UserManager();
 
-        CreateTaskController managerController = new CreateTaskController(managerSessionWrapper, taskManSystem, userManager);
-        CreateTaskController developerController = new CreateTaskController(developerSessionWrapper, taskManSystem, userManager);
+        CreateTaskController managerController = new CreateTaskController(managerSessionProxy, taskManSystem, userManager);
+        CreateTaskController developerController = new CreateTaskController(developerSessionProxy, taskManSystem, userManager);
 
         CreateTaskUI developerUI = new CreateTaskUI(developerController);
         CreateTaskUI managerUI = new CreateTaskUI(managerController);

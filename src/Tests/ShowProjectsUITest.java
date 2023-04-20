@@ -1,7 +1,7 @@
 package Tests;
 
 import Application.Session;
-import Application.SessionWrapper;
+import Application.SessionProxy;
 import Application.ShowProjectsController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
@@ -23,12 +23,12 @@ public class ShowProjectsUITest {
     @Test
     public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         Session session = new Session();
-        SessionWrapper sessionWrapper = new SessionWrapper(session);
+        SessionProxy sessionProxy = new SessionProxy(session);
         TaskManSystem tsm = new TaskManSystem(new Time(0));
         User manager = new User("WardGr", "minecraft123", Set.of(Role.PROJECTMANAGER));
         User dev = new User("OlavBl", "753", Set.of(Role.PYTHONPROGRAMMER));
 
-        ShowProjectsController showProjectsController = new ShowProjectsController(sessionWrapper, tsm);
+        ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, tsm);
 
         ShowProjectsUI ui = new ShowProjectsUI(showProjectsController);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

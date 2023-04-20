@@ -91,16 +91,16 @@ public class ProjectTest {
 
         // PROJECT PROXY TEST
 
-        ProjectProxy projectProxy = project.getProjectData();
+        ProjectData projectData = project.getProjectData();
 
-        assertEquals(project.getName(), projectProxy.getName());
-        assertEquals(project.getStatus(), projectProxy.getStatus());
-        assertEquals(project.getReplacedTasksNames(), projectProxy.getReplacedTasksNames());
-        assertEquals(project.getActiveTasksNames(), projectProxy.getActiveTasksNames());
-        assertEquals(project.getReplacedTasksNames(), projectProxy.getReplacedTasksNames());
-        assertEquals(project.getCreationTime(), projectProxy.getCreationTime());
-        assertEquals(project.getDueTime(), projectProxy.getDueTime());
-        assertEquals(project.getDescription(), projectProxy.getDescription());
+        assertEquals(project.getName(), projectData.getName());
+        assertEquals(project.getStatus(), projectData.getStatus());
+        assertEquals(project.getReplacedTasksNames(), projectData.getReplacedTasksNames());
+        assertEquals(project.getActiveTasksNames(), projectData.getActiveTasksNames());
+        assertEquals(project.getReplacedTasksNames(), projectData.getReplacedTasksNames());
+        assertEquals(project.getCreationTime(), projectData.getCreationTime());
+        assertEquals(project.getDueTime(), projectData.getDueTime());
+        assertEquals(project.getDescription(), projectData.getDescription());
 
 
     }

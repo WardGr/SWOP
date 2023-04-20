@@ -2,7 +2,7 @@ package Tests;
 
 import Application.*;
 import Domain.*;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 import UserInterface.LoadSystemUI;
 import org.junit.Test;
 
@@ -16,9 +16,9 @@ public class LoadSystemTest {
     UserManager userManager = new UserManager();
     TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0));
     Session session = new Session();
-    SessionWrapper sessionWrapper = new SessionWrapper(session);
+    SessionProxy sessionProxy = new SessionProxy(session);
 
-    LoadSystemController lsc = new LoadSystemController(sessionWrapper, taskManSystem, userManager);
+    LoadSystemController lsc = new LoadSystemController(sessionProxy, taskManSystem, userManager);
 
     public LoadSystemTest() throws InvalidTimeException {
     }
@@ -44,7 +44,7 @@ public class LoadSystemTest {
         //tests basic project fields
         assertEquals(taskManSystem.getSystemTime().getHour(), 15);
         assertEquals(10, taskManSystem.getSystemTime().getMinute());
-        ProjectProxy projectData = taskManSystem.getProjectData("availableProject");
+        ProjectData projectData = taskManSystem.getProjectData("availableProject");
         assertEquals(projectData.getName(), "availableProject");
         assertEquals(projectData.getStatus(), ProjectStatus.ONGOING);
         assertEquals(projectData.getDescription(), "first LoadSystemTest");
@@ -54,7 +54,7 @@ public class LoadSystemTest {
         assertEquals(projectData.getDueTime().getMinute(), 10);
 
         //tests basic task fields
-        TaskProxy taskData = taskManSystem.getTaskData("availableProject", "availableTask");
+        TaskData taskData = taskManSystem.getTaskData("availableProject", "availableTask");
         assertEquals(taskData.getName(), "availableTask");
         assertEquals(taskData.getDescription(), "first LoadSystemTask");
         //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);

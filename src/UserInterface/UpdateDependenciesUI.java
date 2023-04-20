@@ -4,7 +4,7 @@ import Application.IncorrectPermissionException;
 import Application.UpdateDependenciesController;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.List;
 import java.util.Scanner;
@@ -54,7 +54,7 @@ public class UpdateDependenciesUI {
     }
 
     private void updateProject(String projectName, Scanner scanner) throws IncorrectPermissionException, ProjectNotFoundException {
-        ProjectProxy projectData = getController().getProjectData(projectName);
+        ProjectData projectData = getController().getProjectData(projectName);
 
         while (true) {
             try {
@@ -75,8 +75,8 @@ public class UpdateDependenciesUI {
     }
 
     private void updateTask(String projectName, String taskName, Scanner scanner) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
-        ProjectProxy projectData = getController().getProjectData(projectName);
-        TaskProxy taskData = getController().getTaskData(projectName, taskName);
+        ProjectData projectData = getController().getProjectData(projectName);
+        TaskData taskData = getController().getTaskData(projectName, taskName);
 
         if (taskData.getStatus() == Status.UNAVAILABLE || taskData.getStatus() == Status.AVAILABLE) {
             while (true) {
@@ -143,7 +143,7 @@ public class UpdateDependenciesUI {
         System.out.println();
     }
 
-    private void showRelevantTasks(ProjectProxy projectData) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
+    private void showRelevantTasks(ProjectData projectData) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
         System.out.println("***** (UN)AVAILABLE TASKS *****");
         List<String> unAvailableTasks = projectData.getActiveTasksNames();
         for (String taskName : projectData.getActiveTasksNames()){
@@ -169,7 +169,7 @@ public class UpdateDependenciesUI {
         System.out.println();
     }
 
-    private void showTaskDependencies(ProjectProxy projectData, TaskProxy taskData) {
+    private void showTaskDependencies(ProjectData projectData, TaskData taskData) {
         System.out.print("Previous tasks: ");
         if (taskData.getPrevTaskNames().size() == 0) {
             System.out.println("There are no previous tasks.");

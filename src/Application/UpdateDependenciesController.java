@@ -2,18 +2,18 @@ package Application;
 
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 public class UpdateDependenciesController {
-    private final SessionWrapper session;
+    private final SessionProxy session;
     private final TaskManSystem taskManSystem;
 
-    public UpdateDependenciesController(SessionWrapper session, TaskManSystem taskManSystem) {
+    public UpdateDependenciesController(SessionProxy session, TaskManSystem taskManSystem) {
         this.session = session;
         this.taskManSystem = taskManSystem;
     }
 
-    private SessionWrapper getSession() {
+    private SessionProxy getSession() {
         return session;
     }
 
@@ -53,21 +53,21 @@ public class UpdateDependenciesController {
         getTaskManSystem().removeNextTaskFromProject(projectName, taskName, nextTaskName);
     }
 
-    public TaskManSystemProxy getTaskManSystemData() throws IncorrectPermissionException {
+    public TaskManSystemData getTaskManSystemData() throws IncorrectPermissionException {
         if (!updateDependenciesPreconditions()) {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
         return getTaskManSystem().getTaskManSystemData();
     }
 
-    public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
+    public ProjectData getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
         if (!updateDependenciesPreconditions()) {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
         return getTaskManSystem().getProjectData(projectName);
     }
 
-    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         if (!updateDependenciesPreconditions()) {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }

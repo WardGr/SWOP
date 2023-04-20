@@ -3,15 +3,15 @@ package Domain;
 import java.util.List;
 
 /**
- * Read-only proxy for a project, containing specific details about this project
+ * Read-only data class for a project, containing specific details about this project
  */
-public class ProjectProxy {
+public class ProjectData {
     private final Project project;
 
     /**
      * @param project The project to create a proxy for
      */
-    public ProjectProxy(Project project) {
+    public ProjectData(Project project) {
         this.project = project;
     }
 

@@ -3,7 +3,7 @@ package Application;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.IllegalTaskRolesException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.List;
 import java.util.Set;
@@ -13,13 +13,13 @@ import java.util.Set;
  */
 public class CreateTaskController {
 
-    private final SessionWrapper session;
+    private final SessionProxy session;
     private final TaskManSystem taskManSystem;
     private final UserManager userManager;
     // TODO deze niet meer nodig?
 
     public CreateTaskController(
-            SessionWrapper session,
+            SessionProxy session,
             TaskManSystem taskManSystem,
             UserManager userManager
     ) {
@@ -29,7 +29,7 @@ public class CreateTaskController {
     }
 
 
-    private SessionWrapper getSession() {
+    private SessionProxy getSession() {
         return session;
     }
 
@@ -130,15 +130,15 @@ public class CreateTaskController {
         );
     }
 
-    public TaskManSystemProxy getTaskManSystemData() {
+    public TaskManSystemData getTaskManSystemData() {
         return getTaskManSystem().getTaskManSystemData();
     }
 
-    public ProjectProxy getProjectData(String projectName) throws ProjectNotFoundException {
+    public ProjectData getProjectData(String projectName) throws ProjectNotFoundException {
         return getTaskManSystem().getProjectData(projectName);
     }
 
-    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
         return getTaskManSystem().getTaskData(projectName, taskName);
     }
 }
