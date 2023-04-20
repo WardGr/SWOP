@@ -120,7 +120,8 @@ public class AdvanceTimeUITest {
         duvel.logout();
         atuiDuvel.advanceTime();
         assertEquals("""
-        You must be logged in with the Project Manager role or a Developer role to call this function\n""".replaceAll("\n|\r\n", System.getProperty("line.separator")), out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")));
+        You must be logged in with the project manager role or a Developer role to call this function
+        """.replaceAll("\n|\r\n", System.getProperty("line.separator")), out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")));
         out.reset();
         duvel.login(olav);
 
@@ -128,7 +129,8 @@ public class AdvanceTimeUITest {
         out.reset();
         atuiChouffe.advanceTime();
         assertEquals("""
-        You must be logged in with the Project Manager role or a Developer role to call this function\n""".replaceAll("\n|\r\n", System.getProperty("line.separator")), out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")));
+        You must be logged in with the project manager role or a Developer role to call this function
+        """.replaceAll("\n|\r\n", System.getProperty("line.separator")), out.toString().replaceAll("\n|\r\n", System.getProperty("line.separator")));
         out.reset();
         chouffe.login(dieter);
 

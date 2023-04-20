@@ -12,7 +12,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,31 +23,18 @@ public class CreateTaskUITest {
     public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException, ProjectNotOngoingException, LoopDependencyGraphException, NonDeveloperRoleException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
 
         // Setup test environment
-
-        Time systemtime = new Time(0);
-
         Session managerSession = new Session();
         SessionWrapper managerSessionWrapper = new SessionWrapper(managerSession);
         Session developerSession = new Session();
         SessionWrapper developerSessionWrapper = new SessionWrapper(developerSession);
-        Set roleMan = new HashSet();
-        roleMan.add(Role.PROJECTMANAGER);
-        Set roleDev = new HashSet();
-        roleDev.add(Role.JAVAPROGRAMMER);
-        roleDev.add(Role.PYTHONPROGRAMMER);
-        User manager = new User("DieterVH", "computer776", roleMan);
-        User developer = new User("SamHa", "trein123", roleDev);
-        User developer2 = new User("SamHa2", "trein123", roleDev);
+        User manager = new User("DieterVH", "computer776", Set.of(Role.PROJECTMANAGER));
+        User developer = new User("SamHa", "trein123", Set.of(Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER));
+        User developer2 = new User("SamHa2", "trein123", Set.of(Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER));
 
         managerSession.login(manager);
         developerSession.login(developer);
 
-        TaskManSystem taskManSystem = new TaskManSystem(systemtime);
-        taskManSystem.createProject("SimpleProject", "Cool description", systemtime, new Time(100));
-        List rolesDev = new LinkedList();
-        rolesDev.add(Role.JAVAPROGRAMMER);
-        rolesDev.add(Role.PYTHONPROGRAMMER);
-        taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, rolesDev, new HashSet<>(), new HashSet<>());
+        TaskManSystem taskManSystem = new TaskManSystem(new Time(0));
 
         UserManager userManager = new UserManager();
 
@@ -60,6 +46,22 @@ public class CreateTaskUITest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
+        managerUI.createTask();
+        assertEquals(
+                """
+                        Type BACK to cancel task creation at any time
+                        *********** TASK CREATION FORM ***********
+                        -- Ongoing Projects --
+                         - There is no ongoing project in the system.
+                        Project name of an ongoing project to add the task to:
+                        Cancelled task creation
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        taskManSystem.createProject("SimpleProject", "Cool description", new Time(100));
+        taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, List.of(Role.JAVAPROGRAMMER, Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
 
         developerUI.createTask();
         assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
@@ -159,7 +161,7 @@ public class CreateTaskUITest {
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        taskManSystem.createProject("SimpleProject2", "Cool description", systemtime, new Time(100));
+        taskManSystem.createProject("SimpleProject2", "Cool description", new Time(100));
         System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\nnotAnInt\nBACK".getBytes()));
         managerUI.createTask();
         assertEquals(
@@ -175,7 +177,7 @@ public class CreateTaskUITest {
                         Task duration hours:
                         Task duration minutes:
                         Given task duration is not an integer, please input an integer and try again
-                        Cancelled task creation            
+                        Cancelled task creation
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -601,7 +603,7 @@ public class CreateTaskUITest {
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation           
+                        Cancelled task creation
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 

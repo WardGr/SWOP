@@ -40,7 +40,6 @@ public class UserInterfaceTest {
         ShowProjectsUI showProjectsUI = new ShowProjectsUI(showProjectsController);
         CreateTaskUI createTaskUI = new CreateTaskUI(createTaskController);
         LoadSystemUI loadSystemUI = new LoadSystemUI(loadSystemController);
-        UpdateTaskUI updateTaskUI = new UpdateTaskUI(session, taskManSystem);
 
         UserInterface UI = new UserInterface(
                 sessionUI,
