@@ -51,6 +51,6 @@ public class Main {
             UI.startSystem();
         } catch (InvalidTimeException e) {
             System.out.println("Somehow the initial start time is invalid, this really should not happen.");
-        } catch (Invali)
+        }
     }
 }
