@@ -44,8 +44,7 @@ public class UserManager {
             myReader.close();
             this.users = users;
         } catch (FileNotFoundException e) {
-            System.out.println("Error reading file.");
-            e.printStackTrace();
+            System.out.println("Error reading users file! Make sure this is set to the correct directory. No users were loaded.");
         }
     }
 
