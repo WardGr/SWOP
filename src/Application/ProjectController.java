@@ -5,12 +5,12 @@ import Domain.*;
 /**
  * Separates domain from UI for the createproject use-case
  */
-public class CreateProjectController {
+public class ProjectController {
 
     private final SessionWrapper session;
     private final TaskManSystem taskManSystem;
 
-    public CreateProjectController(
+    public ProjectController(
             SessionWrapper session,
             TaskManSystem taskManSystem
     ) {
@@ -50,5 +50,12 @@ public class CreateProjectController {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
         getTaskManSystem().createProject(projectName, projectDescription, dueTime);
+    }
+
+    public void deleteProject(String projectName) throws IncorrectPermissionException, ProjectNotFoundException {
+        if (!createProjectPreconditions()) {
+            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
+        getTaskManSystem().deleteProject(projectName);
     }
 }

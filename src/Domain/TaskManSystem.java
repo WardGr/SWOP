@@ -147,6 +147,18 @@ public class TaskManSystem {
         createProject(projectName, projectDescription, getSystemTime(), dueTime);
     }
 
+    public void deleteProject(String projectName) throws IllegalArgumentException {
+        Project project = getProject(projectName);
+        if (project != null) {
+            throw new IllegalArgumentException();
+        }
+        deleteProject(project);
+    }
+
+    private void deleteProject(Project project) {
+        projects.remove(project);
+    }
+
     /**
      * Creates a project with given name, description and due time, using the given time as start time
      *
