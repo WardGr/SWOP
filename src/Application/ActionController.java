@@ -5,6 +5,9 @@ import Domain.Actions.CreateProjectAction;
 import Domain.Time;
 import Domain.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ActionController {
     private Session session;
     private Node node = null;
@@ -44,6 +47,28 @@ public class ActionController {
         node = node.getNext();
     }
 
+    public List<String> possibleUndoes() {
+        Node current = node;
+        User user = session.getCurrentUser();
+        List<String> undoes = new ArrayList<String>();
+        while (current != null && current.getUser() == user) {
+            undoes.add(current.getAction().information());
+            current = current.getPrev();
+        }
+        return undoes;
+    }
+
+    public List<String> possibleRedoes() {
+        Node current = node;
+        User user = session.getCurrentUser();
+        List<String> redoes = new ArrayList<String>();
+        while (current != null && current.getUser() == user) {
+            redoes.add(current.getAction().information());
+            current = current.getNext();
+        }
+        return redoes;
+    }
+
     private void addNode(Action action) {
         Node newNode = new Node(action, session.getCurrentUser());
         if (node == null) {
@@ -51,6 +76,7 @@ public class ActionController {
         } else {
             node.setNext(newNode);
             newNode.setPrev(node);
+            newNode.setNext(null);
             node = newNode;
             removeOldNodes();
         }

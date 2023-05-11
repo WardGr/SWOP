@@ -47,5 +47,10 @@ public class CreateProjectAction extends Action {
             throw new Exception(e);
         } 
     }
+
+    @Override
+    public String information() {
+        return "Create project " + projectName;
+    }
     
 }

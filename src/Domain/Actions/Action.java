@@ -16,4 +16,9 @@ public abstract class Action {
 
     }
 
+    public String information()
+    {
+        return null;
+    }
+
 }
