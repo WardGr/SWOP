@@ -1,8 +1,8 @@
-package Domain.Actions;
+package Application.Command;
 
 import Domain.User;
 
-public abstract class Action {
+public abstract class Command {
 
     User getUser() // zo ofwel in de nodes bijhouden
     {

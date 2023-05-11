@@ -1,15 +1,15 @@
 package Application;
 
-import Domain.Actions.Action;
-import Domain.Actions.CreateProjectAction;
+import Application.Command.Command;
+import Application.Command.CreateProjectCommand;
 import Domain.Time;
 import Domain.User;
 
-public class ActionController {
+public class UndoRedoController {
     private Session session;
     private Node node = null;
 
-    public ActionController(Session session) {
+    public UndoRedoController(Session session) {
         this.session = session;
     }
 
@@ -18,8 +18,8 @@ public class ActionController {
                                  String projectDescription,
                                  Time startTime,
                                  Time dueTime) {
-        Action action = new CreateProjectAction(controller, projectName, projectDescription, startTime, dueTime);
-        addNode(action);
+        Command command = new CreateProjectCommand(controller, projectName, projectDescription, startTime, dueTime);
+        addNode(command);
     }
 
     public void undo() throws Exception {
@@ -27,7 +27,7 @@ public class ActionController {
             throw new Exception("No actions to undo");
         }
         if (node.getUser() != session.getCurrentUser()) {
-            throw new Exception("Incorrect permission: User is not allowed to undo this action");
+            throw new Exception("Incorrect permission: User is not allowed to undo this command");
         }
         node.getAction().undo();
         node = node.getPrev();
@@ -38,14 +38,14 @@ public class ActionController {
             throw new Exception("No actions to redo");
         }
         if (node.getUser() != session.getCurrentUser()) {
-            throw new Exception("Incorrect permission: User is not allowed to redo this action");
+            throw new Exception("Incorrect permission: User is not allowed to redo this command");
         }
         node.getAction().redo();
         node = node.getNext();
     }
 
-    private void addNode(Action action) {
-        Node newNode = new Node(action, session.getCurrentUser());
+    private void addNode(Command command) {
+        Node newNode = new Node(command, session.getCurrentUser());
         if (node == null) {
             node = newNode;
         } else {
@@ -70,19 +70,19 @@ public class ActionController {
     }
 
     private class Node {
-        private Action action;
+        private Command command;
         private Node next;
         private Node prev;
         private User user;
 
-        public Node(Action action, User user) {
-            this.action = action;
+        public Node(Command command, User user) {
+            this.command = command;
             this.next = null;
             this.prev = null;
         }
 
-        public Action getAction() {
-            return action;
+        public Command getAction() {
+            return command;
         }
 
         public Node getNext() {
