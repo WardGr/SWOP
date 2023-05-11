@@ -1,4 +1,4 @@
-package Application.Command;
+package Domain.Command;
 
 import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
