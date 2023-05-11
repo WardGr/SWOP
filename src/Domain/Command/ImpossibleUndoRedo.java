@@ -1,6 +1,4 @@
-package Application.Command;
-
-import Application.Command.Command;
+package Domain.Command;
 
 public class ImpossibleUndoRedo extends Command {
 
