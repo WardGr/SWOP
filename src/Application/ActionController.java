@@ -51,14 +51,14 @@ public class ActionController {
         Node current = node;
         User user = session.getCurrentUser();
         List<String> undoes = new ArrayList<String>();
-        while (current != null && current.getUser() == user) {
+        while (current != null && current.getUser() == user && current.getAction().reversePossible()) {
             undoes.add(current.getAction().information());
             current = current.getPrev();
         }
         return undoes;
     }
 
-    public List<String> possibleRedoes() {
+    public List<String> possibleRedoes() { // hier moet de reversePossible niet want dan was het ook niet undone
         Node current = node;
         User user = session.getCurrentUser();
         List<String> redoes = new ArrayList<String>();

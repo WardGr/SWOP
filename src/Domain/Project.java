@@ -181,6 +181,11 @@ public class Project {
         tasks.add(task);
     }
 
+    public void deleteTask(String taskName) {
+        Task task = getTask(taskName);
+        removeTask(task);
+    }
+
     private void removeTask(Domain.TaskStates.Task task) {
         tasks.remove(task);
     }

@@ -21,4 +21,8 @@ public abstract class Action {
         return null;
     }
 
+    public boolean reversePossible()
+    {
+        return true;
+    }
 }

@@ -228,6 +228,11 @@ public class TaskManSystem {
         );
     }
 
+    public void deleteTask(String projectName, String taskName) {
+        Project project = getProject(projectName);
+        project.deleteTask(taskName);
+    }
+
     /**
      * Replaces a given (FAILED) task in a given project with a new task created from the given information
      *
