@@ -1,9 +1,9 @@
-package Domain.Actions;
+package Application.Command;
 
 import Application.*;
 import Domain.*;
 
-public class CreateProjectAction extends Action {
+public class CreateProjectCommand extends Command {
     
     final ProjectController controller;
     final String projectName;
@@ -11,7 +11,7 @@ public class CreateProjectAction extends Action {
     final Time startTime;
     final Time dueTime;
 
-    public CreateProjectAction(
+    public CreateProjectCommand(
         ProjectController controller,
         String projectName,
     String projectDescription,
