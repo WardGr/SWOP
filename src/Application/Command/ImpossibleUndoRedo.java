@@ -1,6 +1,8 @@
-package Domain.Actions;
+package Application.Command;
 
-public class ImpossibleUndoRedo extends Action {
+import Application.Command.Command;
+
+public class ImpossibleUndoRedo extends Command {
 
         @Override
         public void undo() {

@@ -1,4 +1,4 @@
-package Domain.Actions;
+package Application.Command;
 
 import Application.CreateTaskController;
 import Application.IncorrectPermissionException;
@@ -9,7 +9,7 @@ import Domain.TaskStates.NonDeveloperRoleException;
 import java.util.List;
 import java.util.Set;
 
-public class CreateTaskAction extends Action {
+public class CreateTaskCommand extends Command {
         private CreateTaskController controller;
         private String projectName;
         private String taskName;
@@ -21,7 +21,7 @@ public class CreateTaskAction extends Action {
         private Set<String> nextTasks;
 
         // Ofwel zo, ofwel geven we een task en project mee, dan doen we rechtstreeks project.deletetask en project.addtask ipv nieuwe objecten te maken
-        public CreateTaskAction(CreateTaskController controller,
+        public CreateTaskCommand(CreateTaskController controller,
                                 String projectName,
                                 String taskName,
                                 String description,
