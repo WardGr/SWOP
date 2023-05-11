@@ -181,8 +181,24 @@ public class Project {
         tasks.add(task);
     }
 
-    public void deleteTask(String taskName) {
+    public void deleteTask(String taskName) throws TaskNotFoundException {
         Task task = getTask(taskName);
+        getTaskData(taskName).getNextTasksNames().forEach(nextTaskName -> {
+            try {
+                Task next = getTask(nextTaskName);
+                next.removePreviousTask(task);
+            } catch (IncorrectTaskStatusException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        getTaskData(taskName).getPreviousTasksNames().forEach(previousTaskName -> {
+            try {
+                Task previous = getTask(previousTaskName);
+                previous.removeNextTask(task);
+            } catch (IncorrectTaskStatusException e) {
+                throw new RuntimeException(e);
+            }
+        });
         removeTask(task);
     }
 
