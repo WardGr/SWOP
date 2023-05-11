@@ -42,7 +42,7 @@ public class CreateTaskCommand extends Command {
         }
 
         @Override
-        public void undo() {
+        public void undo() throws TaskNotFoundException {
             controller.deleteTask(projectName, taskName);
         }
 

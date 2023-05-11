@@ -228,7 +228,7 @@ public class TaskManSystem {
         );
     }
 
-    public void deleteTask(String projectName, String taskName) {
+    public void deleteTask(String projectName, String taskName) throws TaskNotFoundException {
         Project project = getProject(projectName);
         project.deleteTask(taskName);
     }
