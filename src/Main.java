@@ -26,7 +26,7 @@ public class Main {
             LoadSystemController loadSystemController = new LoadSystemController(sessionWrapper, taskManSystem, userManager);
             StartTaskController startTaskController = new StartTaskController(sessionWrapper, taskManSystem);
             EndTaskController endTaskController = new EndTaskController(sessionWrapper, taskManSystem);
-            UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionWrapper, taskManSystem);
+            UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionWrapper, taskManSystem, commandController);
 
             SessionUI sessionUI = new SessionUI(sessionController);
             AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);
