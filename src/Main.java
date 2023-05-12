@@ -2,10 +2,7 @@
 
 
 import Application.*;
-import Domain.InvalidTimeException;
-import Domain.TaskManSystem;
-import Domain.Time;
-import Domain.UserManager;
+import Domain.*;
 import UserInterface.*;
 
 /**
@@ -19,10 +16,11 @@ public class Main {
             UserManager userManager = new UserManager();
             Session session = new Session();
             SessionWrapper sessionWrapper = new SessionWrapper(session);
+            CommandController commandController = new CommandController(session);
 
             SessionController sessionController = new SessionController(session, userManager);
-            AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionWrapper, taskManSystem);
-            CreateProjectController createProjectController = new CreateProjectController(sessionWrapper, taskManSystem);
+            AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionWrapper, taskManSystem, commandController);
+            ProjectController createProjectController = new ProjectController(sessionWrapper, taskManSystem);
             ShowProjectsController showProjectsController = new ShowProjectsController(sessionWrapper, taskManSystem);
             CreateTaskController createTaskController = new CreateTaskController(sessionWrapper, taskManSystem, userManager);
             LoadSystemController loadSystemController = new LoadSystemController(sessionWrapper, taskManSystem, userManager);

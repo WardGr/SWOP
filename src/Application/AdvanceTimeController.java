@@ -1,6 +1,8 @@
 package Application;
 
 import Domain.*;
+import Domain.Command.Command;
+import Domain.Command.ImpossibleUndoRedo;
 
 import java.util.Set;
 
@@ -11,13 +13,16 @@ public class AdvanceTimeController {
 
     private final SessionWrapper session;
     private final TaskManSystem taskManSystem;
+    private final CommandController cmdController;
 
     public AdvanceTimeController(
             SessionWrapper session,
-            TaskManSystem taskManSystem
+            TaskManSystem taskManSystem,
+            CommandController cmdController
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
+        this.cmdController = cmdController;
     }
 
     private SessionWrapper getSession() {
@@ -26,6 +31,10 @@ public class AdvanceTimeController {
 
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
+    }
+
+    private CommandController getCommandHandler() {
+        return cmdController;
     }
 
     public Time getSystemTime() {
@@ -58,6 +67,8 @@ public class AdvanceTimeController {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(new Time(newHour, newMinute));
+        Command cmd = new ImpossibleUndoRedo();
+        getCommandHandler().addCommand(cmd);
     }
 
     /**
@@ -73,5 +84,7 @@ public class AdvanceTimeController {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(advanceMinutes);
+        Command cmd = new ImpossibleUndoRedo();
+        getCommandHandler().addCommand(cmd);
     }
 }

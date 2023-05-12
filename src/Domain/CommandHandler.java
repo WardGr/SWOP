@@ -1,47 +1,18 @@
 package Domain;
 
-import Application.CommandController;
-import Application.CreateTaskController;
-import Application.ProjectController;
 import Domain.Command.Command;
-import Domain.Command.CreateProjectCommand;
-import Domain.Command.CreateTaskCommand;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class CommandHandler {
     private Node node;
-    private User user;
 
-    public CommandHandler(User user) {
-        this.user = user;
+    public CommandHandler() {
         node = null;
     }
 
-    public void addCreateProject(ProjectController controller,
-                                 String projectName,
-                                 String projectDescription,
-                                 Time startTime,
-                                 Time dueTime) {
-        Command command = new CreateProjectCommand(controller, projectName, projectDescription, startTime, dueTime);
-        addNode(command);
-    }
-
-    public void addCreateTask(CreateTaskController controller,
-                              String projectName,
-                              String taskName,
-                              String description,
-                              Time durationTime,
-                              double deviation,
-                              List<Role> roles,
-                              Set<String> previousTasks,
-                              Set<String> nextTasks) {
-        Command command = new CreateTaskCommand(controller, projectName, taskName, description, durationTime, deviation, roles, previousTasks, nextTasks);
-        addNode(command);
-    }
-    public void undo() throws Exception {
+    public void undo(User user) throws Exception {
         if (node == null) {
             throw new Exception("No commands to undo");
         }
@@ -52,7 +23,7 @@ public class CommandHandler {
         node = node.getPrev();
     }
 
-    public void redo() throws Exception {
+    public void redo(User user) throws Exception {
         if (node == null) {
             throw new Exception("No commands to redo");
         }
@@ -63,7 +34,7 @@ public class CommandHandler {
         node = node.getNext();
     }
 
-    public List<String> possibleUndoes() {
+    public List<String> possibleUndoes(User user) {
         Node current = node;
         List<String> undoes = new ArrayList<String>();
         while (current != null && current.getUser() == user) {
@@ -73,7 +44,7 @@ public class CommandHandler {
         return undoes;
     }
 
-    public List<String> possibleRedoes() {
+    public List<String> possibleRedoes(User user) {
         Node current = node;
         List<String> redoes = new ArrayList<String>();
         while (current != null && current.getUser() == user) {
@@ -83,7 +54,7 @@ public class CommandHandler {
         return redoes;
     }
 
-    private void addNode(Command command) {
+    public void addNode(Command command, User user) {
         Node newNode = new Node(command, user);
         if (node == null) {
             node = newNode;
@@ -92,11 +63,11 @@ public class CommandHandler {
             newNode.setPrev(node);
             newNode.setNext(null);
             node = newNode;
-            removeOldNodes();
+            removeOldNodes(user);
         }
     }
 
-    private void removeOldNodes() {
+    private void removeOldNodes(User user) {
         Node current = node;
         while (current.getPrev() != null) {
             current = current.getPrev();
