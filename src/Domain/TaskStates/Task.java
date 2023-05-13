@@ -338,15 +338,15 @@ public class Task {
         nextTasks.remove(nextTask);
     }
 
-    private void clearPreviousTasks() throws IncorrectTaskStatusException {
+    private void clearPreviousTasks() {
         for (Task prevTask : getPreviousTasks()) {
-            getState().removePreviousTask(this, prevTask);
+            removePreviousTask(prevTask);
         }
     }
 
-    private void clearNextTasks() throws IncorrectTaskStatusException {
+    private void clearNextTasks() {
         for (Task nextTask : getNextTasks()) {
-            nextTask.getState().removePreviousTask(nextTask, this);
+            removeNextTask(nextTask);
         }
     }
 
@@ -405,7 +405,7 @@ public class Task {
         getState().fail(this, user, endTime);
     }
 
-    void updateAvailability() throws IncorrectTaskStatusException {
+    void updateAvailability() {
         getState().updateAvailability(this);
     }
 
@@ -425,11 +425,13 @@ public class Task {
         nextTask.addPreviousTask(this);
     }
 
-    public void removePreviousTask(Task prevTask) throws IncorrectTaskStatusException {
-        getState().removePreviousTask(this, prevTask);
+    public void removePreviousTask(Task previousTask) {
+        removePreviousTaskDirectly(previousTask);
+        previousTask.removeNextTaskDirectly(this);
+        updateAvailability();
     }
 
-    public void removeNextTask(Task nextTask) throws IncorrectTaskStatusException {
+    public void removeNextTask(Task nextTask) {
         nextTask.removePreviousTask(this);
     }
 }

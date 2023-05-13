@@ -11,9 +11,7 @@ interface TaskState {
     // TODO: is dit een goeie keuze? gewoon temporary omda het anders ni compileert
     Status getStatus();
 
-    default void updateAvailability(Task task) throws IncorrectTaskStatusException {
-        throw new IncorrectTaskStatusException("Task is not (un)available");
-    }
+    default void updateAvailability(Task task) {}
 
     default void updateAvailabilityNextTask(Task nextTask) {
         nextTask.setState(new UnavailableState());
@@ -21,10 +19,6 @@ interface TaskState {
     }
 
     default void addPreviousTask(Task task, Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
-        throw new IncorrectTaskStatusException("Task is not (un)available");
-    }
-
-    default void removePreviousTask(Task task, Task previousTask) throws IncorrectTaskStatusException {
         throw new IncorrectTaskStatusException("Task is not (un)available");
     }
 
