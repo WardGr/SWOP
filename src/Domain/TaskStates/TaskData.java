@@ -3,10 +3,12 @@ package Domain.TaskStates;
 import Domain.Role;
 import Domain.Status;
 import Domain.Time;
+import Domain.Tuple;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 //TODO early, ontime etc
 
@@ -34,7 +36,7 @@ public interface TaskData {
 
     List<String> getPreviousTasksNames();
 
-    List<String> getNextTasksNames();
+    Set<Tuple<String,String>> getNextTasksNames();
 
     Time getStartTime();
 

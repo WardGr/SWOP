@@ -114,17 +114,12 @@ public class Task implements TaskData{
             throw new IncorrectTaskStatusException("One of the next tasks is not (un)available");
         }
     }
-
-    Project getProject() {
-        return project;
-    }
-
     void setProject(Project project) {
         this.project = project;
     }
 
     public String getProjectName() {
-        return getProject().getName();
+        return project.getName();
     }
 
     public String getName() {
@@ -250,10 +245,10 @@ public class Task implements TaskData{
         return new LinkedList<>(nextTasks);
     }
 
-    public List<String> getNextTasksNames() {
-        List<String> nextTasksNames = new LinkedList<>();
+    public Set<Tuple<String,String>> getNextTasksNames() {
+        Set<Tuple<String,String>> nextTasksNames = new HashSet<>();
         for (Task nextTask : getNextTasks()) {
-            nextTasksNames.add(nextTask.getName());
+            nextTasksNames.add(new Tuple<>(nextTask.getProjectName(), nextTask.getName()));
         }
         return nextTasksNames;
     }

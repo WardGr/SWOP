@@ -221,8 +221,8 @@ public class ShowProjectsUI {
         System.out.println("Next tasks:");
         if (taskData.getNextTasksNames().size() > 0) {
             int i = 1;
-            for (String nextTaskName : taskData.getNextTasksNames()) {
-                System.out.println(i++ + ". " + nextTaskName);
+            for (Tuple<String,String> nextTask : taskData.getNextTasksNames()) {
+                System.out.println(i++ + ". " + nextTask.getSecond() + " --- Belonging to project: " + nextTask.getFirst());
             }
         } else {
             System.out.println("- There are no next tasks");
