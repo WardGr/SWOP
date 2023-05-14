@@ -47,7 +47,6 @@ interface TaskState {
      * according to the rules of the dependency graph
      *
      * @param task The task of which to update the availability
-     * @throws IncorrectTaskStatusException if the given task is not available or unavailable
      * @post if task is AVAILABLE and any previous task is not FINISHED then task is set to UNAVAILABLE
      * else if task is UNAVAILABLE and all previous tasks are FINISHED then task is set to AVAILABLE
      */

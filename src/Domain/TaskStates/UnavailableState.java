@@ -32,12 +32,6 @@ public class UnavailableState implements TaskState {
         updateAvailability(task);
     }
 
-    public void removePrevTask(Task task, Task prevTask) {
-        task.removePrevTaskDirectly(prevTask);
-        prevTask.removeNextTaskDirectly(task);
-        updateAvailability(task);
-    }
-
     public boolean canSafelyAddPrevTask(Task task, Task prevTask) {
         return !task.getAllNextTasks().contains(prevTask);
     }

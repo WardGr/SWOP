@@ -58,13 +58,6 @@ public class AvailableState implements TaskState {
     }
 
     @Override
-    public void removePrevTask(Task task, Task prevTask) {
-        task.removePrevTaskDirectly(prevTask);
-        prevTask.removeNextTaskDirectly(task);
-        updateAvailability(task);
-    }
-
-    @Override
     public boolean canSafelyAddPrevTask(Task task, String prevTaskName) {
         for (Task nextTask : task.getAllNextTasks()) {
             if (nextTask.getName().equals(prevTaskName)) {

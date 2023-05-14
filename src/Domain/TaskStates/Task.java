@@ -117,11 +117,11 @@ public class Task {
                 nextTask.addprevTask(this);
             }
         } catch (LoopDependencyGraphException e) {
-            clearprevTasks();
+            clearPrevTasks();
             clearNextTasks();
             throw new LoopDependencyGraphException();
         } catch (IncorrectTaskStatusException e) {
-            clearprevTasks();
+            clearPrevTasks();
             clearNextTasks();
             throw new IncorrectTaskStatusException("One of the next tasks is not (un)available");
         }
@@ -441,9 +441,9 @@ public class Task {
      *
      * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
      */
-    private void clearprevTasks() throws IncorrectTaskStatusException {
+    private void clearPrevTasks() {
         for (Task prevTask : getprevTasks()) {
-            getState().removePrevTask(this, prevTask);
+            removePrevTask(prevTask);
         }
     }
 
@@ -452,9 +452,9 @@ public class Task {
      *
      * @throws IncorrectTaskStatusException if the current task is not AVAILABLE or UNAVAILABLE
      */
-    private void clearNextTasks() throws IncorrectTaskStatusException {
+    private void clearNextTasks() {
         for (Task nextTask : getNextTasks()) {
-            nextTask.getState().removePrevTask(nextTask, this);
+            removeNextTask(nextTask);
         }
     }
 
@@ -532,7 +532,7 @@ public class Task {
      *
      * @throws IncorrectTaskStatusException if the task is not AVAILABLE or UNAVAILABLE
      */
-    void updateAvailability() throws IncorrectTaskStatusException {
+    void updateAvailability() {
         getState().updateAvailability(this);
     }
 
@@ -583,8 +583,10 @@ public class Task {
      * @param prevTask Task to remove as previous task
      * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
      */
-    public void removeprevTask(Task prevTask) throws IncorrectTaskStatusException {
-        getState().removePrevTask(this, prevTask);
+    public void removePrevTask(Task prevTask) {
+        removePrevTaskDirectly(prevTask);
+        prevTask.removeNextTaskDirectly(this);
+        updateAvailability();
     }
 
     /**
@@ -593,7 +595,7 @@ public class Task {
      * @param nextTask Task to remove as next task
      * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
      */
-    public void removeNextTask(Task nextTask) throws IncorrectTaskStatusException {
-        nextTask.removeprevTask(this);
+    public void removeNextTask(Task nextTask) {
+        nextTask.removePrevTask(this);
     }
 }
