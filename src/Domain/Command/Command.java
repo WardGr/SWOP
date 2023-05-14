@@ -12,7 +12,7 @@ package Domain.Command;
      public void undo() throws Exception {
      }
 
-     public void redo() throws Exception {
+     public void execute() throws Exception {
 
      }
 

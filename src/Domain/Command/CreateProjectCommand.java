@@ -5,19 +5,19 @@ package Domain.Command;
 
  public class CreateProjectCommand extends Command {
 
-     final ProjectController controller;
+     final TaskManSystem taskManSystem;
      final String projectName;
      final String projectDescription;
      final Time startTime;
      final Time dueTime;
 
      public CreateProjectCommand(
-         ProjectController controller,
+        TaskManSystem taskManSystem,
          String projectName,
          String projectDescription,
          Time startTime,
          Time dueTime) {
-         this.controller = controller;
+         this.taskManSystem = taskManSystem;
          this.projectName = projectName;
          this.projectDescription = projectDescription;
          this.startTime = startTime;
@@ -33,7 +33,7 @@ package Domain.Command;
      @Override
      public void undo() throws Exception {
          try {
-             controller.deleteProject(projectName);
+             taskManSystem.deleteProject(projectName);
          } catch (Exception e) {
              throw new Exception(e);
          }
@@ -42,7 +42,7 @@ package Domain.Command;
      @Override
      public void redo() throws Exception {
          try {
-             controller.createProject(projectName, projectDescription, dueTime);
+             taskManSystem.createProject(projectName, projectDescription, dueTime);
          } catch (Exception e) {
              throw new Exception(e);
          } 
