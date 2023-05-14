@@ -7,7 +7,7 @@ import java.util.*;
 /**
  * Keeps track of a task, including a list of tasks that should complete before it and which tasks it should come before
  */
-public class Task {
+public class Task implements TaskData{
 
     private final String name;
     private final String description;
@@ -26,8 +26,6 @@ public class Task {
     private List<Role> requiredRoles;
 
     private Map<User, Role> committedUsers;
-
-    private TaskProxy taskProxy;
 
     private Project project;
 
@@ -55,8 +53,6 @@ public class Task {
 
         this.previousTasks = new HashSet<>();
         this.nextTasks = new HashSet<>();
-
-        this.taskProxy = new TaskProxy(this);
 
         this.state = new AvailableState();
     }
@@ -97,8 +93,6 @@ public class Task {
         this.previousTasks = new HashSet<>();
         this.nextTasks = new HashSet<>();
 
-        this.taskProxy = new TaskProxy(this);
-
         setState(new AvailableState());
         setRequiredRoles(roles);
         setProject(project);
@@ -121,10 +115,6 @@ public class Task {
         }
     }
 
-    public TaskProxy getTaskProxy() {
-        return taskProxy;
-    }
-
     Project getProject() {
         return project;
     }
@@ -133,10 +123,9 @@ public class Task {
         this.project = project;
     }
 
-    String getProjectName() {
+    public String getProjectName() {
         return getProject().getName();
     }
-
 
     public String getName() {
         return name;
@@ -146,11 +135,11 @@ public class Task {
         return description;
     }
 
-    double getAcceptableDeviation() {
+    public double getAcceptableDeviation() {
         return acceptableDeviation;
     }
 
-    Time getEstimatedDuration() {
+    public Time getEstimatedDuration() {
         return estimatedDuration;
     }
 
@@ -169,8 +158,16 @@ public class Task {
     /**
      * @return Task that replaces this task
      */
-    public Task getReplacementTask() {
+    private Task getReplacementTask() {
         return replacementTask;
+    }
+
+    public String getReplacementTaskName() {
+        if (getReplacementTask() == null) {
+            return null;
+        } else {
+            return getReplacementTask().getName();
+        }
     }
 
     void setReplacementTask(Task replacementTask) {
@@ -180,8 +177,16 @@ public class Task {
     /**
      * @return Task this task replaces
      */
-    public Task getReplacesTask() {
+    private Task getReplacesTask() {
         return replacesTask;
+    }
+
+    public String getReplacesTaskName() {
+        if (getReplacesTask() == null) {
+            return null;
+        } else {
+            return getReplacesTask().getName();
+        }
     }
 
     void setReplacesTask(Task replacesTask) {
@@ -196,7 +201,7 @@ public class Task {
         this.timeSpan = new TimeSpan(startTime);
     }
 
-    List<Role> getRequiredRoles() {
+    public List<Role> getRequiredRoles() {
         return new LinkedList<>(requiredRoles);
     }
 
@@ -217,7 +222,7 @@ public class Task {
         return committedUsers;
     }
 
-    Map<String, Role> getUserNamesWithRole() {
+    public Map<String, Role> getUserNamesWithRole() {
         Map<String, Role> userNamesWithRole = new HashMap<>();
         getUsersWithRole().forEach((user, role) -> userNamesWithRole.put(user.getUsername(), role));
         return userNamesWithRole;
@@ -230,6 +235,14 @@ public class Task {
         return new LinkedList<>(previousTasks);
     }
 
+    public List<String> getPreviousTasksNames() {
+        List<String> prevTasksNames = new LinkedList<>();
+        for (Task prevTask : getPreviousTasks()) {
+            prevTasksNames.add(prevTask.getName());
+        }
+        return prevTasksNames;
+    }
+
     /**
      * @return Mutable list of all tasks that this task should be completed before
      */
@@ -237,10 +250,18 @@ public class Task {
         return new LinkedList<>(nextTasks);
     }
 
+    public List<String> getNextTasksNames() {
+        List<String> nextTasksNames = new LinkedList<>();
+        for (Task nextTask : getNextTasks()) {
+            nextTasksNames.add(nextTask.getName());
+        }
+        return nextTasksNames;
+    }
+
     /**
      * @return Start time if this is set, null otherwise
      */
-    Time getStartTime() {
+    public Time getStartTime() {
         if (getTimeSpan() == null) {
             return null;
         }
@@ -262,7 +283,7 @@ public class Task {
     /**
      * @return End time if this is set, null otherwise
      */
-    Time getEndTime() {
+    public Time getEndTime() {
         if (getTimeSpan() == null) {
             return null;
         }
@@ -417,7 +438,7 @@ public class Task {
         getState().addPreviousTask(this, prevTask);
     }
 
-    boolean canSafelyAddPrevTask(String prevTask) {
+    public boolean canSafelyAddPrevTask(String prevTask) {
         return getState().canSafelyAddPrevTask(this, prevTask);
     }
 

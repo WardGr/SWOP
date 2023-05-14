@@ -3,6 +3,7 @@ package Domain;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
+import Domain.TaskStates.TaskData;
 
 import java.util.*;
 
@@ -75,7 +76,7 @@ public class TaskManSystem {
         return project.getProjectData();
     }
 
-    public Domain.TaskStates.TaskProxy getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
+    public TaskData getTaskData(String projectName, String taskName) throws TaskNotFoundException, ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();

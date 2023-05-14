@@ -3,7 +3,7 @@ package Application;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.NonDeveloperRoleException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.List;
 import java.util.Set;
@@ -55,10 +55,9 @@ public class CreateTaskController {
      * @param projectName    Name of project the task will be added to, given by the user
      * @param taskName       Name of new task, given by the user
      * @param description    Description of new task, given by the user
-     * @param durationHour   Hours of the new tasks' duration, given by the user
-     * @param durationMinute Minutes of the new tasks' duration, given by the user
+     * @param durationTime   The new tasks' duration, given by the user
      * @param deviation      Acceptable deviation from the given duration, given by the user as a percentage
-     * @param user           Name of the user this task is allocated to
+     * @param roles          Roles this task is required to fulfill
      * @param previousTasks  List of names of tasks that should be completed before this one, given by the user
      * @throws ProjectNotFoundException      If the given project name does not correspond to an existing project
      * @throws InvalidTimeException          If durationMinute > 59 or durationMinute < 0
@@ -103,8 +102,7 @@ public class CreateTaskController {
      * @param projectName    Project name corresponding to the project to which both tasks belong, given by the user
      * @param taskName       Task name of the replacement task, given by the user
      * @param description    Task description of the replacement task, given by the user
-     * @param durationHour   Hours of the replacement tasks' duration, given by the user
-     * @param durationMinute Minutes of the replacement tasks' duration, given by the user
+     * @param durationTime   The replacement tasks' duration, given by the user
      * @param deviation      Acceptable deviation from the given duration, given by the user
      * @param replaces       Task name of the task that the new task would replace, given by the user
      * @throws TaskNotFoundException          If the given task name of the task to replace does not correspond to an existing task
@@ -143,7 +141,7 @@ public class CreateTaskController {
         return getTaskManSystem().getProjectData(projectName);
     }
 
-    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
         return getTaskManSystem().getTaskData(projectName, taskName);
     }
 }

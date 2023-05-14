@@ -3,7 +3,7 @@ package UserInterface;
 import Application.EndTaskController;
 import Application.IncorrectPermissionException;
 import Domain.*;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.Scanner;
 
@@ -74,7 +74,7 @@ public class EndTaskUI {
 
     private void printExecutingTask() {
         System.out.print("You are currently working on task: ");
-        TaskProxy executingTaskData = getController().getUserTaskData();
+        TaskData executingTaskData = getController().getUserTaskData();
         if (executingTaskData != null) {
             System.out.println(executingTaskData.getName() + ", belonging to project: " + executingTaskData.getProjectName());
         } else {

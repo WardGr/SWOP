@@ -2,7 +2,7 @@ package Application;
 
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 import Domain.UserAlreadyAssignedToTaskException;
 
 import java.util.Set;
@@ -33,7 +33,7 @@ public class StartTaskController {
                 getSession().getRoles().contains(Role.SYSADMIN));
     }
 
-    public TaskProxy getUserTaskData() {
+    public TaskData getUserTaskData() {
         return getSession().getCurrentUser().getTaskData();
     }
 
@@ -59,7 +59,7 @@ public class StartTaskController {
         return getTaskManSystem().getProjectData(projectName);
     }
 
-    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }

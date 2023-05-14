@@ -4,7 +4,7 @@ import Application.IncorrectPermissionException;
 import Application.UpdateDependenciesController;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.List;
 import java.util.Scanner;
@@ -76,7 +76,7 @@ public class UpdateDependenciesUI {
 
     private void updateTask(String projectName, String taskName, Scanner scanner) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
         ProjectProxy projectData = getController().getProjectData(projectName);
-        TaskProxy taskData = getController().getTaskData(projectName, taskName);
+        TaskData taskData = getController().getTaskData(projectName, taskName);
 
         if (taskData.getStatus() == Status.UNAVAILABLE || taskData.getStatus() == Status.AVAILABLE) {
             while (true) {
@@ -165,7 +165,7 @@ public class UpdateDependenciesUI {
         System.out.println();
     }
 
-    private void showTaskDependencies(ProjectProxy projectData, TaskProxy taskData) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
+    private void showTaskDependencies(ProjectProxy projectData, TaskData taskData) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
         System.out.print("Previous tasks: ");
         if (taskData.getPreviousTasksNames().size() == 0) {
             System.out.println("There are no previous tasks.");

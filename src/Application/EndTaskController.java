@@ -1,7 +1,7 @@
 package Application;
 
 import Domain.*;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.Set;
 
@@ -31,7 +31,7 @@ public class EndTaskController {
                 getSession().getRoles().contains(Role.SYSADMIN));
     }
 
-    public TaskProxy getUserTaskData() {
+    public TaskData getUserTaskData() {
         return getSession().getCurrentUser().getTaskData();
     }
 
@@ -39,7 +39,7 @@ public class EndTaskController {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
-        TaskProxy userTaskData = getUserTaskData();
+        TaskData userTaskData = getUserTaskData();
         if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING) {
             throw new IncorrectPermissionException("You are not executing a task");
         }
@@ -50,7 +50,7 @@ public class EndTaskController {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
-        TaskProxy userTaskData = getUserTaskData();
+        TaskData userTaskData = getUserTaskData();
         if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING) {
             throw new IncorrectPermissionException("You are not executing a task");
         }
@@ -71,7 +71,7 @@ public class EndTaskController {
         return getTaskManSystem().getProjectData(projectName);
     }
 
-    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }

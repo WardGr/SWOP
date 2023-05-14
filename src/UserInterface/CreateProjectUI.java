@@ -1,6 +1,6 @@
 package UserInterface;
 
-import Application.CreateProjectController;
+import Application.ProjectController;
 import Application.IncorrectPermissionException;
 import Domain.*;
 
@@ -11,13 +11,13 @@ import java.util.Scanner;
  */
 public class CreateProjectUI {
 
-    private final CreateProjectController controller;
+    private final ProjectController controller;
 
-    public CreateProjectUI(CreateProjectController controller) {
+    public CreateProjectUI(ProjectController controller) {
         this.controller = controller;
     }
 
-    private CreateProjectController getController() {
+    private ProjectController getController() {
         return controller;
     }
 

@@ -4,7 +4,7 @@ import Application.IncorrectPermissionException;
 import Application.StartTaskController;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 import Domain.UserAlreadyAssignedToTaskException;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class StartTaskUI {
             }
 
             try {
-                TaskProxy taskData = getController().getTaskData(projectName, taskName);
+                TaskData taskData = getController().getTaskData(projectName, taskName);
 
                 if (taskData.getStatus() != Status.AVAILABLE && taskData.getStatus() != Status.PENDING) {
                     System.out.println("ERROR: The given task is not available or pending");
@@ -198,7 +198,7 @@ public class StartTaskUI {
                 if (projectData.getStatus() == ProjectStatus.ONGOING) {
                     for (String taskName : projectData.getActiveTasksNames()) {
 
-                        TaskProxy taskData = getController().getTaskData(projectName, taskName);
+                        TaskData taskData = getController().getTaskData(projectName, taskName);
 
                         if (taskData.getStatus() == Status.AVAILABLE || taskData.getStatus() == Status.PENDING) {
 
@@ -220,7 +220,7 @@ public class StartTaskUI {
         }
     }
 
-    private void showTask(TaskProxy taskData) {
+    private void showTask(TaskData taskData) {
         System.out.println("******** TASK DETAILS ********");
 
         System.out.println("Task Name:            " + taskData.getName());

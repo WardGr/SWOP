@@ -3,7 +3,7 @@ package Application;
 import Domain.*;
 import Domain.Command.*;
 import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 public class UpdateDependenciesController {
     private final SessionWrapper session;
@@ -82,7 +82,7 @@ public class UpdateDependenciesController {
         return getTaskManSystem().getProjectData(projectName);
     }
 
-    public TaskProxy getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         if (!updateDependenciesPreconditions()) {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }

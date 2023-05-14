@@ -2,7 +2,7 @@ package Domain;
 
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.Task;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,11 +47,11 @@ public class User {
         this.task = task;
     }
 
-    public TaskProxy getTaskData() {
+    public TaskData getTaskData() {
         if (getTask() == null) {
             return null;
         } else {
-            return getTask().getTaskProxy();
+            return getTask().getTaskData();
         }
     }
 

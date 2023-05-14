@@ -3,7 +3,7 @@ package UserInterface;
 import Application.IncorrectPermissionException;
 import Application.ShowProjectsController;
 import Domain.*;
-import Domain.TaskStates.TaskProxy;
+import Domain.TaskStates.TaskData;
 
 import java.util.List;
 import java.util.Scanner;
@@ -162,7 +162,7 @@ public class ShowProjectsUI {
      * @param projectName TODO
      */
     private void showTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
-        TaskProxy taskData = getController().getTaskData(projectName, taskName);
+        TaskData taskData = getController().getTaskData(projectName, taskName);
 
         System.out.println("******** TASK DETAILS ********");
 
