@@ -10,7 +10,7 @@ public class UnavailableState implements TaskState {
     @Override
     public void updateAvailability(Task task) {
         task.setState(new AvailableState());
-        for (Task prevTask : task.getprevTasks()) {
+        for (Task prevTask : task.getPrevTasks()) {
             prevTask.updateAvailabilityNextTask(task);
             // Set this tasks' state to unavailable if prevTask is not finished
         }

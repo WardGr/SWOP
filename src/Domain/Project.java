@@ -117,7 +117,7 @@ public class Project {
         if (task == null) {
             throw new TaskNotFoundException();
         }
-        return task.getTaskProxy();
+        return task.getTaskData();
     }
 
     /**
@@ -213,22 +213,15 @@ public class Project {
     }
 
     public void deleteTask(String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+        // TODO !!!!!!!
         Task task = getTask(taskName);
         getTaskData(taskName).getNextTasksNames().forEach(nextTaskName -> {
             Task next = getTask(nextTaskName);
-            try {
-                next.removeprevTask(task);
-            } catch (IncorrectTaskStatusException e) {
-                // TODO fixen!
-            }
+            next.removePrevTask(task);
         });
         getTaskData(taskName).getPrevTaskNames().forEach(previousTaskName -> {
             Task previous = getTask(previousTaskName);
-            try {
-                previous.removeNextTask(task);
-            } catch (IncorrectTaskStatusException e) {
-                // TODO fixern!
-            }
+            previous.removeNextTask(task);
         });
         removeTask(task);
     }
@@ -434,7 +427,7 @@ public class Project {
         if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
         }
-        task.removeprevTask(prevTask);
+        task.removePrevTask(prevTask);
     }
 
     /**

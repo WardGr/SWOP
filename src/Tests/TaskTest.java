@@ -91,7 +91,7 @@ public class TaskTest {
 
         Task testTask = new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(prevTask), "project1");
         assertThrows(LoopDependencyGraphException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(prevTask), Set.of(currentTask, testTask, nextTask), "project1"));
-        prevTask.removeprevTask(testTask);
+        prevTask.removePrevTask(testTask);
 
         // Check basic getters
         assertEquals("Task", task.getName());
@@ -137,7 +137,7 @@ public class TaskTest {
         // Finish the task
         prevTask.finish(sysAdmin, new Time(10));
         assertEquals("finished", prevTask.getStatus().toString());
-        assertEquals("on time", prevTask.getTaskProxy().getFinishedStatus().toString());
+        assertEquals("on time", prevTask.getTaskData().getFinishedStatus().toString());
 
         // Checks if finished state cannot start/fail/finish/unassign/replace
         assertThrows(IncorrectTaskStatusException.class, () -> prevTask.start(new Time(0), user, Role.JAVAPROGRAMMER));
@@ -151,14 +151,14 @@ public class TaskTest {
 
         // Checks if next tasks are properly added upon task creation
         Task test = new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(currentTask), "project1");
-        currentTask.removeprevTask(test);
+        currentTask.removePrevTask(test);
         assertEquals(Status.AVAILABLE, currentTask.getStatus());
 
         // Asserts it's impossible to start a task before the end time of one of its finished previous tasks
         assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(5), sysAdmin, Role.SYSADMIN));
 
         // Checks removing and adding of tasks to available task
-        currentTask.removeprevTask(prevTask);
+        currentTask.removePrevTask(prevTask);
         assertEquals("available", currentTask.getStatus().toString());
         currentTask.addprevTask(prevTask);
         assertEquals("available", currentTask.getStatus().toString());
@@ -181,7 +181,7 @@ public class TaskTest {
 
         // Fail the current task
         currentTask.fail(pythonProg, new Time(15));
-        assertEquals(new HashMap<>(), currentTask.getTaskProxy().getUserNamesWithRole());
+        assertEquals(new HashMap<>(), currentTask.getTaskData().getUserNamesWithRole());
         assertEquals("failed", currentTask.getStatus().toString());
         assertEquals(Status.UNAVAILABLE, nextTask.getStatus());
 
@@ -191,7 +191,7 @@ public class TaskTest {
 
         // TASK PROXY REPLACED TASK
 
-        TaskData taskDataFailed = currentTask.getTaskProxy();
+        TaskData taskDataFailed = currentTask.getTaskData();
 
         assertEquals("Current Task", taskDataFailed.getName());
         assertEquals("Test", taskDataFailed.getDescription());
@@ -203,7 +203,7 @@ public class TaskTest {
         assertEquals(new Time(15), taskDataFailed.getEndTime());
         assertEquals(List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), taskDataFailed.getUnfulfilledRoles());
         assertEquals("project1", taskDataFailed.getProjectName());
-        assertFalse(taskDataFailed.cansafelyAddPrevTask("Current Task"));
+        assertFalse(taskDataFailed.canSafelyAddPrevTask("Current Task"));
         assertNull(taskDataFailed.getReplacesTaskName());
 
         Map<String, Role> userRoleMap = new HashMap<>();
@@ -217,7 +217,7 @@ public class TaskTest {
 
         // TASK PROXY WITH REPLACEMENT TASK
 
-        TaskData replacementProxy = replacementTask.getTaskProxy();
+        TaskData replacementProxy = replacementTask.getTaskData();
 
         assertNull(replacementProxy.getReplacementTaskName());
         assertEquals("Current Task", replacementProxy.getReplacesTaskName());
@@ -228,55 +228,55 @@ public class TaskTest {
 
 
 
-        assertFalse(task1.getTaskProxy().cansafelyAddPrevTask("Task 1"));
-        assertFalse(task1.getTaskProxy().cansafelyAddPrevTask("Task 2"));
-        assertTrue(task1.getTaskProxy().cansafelyAddPrevTask("Task 3"));
-        assertTrue(task1.getTaskProxy().cansafelyAddPrevTask("Task 4"));
+        assertFalse(task1.getTaskData().canSafelyAddPrevTask("Task 1"));
+        assertFalse(task1.getTaskData().canSafelyAddPrevTask("Task 2"));
+        assertTrue(task1.getTaskData().canSafelyAddPrevTask("Task 3"));
+        assertTrue(task1.getTaskData().canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(task2.getTaskProxy().cansafelyAddPrevTask("Task 1"));
-        assertFalse(task2.getTaskProxy().cansafelyAddPrevTask("Task 2"));
-        assertTrue(task2.getTaskProxy().cansafelyAddPrevTask("Task 3"));
-        assertTrue(task2.getTaskProxy().cansafelyAddPrevTask("Task 4"));
+        assertTrue(task2.getTaskData().canSafelyAddPrevTask("Task 1"));
+        assertFalse(task2.getTaskData().canSafelyAddPrevTask("Task 2"));
+        assertTrue(task2.getTaskData().canSafelyAddPrevTask("Task 3"));
+        assertTrue(task2.getTaskData().canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(task3.getTaskProxy().cansafelyAddPrevTask("Task 1"));
-        assertTrue(task3.getTaskProxy().cansafelyAddPrevTask("Task 2"));
-        assertFalse(task3.getTaskProxy().cansafelyAddPrevTask("Task 3"));
-        assertFalse(task3.getTaskProxy().cansafelyAddPrevTask("Task 4"));
+        assertTrue(task3.getTaskData().canSafelyAddPrevTask("Task 1"));
+        assertTrue(task3.getTaskData().canSafelyAddPrevTask("Task 2"));
+        assertFalse(task3.getTaskData().canSafelyAddPrevTask("Task 3"));
+        assertFalse(task3.getTaskData().canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(task4.getTaskProxy().cansafelyAddPrevTask("Task 1"));
-        assertTrue(task4.getTaskProxy().cansafelyAddPrevTask("Task 2"));
-        assertTrue(task4.getTaskProxy().cansafelyAddPrevTask("Task 3"));
-        assertFalse(task4.getTaskProxy().cansafelyAddPrevTask("Task 4"));
+        assertTrue(task4.getTaskData().canSafelyAddPrevTask("Task 1"));
+        assertTrue(task4.getTaskData().canSafelyAddPrevTask("Task 2"));
+        assertTrue(task4.getTaskData().canSafelyAddPrevTask("Task 3"));
+        assertFalse(task4.getTaskData().canSafelyAddPrevTask("Task 4"));
 
 
         task2.addNextTask(task3);
         task4.addprevTask(task1);
 
-        TaskData taskData1 = task1.getTaskProxy();
-        TaskData taskData2 = task2.getTaskProxy();
-        TaskData taskData3 = task3.getTaskProxy();
-        TaskData taskData4 = task4.getTaskProxy();
+        TaskData taskData1 = task1.getTaskData();
+        TaskData taskData2 = task2.getTaskData();
+        TaskData taskData3 = task3.getTaskData();
+        TaskData taskData4 = task4.getTaskData();
 
 
-        assertFalse(taskData1.cansafelyAddPrevTask("Task 1"));
-        assertFalse(taskData1.cansafelyAddPrevTask("Task 2"));
-        assertFalse(taskData1.cansafelyAddPrevTask("Task 3"));
-        assertFalse(taskData1.cansafelyAddPrevTask("Task 4"));
+        assertFalse(taskData1.canSafelyAddPrevTask("Task 1"));
+        assertFalse(taskData1.canSafelyAddPrevTask("Task 2"));
+        assertFalse(taskData1.canSafelyAddPrevTask("Task 3"));
+        assertFalse(taskData1.canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(taskData2.cansafelyAddPrevTask("Task 1"));
-        assertFalse(taskData2.cansafelyAddPrevTask("Task 2"));
-        assertFalse(taskData2.cansafelyAddPrevTask("Task 3"));
-        assertFalse(taskData2.cansafelyAddPrevTask("Task 4"));
+        assertTrue(taskData2.canSafelyAddPrevTask("Task 1"));
+        assertFalse(taskData2.canSafelyAddPrevTask("Task 2"));
+        assertFalse(taskData2.canSafelyAddPrevTask("Task 3"));
+        assertFalse(taskData2.canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(taskData3.cansafelyAddPrevTask("Task 1"));
-        assertTrue(taskData3.cansafelyAddPrevTask("Task 2"));
-        assertFalse(taskData3.cansafelyAddPrevTask("Task 3"));
-        assertFalse(taskData3.cansafelyAddPrevTask("Task 4"));
+        assertTrue(taskData3.canSafelyAddPrevTask("Task 1"));
+        assertTrue(taskData3.canSafelyAddPrevTask("Task 2"));
+        assertFalse(taskData3.canSafelyAddPrevTask("Task 3"));
+        assertFalse(taskData3.canSafelyAddPrevTask("Task 4"));
 
-        assertTrue(taskData4.cansafelyAddPrevTask("Task 1"));
-        assertTrue(taskData4.cansafelyAddPrevTask("Task 2"));
-        assertTrue(taskData4.cansafelyAddPrevTask("Task 3"));
-        assertFalse(taskData4.cansafelyAddPrevTask("Task 4"));
+        assertTrue(taskData4.canSafelyAddPrevTask("Task 1"));
+        assertTrue(taskData4.canSafelyAddPrevTask("Task 2"));
+        assertTrue(taskData4.canSafelyAddPrevTask("Task 3"));
+        assertFalse(taskData4.canSafelyAddPrevTask("Task 4"));
 
 
         // FinishedStatusTest
@@ -284,19 +284,19 @@ public class TaskTest {
         Task onTime = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
         onTime.start(new Time(0), user, Role.JAVAPROGRAMMER);
         onTime.finish(user, new Time(10));
-        assertEquals("on time", onTime.getTaskProxy().getFinishedStatus().toString());
+        assertEquals("on time", onTime.getTaskData().getFinishedStatus().toString());
 
 
         Task early = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
         early.start(new Time(0), user, Role.JAVAPROGRAMMER);
         early.finish(user, new Time(5));
-        assertEquals("early", early.getTaskProxy().getFinishedStatus().toString());
+        assertEquals("early", early.getTaskData().getFinishedStatus().toString());
 
 
         Task delayed = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
         delayed.start(new Time(0), user, Role.JAVAPROGRAMMER);
         delayed.finish(user, new Time(100));
-        assertEquals("delayed", delayed.getTaskProxy().getFinishedStatus().toString());
+        assertEquals("delayed", delayed.getTaskData().getFinishedStatus().toString());
 
     }
 }

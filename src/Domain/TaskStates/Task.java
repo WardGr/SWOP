@@ -11,7 +11,7 @@ import java.util.*;
  * a list of users currently committed to the task, alongside their role
  * a list of roles required to finish the task
  */
-public class Task {
+public class Task implements TaskData{
 
     private final String name;
     private final String description;
@@ -30,8 +30,6 @@ public class Task {
     private List<Role> requiredRoles;
 
     private final Map<User, Role> committedUsers;
-
-    private final TaskData taskData;
 
     private String projectName;
 
@@ -59,8 +57,6 @@ public class Task {
 
         this.prevTasks = new HashSet<>();
         this.nextTasks = new HashSet<>();
-
-        this.taskData = new TaskData(this);
 
         this.state = new AvailableState();
     }
@@ -103,8 +99,6 @@ public class Task {
         this.prevTasks = new HashSet<>();
         this.nextTasks = new HashSet<>();
 
-        this.taskData = new TaskData(this);
-
         setState(new AvailableState());
         setRequiredRoles(roles);
         setProjectName(projectName);
@@ -128,16 +122,9 @@ public class Task {
     }
 
     /**
-     * @return A read-only proxy of this task, containing certain details of the task
-     */
-    public TaskData getTaskProxy() {
-        return taskData;
-    }
-
-    /**
      * @return A string with the name of the project this task is part of
      */
-    String getProjectName() {
+    public String getProjectName() {
         return projectName;
     }
 
@@ -165,14 +152,14 @@ public class Task {
     /**
      * @return This tasks' acceptable deviation from the estimated duration
      */
-    double getAcceptableDeviation() {
+    public double getAcceptableDeviation() {
         return acceptableDeviation;
     }
 
     /**
      * @return A time object representing this tasks' estimated duration
      */
-    Time getEstimatedDuration() {
+    public Time getEstimatedDuration() {
         return estimatedDuration;
     }
 
@@ -205,6 +192,17 @@ public class Task {
     }
 
     /**
+     * @return A string depicting the name of the task that replaces this task
+     */
+    public String getReplacementTaskName() {
+        if (getReplacementTask() == null) {
+            return null;
+        } else {
+            return getReplacementTask().getName();
+        }
+    }
+
+    /**
      * @param replacementTask The task to set as this tasks' replacementTask
      */
     void setReplacementTask(Task replacementTask) {
@@ -216,6 +214,17 @@ public class Task {
      */
     public Task getReplacesTask() {
         return replacesTask;
+    }
+
+    /**
+     * @return A string depicting the name of the task that the task replaces
+     */
+    public String getReplacesTaskName() {
+        if (getReplacesTask() == null) {
+            return null;
+        } else {
+            return getReplacesTask().getName();
+        }
     }
 
     /**
@@ -265,14 +274,14 @@ public class Task {
      * @return This tasks' finishedstatus (early, on time, delayed)
      * @throws IncorrectTaskStatusException if this task is not Finished
      */
-    FinishedStatus getFinishedStatus() throws IncorrectTaskStatusException {
+    public FinishedStatus getFinishedStatus() throws IncorrectTaskStatusException {
         return getState().getFinishedStatus(this);
     }
 
     /**
      * @return A list of all roles that still need to be fulfilled for this task to be able to execute
      */
-    List<Role> getUnfulfilledRoles() {
+    public List<Role> getUnfulfilledRoles() {
         List<Role> unfulfilledRoles = getRequiredRoles();
         for (Role role : getUsersWithRole().values()){
             unfulfilledRoles.remove(role);
@@ -297,7 +306,7 @@ public class Task {
     /**
      * @return A map of all names of committed users mapped to their roles
      */
-    Map<String, Role> getUserNamesWithRole() {
+    public Map<String, Role> getUserNamesWithRole() {
         Map<String, Role> userNamesWithRole = new HashMap<>();
         getUsersWithRole().forEach((user, role) -> userNamesWithRole.put(user.getUsername(), role));
         return userNamesWithRole;
@@ -306,8 +315,19 @@ public class Task {
     /**
      * @return Mutable list of all tasks that should be completed before this task
      */
-    List<Task> getprevTasks() {
+    List<Task> getPrevTasks() {
         return new LinkedList<>(prevTasks);
+    }
+
+    /**
+     * @return A list of the names of all previous tasks of the task
+     */
+    public List<String> getPrevTaskNames() {
+        List<String> prevTasksNames = new LinkedList<>();
+        for (Task prevTask : getPrevTasks()) {
+            prevTasksNames.add(prevTask.getName());
+        }
+        return prevTasksNames;
     }
 
     /**
@@ -318,9 +338,20 @@ public class Task {
     }
 
     /**
+     * @return A list of the names of all next tasks of the task
+     */
+    public List<String> getNextTasksNames() {
+        List<String> nextTasksNames = new LinkedList<>();
+        for (Task nextTask : getNextTasks()) {
+            nextTasksNames.add(nextTask.getName());
+        }
+        return nextTasksNames;
+    }
+
+    /**
      * @return Start time if this is set, null otherwise
      */
-    Time getStartTime() {
+    public Time getStartTime() {
         if (getTimeSpan() == null) {
             return null;
         }
@@ -342,7 +373,7 @@ public class Task {
     /**
      * @return End time if this is set, null otherwise
      */
-    Time getEndTime() {
+    public Time getEndTime() {
         if (getTimeSpan() == null) {
             return null;
         }
@@ -442,7 +473,7 @@ public class Task {
      * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
      */
     private void clearPrevTasks() {
-        for (Task prevTask : getprevTasks()) {
+        for (Task prevTask : getPrevTasks()) {
             removePrevTask(prevTask);
         }
     }
@@ -562,7 +593,7 @@ public class Task {
      * @param prevTask Name of the task to test adding
      * @return true if adding (the task corresponding to) prevTask does not introduce a loop in the dependency graph, false otherwise
      */
-    boolean canSafelyAddprevTask(String prevTask) {
+    public boolean canSafelyAddPrevTask(String prevTask) {
         return getState().canSafelyAddPrevTask(this, prevTask);
     }
 
