@@ -9,7 +9,7 @@ package Domain.Command;
  import java.util.Set;
 
  public class CreateTaskCommand extends Command {
-         private CreateTaskController controller;
+         private TaskManSystem taskManSystem;
          private String projectName;
          private String taskName;
          private String description;
@@ -19,8 +19,12 @@ package Domain.Command;
          private Set<String> previousTasks;
          private Set<String> nextTasks;
 
+         private TaskManSystem getTaskManSystem() {
+             return taskManSystem;
+         }
+
          // Ofwel zo, ofwel geven we een task en project mee, dan doen we rechtstreeks project.deletetask en project.addtask ipv nieuwe objecten te maken
-         public CreateTaskCommand(CreateTaskController controller,
+         public CreateTaskCommand(TaskManSystem taskManSystem,
                                  String projectName,
                                  String taskName,
                                  String description,
@@ -29,7 +33,7 @@ package Domain.Command;
                                  List<Role> roles,
                                  Set<String> previousTasks,
                                  Set<String> nextTasks) {
-             this.controller = controller;
+             this.taskManSystem = taskManSystem;
              this.projectName = projectName;
              this.taskName = taskName;
              this.description = description;
@@ -41,13 +45,13 @@ package Domain.Command;
          }
 
          @Override
-         public void undo() throws TaskNotFoundException {
-             controller.deleteTask(projectName, taskName);
+         public void undo() throws TaskNotFoundException, IncorrectTaskStatusException {
+             getTaskManSystem().deleteTask(projectName, taskName);
          }
 
          @Override
-         public void redo() throws UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectPermissionException, LoopDependencyGraphException, NonDeveloperRoleException {
-             controller.createTask(projectName, taskName, description, durationTime, deviation, roles, previousTasks, nextTasks);
+         public void execute() throws UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectPermissionException, LoopDependencyGraphException, NonDeveloperRoleException {
+             getTaskManSystem().addTaskToProject(projectName, taskName, description, durationTime, deviation, roles, previousTasks, nextTasks);
          }
 
          @Override

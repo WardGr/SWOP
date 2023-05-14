@@ -1,6 +1,10 @@
 package Application;
 
 import Domain.*;
+import Domain.Command.Command;
+import Domain.Command.CreateTaskCommand;
+import Domain.Command.DeleteTaskCommand;
+import Domain.Command.ReplaceTaskCommand;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.TaskData;
@@ -11,10 +15,11 @@ import java.util.Set;
 /**
  * Separates domain from UI for the createtask use-case
  */
-public class CreateTaskController {
+public class TaskController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
+    private final CommandHandler cmdHandler;
 
     /**
      * Creates this controller object
@@ -22,12 +27,14 @@ public class CreateTaskController {
      * @param session           The current session to set as active session
      * @param taskManSystem     The system object to set as current system
      */
-    public CreateTaskController(
+    public TaskController(
             SessionProxy session,
-            TaskManSystem taskManSystem
+            TaskManSystem taskManSystem,
+            CommandHandler cmdHandler
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
+        this.cmdHandler = cmdHandler;
     }
 
     /**
@@ -86,7 +93,8 @@ public class CreateTaskController {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        getTaskManSystem().addTaskToProject(
+        Command cmd = new CreateTaskCommand(
+                getTaskManSystem(),
                 projectName,
                 taskName,
                 description,
@@ -96,10 +104,13 @@ public class CreateTaskController {
                 prevTasks,
                 nextTasks
         );
+        cmdHandler.addNode(cmd, session.getCurrentUser());
     }
 
-    public void deleteTask(String projectName, String taskName) throws TaskNotFoundException {
+    public void deleteTask(String projectName, String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
         getTaskManSystem().deleteTask(projectName, taskName);
+        Command cmd = new DeleteTaskCommand(getTaskManSystem(), projectName, taskName);
+        cmdHandler.addNode(cmd, session.getCurrentUser());
     }
 
     /**
@@ -128,7 +139,8 @@ public class CreateTaskController {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        getTaskManSystem().replaceTaskInProject(
+        Command cmd = new ReplaceTaskCommand(
+                getTaskManSystem(),
                 projectName,
                 taskName,
                 description,
@@ -136,6 +148,7 @@ public class CreateTaskController {
                 deviation,
                 replaces
         );
+        cmdHandler.addNode(cmd, session.getCurrentUser());
     }
 
     /**

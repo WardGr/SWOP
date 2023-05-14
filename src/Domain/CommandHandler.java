@@ -55,6 +55,7 @@ package Domain;
      }
 
      public void addNode(Command command, User user) {
+        command.execute();
          Node newNode = new Node(command, user);
          if (node == null) {
              node = newNode;

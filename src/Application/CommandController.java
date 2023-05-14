@@ -31,9 +31,4 @@ package Application;
      public List<String> possibleRedoes() {
          return cmdHandler.possibleRedoes(session.getCurrentUser());
      }
-
-     public void addCommand(Command cmd) {
-         cmdHandler.addNode(cmd, session.getCurrentUser());
-     }
-
 }
