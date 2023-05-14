@@ -11,6 +11,7 @@ import java.util.Set;
 public class EndTaskController {
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
+    private final CommandManager commandManager;
 
     /**
      * Creates this controller object
@@ -20,10 +21,12 @@ public class EndTaskController {
      */
     public EndTaskController(
             SessionProxy session,
-            TaskManSystem taskManSystem
+            TaskManSystem taskManSystem,
+            CommandManager commandManager
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
+        this.commandManager = commandManager;
     }
 
     /**
@@ -33,13 +36,20 @@ public class EndTaskController {
         return session;
     }
 
-
     /**
      * @return  The object containing the current taskmanager system
      */
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
     }
+
+    /**
+     * @return  The object containing the current command manager
+     */
+    private CommandManager getCommandManager() {
+        return commandManager;
+    }
+
     public boolean endTaskPreconditions() {
         return (getSession().getRoles().contains(Role.PYTHONPROGRAMMER) ||
                 getSession().getRoles().contains(Role.JAVAPROGRAMMER) ||

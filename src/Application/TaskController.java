@@ -19,22 +19,23 @@ public class TaskController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
-    private final CommandHandler cmdHandler;
+    private final CommandManager commandManager;
 
     /**
      * Creates this controller object
      *
      * @param session           The current session to set as active session
      * @param taskManSystem     The system object to set as current system
+     * @param commandManager    The object that manages the commands in the system
      */
     public TaskController(
             SessionProxy session,
             TaskManSystem taskManSystem,
-            CommandHandler cmdHandler
+            CommandManager commandManager
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
-        this.cmdHandler = cmdHandler;
+        this.commandManager = commandManager;
     }
 
     /**
@@ -49,6 +50,13 @@ public class TaskController {
      */
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
+    }
+
+    /**
+     * @return  The object containing the current command manager
+     */
+    private CommandManager getCommandManager() {
+        return commandManager;
     }
 
     /**
@@ -93,7 +101,7 @@ public class TaskController {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        Command cmd = new CreateTaskCommand(
+        Command createTaskCommand = new CreateTaskCommand(
                 getTaskManSystem(),
                 projectName,
                 taskName,
@@ -104,13 +112,13 @@ public class TaskController {
                 prevTasks,
                 nextTasks
         );
-        cmdHandler.addNode(cmd, session.getCurrentUser());
+        getCommandManager().addExecutedCommand(createTaskCommand, getSession().getCurrentUser());
     }
 
     public void deleteTask(String projectName, String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
         getTaskManSystem().deleteTask(projectName, taskName);
         Command cmd = new DeleteTaskCommand(getTaskManSystem(), projectName, taskName);
-        cmdHandler.addNode(cmd, session.getCurrentUser());
+        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 
     /**
@@ -148,7 +156,7 @@ public class TaskController {
                 deviation,
                 replaces
         );
-        cmdHandler.addNode(cmd, session.getCurrentUser());
+        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 
     /**

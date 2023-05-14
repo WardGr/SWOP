@@ -8,7 +8,7 @@ import Domain.TaskStates.TaskData;
 public class UpdateDependenciesController {
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
-    private final CommandHandler cmdHandler;
+    private final CommandManager cmdHandler;
 
 
     /**
@@ -17,7 +17,7 @@ public class UpdateDependenciesController {
      * @param session           The current session to set as active session
      * @param taskManSystem     Object managing the system
      */
-    public UpdateDependenciesController(SessionProxy session, TaskManSystem taskManSystem, CommandHandler cmdHandler) {
+    public UpdateDependenciesController(SessionProxy session, TaskManSystem taskManSystem, CommandManager cmdHandler) {
         this.session = session;
         this.taskManSystem = taskManSystem;
         this.cmdHandler = cmdHandler;
@@ -63,7 +63,7 @@ public class UpdateDependenciesController {
         }
         getTaskManSystem().addPrevTaskToProject(projectName, taskName, prevTaskName);
         Command cmd = new AddPrevCommand(getTaskManSystem(), projectName, taskName, prevTaskName);
-        cmdHandler.addNode(cmd, session.getCurrentUser());
+        cmdHandler.addExecutedCommand(cmd, session.getCurrentUser());
     }
 
     /**
@@ -85,7 +85,7 @@ public class UpdateDependenciesController {
         }
         getTaskManSystem().addNextTaskToProject(projectName, taskName, nextTaskName);
         Command cmd = new AddNextCommand(getTaskManSystem(), projectName, taskName, nextTaskName);
-        cmdHandler.addNode(cmd, session.getCurrentUser());
+        cmdHandler.addExecutedCommand(cmd, session.getCurrentUser());
     }
 
     /**
@@ -105,8 +105,8 @@ public class UpdateDependenciesController {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
         getTaskManSystem().removePrevTaskFromProject(projectName, taskName, prevTaskName);
-        Command cmd = new RemPrevCommand(getTaskManSystem(), projectName, taskName, prevTaskName);
-        cmdHandler.addNode(cmd, session.getCurrentUser());
+        Command cmd = new RemovePrevCommand(getTaskManSystem(), projectName, taskName, prevTaskName);
+        cmdHandler.addExecutedCommand(cmd, session.getCurrentUser());
     }
 
     /**
@@ -126,8 +126,8 @@ public class UpdateDependenciesController {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
         getTaskManSystem().removeNextTaskFromProject(projectName, taskName, nextTaskName);
-        Command cmd = new RemNextCommand(getTaskManSystem(), projectName, taskName, nextTaskName);
-        cmdHandler.addNode(cmd, session.getCurrentUser());
+        Command cmd = new RemoveNextCommand(getTaskManSystem(), projectName, taskName, nextTaskName);
+        cmdHandler.addExecutedCommand(cmd, session.getCurrentUser());
     }
 
     /**

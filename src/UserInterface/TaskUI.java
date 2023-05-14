@@ -1,6 +1,6 @@
 package UserInterface;
 
-import Application.CreateTaskController;
+import Application.TaskController;
 import Application.IncorrectPermissionException;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
@@ -14,23 +14,23 @@ import java.util.*;
 /**
  * Handles user input for the createtask use-case, requests necessary domain-level information from the Application.CreateTaskController
  */
-public class CreateTaskUI {
+public class TaskUI {
 
-    private final CreateTaskController controller;
+    private final TaskController controller;
 
     /**
      * Creates a new UI object
      *
      * @param controller Controller with which this UI should communicate to access the domain
      */
-    public CreateTaskUI(CreateTaskController controller) {
+    public TaskUI(TaskController controller) {
         this.controller = controller;
     }
 
     /**
      * @return This UI's controller
      */
-    private CreateTaskController getController() {
+    private TaskController getController() {
         return controller;
     }
 

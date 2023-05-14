@@ -7,26 +7,25 @@ import Domain.TaskManSystem;
 import Domain.TaskNotFoundException;
  import Domain.TaskStates.LoopDependencyGraphException;
 
- public class RemNextCommand extends Command {
-     private TaskManSystem taskManSystem;
-     private String projectName;
-     private String taskName;
-     private String nextTaskName;
+ public class RemoveNextCommand implements Command {
+     private final TaskManSystem taskManSystem;
+     private final String projectName;
+     private final String taskName;
+     private final String nextTaskName;
 
-     public RemNextCommand(TaskManSystem taskManSystem, String projectName, String taskName, String nextTaskName) {
+     public RemoveNextCommand(TaskManSystem taskManSystem, String projectName, String taskName, String nextTaskName) {
          this.taskManSystem = taskManSystem;
          this.projectName = projectName;
          this.taskName = taskName;
          this.nextTaskName = nextTaskName;
      }
      @Override
-     public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectPermissionException, LoopDependencyGraphException {
+     public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
          taskManSystem.addNextTaskToProject(projectName, taskName, nextTaskName);
-
      }
 
      @Override
-     public void redo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectPermissionException, LoopDependencyGraphException {
+     public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
          taskManSystem.removeNextTaskFromProject(projectName, taskName, nextTaskName);
      }
 

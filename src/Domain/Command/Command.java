@@ -1,28 +1,15 @@
 package Domain.Command;
 
+ import Domain.IncorrectTaskStatusException;
+ import Domain.ProjectNotFoundException;
+ import Domain.TaskNotFoundException;
+ import Domain.TaskStates.LoopDependencyGraphException;
  import Domain.User;
 
- public abstract class Command {
+ public interface Command extends CommandData {
 
-     User getUser() // zo ofwel in de nodes bijhouden
-     {
-         return null;
-     }
+     void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException;
 
-     public void undo() throws Exception {
-     }
+     void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException;
 
-     public void execute() throws Exception {
-
-     }
-
-     public String information()
-     {
-         return null;
-     }
-
-     public boolean reversePossible()
-     {
-         return true;
-     }
  }

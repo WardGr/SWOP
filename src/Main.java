@@ -1,8 +1,5 @@
 import Application.*;
-import Domain.InvalidTimeException;
-import Domain.TaskManSystem;
-import Domain.Time;
-import Domain.UserManager;
+import Domain.*;
 import UserInterface.*;
 
 /**
@@ -16,38 +13,41 @@ public class Main {
             UserManager userManager = new UserManager();
             Session session = new Session();
             SessionProxy sessionProxy = new SessionProxy(session);
-            CommandController commandController = new CommandController(session);
+            CommandManager commandManager = new CommandManager();
 
             SessionController sessionController = new SessionController(session, userManager);
-            AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandController);
-            ProjectController createProjectController = new ProjectController(sessionProxy, taskManSystem);
+            AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandManager);
+            ProjectController createProjectController = new ProjectController(sessionProxy, taskManSystem, commandManager);
             ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
-            CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem);
-            LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager);
-            StartTaskController startTaskController = new StartTaskController(sessionProxy, taskManSystem);
-            EndTaskController endTaskController = new EndTaskController(sessionProxy, taskManSystem);
-            UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionProxy, taskManSystem, commandController);
+            TaskController taskController = new TaskController(sessionProxy, taskManSystem, commandManager);
+            LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager, commandManager);
+            StartTaskController startTaskController = new StartTaskController(sessionProxy, taskManSystem, commandManager);
+            EndTaskController endTaskController = new EndTaskController(sessionProxy, taskManSystem, commandManager);
+            UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionProxy, taskManSystem, commandManager);
+            UndoRedoController undoRedoController = new UndoRedoController(sessionProxy, commandManager);
 
             SessionUI sessionUI = new SessionUI(sessionController);
             AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);
-            CreateProjectUI createProjectUI = new CreateProjectUI(createProjectController);
+            ProjectUI projectUI = new ProjectUI(createProjectController);
             ShowProjectsUI showProjectsUI = new ShowProjectsUI(showProjectsController);
-            CreateTaskUI createTaskUI = new CreateTaskUI(createTaskController);
+            TaskUI taskUI = new TaskUI(taskController);
             LoadSystemUI loadSystemUI = new LoadSystemUI(loadSystemController);
             StartTaskUI startTaskUI = new StartTaskUI(startTaskController);
             EndTaskUI endTaskUI = new EndTaskUI(endTaskController);
             UpdateDependenciesUI updateDependenciesUI = new UpdateDependenciesUI(updateDependenciesController);
+            UndoRedoUI undoRedoUI = new UndoRedoUI(undoRedoController);
 
             UserInterface UI = new UserInterface(
                     sessionUI,
                     advanceTimeUI,
-                    createProjectUI,
+                    projectUI,
                     showProjectsUI,
-                    createTaskUI,
+                    taskUI,
                     loadSystemUI,
                     startTaskUI,
                     endTaskUI,
-                    updateDependenciesUI
+                    updateDependenciesUI,
+                    undoRedoUI
             );
             UI.startSystem();
         } catch (InvalidTimeException e) {

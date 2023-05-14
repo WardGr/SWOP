@@ -14,7 +14,7 @@ public class AdvanceTimeController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
-    private final CommandController cmdController;
+    private final CommandManager commandManager;
 
 
     /**
@@ -26,11 +26,11 @@ public class AdvanceTimeController {
     public AdvanceTimeController(
             SessionProxy session,
             TaskManSystem taskManSystem,
-            CommandController cmdController
+            CommandManager commandManager
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
-        this.cmdController = cmdController;
+        this.commandManager = commandManager;
     }
 
     /**
@@ -47,8 +47,8 @@ public class AdvanceTimeController {
         return taskManSystem;
     }
 
-    private CommandController getCommandHandler() {
-        return cmdController;
+    private CommandManager getCommandManager() {
+        return commandManager;
     }
 
     public Time getSystemTime() {
@@ -79,8 +79,8 @@ public class AdvanceTimeController {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(newTime);
-        Command cmd = new ImpossibleUndoRedo();
-        getCommandHandler().addCommand(cmd);
+        Command cmd = new ImpossibleUndoRedo(); // TODO
+        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 
     /**
@@ -96,7 +96,7 @@ public class AdvanceTimeController {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(advanceMinutes);
-        Command cmd = new ImpossibleUndoRedo();
-        getCommandHandler().addCommand(cmd);
+        Command cmd = new ImpossibleUndoRedo(); // TODO
+        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 }

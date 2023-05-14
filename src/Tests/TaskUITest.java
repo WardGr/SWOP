@@ -17,7 +17,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
-public class CreateTaskUITest {
+public class TaskUITest {
 
     @Test
     public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
@@ -39,8 +39,8 @@ public class CreateTaskUITest {
         CreateTaskController managerController = new CreateTaskController(managerSessionProxy, taskManSystem);
         CreateTaskController developerController = new CreateTaskController(developerSessionProxy, taskManSystem);
 
-        CreateTaskUI developerUI = new CreateTaskUI(developerController);
-        CreateTaskUI managerUI = new CreateTaskUI(managerController);
+        TaskUI developerUI = new TaskUI(developerController);
+        TaskUI managerUI = new TaskUI(managerController);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));

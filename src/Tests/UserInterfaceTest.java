@@ -20,33 +20,34 @@ public class UserInterfaceTest {
         UserManager userManager = new UserManager();
         Session session = new Session();
         SessionProxy sessionProxy = new SessionProxy(session);
+        CommandManager commandManager = new CommandManager();
 
         SessionController sessionController = new SessionController(session, userManager);
-        AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem);
-        CreateProjectController createProjectController = new CreateProjectController(sessionProxy, taskManSystem);
+        AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandManager);
+        ProjectController createProjectController = new ProjectController(sessionProxy, taskManSystem);
         ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
-        CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem);
+        TaskController taskController = new TaskController(sessionProxy, taskManSystem, commandManager);
         LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager);
         StartTaskController startTaskController = new StartTaskController(sessionProxy, taskManSystem);
         StartTaskUI startTaskUI = new StartTaskUI(startTaskController);
         EndTaskController endTaskController = new EndTaskController(sessionProxy, taskManSystem);
         EndTaskUI endTaskUI = new EndTaskUI(endTaskController);
-        UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionProxy, taskManSystem);
+        UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionProxy, taskManSystem, commandManager);
         UpdateDependenciesUI updateDependenciesUI = new UpdateDependenciesUI(updateDependenciesController);
 
         SessionUI sessionUI = new SessionUI(sessionController);
         AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);
-        CreateProjectUI createProjectUI = new CreateProjectUI(createProjectController);
+        ProjectUI projectUI = new ProjectUI(createProjectController);
         ShowProjectsUI showProjectsUI = new ShowProjectsUI(showProjectsController);
-        CreateTaskUI createTaskUI = new CreateTaskUI(createTaskController);
+        TaskUI taskUI = new TaskUI(taskController);
         LoadSystemUI loadSystemUI = new LoadSystemUI(loadSystemController);
 
         UserInterface UI = new UserInterface(
                 sessionUI,
                 advanceTimeUI,
-                createProjectUI,
+                projectUI,
                 showProjectsUI,
-                createTaskUI,
+                taskUI,
                 loadSystemUI,
                 startTaskUI,
                 endTaskUI,

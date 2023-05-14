@@ -20,6 +20,7 @@ public class LoadSystemController {
     private final UserManager userManager;
     private final TaskManSystem taskManSystem;
     private final SessionProxy session;
+    private final CommandManager commandManager;
 
     /**
      * Creates this controller object
@@ -28,10 +29,11 @@ public class LoadSystemController {
      * @param taskManSystem     The system class to set as current system
      * @param userManager       The class managing all users in the system
      */
-    public LoadSystemController(SessionProxy session, TaskManSystem taskManSystem, UserManager userManager) {
+    public LoadSystemController(SessionProxy session, TaskManSystem taskManSystem, UserManager userManager, CommandManager commandManager) {
         this.session = session;
         this.taskManSystem = taskManSystem;
         this.userManager = userManager;
+        this.commandManager = commandManager;
     }
 
     /**
@@ -47,11 +49,19 @@ public class LoadSystemController {
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
     }
+
     /**
      * @return  The session data object with currently logged-in user
      */
     private SessionProxy getSession() {
         return session;
+    }
+
+    /**
+     * @return  The object containing the current command manager
+     */
+    private CommandManager getCommandManager(){
+        return commandManager;
     }
 
     /**

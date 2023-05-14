@@ -1,12 +1,12 @@
 package Tests;
 
-import Application.CreateProjectController;
+import Application.ProjectController;
 import Application.Session;
 import Application.SessionProxy;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.IllegalTaskRolesException;
-import UserInterface.CreateProjectUI;
+import UserInterface.ProjectUI;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -16,7 +16,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class CreateProjectUITest {
+public class ProjectUITest {
 
     @Test
     public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException {
@@ -45,11 +45,11 @@ public class CreateProjectUITest {
         taskManSystem.createProject("SimpleProject", "Cool description", new Time(100));
         taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
 
-        CreateProjectController managerController = new CreateProjectController(managerSessionProxy, taskManSystem);
-        CreateProjectController developerController = new CreateProjectController(developerSessionProxy, taskManSystem);
+        ProjectController managerController = new ProjectController(managerSessionProxy, taskManSystem);
+        ProjectController developerController = new ProjectController(developerSessionProxy, taskManSystem);
 
-        CreateProjectUI developerUI = new CreateProjectUI(developerController);
-        CreateProjectUI managerUI = new CreateProjectUI(managerController);
+        ProjectUI developerUI = new ProjectUI(developerController);
+        ProjectUI managerUI = new ProjectUI(managerController);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));

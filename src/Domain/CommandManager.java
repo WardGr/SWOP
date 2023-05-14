@@ -5,10 +5,10 @@ package Domain;
  import java.util.ArrayList;
  import java.util.List;
 
- public class CommandHandler {
+ public class CommandManager {
      private Node node;
 
-     public CommandHandler() {
+     public CommandManager() {
          node = null;
      }
 
@@ -30,7 +30,7 @@ package Domain;
          if (node.getUser() != user) {
              throw new Exception("Incorrect permission: User is not allowed to redo this command");
          }
-         node.getcommand().redo();
+         node.getcommand().execute();
          node = node.getNext();
      }
 
@@ -54,9 +54,8 @@ package Domain;
          return redoes;
      }
 
-     public void addNode(Command command, User user) {
-        command.execute();
-         Node newNode = new Node(command, user);
+     public void addExecutedCommand(Command command, User executingUser) {
+         Node newNode = new Node(command, executingUser);
          if (node == null) {
              node = newNode;
          } else {
@@ -64,7 +63,7 @@ package Domain;
              newNode.setPrev(node);
              newNode.setNext(null);
              node = newNode;
-             removeOldNodes(user);
+             removeOldNodes(executingUser); // TODO deze zou niet meer moeten, maar dat doen we later wel
          }
      }
 

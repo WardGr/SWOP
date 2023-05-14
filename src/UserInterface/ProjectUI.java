@@ -9,7 +9,7 @@ import java.util.Scanner;
 /**
  * Handles user input for the createproject use-case, requests necessary domain-level information from the Application.CreateProjectController
  */
-public class CreateProjectUI {
+public class ProjectUI {
 
     private final ProjectController controller;
 
@@ -18,7 +18,7 @@ public class CreateProjectUI {
      *
      * @param controller Controller with which this UI should communicate to access the domain
      */
-    public CreateProjectUI(ProjectController controller) {
+    public ProjectUI(ProjectController controller) {
         this.controller = controller;
     }
 

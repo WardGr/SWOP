@@ -10,13 +10,14 @@ public class UserInterface {
 
     private final SessionUI sessionUI;
     private final ShowProjectsUI showProjectsUI;
-    private final CreateProjectUI createProjectUI;
-    private final CreateTaskUI createTaskUI;
+    private final ProjectUI projectUI;
+    private final TaskUI taskUI;
     private final AdvanceTimeUI advanceTimeUI;
     private final LoadSystemUI loadSystemUI;
     private final StartTaskUI startTaskUI;
     private final EndTaskUI endTaskUI;
     private final UpdateDependenciesUI updateDependenciesUI;
+    private final UndoRedoUI undoRedoUI;
 
     /**
      * Creates the main UI object, setting all its use-case UI's
@@ -24,23 +25,25 @@ public class UserInterface {
     public UserInterface(
             SessionUI sessionUI,
             AdvanceTimeUI advanceTimeUI,
-            CreateProjectUI createProjectUI,
+            ProjectUI projectUI,
             ShowProjectsUI showProjectsUI,
-            CreateTaskUI createTaskUI,
+            TaskUI taskUI,
             LoadSystemUI loadSystemUI,
             StartTaskUI startTaskUI,
             EndTaskUI endTaskUI,
-            UpdateDependenciesUI updateDependenciesUI
+            UpdateDependenciesUI updateDependenciesUI,
+            UndoRedoUI undoRedoUI
     ) {
         this.sessionUI = sessionUI;
         this.advanceTimeUI = advanceTimeUI;
-        this.createProjectUI = createProjectUI;
+        this.projectUI = projectUI;
         this.showProjectsUI = showProjectsUI;
-        this.createTaskUI = createTaskUI;
+        this.taskUI = taskUI;
         this.loadSystemUI = loadSystemUI;
         this.startTaskUI = startTaskUI;
         this.endTaskUI = endTaskUI;
         this.updateDependenciesUI = updateDependenciesUI;
+        this.undoRedoUI = undoRedoUI;
     }
 
     /**
@@ -71,13 +74,16 @@ public class UserInterface {
             case "login" -> sessionUI.loginRequest();
             case "logout" -> sessionUI.logout();
             case "showprojects" -> showProjectsUI.showProjects();
-            case "createproject" -> createProjectUI.createProject();
-            case "createtask" -> createTaskUI.createTask();
+            case "createproject" -> projectUI.createProject();
+            case "createtask" -> taskUI.createTask();
+            // TODO delete task
             case "advancetime" -> advanceTimeUI.advanceTime();
             case "loadsystem" -> loadSystemUI.loadSystem();
             case "starttask" -> startTaskUI.startTask();
             case "endtask" -> endTaskUI.endTask();
             case "updatedependencies" -> updateDependenciesUI.updateDependencies();
+            case "undo" -> undoRedoUI.undo();
+            case "redo" -> undoRedoUI.redo();
             default -> System.out.println(
                     "Unknown command, type help to see available commands"
             );
@@ -96,10 +102,13 @@ public class UserInterface {
         System.out.println("showprojects:       Shows a list of all current projects");
         System.out.println("createproject:      Shows the project creation prompt and creates a project");
         System.out.println("createtask:         Shows the task creation prompt to add a task to a project");
+        // TODO delete task
         System.out.println("advancetime:        Allows the user to modify the system time");
         System.out.println("loadsystem:         Allows the user to load projects and tasks into the system");
         System.out.println("starttask:          Allows the user to start a task");
         System.out.println("endtask:            Allows the user to end a task");
         System.out.println("updatedependencies: Allows the user to update the dependencies of a task");
+        System.out.println("undo:               Allows the user to undo a previously executed command");
+        System.out.println("redo:               Allows the user to redo a previously undone command");
     }
 }
