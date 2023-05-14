@@ -10,7 +10,7 @@ public class UnavailableState implements TaskState {
     @Override
     public void updateAvailability(Task task) {
         task.setState(new AvailableState());
-        for (Task prevTask : task.getprevTasks()) {
+        for (Task prevTask : task.getPrevTasks()) {
             prevTask.updateAvailabilityNextTask(task);
             // Set this tasks' state to unavailable if prevTask is not finished
         }
@@ -29,12 +29,6 @@ public class UnavailableState implements TaskState {
         } else {
             throw new LoopDependencyGraphException();
         }
-        updateAvailability(task);
-    }
-
-    public void removePrevTask(Task task, Task prevTask) {
-        task.removePrevTaskDirectly(prevTask);
-        prevTask.removeNextTaskDirectly(task);
         updateAvailability(task);
     }
 

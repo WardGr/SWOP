@@ -241,7 +241,7 @@ public class UpdateDependenciesUI {
         List<String> possiblePrevTasks = projectData.getActiveTasksNames();
         possiblePrevTasks.removeIf(prevTaskName -> taskData.getName().equals(prevTaskName));
         possiblePrevTasks.removeIf(prevTaskName -> taskData.getPrevTaskNames().contains(prevTaskName));
-        possiblePrevTasks.removeIf(prevTaskName -> !taskData.cansafelyAddPrevTask(prevTaskName));
+        possiblePrevTasks.removeIf(prevTaskName -> !taskData.canSafelyAddPrevTask(prevTaskName));
         System.out.print("Possible previous tasks: ");
         if (possiblePrevTasks.size() == 0) {
             System.out.println("There are no possible previous tasks to add.");
@@ -257,7 +257,7 @@ public class UpdateDependenciesUI {
         possibleNextTasks.removeIf(nextTaskName -> taskData.getNextTasksNames().contains(nextTaskName));
         possibleNextTasks.removeIf(nextTaskName -> {
             try {
-                return !getController().getTaskData(projectData.getName(), nextTaskName).cansafelyAddPrevTask(taskData.getName());
+                return !getController().getTaskData(projectData.getName(), nextTaskName).canSafelyAddPrevTask(taskData.getName());
             } catch (ProjectNotFoundException | TaskNotFoundException | IncorrectPermissionException e) {
                 throw new RuntimeException(e);
             }

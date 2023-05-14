@@ -12,146 +12,85 @@ import java.util.Map;
 /**
  * Read-only data class for task, with some extra functionality
  */
-public class TaskData {
-    private final Task task;
+public interface TaskData {
 
-    /**
-     * Creates a new read-only task data object with the given task
-     *
-     * @param task the task of which to create a task data class
-     */
-    public TaskData(Task task) {
-        this.task = task;
-    }
-
-    /**
-     * @return The task this data represents
-     */
-    private Task getTask() {
-        return task;
-    }
+    default TaskData getTaskData() {return this;}
 
     /**
      * @return A string containing the tasks' name
      */
-    public String getName() {
-        return getTask().getName();
-    }
+    String getName();
 
     /**
      * @return A string containing the tasks' description
      */
-    public String getDescription() {
-        return getTask().getDescription();
-    }
+    String getDescription();
 
     /**
      * @return A time object depicting the tasks' estimated duration
      */
-    public Time getEstimatedDuration() {
-        return getTask().getEstimatedDuration();
-    }
+    Time getEstimatedDuration();
 
     /**
      * @return The tasks' acceptable deviation from the tasks' estimated duration
      */
-    public double getAcceptableDeviation() {
-        return getTask().getAcceptableDeviation();
-    }
+    double getAcceptableDeviation();
 
     /**
      * @return The tasks' internal state (AVAILABLE, UNAVAILABLE, FINISHED, EXECUTING, FAILED, PENDING)
      */
-    public Status getStatus() {
-        return getTask().getStatus();
-    }
+    Status getStatus();
 
     /**
      * @return The tasks' finished state
      * @throws IncorrectTaskStatusException if the task is not FINISHED
      */
-    public FinishedStatus getFinishedStatus() throws IncorrectTaskStatusException {
-        return getTask().getFinishedStatus();
-    }
+    FinishedStatus getFinishedStatus() throws IncorrectTaskStatusException;
 
     /**
      * @return A string depicting the name of the task that replaces this task
      */
-    public String getReplacementTaskName() {
-        if (getTask().getReplacementTask() == null) {
-            return null;
-        } else {
-            return getTask().getReplacementTask().getName();
-        }
-    }
+    String getReplacementTaskName();
 
     /**
      * @return A string depicting the name of the task that the task replaces
      */
-    public String getReplacesTaskName() {
-        if (getTask().getReplacesTask() == null) {
-            return null;
-        } else {
-            return getTask().getReplacesTask().getName();
-        }
-    }
+    String getReplacesTaskName();
 
     /**
      * @return A list of the names of all previous tasks of the task
      */
-    public List<String> getPrevTaskNames() {
-        List<String> prevTasksNames = new LinkedList<>();
-        for (Task prevTask : getTask().getprevTasks()) {
-            prevTasksNames.add(prevTask.getName());
-        }
-        return prevTasksNames;
-    }
+    List<String> getPrevTaskNames();
 
     /**
      * @return A list of the names of all next tasks of the task
      */
-    public List<String> getNextTasksNames() {
-        List<String> nextTasksNames = new LinkedList<>();
-        for (Task nextTask : getTask().getNextTasks()) {
-            nextTasksNames.add(nextTask.getName());
-        }
-        return nextTasksNames;
-    }
+    List<String> getNextTasksNames();
 
     /**
      * @return A time object depicting this tasks' start time
      */
-    public Time getStartTime() {
-        return getTask().getStartTime();
-    }
+    Time getStartTime();
 
     /**
      * @return A time object depicting this tasks' end time
      */
-    public Time getEndTime() {
-        return getTask().getEndTime();
-    }
+    Time getEndTime();
 
     /**
      * @return A list of all roles that are unfulfilled for this task
      */
-    public List<Role> getUnfulfilledRoles() {
-        return getTask().getUnfulfilledRoles();
-    }
+    List<Role> getUnfulfilledRoles();
 
     /**
      * @return A map mapping the names, as Strings, of all committed users to their roles assigned for this task
      */
-    public Map<String, Role> getUserNamesWithRole() {
-        return getTask().getUserNamesWithRole();
-    }
+    Map<String, Role> getUserNamesWithRole();
 
     /**
      * @return A String depicting this tasks' projects' name
      */
-    public String getProjectName() {
-        return getTask().getProjectName();
-    }
+    String getProjectName();
 
     /**
      * Checks if it is safe to add (the task corresponding to) the given prevTask as previous task to this task
@@ -161,7 +100,5 @@ public class TaskData {
      * @return true if (the task corresponding to) the given prevTask can safely be added as a previous task to
      * this proxy's task without introducing a loop in the dependency graph, false otherwise
      */
-    public boolean cansafelyAddPrevTask(String prevTask) {
-        return getTask().canSafelyAddprevTask(prevTask);
-    }
+    boolean canSafelyAddPrevTask(String prevTask);
 }

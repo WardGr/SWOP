@@ -14,7 +14,7 @@ public class FailedState implements TaskState {
 
     @Override
     public void replaceTask(Task toReplace, Task replacement) throws IncorrectTaskStatusException {
-        for (Task prevTask : toReplace.getprevTasks()) {
+        for (Task prevTask : toReplace.getPrevTasks()) {
             prevTask.removeNextTaskDirectly(toReplace);
             toReplace.removePrevTaskDirectly(prevTask);
 
