@@ -241,10 +241,9 @@ public class ShowProjectsUI {
         System.out.println("Next tasks:");
         if (taskData.getNextTasksNames().size() > 0) {
             int i = 1;
-            //for (Tuple<String,String> nextTask : taskData.getNextTasksNames()) {
-            //    System.out.println(i++ + ". " + nextTask.getSecond() + " --- Belonging to project: " + nextTask.getFirst());
-            //}
-            // TODO !!!!!!
+            for (Tuple<String,String> nextTask : taskData.getNextTasksNames()) {
+                System.out.println(i++ + ". " + nextTask.getSecond() + " --- Belonging to project: " + nextTask.getFirst());
+            }
         } else {
             System.out.println("- There are no next tasks");
         }
@@ -253,8 +252,8 @@ public class ShowProjectsUI {
         System.out.println("Previous tasks:");
         if (taskData.getPrevTaskNames().size() > 0) {
             int i = 1;
-            for (String prevTaskName : taskData.getPrevTaskNames()) {
-                System.out.println(i++ + ". " + prevTaskName);
+            for (Tuple<String,String> prevTask : taskData.getPrevTaskNames()) {
+                System.out.println(i++ + ". " + prevTask.getSecond() + " --- Belonging to project: " + prevTask.getFirst());
             }
         } else {
             System.out.println("- There are no previous tasks");

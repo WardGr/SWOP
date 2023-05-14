@@ -322,10 +322,10 @@ public class Task implements TaskData{
     /**
      * @return A list of the names of all previous tasks of the task
      */
-    public List<String> getPrevTaskNames() {
-        List<String> prevTasksNames = new LinkedList<>();
+    public Set<Tuple<String,String>> getPrevTaskNames() {
+        Set<Tuple<String,String>> prevTasksNames = new HashSet<>();
         for (Task prevTask : getPrevTasks()) {
-            prevTasksNames.add(prevTask.getName());
+            prevTasksNames.add( new Tuple<>(prevTask.getProjectName(), prevTask.getName()) );
         }
         return prevTasksNames;
     }
@@ -340,10 +340,10 @@ public class Task implements TaskData{
     /**
      * @return A list of the names of all next tasks of the task
      */
-    public List<String> getNextTasksNames() {
-        List<String> nextTasksNames = new LinkedList<>();
+    public Set<Tuple<String,String>> getNextTasksNames() {
+        Set<Tuple<String,String>> nextTasksNames = new HashSet<>();
         for (Task nextTask : getNextTasks()) {
-            nextTasksNames.add(nextTask.getName());
+            nextTasksNames.add( new Tuple<>(nextTask.getProjectName(), nextTask.getName()) );
         }
         return nextTasksNames;
     }
@@ -487,6 +487,11 @@ public class Task implements TaskData{
         for (Task nextTask : getNextTasks()) {
             removeNextTask(nextTask);
         }
+    }
+
+    public void removeFromDependencyGraph() {
+        clearPrevTasks();
+        clearNextTasks();
     }
 
     /**

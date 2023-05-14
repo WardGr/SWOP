@@ -212,25 +212,21 @@ public class Project {
         tasks.add(task);
     }
 
-    public void deleteTask(String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
-        // TODO !!!!!!!
+    public void deleteTask(String taskName) throws TaskNotFoundException {
         Task task = getTask(taskName);
-        getTaskData(taskName).getNextTasksNames().forEach(nextTaskName -> {
-            Task next = getTask(nextTaskName);
-            next.removePrevTask(task);
-        });
-        getTaskData(taskName).getPrevTaskNames().forEach(previousTaskName -> {
-            Task previous = getTask(previousTaskName);
-            previous.removeNextTask(task);
-        });
-        removeTask(task);
+        if (task == null){
+            throw new TaskNotFoundException();
+        }
+        task.removeFromDependencyGraph();
+        removeActiveTask(task);
+        removeReplacedTask(task);
     }
 
     /**
      * @param task The task to be removed to the list of active tasks
      * @post The task is removed from the list of active tasks
      */
-    private void removeTask(Task task) {
+    private void removeActiveTask(Task task) {
         tasks.remove(task);
     }
 
@@ -240,6 +236,14 @@ public class Project {
      */
     private void addReplacedTask(Task task) {
         replacedTasks.add(task);
+    }
+
+    /**
+     * @param task The task to be removed to the list of replaced tasks
+     * @post The task is removed from the list of replaced tasks
+     */
+    private void removeReplacedTask(Task task) {
+        replacedTasks.remove(task);
     }
 
     /**
@@ -273,7 +277,7 @@ public class Project {
         Task replacement = new Task(taskName, description, duration, deviation);
         replacesTask.replaceTask(replacement);
         addTask(replacement);
-        removeTask(replacesTask);
+        removeActiveTask(replacesTask);
         addReplacedTask(replacesTask);
     }
 

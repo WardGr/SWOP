@@ -1,13 +1,11 @@
 package Domain.TaskStates;
 
-import Domain.IncorrectTaskStatusException;
-import Domain.Role;
-import Domain.Status;
-import Domain.Time;
+import Domain.*;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Read-only data class for task, with some extra functionality
@@ -60,12 +58,12 @@ public interface TaskData {
     /**
      * @return A list of the names of all previous tasks of the task
      */
-    List<String> getPrevTaskNames();
+    Set<Tuple<String,String>> getPrevTaskNames();
 
     /**
      * @return A list of the names of all next tasks of the task
      */
-    List<String> getNextTasksNames();
+    Set<Tuple<String,String>> getNextTasksNames();
 
     /**
      * @return A time object depicting this tasks' start time
