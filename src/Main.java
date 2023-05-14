@@ -16,16 +16,17 @@ public class Main {
             UserManager userManager = new UserManager();
             Session session = new Session();
             SessionProxy sessionProxy = new SessionProxy(session);
+            CommandController commandController = new CommandController(session);
 
             SessionController sessionController = new SessionController(session, userManager);
-            AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem);
-            CreateProjectController createProjectController = new CreateProjectController(sessionProxy, taskManSystem);
+            AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandController);
+            ProjectController createProjectController = new ProjectController(sessionProxy, taskManSystem);
             ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
             CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem);
             LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager);
             StartTaskController startTaskController = new StartTaskController(sessionProxy, taskManSystem);
             EndTaskController endTaskController = new EndTaskController(sessionProxy, taskManSystem);
-            UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionProxy, taskManSystem);
+            UpdateDependenciesController updateDependenciesController = new UpdateDependenciesController(sessionProxy, taskManSystem, commandController);
 
             SessionUI sessionUI = new SessionUI(sessionController);
             AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);

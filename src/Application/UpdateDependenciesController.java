@@ -1,12 +1,15 @@
 package Application;
 
 import Domain.*;
+import Domain.Command.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.TaskData;
 
 public class UpdateDependenciesController {
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
+    private final CommandController cmdController;
+
 
     /**
      * Creates this controller object
@@ -14,9 +17,10 @@ public class UpdateDependenciesController {
      * @param session           The current session to set as active session
      * @param taskManSystem     Object managing the system
      */
-    public UpdateDependenciesController(SessionProxy session, TaskManSystem taskManSystem) {
+    public UpdateDependenciesController(SessionProxy session, TaskManSystem taskManSystem, CommandController cmdController) {
         this.session = session;
         this.taskManSystem = taskManSystem;
+        this.cmdController = cmdController;
     }
 
     /**
@@ -24,6 +28,10 @@ public class UpdateDependenciesController {
      */
     private SessionProxy getSession() {
         return session;
+    }
+
+    private CommandController getCommandController() {
+        return cmdController;
     }
 
     /**
@@ -58,6 +66,8 @@ public class UpdateDependenciesController {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
         getTaskManSystem().addPrevTaskToProject(projectName, taskName, prevTaskName);
+        Command cmd = new AddPrevCommand(this, projectName, taskName, prevTaskName);
+        cmdController.addCommand(cmd);
     }
 
     /**
@@ -78,6 +88,8 @@ public class UpdateDependenciesController {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
         getTaskManSystem().addNextTaskToProject(projectName, taskName, nextTaskName);
+        Command cmd = new AddNextCommand(this, projectName, taskName, nextTaskName);
+        cmdController.addCommand(cmd);
     }
 
     /**
@@ -97,6 +109,8 @@ public class UpdateDependenciesController {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
         getTaskManSystem().removePrevTaskFromProject(projectName, taskName, prevTaskName);
+        Command cmd = new RemPrevCommand(this, projectName, taskName, prevTaskName);
+        cmdController.addCommand(cmd);
     }
 
     /**
@@ -116,6 +130,8 @@ public class UpdateDependenciesController {
             throw new IncorrectPermissionException("You need a project manager role to call this function");
         }
         getTaskManSystem().removeNextTaskFromProject(projectName, taskName, nextTaskName);
+        Command cmd = new RemNextCommand(this, projectName, taskName, nextTaskName);
+        cmdController.addCommand(cmd);
     }
 
     /**

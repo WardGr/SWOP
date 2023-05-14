@@ -4,6 +4,9 @@ import Domain.*;
 
 import java.util.Set;
 
+import Domain.Command.Command;
+import Domain.Command.ImpossibleUndoRedo;
+
 /**
  * Separates domain from UI for the advancetime use-case
  */
@@ -11,6 +14,8 @@ public class AdvanceTimeController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
+    private final CommandController cmdController;
+
 
     /**
      * Creates this controller object
@@ -20,10 +25,12 @@ public class AdvanceTimeController {
      */
     public AdvanceTimeController(
             SessionProxy session,
-            TaskManSystem taskManSystem
+            TaskManSystem taskManSystem,
+            CommandController cmdController
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
+        this.cmdController = cmdController;
     }
 
     /**
@@ -38,6 +45,10 @@ public class AdvanceTimeController {
      */
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
+    }
+
+    private CommandController getCommandHandler() {
+        return cmdController;
     }
 
     public Time getSystemTime() {
@@ -68,6 +79,8 @@ public class AdvanceTimeController {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(newTime);
+        Command cmd = new ImpossibleUndoRedo();
+        getCommandHandler().addCommand(cmd);
     }
 
     /**
@@ -83,5 +96,7 @@ public class AdvanceTimeController {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(advanceMinutes);
+        Command cmd = new ImpossibleUndoRedo();
+        getCommandHandler().addCommand(cmd);
     }
 }

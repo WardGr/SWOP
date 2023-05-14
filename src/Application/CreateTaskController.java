@@ -98,6 +98,10 @@ public class CreateTaskController {
         );
     }
 
+    public void deleteTask(String projectName, String taskName) throws TaskNotFoundException {
+        getTaskManSystem().deleteTask(projectName, taskName);
+    }
+
     /**
      * Creates a new task with the given task information, replacing a failed task
      *

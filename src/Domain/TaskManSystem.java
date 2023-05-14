@@ -141,6 +141,18 @@ public class TaskManSystem {
         }
     }
 
+    public void deleteProject(String projectName) throws IllegalArgumentException {
+        Project project = getProject(projectName);
+        if (project != null) {
+            throw new IllegalArgumentException();
+        }
+        deleteProject(project);
+    }
+
+    private void deleteProject(Project project) {
+        projects.remove(project);
+    }
+
     /**
      * Creates a project with given name, description and due time, using the given time as start time
      *
@@ -208,6 +220,11 @@ public class TaskManSystem {
                 prevTasks,
                 nextTasks
         );
+    }
+
+    public void deleteTask(String projectName, String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+        Project project = getProject(projectName);
+        project.deleteTask(taskName);
     }
 
     /**

@@ -212,6 +212,27 @@ public class Project {
         tasks.add(task);
     }
 
+    public void deleteTask(String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+        Task task = getTask(taskName);
+        getTaskData(taskName).getNextTasksNames().forEach(nextTaskName -> {
+            Task next = getTask(nextTaskName);
+            try {
+                next.removeprevTask(task);
+            } catch (IncorrectTaskStatusException e) {
+                // TODO fixen!
+            }
+        });
+        getTaskData(taskName).getPrevTaskNames().forEach(previousTaskName -> {
+            Task previous = getTask(previousTaskName);
+            try {
+                previous.removeNextTask(task);
+            } catch (IncorrectTaskStatusException e) {
+                // TODO fixern!
+            }
+        });
+        removeTask(task);
+    }
+
     /**
      * @param task The task to be removed to the list of active tasks
      * @post The task is removed from the list of active tasks

@@ -77,7 +77,7 @@ public class User {
         if (getTask() == null) {
             return null;
         } else {
-            return getTask().getTaskProxy();
+            return getTask().getTaskData();
         }
     }
 

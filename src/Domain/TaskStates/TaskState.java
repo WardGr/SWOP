@@ -51,9 +51,8 @@ interface TaskState {
      * @post if task is AVAILABLE and any previous task is not FINISHED then task is set to UNAVAILABLE
      * else if task is UNAVAILABLE and all previous tasks are FINISHED then task is set to AVAILABLE
      */
-    default void updateAvailability(Task task) throws IncorrectTaskStatusException {
-        throw new IncorrectTaskStatusException("Task is not (un)available");
-    }
+    default void updateAvailability(Task task) {}
+
 
     /**
      * Updates the next task according to the current tasks' state
@@ -76,17 +75,6 @@ interface TaskState {
      * @throws LoopDependencyGraphException if adding prevTask as a previous task to task creates a loop in the dependency graph
      */
     default void addPrevTask(Task task, Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
-        throw new IncorrectTaskStatusException("Task is not (un)available");
-    }
-
-    /**
-     * Removes prevTask as a previous task to task
-     *
-     * @param task     The task from which to remove prevTask as a previous task
-     * @param prevTask The task to remove from task as a previous task
-     * @throws IncorrectTaskStatusException if task is not AVAILABLE or UNAVAILABLE
-     */
-    default void removePrevTask(Task task, Task prevTask) throws IncorrectTaskStatusException {
         throw new IncorrectTaskStatusException("Task is not (un)available");
     }
 
