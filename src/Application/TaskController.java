@@ -116,9 +116,16 @@ public class TaskController {
         getCommandManager().addExecutedCommand(createTaskCommand, getSession().getCurrentUser());
     }
 
-    public void deleteTask(String projectName, String taskName) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
+    public boolean needDeleteConfirmation(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+        TaskData taskData = getTaskData(projectName, taskName);
+        return taskData.getStatus() == Status.PENDING || taskData.getStatus() == Status.EXECUTING;
+    }
+
+    public void deleteTask(String projectName, String taskName, boolean confirmation) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, NotConfirmedActionException {
         if (!taskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        } else if (needDeleteConfirmation(projectName, taskName) && !confirmation){
+            throw new NotConfirmedActionException("Deleting a Pending or Executing task is not confirmed.");
         }
         DeleteTaskCommand deleteTaskCommand = new DeleteTaskCommand(getTaskManSystem(), projectName, taskName);
         deleteTaskCommand.execute();

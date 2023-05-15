@@ -1,12 +1,15 @@
 package UserInterface;
 
+import Application.NotConfirmedActionException;
 import Application.TaskController;
 import Application.IncorrectPermissionException;
 import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.IllegalTaskRolesException;
+import Domain.TaskStates.TaskData;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Handles user input for the createtask use-case, requests necessary domain-level information from the Application.CreateTaskController
@@ -346,13 +349,20 @@ public class TaskUI {
                     throw new BackException();
                 }
 
-                getController().deleteTask(projectName, taskName);
+                boolean confirmation = false;
+                if (getController().needDeleteConfirmation(projectName, taskName)){
+                    confirmation = confirmTaskDeletion(scanner, projectName, taskName);
+                }
+
+                getController().deleteTask(projectName, taskName, confirmation);
                 return;
 
             } catch (ProjectNotFoundException e) {
                 System.out.println("Given project name could not be found, try again\n");
             } catch (TaskNotFoundException e) {
                 System.out.println("Given task name could not be found, try again\n");
+            } catch (NotConfirmedActionException e) {
+                System.out.println(e.getMessage() + '\n');
             }
 
         }
@@ -377,6 +387,19 @@ public class TaskUI {
         for (String replacedTaskName : projectData.getReplacedTasksNames()){
             System.out.println(" - " + replacedTaskName + " - Replaced by: " + getController().getTaskData(projectName, replacedTaskName).getReplacementTaskName());
         }
+    }
+
+    private boolean confirmTaskDeletion(Scanner scanner, String projectName, String taskName) throws BackException, ProjectNotFoundException, TaskNotFoundException {
+        TaskData taskData = getController().getTaskData(projectName, taskName);
+
+        System.out.println("\nTask " + taskName + " has status " + taskData.getStatus());
+        System.out.println("   With users committed: ");
+        Set<String> userNames = taskData.getUserNamesWithRole().keySet();
+        System.out.println(
+                userNames.stream().
+                        map(Object::toString).
+                        collect(Collectors.joining(", ")));
+        return getBooleanInput(scanner, "Confirm you want to delete this task.");
     }
 
 
