@@ -250,8 +250,11 @@ public class TaskManSystem {
         );
     }
 
-    public void deleteTask(String projectName, String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+    public void deleteTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
         Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
         project.deleteTask(taskName);
     }
 

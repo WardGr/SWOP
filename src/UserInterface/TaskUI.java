@@ -8,9 +8,6 @@ import Domain.TaskStates.IllegalTaskRolesException;
 
 import java.util.*;
 
-// TODO: de back met exception? dan kunnen we wel vanuit elke functie back doen
-// TODO: support voor het toevoegen van next/prev tasks en alternative tasks bij het creëren?
-
 /**
  * Handles user input for the createtask use-case, requests necessary domain-level information from the Application.CreateTaskController
  */
@@ -38,7 +35,7 @@ public class TaskUI {
      * Initial task creation request, checks the user's role before giving the prompt
      */
     public void createTask() {
-        if (getController().createTaskPreconditions()) {
+        if (getController().taskPreconditions()) {
             try {
                 createTaskForm();
             } catch (IncorrectPermissionException e) {
@@ -312,6 +309,74 @@ public class TaskUI {
         }
 
         return tasks;
+    }
+
+
+    public void deleteTask(){
+        if (getController().taskPreconditions()) {
+            try {
+                deleteTaskForm();
+            } catch (IncorrectPermissionException e) {
+                System.out.println('\n' + e.getMessage() + '\n');
+            } catch (BackException e){
+                System.out.println("\nCancelled Task Deletion\n");
+            }
+        } else {
+            System.out.println("\nYou must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n");
+        }
+    }
+
+    private void deleteTaskForm() throws IncorrectPermissionException, BackException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Use 'BACK' to return to main menu\n");
+
+        while (true){
+            try {
+                printProjectsList();
+                System.out.println("Give the project name in which you want to delete a task:");
+                String projectName = scanner.nextLine();
+                if (projectName.equals("BACK")){
+                    throw new BackException();
+                }
+
+                printTasksList(projectName);
+                System.out.println("Give the task name you want to delete:");
+                String taskName = scanner.nextLine();
+                if (taskName.equals("BACK")){
+                    throw new BackException();
+                }
+
+                getController().deleteTask(projectName, taskName);
+                return;
+
+            } catch (ProjectNotFoundException e) {
+                System.out.println("Given project name could not be found, try again\n");
+            } catch (TaskNotFoundException e) {
+                System.out.println("Given task name could not be found, try again\n");
+            }
+
+        }
+    }
+
+    private void printProjectsList() throws ProjectNotFoundException {
+        System.out.println(" *** PROJECTS ***");
+        TaskManSystemData taskManSystemData = getController().getTaskManSystemData();
+        for (String projectName : taskManSystemData.getProjectNames()){
+            ProjectData projectData = getController().getProjectData(projectName);
+            int nbOfTasks = projectData.getActiveTasksNames().size() + projectData.getReplacedTasksNames().size();
+            System.out.println(" - " + projectName + " | Containing " + nbOfTasks + " Tasks");
+        }
+    }
+
+    private void printTasksList(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
+        ProjectData projectData = getController().getProjectData(projectName);
+        System.out.println(" *** TASKS in " + projectName + " ***");
+        for (String taskName : projectData.getActiveTasksNames()){
+            System.out.println(" - " + taskName);
+        }
+        for (String replacedTaskName : projectData.getReplacedTasksNames()){
+            System.out.println(" - " + replacedTaskName + " - Replaced by: " + getController().getTaskData(projectName, replacedTaskName).getReplacementTaskName());
+        }
     }
 
 

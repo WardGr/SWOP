@@ -44,13 +44,13 @@ package Domain.Command;
          }
 
          @Override
-         public void undo() throws TaskNotFoundException, IncorrectTaskStatusException {
-             getTaskManSystem().deleteTask(projectName, taskName);
+         public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException {
+             getTaskManSystem().addTaskToProject(projectName, taskName, description, durationTime, deviation, roles, previousTasks, nextTasks);
          }
 
          @Override
-         public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException {
-             getTaskManSystem().addTaskToProject(projectName, taskName, description, durationTime, deviation, roles, previousTasks, nextTasks);
+         public void undo() throws TaskNotFoundException, ProjectNotFoundException {
+             getTaskManSystem().deleteTask(projectName, taskName);
          }
 
          @Override

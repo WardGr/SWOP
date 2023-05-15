@@ -40,7 +40,7 @@ public class ReplaceTaskCommand implements Command {
     }
 
     @Override
-    public void undo() throws TaskNotFoundException, IncorrectTaskStatusException {
+    public void undo() throws ProjectNotFoundException, TaskNotFoundException {
         getTaskManSystem().deleteTask(projectName, taskName);
     }
 
