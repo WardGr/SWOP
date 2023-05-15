@@ -4,7 +4,9 @@ import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.TaskData;
+import UserInterface.TaskUI;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -204,14 +206,39 @@ public class TaskManSystem {
             Time durationTime,
             double deviation,
             List<Role> roles,
-            Set<String> prevTasks,
-            Set<String> nextTasks
+            Set<Tuple<String,String>> prevTaskStrings,
+            Set<Tuple<String,String>> nextTaskStrings
     )
             throws ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
+
+        Set<Tuple<Project,String>> prevTasks = new HashSet<>();
+        for (Tuple<String,String> prevTask : prevTaskStrings){
+            String prevProjectName = prevTask.getFirst();
+            String prevTaskName = prevTask.getSecond();
+
+            Project prevProject = getProject(prevProjectName);
+            if (prevProject == null){
+                throw new ProjectNotFoundException();
+            }
+            prevTasks.add(new Tuple<>(prevProject, prevTaskName));
+        }
+        Set<Tuple<Project,String>> nextTasks = new HashSet<>();
+        for (Tuple<String,String> nextTask : nextTaskStrings){
+            String nextProjectName = nextTask.getFirst();
+            String nextTaskName = nextTask.getSecond();
+
+            Project nextProject = getProject(nextProjectName);
+            if (nextProject == null){
+                throw new ProjectNotFoundException();
+            }
+            nextTasks.add(new Tuple<>(nextProject, nextTaskName));
+        }
+
+
         project.addNewTask(
                 taskName,
                 description,

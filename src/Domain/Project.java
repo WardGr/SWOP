@@ -173,8 +173,8 @@ public class Project {
             Time duration,
             double deviation,
             List<Role> roles,
-            Set<String> prevTasksNames,
-            Set<String> nextTasksNames
+            Set<Tuple<Project,String>> prevTasksNames,
+            Set<Tuple<Project,String>> nextTasksNames
     ) throws TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException {
         if (getTask(taskName) != null) {
             throw new TaskNameAlreadyInUseException();
@@ -185,16 +185,22 @@ public class Project {
         }
 
         Set<Task> prevTasks = new HashSet<>();
-        for (String prevTaskName : prevTasksNames) {
-            Task task = getTask(prevTaskName);
+        for (Tuple<Project,String> prevTask : prevTasksNames) {
+            Project prevProject = prevTask.getFirst();
+            String prevTaskName = prevTask.getSecond();
+
+            Task task = prevProject.getTask(prevTaskName);
             if (task == null) {
                 throw new TaskNotFoundException();
             }
             prevTasks.add(task);
         }
         Set<Task> nextTasks = new HashSet<>();
-        for (String nextTaskName : nextTasksNames) {
-            Task task = getTask(nextTaskName);
+        for (Tuple<Project,String> nextTask : nextTasksNames) {
+            Project nextProject = nextTask.getFirst();
+            String nextTaskName = nextTask.getSecond();
+
+            Task task = nextProject.getTask(nextTaskName);
             if (task == null) {
                 throw new TaskNotFoundException();
             }

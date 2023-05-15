@@ -95,13 +95,13 @@ public class TaskController {
             Time durationTime,
             double deviation,
             List<Role> roles,
-            Set<String> prevTasks,
-            Set<String> nextTasks
+            Set<Tuple<String,String>> prevTasks,
+            Set<Tuple<String,String>> nextTasks
     ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException {
         if (!createTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        Command createTaskCommand = new CreateTaskCommand(
+        CreateTaskCommand createTaskCommand = new CreateTaskCommand(
                 getTaskManSystem(),
                 projectName,
                 taskName,
@@ -112,6 +112,7 @@ public class TaskController {
                 prevTasks,
                 nextTasks
         );
+        createTaskCommand.execute();
         getCommandManager().addExecutedCommand(createTaskCommand, getSession().getCurrentUser());
     }
 

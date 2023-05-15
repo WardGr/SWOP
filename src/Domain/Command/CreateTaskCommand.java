@@ -1,23 +1,22 @@
 package Domain.Command;
 
- import Application.CreateTaskController;
- import Application.IncorrectPermissionException;
  import Domain.*;
+ import Domain.TaskStates.IllegalTaskRolesException;
  import Domain.TaskStates.LoopDependencyGraphException;
 
  import java.util.List;
  import java.util.Set;
 
- public class CreateTaskCommand extends Command {
-         private TaskManSystem taskManSystem;
-         private String projectName;
-         private String taskName;
-         private String description;
-         private Time durationTime;
-         private double deviation;
-         private List<Role> roles;
-         private Set<String> previousTasks;
-         private Set<String> nextTasks;
+ public class CreateTaskCommand implements Command {
+         private final TaskManSystem taskManSystem;
+         private final String projectName;
+         private final String taskName;
+         private final String description;
+         private final Time durationTime;
+         private final double deviation;
+         private final List<Role> roles;
+         private final Set<Tuple<String,String>> previousTasks;
+         private final Set<Tuple<String,String>> nextTasks;
 
          private TaskManSystem getTaskManSystem() {
              return taskManSystem;
@@ -31,8 +30,8 @@ package Domain.Command;
                                  Time durationTime,
                                  double deviation,
                                  List<Role> roles,
-                                 Set<String> previousTasks,
-                                 Set<String> nextTasks) {
+                                 Set<Tuple<String,String>> previousTasks,
+                                 Set<Tuple<String,String>> nextTasks) {
              this.taskManSystem = taskManSystem;
              this.projectName = projectName;
              this.taskName = taskName;
@@ -50,7 +49,7 @@ package Domain.Command;
          }
 
          @Override
-         public void execute() throws UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectPermissionException, LoopDependencyGraphException, NonDeveloperRoleException {
+         public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException {
              getTaskManSystem().addTaskToProject(projectName, taskName, description, durationTime, deviation, roles, previousTasks, nextTasks);
          }
 

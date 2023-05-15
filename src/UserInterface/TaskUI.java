@@ -42,10 +42,12 @@ public class TaskUI {
             try {
                 createTaskForm();
             } catch (IncorrectPermissionException e) {
-                System.out.println(e.getMessage());
+                System.out.println('\n' + e.getMessage() + '\n');
+            } catch (BackException e){
+                System.out.println("\nCancelled Task Creation\n");
             }
         } else {
-            System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+            System.out.println("\nYou must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n");
         }
     }
 
@@ -54,7 +56,7 @@ public class TaskUI {
      *
      * @throws IncorrectPermissionException if the user is not logged in as a project manager
      */
-    private void createTaskForm() throws IncorrectPermissionException {
+    private void createTaskForm() throws IncorrectPermissionException, BackException {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -65,111 +67,41 @@ public class TaskUI {
             System.out.println("Project name of an ongoing project to add the task to:");
             String projectName = scanner.nextLine();
             if (projectName.equals("BACK")) {
-                System.out.println("Cancelled task creation");
-                return;
+                throw new BackException();
             }
 
             System.out.println("Task name:");
             String taskName = scanner.nextLine();
             if (taskName.equals("BACK")) {
-                System.out.println("Cancelled task creation");
-                return;
+                throw new BackException();
             }
 
             System.out.println("Task description:");
             String description = scanner.nextLine();
             if (description.equals("BACK")) {
-                System.out.println("Cancelled task creation");
-                return;
+                throw new BackException();
             }
-
-            // TODO de estimated duration halen uit de duration van een andere task?
 
             System.out.println("Task duration hours:");
-            String durationHourString = scanner.nextLine();
-
-            int durationHour;
-            while (true) {
-                try {
-                    if (durationHourString.equals("BACK")) {
-                        System.out.println("Cancelled task creation");
-                        return;
-                    }
-                    durationHour = Integer.parseInt(durationHourString);
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println(
-                            "Given task duration is not an integer, please input an integer and try again"
-                    );
-                    durationHourString = scanner.nextLine();
-                }
-            }
+            int durationHour = getIntegerInput(scanner, "Given task duration is not an integer, please input an integer and try again");
 
             System.out.println("Task duration minutes:");
-            String durationMinutesString = scanner.nextLine();
-
-            int durationMinutes;
-            while (true) {
-                try {
-                    if (durationMinutesString.equals("BACK")) {
-                        System.out.println("Cancelled task creation");
-                        return;
-                    }
-                    durationMinutes = Integer.parseInt(durationMinutesString);
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println(
-                            "Given task duration is not an integer, please input an integer and try again"
-                    );
-                    durationMinutesString = scanner.nextLine();
-                }
-            }
+            int durationMinutes = getIntegerInput(scanner, "Given task duration is not an integer, please input an integer and try again");
 
             System.out.println("Task deviation:");
-            String deviationString = scanner.nextLine();
+            double deviation = getDoubleInput(scanner, "Given task deviation is not a double, please input an integer and try again");
 
-            double deviation;
-            while (true) {
-                try {
-                    if (deviationString.equals("BACK")) {
-                        System.out.println("Cancelled task creation");
-                        return;
-                    }
-                    deviation = Double.parseDouble(deviationString);
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println(
-                            "Given task deviation is not a double, please input an integer and try again"
-                    );
-                    deviationString = scanner.nextLine();
-                }
-            }
 
-            System.out.println("Is this a replacement task? (y/n)");
-            String answer = scanner.nextLine();
-            if (answer.equals("BACK")) {
-                System.out.println("Cancelled task creation");
-                return;
-            }
+            boolean replacement = getBooleanInput(scanner, "Is this a replacement task?");
 
-            while (!answer.equals("y") && !answer.equals("n")) {
-                System.out.println("Is this a replacement task? (y/n)");
-                answer = scanner.nextLine();
-                if (answer.equals("BACK")) {
-                    System.out.println("Cancelled task creation");
-                    return;
-                }
-            }
-
-            if (answer.equals("y")) {
+            if (replacement) {
                 try {
                     printReplacableTasks(projectName);
 
                     System.out.println("This task is a replacement for task:");
                     String replaces = scanner.nextLine();
                     if (replaces.equals("BACK")) {
-                        System.out.println("Cancelled task creation");
-                        return;
+                        throw new BackException();
                     }
 
                     getController().replaceTask(
@@ -193,64 +125,14 @@ public class TaskUI {
                 } catch (IncorrectTaskStatusException e) {
                     System.out.println("ERROR: " + e.getMessage() + ", please try again\n");
                 }
+
             } else {
-                List<Role> roles = new LinkedList<>();
 
-                System.out.println("Give developer roles needed for this task, end with a '.'");
-                System.out.println("You can choose from: sysadmin, java programmer, python programmer");
-                String role = scanner.nextLine();
-                if (role.equals("BACK")) {
-                    System.out.println("Cancelled task creation");
-                    return;
-                }
-                while (!role.equals(".")) {
-                    switch (role) {
-                        case ("sysadmin") -> roles.add(Role.SYSADMIN);
-                        case ("java programmer") -> roles.add(Role.JAVAPROGRAMMER);
-                        case ("python programmer") -> roles.add(Role.PYTHONPROGRAMMER);
-                        default -> System.out.println("(Unrecognized developer role)");
-                    }
-                    role = scanner.nextLine();
-                    if (role.equals("BACK")) {
-                        System.out.println("Cancelled task creation");
-                        return;
-                    }
-                }
+                List<Role> roles = getRolesInput(scanner);
 
-                System.out.println("Tasks that this task depends on, enter '.' to stop adding new tasks:");
-                String prevTask = scanner.nextLine();
-                if (prevTask.equals("BACK")) {
-                    System.out.println("Cancelled task creation");
-                    return;
-                }
-
-                Set<String> prevTasks = new HashSet<>();
-                while (!prevTask.equals(".")) {
-                    prevTasks.add(prevTask);
-                    prevTask = scanner.nextLine();
-                    if (prevTask.equals("BACK")) {
-                        System.out.println("Cancelled task creation");
-                        return;
-                    }
-                }
-
-                System.out.println("Tasks that depend on this task, enter '.' to stop adding new tasks:");
-                String nextTask = scanner.nextLine();
-                if (nextTask.equals("BACK")) {
-                    System.out.println("Cancelled task creation");
-                    return;
-                }
-
-                Set<String> nextTasks = new HashSet<>();
-                while (!nextTask.equals(".")) {
-                    nextTasks.add(nextTask);
-                    nextTask = scanner.nextLine();
-                    if (nextTask.equals("BACK")) {
-                        System.out.println("Cancelled task creation");
-                        return;
-                    }
-                }
-
+                Set<Tuple<String,String>> prevTasks = getTaskSet(scanner, "Give projectName and taskName of tasks that this task depends on");
+                Set<Tuple<String,String>> nextTasks = getTaskSet(scanner, "Give projectName and taskName of tasks that depend on this task");
+                System.out.println();
 
                 try {
                     getController().createTask(
@@ -322,5 +204,118 @@ public class TaskUI {
                 System.out.println(" - " + taskName);
             }
         }
+    }
+
+
+    private int getIntegerInput(Scanner scanner, String tryAgainMessage) throws BackException{
+        String string = scanner.nextLine();
+
+        int integer;
+        while (true) {
+            if (string.equals("BACK")) {
+                throw new BackException();
+            }
+            try {
+                integer = Integer.parseInt(string);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(tryAgainMessage);
+                string = scanner.nextLine();
+            }
+        }
+        return integer;
+    }
+
+    private double getDoubleInput(Scanner scanner, String tryAgainMessage) throws BackException{
+        String string = scanner.nextLine();
+
+        double doubleValue;
+        while (true) {
+            if (string.equals("BACK")) {
+                throw new BackException();
+            }
+            try {
+                doubleValue = Double.parseDouble(string);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println(tryAgainMessage);
+                string = scanner.nextLine();
+            }
+        }
+        return doubleValue;
+    }
+
+    private boolean getBooleanInput(Scanner scanner, String message) throws BackException {
+        System.out.println(message + " (y/n)");
+        String answer = scanner.nextLine();
+        if (answer.equals("BACK")) {
+            throw new BackException();
+        }
+
+        while (!answer.equals("y") && !answer.equals("n")) {
+            System.out.println("\nInput has to be 'y' or 'n', try again");
+            System.out.println(message + " (y/n)");
+            answer = scanner.nextLine();
+            if (answer.equals("BACK")) {
+                throw new BackException();
+            }
+        }
+
+        return answer.equals("y");
+    }
+
+    private List<Role> getRolesInput(Scanner scanner) throws BackException {
+        List<Role> roles = new LinkedList<>();
+
+        System.out.println("Give developer roles needed for this task, end with a '.'");
+        System.out.println("You can choose from: sysadmin, java programmer, python programmer");
+        String role = scanner.nextLine();
+        if (role.equals("BACK")) {
+            throw new BackException();
+        }
+        while (!role.equals(".")) {
+            switch (role) {
+                case ("sysadmin") -> roles.add(Role.SYSADMIN);
+                case ("java programmer") -> roles.add(Role.JAVAPROGRAMMER);
+                case ("python programmer") -> roles.add(Role.PYTHONPROGRAMMER);
+                default -> System.out.println("(Unrecognized developer role)");
+            }
+            role = scanner.nextLine();
+            if (role.equals("BACK")) {
+                throw new BackException();
+            }
+        }
+        return roles;
+    }
+
+    private Set<Tuple<String,String>> getTaskSet(Scanner scanner, String message) throws BackException {
+        Set<Tuple<String,String>> tasks = new HashSet<>();
+
+        System.out.println(message);
+        System.out.println("Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:");
+        String input = scanner.nextLine();
+        while (!input.equals(".")){
+            if (input.equals("BACK")) {
+                throw new BackException();
+            }
+
+            String[] inputSplit = input.split(" / ");
+            if (inputSplit.length == 2){
+                String projectName = inputSplit[0];
+                String taskName = inputSplit[1];
+                tasks.add(new Tuple<>(projectName, taskName));
+
+                System.out.println("Give projectName and taskName of tasks that this task depends on");
+                System.out.println("Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:");
+                input = scanner.nextLine();
+            }
+        }
+
+        return tasks;
+    }
+
+
+    private static class BackException extends Exception {
+        public BackException() {super();}
     }
 }
