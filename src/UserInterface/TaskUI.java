@@ -305,8 +305,6 @@ public class TaskUI {
                 String taskName = inputSplit[1];
                 tasks.add(new Tuple<>(projectName, taskName));
 
-                System.out.println("Give projectName and taskName of tasks that this task depends on");
-                System.out.println("Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:");
                 input = scanner.nextLine();
             }
         }

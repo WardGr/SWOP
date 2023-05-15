@@ -213,7 +213,7 @@ public class UpdateDependenciesUI {
             ProjectData possibleProjectData = getController().getProjectData(possibleProjectName);
 
             for (String prevTaskName : possibleProjectData.getActiveTasksNames()) {
-                Tuple<String, String> prevTask = new Tuple<>(possibleProjectName, prevTaskName);
+                Tuple<String,String> prevTask = new Tuple<>(possibleProjectName, prevTaskName);
 
                 if ( !taskData.getPrevTaskNames().contains(prevTask) &&
                         taskData.canSafelyAddPrevTask(prevTask) ) {
@@ -222,10 +222,10 @@ public class UpdateDependenciesUI {
             }
 
             for (String nextTaskName : possibleProjectData.getActiveTasksNames()) {
-                Tuple<String, String> nextTask = new Tuple<>(possibleProjectName, nextTaskName);
+                Tuple<String,String> nextTask = new Tuple<>(possibleProjectName, nextTaskName);
                 TaskData nextTaskData = getController().getTaskData(possibleProjectName, nextTaskName);
 
-                if (!taskData.getNextTaskNames().contains(nextTask) &&
+                if ( !taskData.getNextTaskNames().contains(nextTask) &&
                         nextTaskData.canSafelyAddPrevTask(new Tuple<>(projectName, taskName)) ) {
                     possibleNextTasks.add(nextTask);
                 }
