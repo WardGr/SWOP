@@ -1,6 +1,8 @@
 package Application;
 
 import Domain.*;
+import Domain.Command.CreateProjectCommand;
+import Domain.Command.DeleteProjectCommand;
 
 /**
  * Separates domain from UI for the createproject use-case
@@ -53,7 +55,7 @@ public class ProjectController {
      *
      * @return whether the preconditions are satisfied
      */
-    public boolean createProjectPreconditions() {
+    public boolean projectPreconditions() {
         return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
@@ -68,16 +70,49 @@ public class ProjectController {
      * @throws DueBeforeSystemTimeException     if the due time is before the system time (the project should have been completed already)
      */
     public void createProject(String projectName, String projectDescription, Time dueTime) throws IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
-        if (!createProjectPreconditions()) {
+        if (!projectPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        getTaskManSystem().createProject(projectName, projectDescription, dueTime);
+        CreateProjectCommand createProjectCommand = new CreateProjectCommand(getTaskManSystem(), projectName, projectDescription, dueTime);
+        createProjectCommand.execute();
+        getCommandManager().addExecutedCommand(createProjectCommand, getSession().getCurrentUser());
     }
 
     public void deleteProject(String projectName) throws IncorrectPermissionException, ProjectNotFoundException {
-        if (!createProjectPreconditions()) {
+        if (!projectPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        getTaskManSystem().deleteProject(projectName);
+        DeleteProjectCommand deleteProjectCommand = new DeleteProjectCommand(taskManSystem, projectName);
+        deleteProjectCommand.execute();
+        getCommandManager().addExecutedCommand(deleteProjectCommand, getSession().getCurrentUser());
+    }
+
+
+    /**
+     * Returns a read-only data object that contains information about the current task manager system, if the user is
+     * a project manager
+     *
+     * @return  A read-only data object
+     * @throws IncorrectPermissionException if the current user is not a project manager
+     */
+    public TaskManSystemData getTaskManSystemData() throws IncorrectPermissionException {
+        if (!projectPreconditions()) {
+            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
+        return getTaskManSystem().getTaskManSystemData();
+    }
+
+    /**
+     * Gets a read-only data object containing information about the project corresponding to the given project name
+     *
+     * @param projectName                   Name of the project to get the data from
+     * @return                              Read-only ProjectData object containing specific information about the project
+     * @throws ProjectNotFoundException     If projectName does not correspond to an existing project in the current system
+     */
+    public ProjectData getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
+        if (!projectPreconditions()) {
+            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
+        return getTaskManSystem().getProjectData(projectName);
     }
 }

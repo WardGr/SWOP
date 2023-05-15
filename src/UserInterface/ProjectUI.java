@@ -33,7 +33,7 @@ public class ProjectUI {
      * Does the initial project creation request, checks if the user has the projectmanager role
      */
     public void createProject() {
-        if (getController().createProjectPreconditions()) {
+        if (getController().projectPreconditions()) {
             try {
                 createProjectForm();
             } catch (IncorrectPermissionException e) {
@@ -124,5 +124,58 @@ public class ProjectUI {
                 System.out.println("The given due time is before the current system time, please try again\n");
             }
         }
+    }
+
+    public void deleteProject() {
+        if (getController().projectPreconditions()) {
+            try {
+                deleteProjectForm();
+            } catch (IncorrectPermissionException e) {
+                System.out.println(e.getMessage());
+            }
+        } else {
+            System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
+    }
+
+    private void deleteProjectForm() throws IncorrectPermissionException{
+        Scanner scanner = new Scanner(System.in);
+
+        while(true) {
+            printProjectList();
+
+            System.out.println("Project Name to Delete (type 'BACK' to return): ");
+            String projectName = scanner.nextLine();
+            if (projectName.equals("BACK")) {
+                System.out.println("Project deletion cancelled");
+                return;
+            }
+
+            try {
+                getController().deleteProject(projectName);
+                System.out.println();
+                return;
+            } catch (ProjectNotFoundException e) {
+                System.out.println();
+                System.out.println("WARNING: Project couldn't be found, try again");
+                System.out.println();
+            }
+        }
+    }
+
+    private void printProjectList() throws IncorrectPermissionException {
+        System.out.println(" *** PROJECT LIST ***");
+        TaskManSystemData taskManSystemData = getController().getTaskManSystemData();
+        for (String projectName : taskManSystemData.getProjectNames()){
+            try {
+                ProjectData projectData = getController().getProjectData(projectName);
+                int nbOfTasks = projectData.getActiveTasksNames().size() + projectData.getReplacedTasksNames().size();
+                System.out.println("- " + projectName + " --- Containing " + nbOfTasks + " Task(s)");
+            } catch (ProjectNotFoundException e) {
+                System.out.println();
+                throw new RuntimeException(e);
+            }
+        }
+        System.out.println();
     }
 }

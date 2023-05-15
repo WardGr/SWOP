@@ -141,11 +141,12 @@ public class TaskManSystem {
         }
     }
 
-    public void deleteProject(String projectName) throws IllegalArgumentException {
+    public void deleteProject(String projectName) throws ProjectNotFoundException {
         Project project = getProject(projectName);
-        if (project != null) {
-            throw new IllegalArgumentException();
+        if (project == null) {
+            throw new ProjectNotFoundException();
         }
+        project.clearTasks();
         deleteProject(project);
     }
 

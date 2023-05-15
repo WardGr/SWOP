@@ -75,6 +75,7 @@ public class UserInterface {
             case "logout" -> sessionUI.logout();
             case "showprojects" -> showProjectsUI.showProjects();
             case "createproject" -> projectUI.createProject();
+            case "deleteproject" -> projectUI.deleteProject();
             case "createtask" -> taskUI.createTask();
             // TODO delete task
             case "advancetime" -> advanceTimeUI.advanceTime();
@@ -101,6 +102,7 @@ public class UserInterface {
         System.out.println("shutdown:           Exits the system");
         System.out.println("showprojects:       Shows a list of all current projects");
         System.out.println("createproject:      Shows the project creation prompt and creates a project");
+        System.out.println("deleteproject:      Allows the user to delete a project in the system");
         System.out.println("createtask:         Shows the task creation prompt to add a task to a project");
         // TODO delete task
         System.out.println("advancetime:        Allows the user to modify the system time");

@@ -212,14 +212,28 @@ public class Project {
         tasks.add(task);
     }
 
+    private void deleteTask(Task task){
+        task.removeFromDependencyGraph();
+        removeActiveTask(task);
+        removeReplacedTask(task);
+    }
+
     public void deleteTask(String taskName) throws TaskNotFoundException {
         Task task = getTask(taskName);
         if (task == null){
             throw new TaskNotFoundException();
         }
-        task.removeFromDependencyGraph();
-        removeActiveTask(task);
-        removeReplacedTask(task);
+        deleteTask(task);
+    }
+
+    public void clearTasks(){
+        for (Task task : getTasks()){
+            deleteTask(task);
+        }
+        for (Task task : getReplacedTasks()){
+            deleteTask(task);
+        }
+        updateProjectStatus();
     }
 
     /**
@@ -371,6 +385,9 @@ public class Project {
      */
     private void updateProjectStatus() {
         setStatus(ProjectStatus.FINISHED);
+        if (getTasks().size() == 0){
+            setStatus(ProjectStatus.ONGOING);
+        }
         for (Task task : getTasks()) {
             if (task.getStatus() != Status.FINISHED) {
                 setStatus(ProjectStatus.ONGOING);
