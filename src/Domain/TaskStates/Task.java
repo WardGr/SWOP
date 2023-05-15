@@ -489,9 +489,21 @@ public class Task implements TaskData{
         }
     }
 
-    public void removeFromDependencyGraph() {
+    public void removeAllDependencies() {
         clearPrevTasks();
         clearNextTasks();
+        if (getReplacementTask() != null){
+            getReplacementTask().setReplacesTask(null);
+            setReplacementTask(null);
+        }
+        if (getReplacesTask() != null){
+            getReplacesTask().setReplacementTask(null);
+            setReplacesTask(null);
+        }
+        for (User user : getCommittedUsers()) {
+            user.endTask();
+            uncommitUser(user);
+        }
     }
 
     /**

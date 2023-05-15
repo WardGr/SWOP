@@ -219,7 +219,7 @@ public class Project {
     }
 
     private void deleteTask(Task task){
-        task.removeFromDependencyGraph();
+        task.removeAllDependencies();
         removeActiveTask(task);
         removeReplacedTask(task);
     }
