@@ -1,6 +1,6 @@
 package Domain.Command;
 
- public class ImpossibleUndoRedo extends Command {
+ public class ImpossibleUndoRedo implements Command {
 
          @Override
          public void undo() {
@@ -8,7 +8,7 @@ package Domain.Command;
          }
 
          @Override
-         public void redo() {
+         public void execute() {
              throw new UnsupportedOperationException("Redo is not possible");
          }
 
@@ -18,7 +18,7 @@ package Domain.Command;
          }
 
          @Override
-         public boolean reversePossible()
+         public boolean undoPossible()
          {
              return false;
          }

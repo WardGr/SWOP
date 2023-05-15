@@ -340,7 +340,8 @@ public class LoadSystemController {
             getTaskManSystem().replaceTaskInProject(projectName, name, description, dueTime, acceptableDeviation, replaces);
         }else{
             ArrayList<String> prevTasks = (ArrayList<String>) task.get("previousTasks");
-            getTaskManSystem().addTaskToProject(projectName, name, description, dueTime, acceptableDeviation, roles, new HashSet<>(prevTasks), new HashSet<>());
+            // TODO
+            //getTaskManSystem().addTaskToProject(projectName, name, description, dueTime, acceptableDeviation, roles, new HashSet<>(prevTasks), new HashSet<>());
         }
         //start the task
         if(getTaskManSystem().getTaskData(projectName, name).getStatus() == Status.AVAILABLE || getTaskManSystem().getTaskData(projectName, name).getStatus() == Status.PENDING){
