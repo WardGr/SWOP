@@ -340,7 +340,7 @@ public class Task implements TaskData{
     /**
      * @return A list of the names of all next tasks of the task
      */
-    public Set<Tuple<String,String>> getNextTasksNames() {
+    public Set<Tuple<String,String>> getNextTaskNames() {
         Set<Tuple<String,String>> nextTasksNames = new HashSet<>();
         for (Task nextTask : getNextTasks()) {
             nextTasksNames.add( new Tuple<>(nextTask.getProjectName(), nextTask.getName()) );
@@ -610,7 +610,7 @@ public class Task implements TaskData{
      * @param prevTask Name of the task to test adding
      * @return true if adding (the task corresponding to) prevTask does not introduce a loop in the dependency graph, false otherwise
      */
-    public boolean canSafelyAddPrevTask(String prevTask) {
+    public boolean canSafelyAddPrevTask(Tuple<String,String> prevTask) {
         return getState().canSafelyAddPrevTask(this, prevTask);
     }
 

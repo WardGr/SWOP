@@ -1,6 +1,7 @@
 package Domain.TaskStates;
 
 import Domain.Status;
+import Domain.Tuple;
 
 /**
  * Task state class governing the task transitions from the UNAVAILABLE state
@@ -32,17 +33,19 @@ public class UnavailableState implements TaskState {
         updateAvailability(task);
     }
 
-    public boolean canSafelyAddPrevTask(Task task, Task prevTask) {
-        return !task.getAllNextTasks().contains(prevTask);
-    }
-
-    public boolean canSafelyAddPrevTask(Task task, String prevTaskName) {
+    @Override
+    public boolean canSafelyAddPrevTask(Task task, Tuple<String,String> prevTask) {
         for (Task nextTask : task.getAllNextTasks()) {
-            if (nextTask.getName().equals(prevTaskName)) {
+            if ( prevTask.equals( new Tuple<>(nextTask.getProjectName(), nextTask.getName()) ) ){
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean canSafelyAddPrevTask(Task task, Task prevTask) {
+        return !task.getAllNextTasks().contains(prevTask);
     }
 
 }

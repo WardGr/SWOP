@@ -22,4 +22,9 @@ package Domain;
          }
          return false;
      }
+
+     @Override
+     public String toString(){
+         return "(" + getFirst().toString() + ", " + getSecond().toString() + ")";
+     }
  }

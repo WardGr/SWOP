@@ -381,12 +381,16 @@ public class TaskUI {
     private void printTasksList(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
         ProjectData projectData = getController().getProjectData(projectName);
         System.out.println(" *** TASKS in " + projectName + " ***");
+        if (projectData.getActiveTasksNames().size() + projectData.getReplacedTasksNames().size() == 0) {
+            System.out.println("There are no tasks in this project");
+        }
         for (String taskName : projectData.getActiveTasksNames()){
             System.out.println(" - " + taskName);
         }
         for (String replacedTaskName : projectData.getReplacedTasksNames()){
             System.out.println(" - " + replacedTaskName + " - Replaced by: " + getController().getTaskData(projectName, replacedTaskName).getReplacementTaskName());
         }
+        System.out.println();
     }
 
     private boolean confirmTaskDeletion(Scanner scanner, String projectName, String taskName) throws BackException, ProjectNotFoundException, TaskNotFoundException {

@@ -17,7 +17,7 @@ public class AvailableState implements TaskState {
         if (!task.getUnfulfilledRoles().contains(role)) {
             throw new IncorrectRoleException("Given role is not required in the task");
         }
-        for (Task prevTask : task.getprevTasks()) {
+        for (Task prevTask : task.getPrevTasks()) {
             if (prevTask.getEndTime().after(startTime)) {
                 throw new IncorrectTaskStatusException("Start time is before end time previous task");
             }
@@ -58,9 +58,9 @@ public class AvailableState implements TaskState {
     }
 
     @Override
-    public boolean canSafelyAddPrevTask(Task task, String prevTaskName) {
+    public boolean canSafelyAddPrevTask(Task task, Tuple<String,String> prevTask) {
         for (Task nextTask : task.getAllNextTasks()) {
-            if (nextTask.getName().equals(prevTaskName)) {
+            if ( prevTask.equals( new Tuple<>(nextTask.getProjectName(), nextTask.getName()) ) ){
                 return false;
             }
         }
