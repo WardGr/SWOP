@@ -22,4 +22,14 @@ package Domain;
          }
          return false;
      }
+
+     @Override
+     public int hashCode() {
+         return getSecond().hashCode();
+     }
+
+     @Override
+     public String toString(){
+         return "(" + getFirst().toString() + ", " + getSecond().toString() + ")";
+     }
  }

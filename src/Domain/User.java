@@ -89,15 +89,14 @@ public class User {
      * @throws IncorrectRoleException             if the user does not have the given role
      * @throws UserAlreadyAssignedToTaskException if the user is already assigned to the task
      */
-    public void assignTask(Task task, Role role) throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+    public void assignTask(Task task, Role role) throws IncorrectRoleException, UserAlreadyAssignedToTaskException {
         if (!getRoles().contains(role)) {
             throw new IncorrectRoleException("User does not have the given role");
         }
         if (getTask() != null) {
-            if (getTaskData().getStatus() == Status.PENDING) {
-                // We will now switch tasks
+            try {
                 getTask().unassignUser(this);
-            } else {
+            } catch (IncorrectTaskStatusException e) {
                 throw new UserAlreadyAssignedToTaskException();
             }
         }

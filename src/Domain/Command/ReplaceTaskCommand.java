@@ -1,15 +1,16 @@
 package Domain.Command;
 
-import Domain.TaskManSystem;
-import Domain.Time;
+import Domain.*;
 
-public class ReplaceTaskCommand extends Command {
+public class ReplaceTaskCommand implements Command {
 
-    private TaskManSystem taskManSystem;
-    private String projectName;
-    private Time durationTime;
-    private double deviation;
-    private String replaces;
+    private final TaskManSystem taskManSystem;
+    private final String projectName;
+    private final String taskName;
+    private final String description;
+    private final Time durationTime;
+    private final double deviation;
+    private final String replaces;
 
 
     public ReplaceTaskCommand(TaskManSystem taskManSystem,
@@ -21,20 +22,30 @@ public class ReplaceTaskCommand extends Command {
                         String replaces) {
         this.taskManSystem = taskManSystem;
         this.projectName = projectName;
+        this.taskName = taskName;
+        this.description = description;
         this.durationTime = durationTime;
         this.deviation = deviation;
         this.replaces = replaces;
         
     }
 
-    @Override
-    public boolean reversePossible() {
-        return false;
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
     }
 
     @Override
-    public void execute() throws Exception {
-        taskManSystem.replaceTaskInProject(projectName, projectName, projectName, durationTime, deviation, replaces);
+    public void execute() throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
+        getTaskManSystem().replaceTaskInProject(projectName, taskName, description, durationTime, deviation, replaces);
     }
-    
+
+    @Override
+    public void undo() throws ProjectNotFoundException, TaskNotFoundException {
+        getTaskManSystem().deleteTask(projectName, taskName);
+    }
+
+    @Override
+    public boolean undoPossible() {
+        return true;
+    }
 }

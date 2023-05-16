@@ -62,7 +62,7 @@ public class TaskController {
     /**
      * @return whether the preconditions for the createtask use-case are met
      */
-    public boolean createTaskPreconditions() {
+    public boolean taskPreconditions() {
         return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
@@ -95,13 +95,13 @@ public class TaskController {
             Time durationTime,
             double deviation,
             List<Role> roles,
-            Set<String> prevTasks,
-            Set<String> nextTasks
+            Set<Tuple<String,String>> prevTasks,
+            Set<Tuple<String,String>> nextTasks
     ) throws ProjectNotFoundException, InvalidTimeException, TaskNameAlreadyInUseException, IncorrectPermissionException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException {
-        if (!createTaskPreconditions()) {
+        if (!taskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        Command createTaskCommand = new CreateTaskCommand(
+        CreateTaskCommand createTaskCommand = new CreateTaskCommand(
                 getTaskManSystem(),
                 projectName,
                 taskName,
@@ -112,13 +112,24 @@ public class TaskController {
                 prevTasks,
                 nextTasks
         );
+        createTaskCommand.execute();
         getCommandManager().addExecutedCommand(createTaskCommand, getSession().getCurrentUser());
     }
 
-    public void deleteTask(String projectName, String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
-        getTaskManSystem().deleteTask(projectName, taskName);
-        Command cmd = new DeleteTaskCommand(getTaskManSystem(), projectName, taskName);
-        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
+    public boolean needDeleteConfirmation(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+        TaskData taskData = getTaskData(projectName, taskName);
+        return taskData.getStatus() == Status.PENDING || taskData.getStatus() == Status.EXECUTING;
+    }
+
+    public void deleteTask(String projectName, String taskName, boolean confirmation) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, NotConfirmedActionException {
+        if (!taskPreconditions()) {
+            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        } else if (needDeleteConfirmation(projectName, taskName) && !confirmation){
+            throw new NotConfirmedActionException("Deleting a Pending or Executing task is not confirmed.");
+        }
+        DeleteTaskCommand deleteTaskCommand = new DeleteTaskCommand(getTaskManSystem(), projectName, taskName);
+        deleteTaskCommand.execute();
+        getCommandManager().addExecutedCommand(deleteTaskCommand, getSession().getCurrentUser());
     }
 
     /**
@@ -144,7 +155,7 @@ public class TaskController {
             double deviation,
             String replaces
     ) throws IncorrectPermissionException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
-        if (!createTaskPreconditions()) {
+        if (!taskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
         Command cmd = new ReplaceTaskCommand(

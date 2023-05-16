@@ -105,10 +105,10 @@ public class Task implements TaskData{
 
         try {
             for (Task prevTask : prevTasks) {
-                addprevTask(prevTask);
+                addPrevTask(prevTask);
             }
             for (Task nextTask : nextTasks) {
-                nextTask.addprevTask(this);
+                nextTask.addPrevTask(this);
             }
         } catch (LoopDependencyGraphException e) {
             clearPrevTasks();
@@ -187,7 +187,7 @@ public class Task implements TaskData{
     /**
      * @return Task that replaces this task
      */
-    public Task getReplacementTask() {
+    Task getReplacementTask() {
         return replacementTask;
     }
 
@@ -212,7 +212,7 @@ public class Task implements TaskData{
     /**
      * @return Task this task replaces
      */
-    public Task getReplacesTask() {
+    Task getReplacesTask() {
         return replacesTask;
     }
 
@@ -340,7 +340,7 @@ public class Task implements TaskData{
     /**
      * @return A list of the names of all next tasks of the task
      */
-    public Set<Tuple<String,String>> getNextTasksNames() {
+    public Set<Tuple<String,String>> getNextTaskNames() {
         Set<Tuple<String,String>> nextTasksNames = new HashSet<>();
         for (Task nextTask : getNextTasks()) {
             nextTasksNames.add( new Tuple<>(nextTask.getProjectName(), nextTask.getName()) );
@@ -489,9 +489,24 @@ public class Task implements TaskData{
         }
     }
 
-    public void removeFromDependencyGraph() {
+    public void removeAllDependencies() {
         clearPrevTasks();
         clearNextTasks();
+        if (getReplacementTask() != null){
+            getReplacementTask().setReplacesTask(null);
+            setReplacementTask(null);
+        }
+        if (getReplacesTask() != null){
+            getReplacesTask().setReplacementTask(null);
+            setReplacesTask(null);
+        }
+        if (!getCommittedUsers().isEmpty()){
+            setState(new AvailableState());
+        }
+        for (User user : getCommittedUsers()) {
+            user.endTask();
+            uncommitUser(user);
+        }
     }
 
     /**
@@ -588,7 +603,7 @@ public class Task implements TaskData{
      * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
      * @throws LoopDependencyGraphException if adding this task would cause a loop in the dependency graph of the project this task belongs to
      */
-    public void addprevTask(Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
+    public void addPrevTask(Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
         getState().addPrevTask(this, prevTask);
     }
 
@@ -598,7 +613,7 @@ public class Task implements TaskData{
      * @param prevTask Name of the task to test adding
      * @return true if adding (the task corresponding to) prevTask does not introduce a loop in the dependency graph, false otherwise
      */
-    public boolean canSafelyAddPrevTask(String prevTask) {
+    public boolean canSafelyAddPrevTask(Tuple<String,String> prevTask) {
         return getState().canSafelyAddPrevTask(this, prevTask);
     }
 
@@ -610,7 +625,7 @@ public class Task implements TaskData{
      * @throws LoopDependencyGraphException if adding this task would cause a loop in the dependency graph
      */
     public void addNextTask(Task nextTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
-        nextTask.addprevTask(this);
+        nextTask.addPrevTask(this);
     }
 
     /**

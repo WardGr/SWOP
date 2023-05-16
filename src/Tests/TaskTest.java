@@ -2,7 +2,6 @@ package Tests;
 
 import Domain.*;
 import Domain.TaskStates.*;
-import Domain.TaskStates.TaskData;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,19 +15,13 @@ import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaskTest {
-    @Mock
-    private Project project1;
 
     @Mock
     private User user;
 
-    @Mock
     private User sysAdmin;
 
-    @Mock
     private User pythonProg;
-
-    @Mock
     private User javaProg;
 
     private Task task;
@@ -36,6 +29,7 @@ public class TaskTest {
     private Task prevTask;
     private Task currentTask;
     private Task nextTask;
+    private Task multipleRolesTask;
 
     private Task task1;
     private Task task2;
@@ -46,257 +40,310 @@ public class TaskTest {
 
     @Before
     public void setUp() throws InvalidTimeException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException {
+        this.sysAdmin = new User("sysAdmin", "123", Set.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER));
+        this.javaProg = new User("javaProg", "123", Set.of(Role.JAVAPROGRAMMER));
+        this.pythonProg = new User("pythonProg", "123", Set.of(Role.PYTHONPROGRAMMER));
+
         // Tasks for general task tests
         this.task = new Task("Task", "Test", new Time(100), 0.1, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(), "project1");
 
-        this.prevTask = new Task("Previous Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER), Set.of(), Set.of(), "project1");
-        this.currentTask = new Task("Current Task", "Test", new Time(100), 0.1, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), Set.of(prevTask), Set.of(), "project1");
+        this.prevTask = new Task("Previous Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN), Set.of(), Set.of(), "project1");
+        this.currentTask = new Task("Current Task", "Test", new Time(100), 0.1, List.of(Role.SYSADMIN, Role.JAVAPROGRAMMER), Set.of(prevTask), Set.of(), "project1");
         this.nextTask = new Task("Next Task", "Test", new Time(10), 0.1, List.of(Role.SYSADMIN), Set.of(currentTask), Set.of(), "project1");
 
         this.replacementTask = new Task("Replacement Task", "", new Time(20), 0);
-
+        this.multipleRolesTask = new Task("MR", "test", new Time(20), 0.2, List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), new HashSet<>(), new HashSet<>(), "project1");
 
         // Loop dependency check tasks
-        List<Role> roles = List.of(Role.SYSADMIN, Role.JAVAPROGRAMMER);
+        List<Role> roles = List.of(Role.SYSADMIN);
 
         this.task1 = new Task("Task 1", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), "project1");
-        this.task2 = new Task("Task 2", "test", new Time(20), 0, roles, Set.of(task1), new HashSet<>(), "project1");
-        this.task4 = new Task("Task 4", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), "project1");
-        this.task3 = new Task("Task 3", "test", new Time(20), 0, roles, new HashSet<>(), Set.of(task4), "project1");
+        this.task2 = new Task("Task 2", "test", new Time(20), 0, roles, Set.of(task1), new HashSet<>(), "project2");
+        this.task4 = new Task("Task 4", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), "project4");
+        this.task3 = new Task("Task 3", "test", new Time(20), 0, roles, new HashSet<>(), Set.of(task4), "project3");
 
     }
 
+    @Test
+    public void testTaskCreation() throws InvalidTimeException, IllegalTaskRolesException, IncorrectTaskStatusException, LoopDependencyGraphException {
+        List<Role> roles = List.of(Role.SYSADMIN, Role.JAVAPROGRAMMER);
+        Task creation = new Task("Creation", "test", new Time(20), 0, roles, new HashSet<>(), new HashSet<>(), "project1");
+        assertEquals("Creation", creation.getName());
+        assertEquals("Creation", creation.getTaskData().getName());
+        assertEquals("test", creation.getDescription());
+        assertEquals(new Time(20), creation.getEstimatedDuration());
+        assertEquals(0, creation.getAcceptableDeviation(),0);
+        assertEquals(List.of(Role.SYSADMIN, Role.JAVAPROGRAMMER), creation.getUnfulfilledRoles());
+        assertEquals("project1", creation.getProjectName());
+
+        assertEquals(0, creation.getNextTaskNames().size());
+        assertEquals(0, creation.getPrevTaskNames().size());
+        assertNull(creation.getReplacesTaskName());
+        assertNull(creation.getReplacementTaskName());
+        assertNull(creation.getStartTime());
+        assertNull(creation.getEndTime());
+    }
 
     @Test
-    public void testTask() throws InvalidTimeException, IncorrectTaskStatusException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException {
+    public void testTaskCreationExceptions() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, IllegalTaskRolesException, LoopDependencyGraphException {
+        assertThrows(IllegalTaskRolesException.class, () -> new Task("Creation", "test", new Time(20), 0, new LinkedList<>(), new HashSet<>(), new HashSet<>(), "project1"));
+        List<Role> projectManagerRole = List.of(Role.PROJECTMANAGER, Role.SYSADMIN);
+        assertThrows(IllegalTaskRolesException.class, () -> new Task("Creation", "test", new Time(20), 0, projectManagerRole, new HashSet<>(), new HashSet<>(), "project1"));
 
-        assertThrows(IllegalTaskRolesException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PROJECTMANAGER), Set.of(), Set.of(), "project1"));
+        Task executingTask = new Task("Executing", "", new Time(0),0, List.of(Role.SYSADMIN), new HashSet<>(), new HashSet<>(), "project1");
+        executingTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertThrows(IncorrectTaskStatusException.class, () -> new Task("Creation", "test", new Time(20), 0, List.of(Role.SYSADMIN), new HashSet<>(), Set.of(executingTask), "project1"));
+        assertThrows(LoopDependencyGraphException.class, () -> new Task("Creation", "test", new Time(20), 0, List.of(Role.SYSADMIN), Set.of(task1), Set.of(task1), "project1"));
 
-        // Test if the task states are initialised correctly
-        assertEquals(Status.AVAILABLE, prevTask.getStatus());
+    }
+
+    @Test
+    public void testStartTask() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        assertEquals(Status.AVAILABLE, task1.getStatus());
+        assertEquals(Status.UNAVAILABLE, task2.getStatus());
+
+        assertThrows(IncorrectRoleException.class, () -> task1.start(new Time(0), javaProg, Role.JAVAPROGRAMMER));
+
+        task1.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertEquals(Status.EXECUTING,task1.getStatus());
+        assertEquals(Status.UNAVAILABLE, task2.getStatus());
+        assertEquals(new Time(0), task1.getStartTime());
+        assertNull(task1.getEndTime());
+
+        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN));
+
+        task1.finish(sysAdmin, new Time(4));
+        assertEquals(Status.FINISHED, task1.getStatus());
+        assertEquals(Status.AVAILABLE, task2.getStatus());
+        assertEquals(new Time(4), task1.getEndTime());
+    }
+
+    @Test
+    public void testUserSwitchTasks() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        multipleRolesTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        task3.start(new Time(2), sysAdmin, Role.SYSADMIN);
+        assertEquals(0, task1.getUserNamesWithRole().size());
+        assertEquals(1, task3.getUserNamesWithRole().size());
+        assertEquals(0, task3.getUnfulfilledRoles().size());
+        assertThrows(UserAlreadyAssignedToTaskException.class, () -> task1.start(new Time(5), sysAdmin, Role.SYSADMIN));
+    }
+
+    @Test
+    public void testStartingPendingTask() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        multipleRolesTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertNull(multipleRolesTask.getStartTime());
+        assertEquals(Status.PENDING, multipleRolesTask.getStatus());
+
+        assertThrows(IncorrectRoleException.class, () -> multipleRolesTask.start(new Time(1), javaProg, Role.SYSADMIN));
+        multipleRolesTask.start(new Time(1), javaProg, Role.JAVAPROGRAMMER);
+        assertNull(multipleRolesTask.getStartTime());
+        assertEquals(Status.PENDING, multipleRolesTask.getStatus());
+
+        multipleRolesTask.start(new Time(2), pythonProg, Role.PYTHONPROGRAMMER);
+        assertEquals(new Time(2), multipleRolesTask.getStartTime());
+        assertEquals(Status.EXECUTING, multipleRolesTask.getStatus());
+    }
+
+    @Test
+    public void testFinishingTask() throws InvalidTimeException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        task1.start(new Time(5), sysAdmin, Role.SYSADMIN);
+        assertNull(task1.getEndTime());
+        assertThrows(IncorrectUserException.class, () -> task1.finish(javaProg, new Time(10)));
+        assertThrows(EndTimeBeforeStartTimeException.class, () -> task1.finish(sysAdmin, new Time(0)));
+
+        assertEquals(Status.EXECUTING, task1.getStatus());
+        task1.finish(sysAdmin, new Time(10));
+        assertEquals(Status.FINISHED, task1.getStatus());
+
+        multipleRolesTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertThrows(IncorrectTaskStatusException.class, () -> multipleRolesTask.finish(sysAdmin, new Time(0)));
+        multipleRolesTask.start(new Time(0), javaProg, Role.JAVAPROGRAMMER);
+        multipleRolesTask.start(new Time(0), pythonProg, Role.PYTHONPROGRAMMER);
+        multipleRolesTask.finish(sysAdmin, new Time(10));
+        assertEquals(Status.FINISHED, multipleRolesTask.getStatus());
+    }
+
+    @Test
+    public void testStartTimeBeforeAvailableTime() throws InvalidTimeException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
-        assertEquals(Status.UNAVAILABLE, nextTask.getStatus());
+        prevTask.start(new Time(10), sysAdmin, Role.SYSADMIN);
+        prevTask.finish(sysAdmin, new Time(20));
 
-        // Check removal and appending of tasks, and checks if the states are correct afterwards
-        currentTask.removeNextTask(nextTask);
-        assertEquals(Status.AVAILABLE, nextTask.getStatus());
+        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(15), sysAdmin, Role.SYSADMIN));
+        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+        currentTask.start(new Time(25), sysAdmin, Role.SYSADMIN);
+        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(15), javaProg, Role.JAVAPROGRAMMER));
+        currentTask.start(new Time(25), javaProg, Role.JAVAPROGRAMMER);
+    }
 
-        currentTask.addNextTask(nextTask);
-        assertEquals("unavailable", nextTask.getStatus().toString());
+    @Test
+    public void testFailTask() throws InvalidTimeException, EndTimeBeforeStartTimeException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        multipleRolesTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertThrows(IncorrectTaskStatusException.class, () -> multipleRolesTask.fail(sysAdmin, new Time(0)));
 
+        prevTask.start(new Time(5), sysAdmin, Role.SYSADMIN);
+        assertThrows(EndTimeBeforeStartTimeException.class, () -> prevTask.fail(sysAdmin, new Time(0)));
+        assertThrows(IncorrectUserException.class, () -> prevTask.fail(javaProg, new Time(10)));
+        prevTask.fail(sysAdmin, new Time(10));
+        assertEquals(Status.FAILED, prevTask.getStatus());
+        assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
+    }
 
-        // Asserts it's impossible to add loops in the dependency graph
-        assertThrows(LoopDependencyGraphException.class, () -> nextTask.addNextTask(currentTask));
-        assertThrows(LoopDependencyGraphException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(prevTask), Set.of(prevTask), "project1"));
-
-        Task testTask = new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(prevTask), "project1");
-        assertThrows(LoopDependencyGraphException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(prevTask), Set.of(currentTask, testTask, nextTask), "project1"));
-        prevTask.removePrevTask(testTask);
-
-        // Check basic getters
-        assertEquals("Task", task.getName());
-        assertEquals("Test", task.getDescription());
-        assertEquals(task.getStatus(), Status.AVAILABLE);
-
-        assertNull(task.getReplacesTask());
-        assertNull(task.getReplacementTask());
-
-        // Assert unavailable tasks cant be started, and tasks cannot be started with irrelevant roles
-        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN));
-        assertThrows(IncorrectRoleException.class, () -> prevTask.start(new Time(0), sysAdmin, Role.JAVAPROGRAMMER));
-        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN));
-
-
-        // Checks start and pending status
-        task.start(new Time(0), pythonProg, Role.PYTHONPROGRAMMER);
-        assertEquals(task.getStatus(), Status.EXECUTING);
-
-        prevTask.start(new Time(0), pythonProg, Role.PYTHONPROGRAMMER);
-        assertEquals(prevTask.getStatus(), Status.PENDING);
-
-
-        // Checks unassigning users
-        prevTask.unassignUser(pythonProg);
-        assertEquals(prevTask.getStatus(), Status.AVAILABLE);
-
-        prevTask.start(new Time(0), pythonProg, Role.PYTHONPROGRAMMER);
-        assertEquals(prevTask.getStatus(), Status.PENDING);
-
-        // Checks if pending tasks can't be started with the wrong roles
-        assertThrows(IncorrectRoleException.class, () -> prevTask.start(new Time(0), pythonProg, Role.JAVAPROGRAMMER));
-
-        // Start executing the pending task
+    @Test
+    public void testReplacingTask() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
         prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
-        assertEquals("executing", Status.EXECUTING.toString());
+        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.replaceTask(replacementTask));
 
-        // Check if an executing task cannot be a next task for a new task, and that we cannot finish/fail a task with the wrong user
-        assertThrows(IncorrectTaskStatusException.class, () -> new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(prevTask), "project1"));
-        assertThrows(IncorrectUserException.class, () -> prevTask.finish(user, new Time(10)));
-        assertThrows(IncorrectUserException.class, () -> prevTask.fail(user, new Time(10)));
-
-        // Finish the task
-        prevTask.finish(sysAdmin, new Time(10));
-        assertEquals("finished", prevTask.getStatus().toString());
-        assertEquals("on time", prevTask.getTaskData().getFinishedStatus().toString());
-
-        // Checks if finished state cannot start/fail/finish/unassign/replace
-        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.start(new Time(0), user, Role.JAVAPROGRAMMER));
-        assertThrows(IncorrectUserException.class, () -> prevTask.finish(pythonProg, new Time(0)));
-        assertThrows(IncorrectUserException.class, () -> prevTask.fail(pythonProg, new Time(0)));
-        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.unassignUser(pythonProg));
-        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.replaceTask(task));
-
-        // Checks if the next task becomes available once prevTask is finished
-        assertEquals(Status.AVAILABLE, currentTask.getStatus());
-
-        // Checks if next tasks are properly added upon task creation
-        Task test = new Task("", "", new Time(0), 0, List.of(Role.PYTHONPROGRAMMER), Set.of(), Set.of(currentTask), "project1");
-        currentTask.removePrevTask(test);
-        assertEquals(Status.AVAILABLE, currentTask.getStatus());
-
-        // Asserts it's impossible to start a task before the end time of one of its finished previous tasks
-        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(5), sysAdmin, Role.SYSADMIN));
-
-        // Checks removing and adding of tasks to available task
-        currentTask.removePrevTask(prevTask);
-        assertEquals("available", currentTask.getStatus().toString());
-        currentTask.addprevTask(prevTask);
-        assertEquals("available", currentTask.getStatus().toString());
-
-        // Assign a first user to this task, ensuring it is pending
-        currentTask.start(new Time(10), sysAdmin, Role.SYSADMIN);
-        assertEquals("pending", currentTask.getStatus().toString());
-
-
-        // Make sure you cannot assign a user to a pending task with start time before the end time of any of its previous tasks
-        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.start(new Time(5), pythonProg, Role.PYTHONPROGRAMMER));
-
-        // Assign a second user to this task, ensuring it is still pending
-        currentTask.start(new Time(10), pythonProg, Role.PYTHONPROGRAMMER);
-        assertEquals(Status.PENDING, currentTask.getStatus());
-
-        // Assign the final user to this task, ensuring it is executing
-        currentTask.start(new Time(10), javaProg, Role.JAVAPROGRAMMER);
-        assertEquals(Status.EXECUTING, currentTask.getStatus());
-
-        // Fail the current task
-        currentTask.fail(pythonProg, new Time(15));
-        assertEquals(new HashMap<>(), currentTask.getTaskData().getUserNamesWithRole());
-        assertEquals("failed", currentTask.getStatus().toString());
-        assertEquals(Status.UNAVAILABLE, nextTask.getStatus());
+        prevTask.finish(sysAdmin, new Time(0));
+        currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        currentTask.start(new Time(0), javaProg, Role.JAVAPROGRAMMER);
+        currentTask.fail(sysAdmin, new Time(10));
+        assertNull(currentTask.getReplacesTaskName());
+        assertNull(currentTask.getReplacementTaskName());
 
         currentTask.replaceTask(replacementTask);
+        assertEquals("Current Task", replacementTask.getReplacesTaskName());
+        assertEquals("Replacement Task", currentTask.getReplacementTaskName());
+        assertEquals(Status.AVAILABLE, replacementTask.getStatus());
 
-        Task replacementTask = currentTask.getReplacementTask();
+        assertEquals(Set.of(new Tuple<>("project1", "Next Task")), replacementTask.getNextTaskNames());
+        assertEquals(Set.of(new Tuple<>("project1", "Previous Task")), replacementTask.getPrevTaskNames());
+        assertEquals(0, currentTask.getNextTaskNames().size());
+        assertEquals(0, currentTask.getPrevTaskNames().size());
+    }
 
-        // TASK PROXY REPLACED TASK
+    @Test
+    public void testPreviousDependencies() throws IncorrectTaskStatusException, LoopDependencyGraphException, InvalidTimeException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        assertFalse(prevTask.canSafelyAddPrevTask(new Tuple<>("project1", "Next Task")));
+        assertFalse(currentTask.canSafelyAddPrevTask(new Tuple<>("project1", "Current Task")));
+        assertTrue(prevTask.canSafelyAddPrevTask(new Tuple<>("project2", "Task 2")));
+        assertTrue(nextTask.canSafelyAddPrevTask(new Tuple<>("project1", "Current Task")));
 
-        TaskData taskDataFailed = currentTask.getTaskData();
+        assertThrows(LoopDependencyGraphException.class, () -> prevTask.addPrevTask(nextTask));
+        assertThrows(LoopDependencyGraphException.class, () -> currentTask.addPrevTask(currentTask));
 
-        assertEquals("Current Task", taskDataFailed.getName());
-        assertEquals("Test", taskDataFailed.getDescription());
-        assertEquals(new Time(100), taskDataFailed.getEstimatedDuration());
-        assertEquals(0.1, taskDataFailed.getAcceptableDeviation(), 0.00001);
-        assertEquals(Status.FAILED, taskDataFailed.getStatus());
-        assertEquals("Replacement Task", taskDataFailed.getReplacementTaskName());
-        assertEquals(new Time(10), taskDataFailed.getStartTime());
-        assertEquals(new Time(15), taskDataFailed.getEndTime());
-        assertEquals(List.of(Role.SYSADMIN, Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER), taskDataFailed.getUnfulfilledRoles());
-        assertEquals("project1", taskDataFailed.getProjectName());
-        assertFalse(taskDataFailed.canSafelyAddPrevTask("Current Task"));
-        assertNull(taskDataFailed.getReplacesTaskName());
+        nextTask.addPrevTask(currentTask);
+        currentTask.removePrevTask(nextTask);
 
-        Map<String, Role> userRoleMap = new HashMap<>();
+        assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
+        currentTask.removePrevTask(prevTask);
+        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+        currentTask.addPrevTask(prevTask);
+        assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
+        assertEquals(Set.of(new Tuple<>("project1", "Previous Task")), currentTask.getPrevTaskNames());
 
-        userRoleMap.put("System Administrator", Role.SYSADMIN);
-        userRoleMap.put("Python Programmer", Role.PYTHONPROGRAMMER);
-        userRoleMap.put("Java Programmer", Role.JAVAPROGRAMMER);
+        currentTask.removePrevTask(prevTask);
+        currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertFalse(currentTask.canSafelyAddPrevTask(new Tuple<>("project1", "Previous Task")));
+        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.addPrevTask(prevTask));
+    }
 
-        assertEquals(new HashMap<>(), taskDataFailed.getUserNamesWithRole());
-        assertEquals(userRoleMap.values().stream().sorted().toList(), taskDataFailed.getUnfulfilledRoles().stream().sorted().toList());
+    @Test
+    public void testNextDependencies() throws IncorrectTaskStatusException, LoopDependencyGraphException, InvalidTimeException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        assertThrows(LoopDependencyGraphException.class, () -> nextTask.addNextTask(prevTask));
 
-        // TASK PROXY WITH REPLACEMENT TASK
+        currentTask.removeNextTask(prevTask);
 
-        TaskData replacementProxy = replacementTask.getTaskData();
+        assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
+        prevTask.removeNextTask(currentTask);
+        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+        prevTask.addNextTask(currentTask);
+        assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
+        assertEquals(Set.of(new Tuple<>("project1", "Current Task")), prevTask.getNextTaskNames());
 
-        assertNull(replacementProxy.getReplacementTaskName());
-        assertEquals("Current Task", replacementProxy.getReplacesTaskName());
-        assertEquals(List.of("Previous Task"), replacementProxy.getPrevTaskNames());
-        assertEquals(List.of("Next Task"), replacementProxy.getNextTasksNames());
-        assertNull(replacementProxy.getEndTime());
-        assertNull(replacementProxy.getStartTime());
-
-
-
-        assertFalse(task1.getTaskData().canSafelyAddPrevTask("Task 1"));
-        assertFalse(task1.getTaskData().canSafelyAddPrevTask("Task 2"));
-        assertTrue(task1.getTaskData().canSafelyAddPrevTask("Task 3"));
-        assertTrue(task1.getTaskData().canSafelyAddPrevTask("Task 4"));
-
-        assertTrue(task2.getTaskData().canSafelyAddPrevTask("Task 1"));
-        assertFalse(task2.getTaskData().canSafelyAddPrevTask("Task 2"));
-        assertTrue(task2.getTaskData().canSafelyAddPrevTask("Task 3"));
-        assertTrue(task2.getTaskData().canSafelyAddPrevTask("Task 4"));
-
-        assertTrue(task3.getTaskData().canSafelyAddPrevTask("Task 1"));
-        assertTrue(task3.getTaskData().canSafelyAddPrevTask("Task 2"));
-        assertFalse(task3.getTaskData().canSafelyAddPrevTask("Task 3"));
-        assertFalse(task3.getTaskData().canSafelyAddPrevTask("Task 4"));
-
-        assertTrue(task4.getTaskData().canSafelyAddPrevTask("Task 1"));
-        assertTrue(task4.getTaskData().canSafelyAddPrevTask("Task 2"));
-        assertTrue(task4.getTaskData().canSafelyAddPrevTask("Task 3"));
-        assertFalse(task4.getTaskData().canSafelyAddPrevTask("Task 4"));
+        prevTask.removeNextTask(currentTask);
+        currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.addNextTask(currentTask));
+    }
 
 
-        task2.addNextTask(task3);
-        task4.addprevTask(task1);
 
-        TaskData taskData1 = task1.getTaskData();
-        TaskData taskData2 = task2.getTaskData();
-        TaskData taskData3 = task3.getTaskData();
-        TaskData taskData4 = task4.getTaskData();
+    @Test
+    public void testDeletingReplacedTask() throws IncorrectTaskStatusException, InvalidTimeException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        prevTask.fail(sysAdmin, new Time(2));
+        prevTask.replaceTask(replacementTask);
 
+        prevTask.removeAllDependencies();
+        assertNull(prevTask.getReplacementTaskName());
+        assertNull(prevTask.getReplacesTaskName());
+        assertNull(replacementTask.getReplacesTaskName());
 
-        assertFalse(taskData1.canSafelyAddPrevTask("Task 1"));
-        assertFalse(taskData1.canSafelyAddPrevTask("Task 2"));
-        assertFalse(taskData1.canSafelyAddPrevTask("Task 3"));
-        assertFalse(taskData1.canSafelyAddPrevTask("Task 4"));
+    }
 
-        assertTrue(taskData2.canSafelyAddPrevTask("Task 1"));
-        assertFalse(taskData2.canSafelyAddPrevTask("Task 2"));
-        assertFalse(taskData2.canSafelyAddPrevTask("Task 3"));
-        assertFalse(taskData2.canSafelyAddPrevTask("Task 4"));
+    @Test
+    public void testDeletingReplacingTask() throws IncorrectTaskStatusException, InvalidTimeException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        prevTask.fail(sysAdmin, new Time(2));
+        prevTask.replaceTask(replacementTask);
 
-        assertTrue(taskData3.canSafelyAddPrevTask("Task 1"));
-        assertTrue(taskData3.canSafelyAddPrevTask("Task 2"));
-        assertFalse(taskData3.canSafelyAddPrevTask("Task 3"));
-        assertFalse(taskData3.canSafelyAddPrevTask("Task 4"));
+        replacementTask.removeAllDependencies();
+        assertNull(replacementTask.getReplacementTaskName());
+        assertNull(replacementTask.getReplacesTaskName());
+        assertNull(prevTask.getReplacementTaskName());
 
-        assertTrue(taskData4.canSafelyAddPrevTask("Task 1"));
-        assertTrue(taskData4.canSafelyAddPrevTask("Task 2"));
-        assertTrue(taskData4.canSafelyAddPrevTask("Task 3"));
-        assertFalse(taskData4.canSafelyAddPrevTask("Task 4"));
+    }
 
+    @Test
+    public void testDeletingCurrentTask(){
+        currentTask.removeAllDependencies();
+        assertEquals(0, currentTask.getPrevTaskNames().size());
+        assertEquals(0, currentTask.getNextTaskNames().size());
+        assertEquals(0, nextTask.getPrevTaskNames().size());
+        assertEquals(0, prevTask.getNextTaskNames().size());
+    }
 
-        // FinishedStatusTest
+    @Test
+    public void testDeletingUsers() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        prevTask.removeAllDependencies();
 
-        Task onTime = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
-        onTime.start(new Time(0), user, Role.JAVAPROGRAMMER);
-        onTime.finish(user, new Time(10));
-        assertEquals("on time", onTime.getTaskData().getFinishedStatus().toString());
+        assertNull(sysAdmin.getTaskData());
+        assertEquals(List.of(Role.SYSADMIN), prevTask.getUnfulfilledRoles());
+        assertEquals(0, prevTask.getUserNamesWithRole().size());
+        assertEquals(Status.AVAILABLE, prevTask.getStatus());
+    }
 
+    @Test
+    public void testDeletingFinishedCurrentTask() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        prevTask.finish(sysAdmin, new Time(0));
+        currentTask.start(new Time(0), javaProg, Role.JAVAPROGRAMMER);
+        currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        currentTask.finish(sysAdmin, new Time(0));
 
-        Task early = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
-        early.start(new Time(0), user, Role.JAVAPROGRAMMER);
-        early.finish(user, new Time(5));
-        assertEquals("early", early.getTaskData().getFinishedStatus().toString());
+        currentTask.removeAllDependencies();
+        assertEquals(Status.FINISHED, currentTask.getStatus());
+    }
 
+    @Test
+    public void testEarlyFinishedState() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.getFinishedStatus());
 
-        Task delayed = new Task("On Time", "", new Time(10), 0.1, List.of(Role.JAVAPROGRAMMER), Set.of(), Set.of(), "project1");
-        delayed.start(new Time(0), user, Role.JAVAPROGRAMMER);
-        delayed.finish(user, new Time(100));
-        assertEquals("delayed", delayed.getTaskData().getFinishedStatus().toString());
+        prevTask.finish(sysAdmin, new Time(8));
+        assertEquals(FinishedStatus.EARLY, prevTask.getFinishedStatus());
+        assertEquals("early", prevTask.getFinishedStatus().toString());
+    }
 
+    @Test
+    public void testOnTimeFinishedState() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.getFinishedStatus());
+
+        prevTask.finish(sysAdmin, new Time(10));
+        assertEquals(FinishedStatus.ON_TIME, prevTask.getFinishedStatus());
+        assertEquals("on time", prevTask.getFinishedStatus().toString());
+    }
+
+    @Test
+    public void testDelayedFinishedState() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.getFinishedStatus());
+
+        prevTask.finish(sysAdmin, new Time(12));
+        assertEquals(FinishedStatus.DELAYED, prevTask.getFinishedStatus());
+        assertEquals("delayed", prevTask.getFinishedStatus().toString());
     }
 }

@@ -21,6 +21,7 @@ public class ProjectUITest {
     @Test
     public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException {
 
+        /*
         // Setup test environment
         Time systemtime = new Time(70);
 

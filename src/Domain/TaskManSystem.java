@@ -4,7 +4,9 @@ import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.TaskData;
+import UserInterface.TaskUI;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -141,11 +143,12 @@ public class TaskManSystem {
         }
     }
 
-    public void deleteProject(String projectName) throws IllegalArgumentException {
+    public void deleteProject(String projectName) throws ProjectNotFoundException {
         Project project = getProject(projectName);
-        if (project != null) {
-            throw new IllegalArgumentException();
+        if (project == null) {
+            throw new ProjectNotFoundException();
         }
+        project.clearTasks();
         deleteProject(project);
     }
 
@@ -203,14 +206,39 @@ public class TaskManSystem {
             Time durationTime,
             double deviation,
             List<Role> roles,
-            Set<String> prevTasks,
-            Set<String> nextTasks
+            Set<Tuple<String,String>> prevTaskStrings,
+            Set<Tuple<String,String>> nextTaskStrings
     )
             throws ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, ProjectNotOngoingException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
+
+        Set<Tuple<Project,String>> prevTasks = new HashSet<>();
+        for (Tuple<String,String> prevTask : prevTaskStrings){
+            String prevProjectName = prevTask.getFirst();
+            String prevTaskName = prevTask.getSecond();
+
+            Project prevProject = getProject(prevProjectName);
+            if (prevProject == null){
+                throw new ProjectNotFoundException();
+            }
+            prevTasks.add(new Tuple<>(prevProject, prevTaskName));
+        }
+        Set<Tuple<Project,String>> nextTasks = new HashSet<>();
+        for (Tuple<String,String> nextTask : nextTaskStrings){
+            String nextProjectName = nextTask.getFirst();
+            String nextTaskName = nextTask.getSecond();
+
+            Project nextProject = getProject(nextProjectName);
+            if (nextProject == null){
+                throw new ProjectNotFoundException();
+            }
+            nextTasks.add(new Tuple<>(nextProject, nextTaskName));
+        }
+
+
         project.addNewTask(
                 taskName,
                 description,
@@ -222,8 +250,11 @@ public class TaskManSystem {
         );
     }
 
-    public void deleteTask(String projectName, String taskName) throws TaskNotFoundException, IncorrectTaskStatusException {
+    public void deleteTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
         Project project = getProject(projectName);
+        if (project == null){
+            throw new ProjectNotFoundException();
+        }
         project.deleteTask(taskName);
     }
 
@@ -374,78 +405,85 @@ public class TaskManSystem {
     /**
      * Adds a previous task to a given task within a given project
      *
-     * @param projectName  The name corresponding with the project
-     * @param taskName     The name corresponding to the task which to add the previous task to
-     * @param prevTaskName The name corresponding to the task to add as a previous task
+     * @param projectName     The name corresponding with the project
+     * @param taskName        The name corresponding to the task which to add the previous task to
+     * @param prevProjectName The name corresponding to the project the previous task belongs to
+     * @param prevTaskName    The name corresponding to the task to add as a previous task
      * @throws ProjectNotFoundException     If the given projectName does not correspond to an existing project
      * @throws TaskNotFoundException        If taskName or prevTaskName do not correspond to a task within the given project
      * @throws IncorrectTaskStatusException if the status of the taskName task is not available or unavailable
      * @throws LoopDependencyGraphException if adding this previous task create a loop in the dependency graph
      * @post if the task corresponding to taskName is AVAILABLE, then sets taskName's status to UNAVAILABLE
      */
-    public void addPrevTaskToProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
+    public void addPrevTaskToProject(String projectName, String taskName, String prevProjectName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
         Project project = getProject(projectName);
-        if (project == null) {
+        Project prevProject = getProject(prevProjectName);
+        if (project == null || prevProject == null) {
             throw new ProjectNotFoundException();
         }
-        project.addPrevTask(taskName, prevTaskName);
+
+        project.addPrevTask(taskName, prevProject, prevTaskName);
     }
 
     /**
      * Adds a task as a next task to the given task in the given project
      *
-     * @param projectName  The name of the project
-     * @param taskName     The name of the task to add the next task to
-     * @param nextTaskName The name of the next task
+     * @param projectName     The name of the project
+     * @param taskName        The name of the task to add the next task to
+     * @param nextProjectName The name of the project the next task belongs to
+     * @param nextTaskName    The name of the next task
      * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task within the given project
      * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project
      * @throws IncorrectTaskStatusException if the task corresponding to taskName is not available or unavailable
      * @throws LoopDependencyGraphException if adding this task causes a loop in the dependency graph of the given project
      * @post if the task corresponding to nextTaskName is AVAILABLE, then sets taskName's status to UNAVAILABLE
      */
-    public void addNextTaskToProject(String projectName, String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
+    public void addNextTaskToProject(String projectName, String taskName, String nextProjectName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNotFoundException {
         Project project = getProject(projectName);
-        if (project == null) {
+        Project nextProject = getProject(nextProjectName);
+        if (project == null || nextProject == null) {
             throw new ProjectNotFoundException();
         }
-        project.addNextTask(taskName, nextTaskName);
+        project.addNextTask(taskName, nextProject, nextTaskName);
     }
 
     /**
      * Removes a task from the prevTasks list of a given task in the project, respecting the rules of the dependency graph
      *
-     * @param taskName     Name of the task to remove the previous task from
-     * @param prevTaskName Name of the previous task to add
-     * @param projectName  Name of the project to add the task to
+     * @param projectName     Name of the project to add the task to
+     * @param taskName        Name of the task to remove the previous task from
+     * @param prevProjectName Name of the project to which the previous task belongs
+     * @param prevTaskName    Name of the previous task to add
      * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project
      * @throws TaskNotFoundException        if taskName or prevTaskName do not correspond to an existing task within this project
-     * @throws IncorrectTaskStatusException if the task corresponding to taskName is not AVAILABLE or UNAVAILABLE
      * @post if prevTaskName is the last previous task in taskName, then sets the status of taskName to AVAILABLE
      */
-    public void removePrevTaskFromProject(String projectName, String taskName, String prevTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
+    public void removePrevTaskFromProject(String projectName, String taskName, String prevProjectName, String prevTaskName) throws TaskNotFoundException, ProjectNotFoundException {
         Project project = getProject(projectName);
-        if (project == null) {
+        Project prevProject = getProject(prevProjectName);
+        if (project == null || prevProject == null) {
             throw new ProjectNotFoundException();
         }
-        project.removePrevTask(taskName, prevTaskName);
+        project.removePrevTask(taskName, prevProject, prevTaskName);
     }
 
     /**
      * Removes a task from the nextTasks list of a given task in a given project, respecting the rules of the dependency graph
      *
-     * @param taskName     Name of the task to remove the next task from
-     * @param projectName  Name of the project to add the next task to
-     * @param nextTaskName Name of the next task to add
+     * @param projectName     Name of the project to add the next task to
+     * @param taskName        Name of the task to remove the next task from
+     * @param nextProjectName Name of the project the next task belongs to
+     * @param nextTaskName    Name of the next task to add
      * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task within this project
-     * @throws IncorrectTaskStatusException if the task corresponding to nextTaskName is not AVAILABLE or UNAVAILABLE
      * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project
      * @post if taskName is the last prevtask of nextTask, then set nextTask to AVAILABLE
      */
-    public void removeNextTaskFromProject(String projectName, String taskName, String nextTaskName) throws TaskNotFoundException, IncorrectTaskStatusException, ProjectNotFoundException {
+    public void removeNextTaskFromProject(String projectName, String taskName, String nextProjectName, String nextTaskName) throws TaskNotFoundException, ProjectNotFoundException {
         Project project = getProject(projectName);
-        if (project == null) {
+        Project nextProject = getProject(nextProjectName);
+        if (project == null || nextProject == null) {
             throw new ProjectNotFoundException();
         }
-        project.removeNextTask(taskName, nextTaskName);
+        project.removeNextTask(taskName, nextProject, nextTaskName);
     }
 }

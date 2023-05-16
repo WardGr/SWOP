@@ -78,25 +78,13 @@ interface TaskState {
     }
 
     /**
-     * Checks if it is safe to add prevTask as a previous task to the given task, without introducing a loop in the dependency graph
-     *
-     * @param task     Task which to add prevTask to
-     * @param prevTask Task to add to task
-     * @return true if no loop will be created once prevTask is added as a previous task, false otherwise
-     * @throws IncorrectTaskStatusException if task is not AVAILABLE or UNAVAILABLE
-     */
-    default boolean canSafelyAddPrevTask(Task task, Task prevTask) throws IncorrectTaskStatusException {
-        throw new IncorrectTaskStatusException("Task is not (un)available");
-    }
-
-    /**
      * Checks if it is safe to add (the task corresponding to) prevTask as a previous task to the given task, without introducing a loop in the dependency graph
      *
      * @param task     Task which to add (the task corresponding to) prevTask to
      * @param prevTask The name of the task corresponding to the task to add as previous task
      * @return true if task is UNAVAILABLE or AVAILABLE and adding (the task corresponding to) prevTask does not introduce a loop in the dependency graph
      */
-    default boolean canSafelyAddPrevTask(Task task, String prevTask) {
+    default boolean canSafelyAddPrevTask(Task task, Tuple<String,String> prevTask) {
         return false;
     }
 

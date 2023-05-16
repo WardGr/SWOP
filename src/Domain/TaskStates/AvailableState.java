@@ -17,7 +17,7 @@ public class AvailableState implements TaskState {
         if (!task.getUnfulfilledRoles().contains(role)) {
             throw new IncorrectRoleException("Given role is not required in the task");
         }
-        for (Task prevTask : task.getprevTasks()) {
+        for (Task prevTask : task.getPrevTasks()) {
             if (prevTask.getEndTime().after(startTime)) {
                 throw new IncorrectTaskStatusException("Start time is before end time previous task");
             }
@@ -58,16 +58,23 @@ public class AvailableState implements TaskState {
     }
 
     @Override
-    public boolean canSafelyAddPrevTask(Task task, String prevTaskName) {
+    public boolean canSafelyAddPrevTask(Task task, Tuple<String,String> prevTask) {
         for (Task nextTask : task.getAllNextTasks()) {
-            if (nextTask.getName().equals(prevTaskName)) {
+            if ( prevTask.equals( new Tuple<>(nextTask.getProjectName(), nextTask.getName()) ) ){
                 return false;
             }
         }
         return true;
     }
 
-    @Override
+    /**
+     * Checks if it is safe to add prevTask as a previous task to the given task, without introducing a loop in the dependency graph
+     *
+     * @param task     Task which to add prevTask to
+     * @param prevTask Task to add to task
+     * @return true if no loop will be created once prevTask is added as a previous task, false otherwise
+     * @throws IncorrectTaskStatusException if task is not AVAILABLE or UNAVAILABLE
+     */
     public boolean canSafelyAddPrevTask(Task task, Task prevTask) {
         return !task.getAllNextTasks().contains(prevTask);
     }

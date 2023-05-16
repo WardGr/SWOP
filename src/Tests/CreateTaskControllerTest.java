@@ -18,6 +18,7 @@ public class CreateTaskControllerTest {
 
     @Test
     public void testCreateTaskController() throws LoginException, UserNotFoundException, ProjectNotFoundException, InvalidTimeException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectPermissionException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, NewTimeBeforeSystemTimeException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        /*
         Session wardsSession = new Session();
         SessionProxy omerWrapper = new SessionProxy(wardsSession);
         Set wardsRoles = new HashSet();

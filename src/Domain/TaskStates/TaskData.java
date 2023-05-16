@@ -63,7 +63,7 @@ public interface TaskData {
     /**
      * @return A list of the names of all next tasks of the task
      */
-    Set<Tuple<String,String>> getNextTasksNames();
+    Set<Tuple<String,String>> getNextTaskNames();
 
     /**
      * @return A time object depicting this tasks' start time
@@ -98,5 +98,5 @@ public interface TaskData {
      * @return true if (the task corresponding to) the given prevTask can safely be added as a previous task to
      * this proxy's task without introducing a loop in the dependency graph, false otherwise
      */
-    boolean canSafelyAddPrevTask(String prevTask);
+    boolean canSafelyAddPrevTask(Tuple<String,String> prevTask);
 }
