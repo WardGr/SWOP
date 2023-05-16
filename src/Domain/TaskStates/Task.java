@@ -105,10 +105,10 @@ public class Task implements TaskData{
 
         try {
             for (Task prevTask : prevTasks) {
-                addprevTask(prevTask);
+                addPrevTask(prevTask);
             }
             for (Task nextTask : nextTasks) {
-                nextTask.addprevTask(this);
+                nextTask.addPrevTask(this);
             }
         } catch (LoopDependencyGraphException e) {
             clearPrevTasks();
@@ -187,7 +187,7 @@ public class Task implements TaskData{
     /**
      * @return Task that replaces this task
      */
-    public Task getReplacementTask() {
+    Task getReplacementTask() {
         return replacementTask;
     }
 
@@ -212,7 +212,7 @@ public class Task implements TaskData{
     /**
      * @return Task this task replaces
      */
-    public Task getReplacesTask() {
+    Task getReplacesTask() {
         return replacesTask;
     }
 
@@ -500,6 +500,9 @@ public class Task implements TaskData{
             getReplacesTask().setReplacementTask(null);
             setReplacesTask(null);
         }
+        if (!getCommittedUsers().isEmpty()){
+            setState(new AvailableState());
+        }
         for (User user : getCommittedUsers()) {
             user.endTask();
             uncommitUser(user);
@@ -600,7 +603,7 @@ public class Task implements TaskData{
      * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
      * @throws LoopDependencyGraphException if adding this task would cause a loop in the dependency graph of the project this task belongs to
      */
-    public void addprevTask(Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
+    public void addPrevTask(Task prevTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
         getState().addPrevTask(this, prevTask);
     }
 
@@ -622,7 +625,7 @@ public class Task implements TaskData{
      * @throws LoopDependencyGraphException if adding this task would cause a loop in the dependency graph
      */
     public void addNextTask(Task nextTask) throws IncorrectTaskStatusException, LoopDependencyGraphException {
-        nextTask.addprevTask(this);
+        nextTask.addPrevTask(this);
     }
 
     /**

@@ -17,9 +17,9 @@ public class ExecutingState implements TaskState {
 
 
     @Override
-    public void finish(Task task, Time endTime) throws IncorrectTaskStatusException, EndTimeBeforeStartTimeException {
-        task.setState(new FinishedState());
+    public void finish(Task task, Time endTime) throws EndTimeBeforeStartTimeException {
         task.setEndTime(endTime);
+        task.setState(new FinishedState());
 
         for (Task nextTask : task.getNextTasks()) {
             nextTask.updateAvailability();
@@ -28,7 +28,7 @@ public class ExecutingState implements TaskState {
 
     @Override
     public void fail(Task task, Time endTime) throws EndTimeBeforeStartTimeException {
-        task.setState(new FailedState());
         task.setEndTime(endTime);
+        task.setState(new FailedState());
     }
 }

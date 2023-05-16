@@ -418,7 +418,7 @@ public class Project {
         if (task == null || prevTask == null) {
             throw new TaskNotFoundException();
         }
-        task.addprevTask(prevTask);
+        task.addPrevTask(prevTask);
     }
 
     /**

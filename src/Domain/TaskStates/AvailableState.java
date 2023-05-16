@@ -67,7 +67,14 @@ public class AvailableState implements TaskState {
         return true;
     }
 
-    @Override
+    /**
+     * Checks if it is safe to add prevTask as a previous task to the given task, without introducing a loop in the dependency graph
+     *
+     * @param task     Task which to add prevTask to
+     * @param prevTask Task to add to task
+     * @return true if no loop will be created once prevTask is added as a previous task, false otherwise
+     * @throws IncorrectTaskStatusException if task is not AVAILABLE or UNAVAILABLE
+     */
     public boolean canSafelyAddPrevTask(Task task, Task prevTask) {
         return !task.getAllNextTasks().contains(prevTask);
     }
