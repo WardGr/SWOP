@@ -344,15 +344,14 @@ public class Project {
 
     public void stopTask(
             String taskName,
-            User currentUser,
-            Role role
+            User currentUser
     )
-            throws TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+            throws TaskNotFoundException, IncorrectTaskStatusException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();
         }
-        task.stop(currentUser, role);
+        task.stop(currentUser);
     }
 
     public void restartTask(

@@ -24,7 +24,7 @@ interface TaskState {
         throw new IncorrectTaskStatusException("Task must be available or pending to be started");
     }
 
-    default void stop(Task task, User currentUser, Role role) throws IncorrectTaskStatusException {
+    default void stop(Task task, User currentUser) throws IncorrectTaskStatusException {
         throw new IncorrectTaskStatusException("Task must be pending or executing to be stopped"); // no way dat ge undo kunt doen als in available is, want dan hebt ge nog niks gestart
     }
 

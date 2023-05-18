@@ -406,9 +406,9 @@ public class Task implements TaskData{
         getState().start(this, startTime, currentUser, role);
     }
 
-    public void stop(User currentUser, Role role)
-            throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
-        getState().stop( this, currentUser, role);
+    public void stop(User currentUser)
+            throws IncorrectTaskStatusException {
+        getState().stop( this, currentUser);
     }
 
     public void restart() throws IncorrectTaskStatusException {

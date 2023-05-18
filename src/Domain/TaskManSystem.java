@@ -328,18 +328,16 @@ public class TaskManSystem {
     public void stopTask(
             String projectName,
             String taskName,
-            User currentUser,
-            Role role
+            User currentUser
     )
-            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
         }
         project.stopTask(
                 taskName,
-                currentUser,
-                role
+                currentUser
         );
     }
 
