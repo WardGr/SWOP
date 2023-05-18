@@ -563,7 +563,6 @@ public class Task implements TaskData{
 
         for (User user : getCommittedUsers()) {
             user.endTask();
-            uncommitUser(user);
         }
     }
 
@@ -583,7 +582,6 @@ public class Task implements TaskData{
         getState().fail(this, endTime);
         for (User user : getCommittedUsers()) {
             user.endTask();
-            uncommitUser(user);
         }
     }
 
