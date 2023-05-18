@@ -63,20 +63,7 @@ package Domain;
              newNode.setPrev(node);
              newNode.setNext(null);
              node = newNode;
-             removeOldNodes(executingUser); // TODO deze zou niet meer moeten, maar dat doen we later wel
          }
-     }
-
-     private void removeOldNodes(User user) {
-         Node current = node;
-         while (current.getPrev() != null) {
-             current = current.getPrev();
-             if (current.getUser() == user) {
-                 current.setNext(null);
-                 break;
-             }
-         }
-
      }
 
      private class Node {
