@@ -1,6 +1,7 @@
 package Application;
 
 import Domain.*;
+import Domain.Command.StartTaskCommand;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.TaskData;
 import Domain.UserAlreadyAssignedToTaskException;
@@ -80,7 +81,9 @@ public class StartTaskController {
         if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with a developer role to start a task");
         }
-        getTaskManSystem().startTask(projectName, taskName, getSession().getCurrentUser(), role);
+        StartTaskCommand cmd = new StartTaskCommand(getTaskManSystem(), projectName, taskName, getSession().getCurrentUser(), role);
+        cmd.execute();
+        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 
 
