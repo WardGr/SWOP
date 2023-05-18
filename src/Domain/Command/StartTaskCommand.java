@@ -26,8 +26,8 @@ public class StartTaskCommand implements Command {
     }
 
     @Override
-    public void undo() throws UndoNotPossibleException {
-        throw new UndoNotPossibleException(); // TODO implement
+    public void undo() throws UndoNotPossibleException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        taskManSystem.stopTask(projectName, taskName, user, role);
     }
 
     @Override

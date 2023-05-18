@@ -24,6 +24,10 @@ interface TaskState {
         throw new IncorrectTaskStatusException("Task must be available or pending to be started");
     }
 
+    default void stop(Task task, User currentUser, Role role) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task must be pending or executing to be stopped"); // no way dat ge undo kunt doen als in available is, want dan hebt ge nog niks gestart
+    }
+
     /**
      * Returns the finishedStatus of the given task (early, on time, delayed)
      *
@@ -52,6 +56,10 @@ interface TaskState {
      */
     default void updateAvailability(Task task) {}
 
+
+    default void stop(Task task) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task must be in finished state"); // no way dat ge undo kunt doen als in available is, want dan hebt ge nog niks gestart
+    }
 
     /**
      * Updates the next task according to the current tasks' state

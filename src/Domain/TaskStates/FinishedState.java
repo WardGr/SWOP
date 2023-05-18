@@ -29,6 +29,11 @@ public class FinishedState implements TaskState {
         }
     }
 
+    @Override // TODO fixen dat met #params werkt
+    public void stop(Task task) {
+        task.setState(new AvailableState());
+    }
+
     @Override
     public void updateAvailabilityNextTask(Task task, Task nextTask) {
     }

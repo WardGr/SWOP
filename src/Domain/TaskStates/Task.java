@@ -406,6 +406,11 @@ public class Task implements TaskData{
         getState().start(this, startTime, currentUser, role);
     }
 
+    public void stop(User currentUser, Role role)
+            throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+        getState().stop( this, currentUser, role);
+    }
+
     /**
      * Semantically replaces this (failed) task with a task created with the given task details
      *
