@@ -80,12 +80,13 @@ package Domain;
      }
 
      private class Node {
-         private Command command;
+         private final Command command;
          private Node next;
          private Node prev;
-         private User user;
+         private final User user;
 
          public Node(Command command, User user) {
+             this.user = user;
              this.command = command;
              this.next = null;
              this.prev = null;
