@@ -398,7 +398,7 @@ public class TaskManSystem {
         project.finishTask(taskName, user, getSystemTime());
     }
 
-    public void restartTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+    public void restartTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();

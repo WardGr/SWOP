@@ -2,6 +2,7 @@ package Domain.Command;
 
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
+import Domain.TaskStates.TaskData;
 
 public class StartTaskCommand implements Command {
     private final TaskManSystem taskManSystem;
@@ -9,6 +10,7 @@ public class StartTaskCommand implements Command {
     private final String taskName;
     private final User user;
     private final Role role;
+    private final TaskData prevTaskUser;
 
     public StartTaskCommand(TaskManSystem taskManSystem, String projectName, String taskName, User user, Role role){
         this.taskManSystem = taskManSystem;
@@ -16,6 +18,8 @@ public class StartTaskCommand implements Command {
         this.taskName = taskName;
         this.user = user;
         this.role = role;
+
+        this.prevTaskUser = user.getTaskData();
 
     }
 
@@ -26,8 +30,12 @@ public class StartTaskCommand implements Command {
     }
 
     @Override
-    public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+    public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         taskManSystem.stopTask(projectName, taskName, user);
+        if (prevTaskUser != null){
+            Role previousRole = prevTaskUser.getUserNamesWithRole().get(user.getUsername());
+            taskManSystem.startTask(prevTaskUser.getProjectName(), prevTaskUser.getName(), user, previousRole);
+        }
     }
 
     @Override
