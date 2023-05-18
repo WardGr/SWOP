@@ -249,6 +249,13 @@ public class Task implements TaskData{
     }
 
     /**
+     * Clears the TimeSpan of this Task
+     */
+    private void clearTimeSpan() {
+        this.timeSpan = null;
+    }
+
+    /**
      * @return A mutable list of roles this task requires before it can be executed
      */
     List<Role> getRequiredRoles() {
@@ -411,7 +418,10 @@ public class Task implements TaskData{
         if (!getCommittedUsers().contains(currentUser)){
             throw new IncorrectUserException("Given user is not assigned to this task");
         }
-        getState().stop( this, currentUser);
+        getState().stopOneUser( this);
+        currentUser.endTask();
+        uncommitUser(currentUser);
+        clearTimeSpan();
     }
 
     public void restart() throws IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
@@ -422,6 +432,11 @@ public class Task implements TaskData{
         for (User user : getCommittedUsers()){
             Role role = getUsersWithRole().get(user);
             user.assignTask(this, role);
+        }
+        try{
+            setEndTime(null);
+        } catch (EndTimeBeforeStartTimeException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -511,6 +526,7 @@ public class Task implements TaskData{
     public void removeAllDependencies() {
         clearPrevTasks();
         clearNextTasks();
+        clearTimeSpan();
         if (getReplacementTask() != null){
             getReplacementTask().setReplacesTask(null);
             setReplacementTask(null);

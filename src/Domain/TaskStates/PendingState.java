@@ -31,10 +31,8 @@ public class PendingState implements TaskState {
     }
 
     @Override
-    public void stop(Task task, User currentUser) {
-        currentUser.endTask();
-        task.uncommitUser(currentUser);
-        if (task.getCommittedUsers().size() == 0) {
+    public void stopOneUser(Task task) {
+        if (task.getCommittedUsers().size() - 1 == 0) {
             task.setState(new AvailableState());
         }
     }

@@ -314,7 +314,7 @@ public class TaskTest {
         currentTask.finish(sysAdmin, new Time(0));
 
         currentTask.removeAllDependencies();
-        assertEquals(Status.FINISHED, currentTask.getStatus());
+        assertEquals(Status.AVAILABLE, currentTask.getStatus());
     }
 
     @Test
@@ -345,5 +345,104 @@ public class TaskTest {
         prevTask.finish(sysAdmin, new Time(12));
         assertEquals(FinishedStatus.DELAYED, prevTask.getFinishedStatus());
         assertEquals("delayed", prevTask.getFinishedStatus().toString());
+    }
+
+    @Test
+    public void testStopTaskWithMoreUsers() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, IncorrectUserException {
+        multipleRolesTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        multipleRolesTask.start(new Time(2), javaProg, Role.JAVAPROGRAMMER);
+        multipleRolesTask.start(new Time(4), pythonProg, Role.PYTHONPROGRAMMER);
+
+        assertEquals(Status.EXECUTING, multipleRolesTask.getStatus());
+        assertEquals(0, multipleRolesTask.getUnfulfilledRoles().size());
+        assertEquals(new Time(4), multipleRolesTask.getStartTime());
+
+        multipleRolesTask.stop(pythonProg);
+
+        assertEquals(Status.PENDING, multipleRolesTask.getStatus());
+        assertEquals(List.of(Role.PYTHONPROGRAMMER), multipleRolesTask.getUnfulfilledRoles());
+        assertNull(multipleRolesTask.getStartTime());
+
+        assertThrows(IncorrectUserException.class, () -> multipleRolesTask.stop(pythonProg));
+
+        multipleRolesTask.stop(sysAdmin);
+
+        assertEquals(Status.PENDING, multipleRolesTask.getStatus());
+        assertTrue(multipleRolesTask.getUnfulfilledRoles().contains(Role.PYTHONPROGRAMMER));
+        assertTrue(multipleRolesTask.getUnfulfilledRoles().contains(Role.SYSADMIN));
+
+        multipleRolesTask.stop(javaProg);
+
+        assertEquals(Status.AVAILABLE, multipleRolesTask.getStatus());
+        assertTrue(multipleRolesTask.getUnfulfilledRoles().contains(Role.SYSADMIN));
+        assertTrue(multipleRolesTask.getUnfulfilledRoles().contains(Role.PYTHONPROGRAMMER));
+        assertTrue(multipleRolesTask.getUnfulfilledRoles().contains(Role.JAVAPROGRAMMER));
+    }
+
+    @Test
+    public void testStopTaskWithOneUser() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, IncorrectUserException, EndTimeBeforeStartTimeException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        assertEquals(Status.EXECUTING, prevTask.getStatus());
+        assertEquals(0, prevTask.getUnfulfilledRoles().size());
+        assertEquals(new Time(0), prevTask.getStartTime());
+
+        prevTask.stop(sysAdmin);
+        assertEquals(Status.AVAILABLE, prevTask.getStatus());
+        assertEquals(List.of(Role.SYSADMIN), prevTask.getUnfulfilledRoles());
+        assertNull(prevTask.getStartTime());
+
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        prevTask.finish(sysAdmin, new Time(2));
+
+        assertThrows(IncorrectTaskStatusException.class, () -> prevTask.stop(sysAdmin));
+        assertEquals(Status.FINISHED, prevTask.getStatus());
+        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+    }
+
+    @Test
+    public void testRestartingFinishedMultipleRolesTask() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        assertThrows(IncorrectTaskStatusException.class, () -> multipleRolesTask.restart());
+
+        multipleRolesTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        multipleRolesTask.start(new Time(2), javaProg, Role.JAVAPROGRAMMER);
+
+        assertThrows(IncorrectTaskStatusException.class, () -> multipleRolesTask.restart());
+
+        multipleRolesTask.start(new Time(4), pythonProg, Role.PYTHONPROGRAMMER);
+        multipleRolesTask.finish(sysAdmin, new Time(6));
+
+        multipleRolesTask.restart();
+        assertEquals(Status.EXECUTING, multipleRolesTask.getStatus());
+        assertEquals(0, multipleRolesTask.getUnfulfilledRoles().size());
+        assertNull(multipleRolesTask.getEndTime());
+        assertEquals(new Time(4), multipleRolesTask.getStartTime());
+
+        assertThrows(IncorrectTaskStatusException.class, () -> multipleRolesTask.restart());
+    }
+
+    @Test
+    public void testRestartingFinishedPreviousTask() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        prevTask.finish(sysAdmin, new Time(2));
+        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+
+        prevTask.restart();
+        assertEquals(Status.EXECUTING, prevTask.getStatus());
+        assertEquals(0, prevTask.getUnfulfilledRoles().size());
+        assertNull(prevTask.getEndTime());
+        assertEquals(new Time(0), prevTask.getStartTime());
+        assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
+    }
+
+    @Test
+    public void testRestartingFailedTask() throws InvalidTimeException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
+        prevTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
+        prevTask.fail(sysAdmin, new Time(2));
+
+        prevTask.restart();
+        assertEquals(Status.EXECUTING, prevTask.getStatus());
+        assertEquals(0, prevTask.getUnfulfilledRoles().size());
+        assertNull(prevTask.getEndTime());
+        assertEquals(new Time(0), prevTask.getStartTime());
     }
 }
