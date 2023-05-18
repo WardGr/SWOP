@@ -411,6 +411,10 @@ public class Task implements TaskData{
         getState().stop( this, currentUser, role);
     }
 
+    public void restart() throws IncorrectTaskStatusException {
+        getState().stop(this);
+    }
+
     /**
      * Semantically replaces this (failed) task with a task created with the given task details
      *

@@ -400,6 +400,14 @@ public class TaskManSystem {
         project.finishTask(taskName, user, getSystemTime());
     }
 
+    public void restartTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        Project project = getProject(projectName);
+        if (project == null) {
+            throw new ProjectNotFoundException();
+        }
+        project.restartTask(taskName);
+    }
+
 
     /**
      * Sets the end time of the given (EXECUTING) task, and changes its status to FAILED

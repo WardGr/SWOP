@@ -1,6 +1,7 @@
 package Domain.Command;
 
 import Domain.*;
+import Domain.TaskStates.IncorrectRoleException;
 
 public class FinishTaskCommand implements Command {
     private final TaskManSystem taskManSystem;
@@ -17,12 +18,12 @@ public class FinishTaskCommand implements Command {
 
     @Override
     public void execute() throws ProjectNotFoundException, EndTimeBeforeStartTimeException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
-        taskManSystem.failTask(taskName, projectName, user);
+        taskManSystem.finishTask(taskName, projectName, user);
     }
 
     @Override
-    public void undo() throws UndoNotPossibleException {
-        throw new UndoNotPossibleException(); // TODO implement
+    public void undo() throws UndoNotPossibleException, ProjectNotFoundException, EndTimeBeforeStartTimeException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        taskManSystem.restartTask(projectName, taskName);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class FinishedState implements TaskState {
         }
     }
 
-    @Override // TODO fixen dat met #params werkt
+    @Override // TODO next tasks terug op unavailable  zetten
     public void stop(Task task) {
         task.setState(new AvailableState());
     }
