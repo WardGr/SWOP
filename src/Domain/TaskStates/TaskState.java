@@ -57,8 +57,8 @@ interface TaskState {
     default void updateAvailability(Task task) {}
 
 
-    default void stop(Task task) throws IncorrectTaskStatusException {
-        throw new IncorrectTaskStatusException("Task must be in finished state"); // no way dat ge undo kunt doen als in available is, want dan hebt ge nog niks gestart
+    default void restart(Task task) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task is not in the finished or failed state"); // no way dat ge undo kunt doen als in available is, want dan hebt ge nog niks gestart
     }
 
     /**

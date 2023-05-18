@@ -29,9 +29,9 @@ public class FinishedState implements TaskState {
         }
     }
 
-    @Override // TODO next tasks terug op unavailable  zetten
-    public void stop(Task task) {
-        task.setState(new AvailableState());
+    @Override
+    public void restart(Task task) {
+        task.setState(new ExecutingState());
     }
 
     @Override

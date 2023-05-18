@@ -346,7 +346,7 @@ public class Project {
             String taskName,
             User currentUser
     )
-            throws TaskNotFoundException, IncorrectTaskStatusException {
+            throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         Task task = getTask(taskName);
         if (task == null) {
             throw new TaskNotFoundException();

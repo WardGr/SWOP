@@ -407,12 +407,22 @@ public class Task implements TaskData{
     }
 
     public void stop(User currentUser)
-            throws IncorrectTaskStatusException {
+            throws IncorrectTaskStatusException, IncorrectUserException {
+        if (!getCommittedUsers().contains(currentUser)){
+            throw new IncorrectUserException("Given user is not assigned to this task");
+        }
         getState().stop( this, currentUser);
     }
 
-    public void restart() throws IncorrectTaskStatusException {
-        getState().stop(this);
+    public void restart() throws IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        getState().restart(this);
+        for (Task nextTask : getNextTasks()){
+            nextTask.updateAvailability();
+        }
+        for (User user : getCommittedUsers()){
+            Role role = getUsersWithRole().get(user);
+            user.assignTask(this, role);
+        }
     }
 
     /**

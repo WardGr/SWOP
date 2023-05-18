@@ -26,7 +26,7 @@ public class StartTaskCommand implements Command {
     }
 
     @Override
-    public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
+    public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         taskManSystem.stopTask(projectName, taskName, user);
     }
 

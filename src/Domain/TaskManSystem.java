@@ -330,7 +330,7 @@ public class TaskManSystem {
             String taskName,
             User currentUser
     )
-            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException {
+            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         Project project = getProject(projectName);
         if (project == null) {
             throw new ProjectNotFoundException();
