@@ -4,7 +4,6 @@ import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.TaskData;
-import UserInterface.TaskUI;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -17,7 +16,6 @@ import java.util.Set;
  */
 public class TaskManSystem {
 
-    private final TaskManSystemData taskManSystemData;
     private List<Project> projects;
     private Time systemTime;
 
@@ -30,14 +28,6 @@ public class TaskManSystem {
     public TaskManSystem(Time systemTime) {
         this.systemTime = systemTime;
         projects = new LinkedList<>();
-        taskManSystemData = new TaskManSystemData(this);
-    }
-
-    /**
-     * @return An immutable proxy of this object, containing some of this objects' details
-     */
-    public TaskManSystemData getTaskManSystemData() {
-        return taskManSystemData;
     }
 
     /**
@@ -79,7 +69,7 @@ public class TaskManSystem {
     /**
      * @return List of all project names, as strings
      */
-    List<String> getProjectNames() {
+    public List<String> getProjectNames() {
         List<String> names = new LinkedList<>();
         for (Project project : getProjects()) {
             names.add(project.getName());
