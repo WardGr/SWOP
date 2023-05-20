@@ -1,9 +1,6 @@
 package Domain.TaskStates;
 
-import Domain.EndTimeBeforeStartTimeException;
-import Domain.IncorrectTaskStatusException;
-import Domain.Status;
-import Domain.Time;
+import Domain.*;
 
 /**
  * Task state class governing the task transitions from the EXECUTING state
@@ -30,5 +27,14 @@ public class ExecutingState implements TaskState {
     public void fail(Task task, Time endTime) throws EndTimeBeforeStartTimeException {
         task.setEndTime(endTime);
         task.setState(new FailedState());
+    }
+
+    @Override
+    public void stopOneUser(Task task) {
+        if (task.getCommittedUsers().size() - 1 == 0) {
+            task.setState(new AvailableState());
+        } else {
+            task.setState(new PendingState());
+        }
     }
 }

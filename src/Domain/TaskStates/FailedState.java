@@ -42,4 +42,9 @@ public class FailedState implements TaskState {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void restart(Task task) {
+        task.setState(new ExecutingState());
+    }
 }

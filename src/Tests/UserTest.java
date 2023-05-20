@@ -1,9 +1,7 @@
 package Tests;
 
 import Domain.*;
-import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.Task;
-import Domain.TaskStates.TaskData;
+import Domain.TaskStates.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -32,66 +31,61 @@ public class UserTest {
     @Mock
     private TaskData taskData2;
 
+    private User user;
+
     @Before
     public void setUp() {
-        // See startTask, taskData moet PENDING status returnen.
-        //Mockito.when(task.getTaskProxy()).thenReturn(taskData);
-        //Mockito.when(task2.getTaskProxy()).thenReturn(taskData2);
-        //Mockito.when(taskData.getStatus()).thenReturn(Status.EXECUTING);
+        Mockito.when(task.getTaskData()).thenReturn(taskData);
+        Mockito.when(task2.getTaskData()).thenReturn(taskData2);
+
+        user = new User("User", "123", Set.of(Role.SYSADMIN));
     }
 
     @Test
-    public void testUser() throws IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+    public void testUserCreation(){
+        User testUser = new User("Test", "123", Set.of(Role.SYSADMIN, Role.PROJECTMANAGER));
+        assertEquals("Test", testUser.getUsername());
+        assertEquals("123", testUser.getPassword());
+        assertEquals(Set.of(Role.PROJECTMANAGER, Role.SYSADMIN), testUser.getRoles());
 
-        /*
-        Set<Role> roles = new HashSet<>();
-        roles.add(Role.PROJECTMANAGER);
-        User thomas = new User("Thomas", "banaan123", roles);
-        assertEquals("Thomas", thomas.getUsername());
-        assertEquals("banaan123", thomas.getPassword());
-        assertEquals(roles, thomas.getRoles());
-        assertNotEquals("Thomas", thomas.getPassword());
-        assertNotEquals("banaan123", thomas.getUsername());
-        roles.add(Role.PYTHONPROGRAMMER);
-        assertNotSame(roles, thomas.getRoles());
-        assertNotSame("banaan1234", thomas.getPassword());
+        assertThrows(IllegalArgumentException.class, () -> new User(null, "123", Set.of(Role.SYSADMIN)));
+        assertThrows(IllegalArgumentException.class, () -> new User("Test", null, Set.of(Role.SYSADMIN)));
+        assertThrows(IllegalArgumentException.class, () -> new User("Test", "123", null));
+        assertThrows(IllegalArgumentException.class, () -> new User("Test", "123", new HashSet<>()));
+    }
 
-        roles.add(Role.JAVAPROGRAMMER);
-        User jonathan = new User("Jonathan", "perzik789", roles);
-        assertEquals("Jonathan", jonathan.getUsername());
-        assertEquals("perzik789", jonathan.getPassword());
-        assertNotEquals("perzik7890", jonathan.getPassword());
-        assertNotEquals("thomas", jonathan.getUsername());
-        assertEquals(roles, jonathan.getRoles());
-        assertFalse(jonathan.getRoles().contains(Role.SYSADMIN));
+    @Test
+    public void testAssignTask() throws UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        assertThrows(IncorrectRoleException.class, () -> user.assignTask(task, Role.JAVAPROGRAMMER));
 
-        assertThrows(IllegalArgumentException.class, () -> new User(null, null, null));
+        user.assignTask(task, Role.SYSADMIN);
+        assertEquals(task.getTaskData(), user.getTaskData());
+    }
 
-        assertThrows(IllegalArgumentException.class, () -> new User("Fiona", "hoi123", null));
+    @Test
+    public void testReplaceTask() throws UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        user.assignTask(task2, Role.SYSADMIN);
+        assertEquals(task2.getTaskData(), user.getTaskData());
 
-        assertThrows(IllegalArgumentException.class, () -> new User("Fiona", null, roles));
+        user.assignTask(task, Role.SYSADMIN);
+        assertEquals(task.getTaskData(), user.getTaskData());
+    }
 
-        Set<Role> emptyRoles = new HashSet<>();
-        assertThrows(IllegalArgumentException.class, () -> new User("Fiona", "hoi123", emptyRoles));
+    @Test
+    public void testFailedReplaceTask() throws UserAlreadyAssignedToTaskException, IncorrectRoleException, InvalidTimeException, IncorrectTaskStatusException, IllegalTaskRolesException, LoopDependencyGraphException {
+        Task executingTask = new Task("Test", "Descr", new Time(5), 0.1, List.of(Role.SYSADMIN), new HashSet<>(), new HashSet<>(), "project");
+        executingTask.start(new Time(0), user, Role.SYSADMIN);
+        assertThrows(UserAlreadyAssignedToTaskException.class, () -> user.assignTask(task2,Role.SYSADMIN));
 
-        assertThrows(IncorrectRoleException.class, () -> jonathan.assignTask(task, Role.SYSADMIN));
+        assertEquals(executingTask.getTaskData(), user.getTaskData());
+    }
 
-        jonathan.assignTask(task, Role.PROJECTMANAGER);
-        // Jonathan is now assigned to this task, so it is not pending anymore
+    @Test
+    public void testEndAssignedTask() throws UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        user.assignTask(task, Role.SYSADMIN);
+        assertEquals(task.getTaskData(), user.getTaskData());
 
-        //assertThrows(UserAlreadyAssignedToTaskException.class, () -> jonathan.assignTask(task, Role.PROJECTMANAGER));
-
-        //Mockito.when(taskData.getStatus()).thenReturn(Status.PENDING);
-        //jonathan.assignTask(task2, Role.PROJECTMANAGER);
-        // This should unassign jonathan to the pending task, and assign task as its current task
-
-        //assertEquals(taskData2, jonathan.getTaskData());
-
-
-        //jonathan.endTask();
-        //assertNull(jonathan.getTaskData());
-
-         */
-
+        user.endTask();
+        assertNull(user.getTaskData());
     }
 }

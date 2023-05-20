@@ -1,28 +1,29 @@
 package Domain.Command;
 
 import Domain.*;
+import Domain.TaskStates.IncorrectRoleException;
 
 public class FailTaskCommand implements Command {
     private final TaskManSystem taskManSystem;
-    private final String taskName;
     private final String projectName;
+    private final String taskName;
     private final User user;
 
     public FailTaskCommand(TaskManSystem taskManSystem, String taskName, String projectName, User user){
         this.taskManSystem = taskManSystem;
-        this.taskName = taskName;
         this.projectName = projectName;
+        this.taskName = taskName;
         this.user = user;
     }
 
     @Override
     public void execute() throws ProjectNotFoundException, EndTimeBeforeStartTimeException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
-        taskManSystem.failTask(taskName, projectName, user);
+        taskManSystem.failTask(projectName, taskName, user);
     }
 
     @Override
-    public void undo() throws UndoNotPossibleException {
-        throw new UndoNotPossibleException(); // TODO: implement
+    public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+        taskManSystem.restartTask(projectName, taskName);
     }
 
     @Override

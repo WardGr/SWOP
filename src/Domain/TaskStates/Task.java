@@ -249,6 +249,13 @@ public class Task implements TaskData{
     }
 
     /**
+     * Clears the TimeSpan of this Task
+     */
+    private void clearTimeSpan() {
+        this.timeSpan = null;
+    }
+
+    /**
      * @return A mutable list of roles this task requires before it can be executed
      */
     List<Role> getRequiredRoles() {
@@ -406,6 +413,33 @@ public class Task implements TaskData{
         getState().start(this, startTime, currentUser, role);
     }
 
+    public void stop(User currentUser)
+            throws IncorrectTaskStatusException, IncorrectUserException {
+        if (!getCommittedUsers().contains(currentUser)){
+            throw new IncorrectUserException("Given user is not assigned to this task");
+        }
+        getState().stopOneUser( this);
+        currentUser.endTask();
+        uncommitUser(currentUser);
+        clearTimeSpan();
+    }
+
+    public void restart() throws IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        getState().restart(this);
+        for (Task nextTask : getNextTasks()){
+            nextTask.updateAvailability();
+        }
+        for (User user : getCommittedUsers()){
+            Role role = getUsersWithRole().get(user);
+            user.assignTask(this, role);
+        }
+        try{
+            setEndTime(null);
+        } catch (EndTimeBeforeStartTimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Semantically replaces this (failed) task with a task created with the given task details
      *
@@ -492,6 +526,7 @@ public class Task implements TaskData{
     public void removeAllDependencies() {
         clearPrevTasks();
         clearNextTasks();
+        clearTimeSpan();
         if (getReplacementTask() != null){
             getReplacementTask().setReplacesTask(null);
             setReplacementTask(null);
@@ -554,7 +589,6 @@ public class Task implements TaskData{
 
         for (User user : getCommittedUsers()) {
             user.endTask();
-            uncommitUser(user);
         }
     }
 
@@ -574,7 +608,6 @@ public class Task implements TaskData{
         getState().fail(this, endTime);
         for (User user : getCommittedUsers()) {
             user.endTask();
-            uncommitUser(user);
         }
     }
 

@@ -30,6 +30,11 @@ public class FinishedState implements TaskState {
     }
 
     @Override
+    public void restart(Task task) {
+        task.setState(new ExecutingState());
+    }
+
+    @Override
     public void updateAvailabilityNextTask(Task task, Task nextTask) {
     }
 }

@@ -325,6 +325,22 @@ public class TaskManSystem {
         );
     }
 
+    public void stopTask(
+            String projectName,
+            String taskName,
+            User currentUser
+    )
+            throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+        Project project = getProject(projectName);
+        if (project == null) {
+            throw new ProjectNotFoundException();
+        }
+        project.stopTask(
+                taskName,
+                currentUser
+        );
+    }
+
     /**
      * Advances the system time
      *
@@ -380,6 +396,14 @@ public class TaskManSystem {
             throw new ProjectNotFoundException();
         }
         project.finishTask(taskName, user, getSystemTime());
+    }
+
+    public void restartTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        Project project = getProject(projectName);
+        if (project == null) {
+            throw new ProjectNotFoundException();
+        }
+        project.restartTask(taskName);
     }
 
 
