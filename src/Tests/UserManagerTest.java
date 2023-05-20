@@ -29,51 +29,26 @@ public class UserManagerTest {
 
     private UserManager userManager;
 
-    @Mock
-    private User ward;
-    @Mock
-    private User olav;
-    @Mock
-    private User sam;
-    @Mock
-    private User dieter;
-
 
     @Before
     public void setUp() {
-        Mockito.when(ward.getUsername()).thenReturn("WardGr");
-        Mockito.when(ward.getPassword()).thenReturn("minecraft123");
-        Mockito.when(ward.getRoles()).thenReturn(Set.of(Role.JAVAPROGRAMMER, Role.PYTHONPROGRAMMER));
-
-        Mockito.when(olav.getUsername()).thenReturn("OlavBl");
-        Mockito.when(olav.getPassword()).thenReturn("peer123");
-        Mockito.when(olav.getRoles()).thenReturn(Set.of(Role.PYTHONPROGRAMMER));
-
-        Mockito.when(olav.getUsername()).thenReturn("SamHa");
-        Mockito.when(olav.getPassword()).thenReturn("trein123");
-        Mockito.when(olav.getRoles()).thenReturn(Set.of(Role.JAVAPROGRAMMER));
-
-        Mockito.when(olav.getUsername()).thenReturn("DieterVH");
-        Mockito.when(olav.getPassword()).thenReturn("computer776");
-        Mockito.when(olav.getRoles()).thenReturn(Set.of(Role.PROJECTMANAGER));
-
         userManager = new UserManager();
     }
 
     @Test
     public void testGetUserWithPassword() throws LoginException, UserNotFoundException {
-        assertEquals(ward.getUsername(), userManager.getUser("WardGr", "minecraft123").getUsername());
-        assertEquals(ward.getPassword(), userManager.getUser("WardGr", "minecraft123").getPassword());
-        assertEquals(ward.getRoles(), userManager.getUser("WardGr", "minecraft123").getRoles());
-        assertEquals(sam.getUsername(), userManager.getUser("SamHa", "trein123").getUsername());
-        assertEquals(sam.getPassword(), userManager.getUser("SamHa", "trein123").getPassword());
-        assertEquals(sam.getRoles(), userManager.getUser("SamHa", "trein123").getRoles());
-        assertEquals(olav.getUsername(), userManager.getUser(("OlavBl"), "peer123").getUsername());
-        assertEquals(olav.getPassword(), userManager.getUser("OlavBl", "peer123").getPassword());
-        assertEquals(olav.getRoles(), userManager.getUser("OlavBl", "peer123").getRoles());
-        assertEquals(dieter.getUsername(), userManager.getUser("DieterVH", "computer776").getUsername());
-        assertEquals(dieter.getPassword(), userManager.getUser("DieterVH", "computer776").getPassword());
-        assertEquals(dieter.getRoles(), userManager.getUser("DieterVH", "computer776").getRoles());
+        assertEquals("WardGr", userManager.getUser("WardGr", "minecraft123").getUsername());
+        assertEquals("minecraft123", userManager.getUser("WardGr", "minecraft123").getPassword());
+        assertEquals(Set.of(Role.JAVAPROGRAMMER, Role.PYTHONPROGRAMMER), userManager.getUser("WardGr", "minecraft123").getRoles());
+        assertEquals("SamHa", userManager.getUser("SamHa", "trein123").getUsername());
+        assertEquals("trein123", userManager.getUser("SamHa", "trein123").getPassword());
+        assertEquals(Set.of(Role.JAVAPROGRAMMER), userManager.getUser("SamHa", "trein123").getRoles());
+        assertEquals("OlavBl", userManager.getUser(("OlavBl"), "peer123").getUsername());
+        assertEquals("peer123", userManager.getUser("OlavBl", "peer123").getPassword());
+        assertEquals(Set.of(Role.PYTHONPROGRAMMER), userManager.getUser("OlavBl", "peer123").getRoles());
+        assertEquals("DieterVH", userManager.getUser("DieterVH", "computer776").getUsername());
+        assertEquals("computer776", userManager.getUser("DieterVH", "computer776").getPassword());
+        assertEquals(Set.of(Role.PROJECTMANAGER), userManager.getUser("DieterVH", "computer776").getRoles());
 
         assertThrows(LoginException.class, () -> {
             userManager.getUser("Fiona", "hoi123");
@@ -91,18 +66,18 @@ public class UserManagerTest {
 
     @Test
     public void testGetUser() throws UserNotFoundException {
-        assertEquals(ward.getUsername(), userManager.getUser("WardGr").getUsername());
-        assertEquals(ward.getPassword(), userManager.getUser("WardGr").getPassword());
-        assertEquals(ward.getRoles(), userManager.getUser("WardGr").getRoles());
-        assertEquals(olav.getUsername(), userManager.getUser("OlavBl").getUsername());
-        assertEquals(olav.getPassword(), userManager.getUser("OlavBl").getPassword());
-        assertEquals(olav.getRoles(), userManager.getUser("OlavBl").getRoles());
-        assertEquals(sam.getUsername(), userManager.getUser("SamHa").getUsername());
-        assertEquals(sam.getPassword(), userManager.getUser("SamHa").getPassword());
-        assertEquals(sam.getRoles(), userManager.getUser("SamHa").getRoles());
-        assertEquals(dieter.getUsername(), userManager.getUser("DieterVH").getUsername());
-        assertEquals(dieter.getPassword(), userManager.getUser("DieterVH").getPassword());
-        assertEquals(dieter.getRoles(), userManager.getUser("DieterVH").getRoles());
+        assertEquals("WardGr", userManager.getUser("WardGr").getUsername());
+        assertEquals("minecraft123", userManager.getUser("WardGr").getPassword());
+        assertEquals(Set.of(Role.JAVAPROGRAMMER, Role.PYTHONPROGRAMMER), userManager.getUser("WardGr").getRoles());
+        assertEquals("OlavBl", userManager.getUser("OlavBl").getUsername());
+        assertEquals("peer123", userManager.getUser("OlavBl").getPassword());
+        assertEquals(Set.of(Role.PYTHONPROGRAMMER), userManager.getUser("OlavBl").getRoles());
+        assertEquals("SamHa", userManager.getUser("SamHa").getUsername());
+        assertEquals("trein123", userManager.getUser("SamHa").getPassword());
+        assertEquals(Set.of(Role.JAVAPROGRAMMER), userManager.getUser("SamHa").getRoles());
+        assertEquals("DieterVH", userManager.getUser("DieterVH").getUsername());
+        assertEquals("computer776", userManager.getUser("DieterVH").getPassword());
+        assertEquals(Set.of(Role.PROJECTMANAGER), userManager.getUser("DieterVH").getRoles());
 
         assertThrows(UserNotFoundException.class, () -> {
             userManager.getUser("Fiona");
