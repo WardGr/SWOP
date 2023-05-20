@@ -2,6 +2,11 @@ package Domain.Command;
 
 import Domain.*;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 public class ReplaceTaskCommand implements Command {
 
     private final TaskManSystem taskManSystem;
@@ -45,7 +50,34 @@ public class ReplaceTaskCommand implements Command {
     }
 
     @Override
-    public boolean undoPossible() {
+    public boolean undoPossible(){
         return true;
+    }
+
+    @Override
+    public String getInformation(){
+        return "Replace task";
+    }
+
+    @Override
+    public String getExtendedInformation(){
+        return "Replace task " + replaces + " by task " + taskName + " in project " + projectName;
+    }
+
+    @Override
+    public Map<String,String> getArguments(){
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("projectName", projectName);
+        arguments.put("taskName", taskName);
+        arguments.put("description", description);
+        arguments.put("durationTime", durationTime.toString());
+        arguments.put("deviation", Double.toString(deviation));
+        arguments.put("replaces", replaces);
+        return arguments;
+    }
+
+    @Override
+    public List<String> getArgumentNames(){
+        return new LinkedList<>(List.of("projectName", "taskName", "description", "durationTime", "deviation", "replaces"));
     }
 }

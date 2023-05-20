@@ -1,7 +1,14 @@
 package UserInterface;
 
 import Application.UndoRedoController;
+import Domain.Command.Command;
+import Domain.Command.CommandData;
+import Domain.Command.UndoNotPossibleException;
+import Domain.EmptyCommandStackException;
+import Domain.IncorrectUserException;
+import Domain.Tuple;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class UndoRedoUI {
@@ -22,63 +29,120 @@ public class UndoRedoUI {
 
     public void undo() {
         Scanner scanner = new Scanner(System.in);
-        if (!getController().undoConditions()) {
-            System.out.println("You cannot undo any commands at this time.");
-            return;
-        }
-        undoForm(scanner);
-    }
-
-    private void undoForm(Scanner scanner) {
-        System.out.println("******** UNDO *******");
-        System.out.println("Type 'BACK' to cancel undo");
-        System.out.println("Undoable commands:");
-        for (String command : getController().possibleUndoes()) {
-            System.out.println(command);
-        }
-        System.out.println("How many commands do you want to undo?");
-        String command = scanner.nextLine();
-        if (command.equals("BACK")) {
-            System.out.println("Cancelled undo");
-            return;
-        }
         try {
-            for (int i = 0; i < Integer.parseInt(command); i++)
-                getController().undo();
-            System.out.println("Succesfully undone.");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            undoForm(scanner);
+        } catch (BackException e){
+            System.out.println("Cancelled undo\n");
         }
     }
 
-    public void redo(){
+    private void undoForm(Scanner scanner) throws BackException {
+        List<Tuple<CommandData,String>> previousCommands = getController().getPreviousCommandsList();
+        if (previousCommands.size() == 0){
+            System.out.println("There are no actions that can be undone; Cancelled undo\n");
+        } else {
+            printPreviousCommandsList(previousCommands);
+            CommandData latestCommand = getController().getLastCommand();
+            boolean confirmation = getBooleanInput(scanner,"Confirm that you want to undo the last action: " + latestCommand.getExtendedInformation());
+
+            if (confirmation){
+                try{
+                    getController().undoLastCommand();
+                    System.out.println("Last action successfully undone\n");
+                } catch (IncorrectUserException | EmptyCommandStackException e) {
+                    System.out.println("ERROR: " + e.getMessage() + '\n');
+                } catch (UndoNotPossibleException e) {
+                    System.out.println("Last executed action can't be undone\n");
+                }
+            } else {
+                System.out.println("Cancelled undo\n");
+            }
+        }
+    }
+
+    private void printPreviousCommandsList(List<Tuple<CommandData,String>> prevCmdList){
+        System.out.println(" ***** EXECUTED ACTIONS *****");
+        System.out.println(" ----- Oldest Action -----");
+        for (Tuple<CommandData,String> command : prevCmdList){
+            System.out.print(" - " + command.getFirst().getExtendedInformation() +
+                    " --- Executed By: " + command.getSecond());
+            if (!command.getFirst().undoPossible()){
+                System.out.println(" --- NO UNDO POSSIBLE");
+            } else {
+                System.out.println();
+            }
+        }
+        System.out.println(" ----- Most Recent Action -----");
+        System.out.println();
+    }
+
+
+
+    public void redo() {
+        try {
+            redoForm();
+        } catch (BackException e){
+            System.out.println("Cancelled redo\n");
+        }
+    }
+
+    private void redoForm() throws BackException {
         Scanner scanner = new Scanner(System.in);
-        if (!getController().redoConditions()) {
-            System.out.println("You cannot redo any commands at this time.");
-            return;
+
+        List<Tuple<CommandData,String>> undoneCommands = getController().getUndoneCommandsList();
+        if (undoneCommands.size() == 0){
+            System.out.println("There are no undone actions that can be redone; Cancelled redo\n");
+        } else {
+            printUndoneCommandsList(undoneCommands);
+            CommandData latestCommand = getController().getLastUndoneCommand();
+            boolean confirmation = getBooleanInput(scanner,"Confirm that you want to redo the last undone action: " + latestCommand.getExtendedInformation());
+
+            if (confirmation){
+                try{
+                    getController().redoLastUndoneCommand();
+                    System.out.println("Last undone action successfully redone\n");
+                } catch (IncorrectUserException | EmptyCommandStackException e) {
+                    System.out.println("ERROR: " + e.getMessage() + '\n');
+                }
+            } else {
+                System.out.println("Cancelled redo\n");
+            }
         }
-        redoForm(scanner);
     }
 
-    private void redoForm(Scanner scanner) {
-        System.out.println("******** REDO *******");
-        System.out.println("Type 'BACK' to cancel redo");
-        System.out.println("Redoable commands:");
-        for (String command : getController().possibleRedoes()) {
-            System.out.println(command);
+    private void printUndoneCommandsList(List<Tuple<CommandData,String>> prevCmdList){
+        System.out.println(" ***** UNDONE ACTIONS *****");
+        System.out.println(" ----- Oldest Undone Action -----");
+        for (Tuple<CommandData,String> command : prevCmdList){
+            System.out.println(" - " + command.getFirst().getExtendedInformation() +
+                    " --- Executed By: " + command.getSecond());
         }
-        System.out.println("How many commands do you want to redo?");
-        String command = scanner.nextLine();
-        if (command.equals("BACK")) {
-            System.out.println("Cancelled redo");
-            return;
+        System.out.println(" ----- Most Recent Undone Action -----");
+        System.out.println();
+    }
+
+
+
+    private boolean getBooleanInput(Scanner scanner, String message) throws BackException {
+        System.out.println(message + " (y/n)");
+        String answer = scanner.nextLine();
+        if (answer.equals("BACK")) {
+            throw new BackException();
         }
-        try {
-            for (int i = 0; i < Integer.parseInt(command); i++)
-                getController().redo();
-            System.out.println("Succesfully redone.");
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+
+        while (!answer.equals("y") && !answer.equals("n")) {
+            System.out.println("\nInput has to be 'y' or 'n', try again");
+            System.out.println(message + " (y/n)");
+            answer = scanner.nextLine();
+            if (answer.equals("BACK")) {
+                throw new BackException();
+            }
         }
+
+        return answer.equals("y");
+    }
+
+    private static class BackException extends Exception {
+        public BackException() {super();}
     }
 }

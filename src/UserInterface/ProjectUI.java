@@ -153,7 +153,7 @@ public class ProjectUI {
 
             try {
                 getController().deleteProject(projectName);
-                System.out.println();
+                System.out.println("Project successfully deleted\n");
                 return;
             } catch (ProjectNotFoundException e) {
                 System.out.println();

@@ -5,6 +5,11 @@ import Domain.ProjectNotFoundException;
 import Domain.TaskManSystem;
 import Domain.Time;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 public class SetNewTimeCommand implements Command {
     private final TaskManSystem taskManSystem;
     private final Time time;
@@ -20,17 +25,24 @@ public class SetNewTimeCommand implements Command {
     }
 
     @Override
-    public void undo() throws UndoNotPossibleException {
-        throw new UndoNotPossibleException();
+    public String getInformation(){
+        return "Set new time";
     }
 
     @Override
-    public String information() {
+    public String getExtendedInformation(){
         return "Set new time " + time.toString();
     }
 
     @Override
-    public boolean undoPossible(){
-        return false;
+    public Map<String,String> getArguments(){
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("newTime", time.toString());
+        return arguments;
+    }
+
+    @Override
+    public List<String> getArgumentNames(){
+        return new LinkedList<>(List.of("newTime"));
     }
 }
