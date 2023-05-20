@@ -60,8 +60,8 @@ public class UserManager {
             throws LoginException {
         for (User user : getUsers()) {
             if (
-                    username.equals(user.getUsername()) &&
-                            password.equals(user.getPassword())
+                    user.getUsername().equals(username) &&
+                            user.getPassword().equals(password)
             ) {
                 return user;
             }

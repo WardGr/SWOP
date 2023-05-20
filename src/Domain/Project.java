@@ -342,6 +342,29 @@ public class Project {
         task.start(startTime, currentUser, role);
     }
 
+    public void stopTask(
+            String taskName,
+            User currentUser
+    )
+            throws TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        task.stop(currentUser);
+    }
+
+    public void restartTask(
+            String taskName
+    )
+            throws TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        Task task = getTask(taskName);
+        if (task == null) {
+            throw new TaskNotFoundException();
+        }
+        task.restart();
+    }
+
 
     /**
      * Ends the given task and sets its status to FINISHED

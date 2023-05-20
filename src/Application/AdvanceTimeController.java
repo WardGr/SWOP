@@ -4,8 +4,10 @@ import Domain.*;
 
 import java.util.Set;
 
+import Domain.Command.AdvanceTimeCommand;
 import Domain.Command.Command;
 import Domain.Command.ImpossibleUndoRedo;
+import Domain.Command.SetNewTimeCommand;
 
 /**
  * Separates domain from UI for the advancetime use-case
@@ -79,7 +81,8 @@ public class AdvanceTimeController {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(newTime);
-        Command cmd = new ImpossibleUndoRedo(); // TODO
+        SetNewTimeCommand cmd = new SetNewTimeCommand(getTaskManSystem(), newTime);
+        cmd.execute();
         getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 
@@ -96,7 +99,8 @@ public class AdvanceTimeController {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
         getTaskManSystem().advanceTime(advanceMinutes);
-        Command cmd = new ImpossibleUndoRedo(); // TODO
+        AdvanceTimeCommand cmd = new AdvanceTimeCommand(getTaskManSystem(), advanceMinutes);
+        cmd.execute();
         getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 }

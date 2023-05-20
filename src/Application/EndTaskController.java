@@ -1,6 +1,8 @@
 package Application;
 
 import Domain.*;
+import Domain.Command.FailTaskCommand;
+import Domain.Command.FinishTaskCommand;
 import Domain.TaskStates.TaskData;
 
 import java.util.Set;
@@ -81,7 +83,9 @@ public class EndTaskController {
         if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING) {
             throw new IncorrectPermissionException("You are not executing a task");
         }
-        getTaskManSystem().finishTask(userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
+        FinishTaskCommand cmd = new FinishTaskCommand(getTaskManSystem(), userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
+        cmd.execute();
+        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 
     /**
@@ -102,7 +106,9 @@ public class EndTaskController {
         if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING) {
             throw new IncorrectPermissionException("You are not executing a task");
         }
-        getTaskManSystem().failTask(userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
+        FailTaskCommand cmd = new FailTaskCommand(getTaskManSystem(), userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
+        cmd.execute();
+        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
 
     /**
