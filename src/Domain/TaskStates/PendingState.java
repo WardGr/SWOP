@@ -50,4 +50,9 @@ public class PendingState implements TaskState {
             task.setState(new AvailableState());
         }
     }
+
+    @Override
+    public String toString() {
+        return getStatus().toString();
+    }
 }

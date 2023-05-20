@@ -10,47 +10,76 @@ import static org.junit.Assert.*;
 
 public class TimeSpanTest {
     @Test
-    public void testTimeSpan() throws InvalidTimeException, EndTimeBeforeStartTimeException {
-        TimeSpan brewery = new TimeSpan(new Time(10, 55));
-        TimeSpan pilsner = new TimeSpan(new Time(15, 22));
+    public void testCreation() throws InvalidTimeException {
+        TimeSpan timeSpan = new TimeSpan(null);
+        assertNull(timeSpan.getStartTime());
+        assertNull(timeSpan.getEndTime());
+        assertNull(timeSpan.getTimeElapsed());
 
-        assertEquals("10 hour(s), 55 minute(s)", brewery.showStartTime());
-        assertEquals("No end time set", brewery.showEndTime());
+        TimeSpan timeSpan2 = new TimeSpan(new Time(50));
+        assertEquals(new Time(50), timeSpan2.getStartTime());
+        assertNull(timeSpan2.getEndTime());
+        assertNull(timeSpan2.getTimeElapsed());
+    }
 
-        assertEquals("15 hour(s), 22 minute(s)", pilsner.showStartTime());
-        assertEquals("No end time set", pilsner.showEndTime());
+    @Test
+    public void testStartTime() throws InvalidTimeException, EndTimeBeforeStartTimeException {
+        TimeSpan timeSpan = new TimeSpan(null);
 
-        assertNotSame(brewery, pilsner);
-        brewery.setStartTime(new Time(12, 55));
-        assertEquals("12 hour(s), 55 minute(s)", brewery.showStartTime());
-        assertEquals("No end time set", brewery.showEndTime());
+        timeSpan.setStartTime(new Time(20));
+        assertEquals(new Time(20), timeSpan.getStartTime());
+        assertNull(timeSpan.getEndTime());
+        assertNull(timeSpan.getTimeElapsed());
 
-        brewery.setEndTime(new Time(22, 0));
-        brewery.setStartTime(new Time(17, 55));
-        assertEquals("17 hour(s), 55 minute(s)", brewery.showStartTime());
-        assertEquals("22 hour(s), 0 minute(s)", brewery.showEndTime());
+        timeSpan.setEndTime(new Time(20));
+        assertEquals(new Time(0), timeSpan.getTimeElapsed());
 
-        pilsner.setEndTime(new Time(17, 0));
-        assertEquals("15 hour(s), 22 minute(s)", pilsner.showStartTime());
-        assertEquals("17 hour(s), 0 minute(s)", pilsner.showEndTime());
+        assertThrows(EndTimeBeforeStartTimeException.class, () -> timeSpan.setStartTime(new Time(25)));
+        timeSpan.setStartTime(new Time(15));
+        assertEquals(new Time(15), timeSpan.getStartTime());
+        assertEquals(new Time(20), timeSpan.getEndTime());
+        assertEquals(new Time(5), timeSpan.getTimeElapsed());
 
-        brewery.setStartTime(null);
-        assertEquals("No start time set", brewery.showStartTime());
-        assertEquals("22 hour(s), 0 minute(s)", brewery.showEndTime());
+        timeSpan.setStartTime(null);
+        assertNull(timeSpan.getStartTime());
+        assertEquals(new Time(20), timeSpan.getEndTime());
+        assertNull(timeSpan.getTimeElapsed());
+    }
 
-        brewery.setStartTime(new Time(17, 55));
+    @Test
+    public void testEndTime() throws InvalidTimeException, EndTimeBeforeStartTimeException {
+        TimeSpan timeSpanNoStartTime = new TimeSpan(null);
+        timeSpanNoStartTime.setEndTime(new Time(50));
 
-        assertEquals(new Time(1, 38).getHour(), pilsner.getTimeElapsed().getHour());
-        assertEquals(new Time(1, 38).getMinute(), pilsner.getTimeElapsed().getMinute());
+        assertEquals(new Time(50), timeSpanNoStartTime.getEndTime());
+        assertNull(timeSpanNoStartTime.getStartTime());
+        assertNull(timeSpanNoStartTime.getTimeElapsed());
 
-        assertEquals(new Time(4, 5).getHour(), brewery.getTimeElapsed().getHour());
-        assertEquals(new Time(4, 5).getMinute(), brewery.getTimeElapsed().getMinute());
+        TimeSpan timeSpan = new TimeSpan(new Time(50));
+        assertThrows(EndTimeBeforeStartTimeException.class, () -> timeSpan.setEndTime(new Time(40)));
 
-        TimeSpan exceptionTimeSpan = new TimeSpan(new Time(10));
-        assertThrows(EndTimeBeforeStartTimeException.class, () -> exceptionTimeSpan.setEndTime(new Time(5)));
-        exceptionTimeSpan.setEndTime(new Time(15));
-        assertThrows(EndTimeBeforeStartTimeException.class, () -> exceptionTimeSpan.setStartTime(new Time(20)));
+        timeSpan.setEndTime(new Time(60));
+        assertEquals(new Time(50), timeSpan.getStartTime());
+        assertEquals(new Time(60), timeSpan.getEndTime());
+        assertEquals(new Time(10), timeSpan.getTimeElapsed());
 
+        timeSpan.setEndTime(null);
+        assertEquals(new Time(50), timeSpan.getStartTime());
+        assertNull(timeSpan.getEndTime());
+        assertNull(timeSpan.getTimeElapsed());
+    }
 
+    @Test
+    public void testShowTimes() throws InvalidTimeException, EndTimeBeforeStartTimeException {
+        TimeSpan timeSpan = new TimeSpan(null);
+
+        assertEquals("No start time set", timeSpan.showStartTime());
+        assertEquals("No end time set", timeSpan.showEndTime());
+
+        timeSpan.setStartTime(new Time(5));
+        timeSpan.setEndTime(new Time(20));
+
+        assertEquals(new Time(5).toString(), timeSpan.showStartTime());
+        assertEquals(new Time(20).toString(), timeSpan.showEndTime());
     }
 }
