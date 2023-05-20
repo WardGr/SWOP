@@ -28,6 +28,14 @@ public class UndoRedoController {
          commandManager.redo(session.getCurrentUser());
      }
 
+     public boolean undoConditions() {
+         return commandManager.undoConditions(session.getCurrentUser());
+     }
+
+     public boolean redoConditions() {
+         return commandManager.redoConditions(session.getCurrentUser());
+     }
+
      public List<String> possibleUndoes() {
          return commandManager.possibleUndoes(session.getCurrentUser());
      }

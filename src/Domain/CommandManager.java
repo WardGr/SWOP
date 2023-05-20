@@ -66,6 +66,14 @@ package Domain;
          }
      }
 
+     public boolean undoConditions(User user) {
+         return node != null && node.getUser() == user;
+     }
+
+        public boolean redoConditions(User user) {
+            return node != null && node.getNext() != null && node.getNext().getUser() == user;
+        }
+
      private class Node {
          private final Command command;
          private Node next;
