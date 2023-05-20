@@ -14,7 +14,7 @@ import java.util.Set;
  * Central domain-level system class, keeps track of system time and all projects, first point of entry into the domain
  * layer
  */
-public class TaskManSystem {
+public class TaskManSystem implements TaskManSystemData {
 
     private List<Project> projects;
     private Time systemTime;
