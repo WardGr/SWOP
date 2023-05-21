@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * A project currently registered, including a list of tasks that this project requires to be finished
  */
-public class Project {
+public class Project implements ProjectData {
 
     private final List<Task> tasks;
     private final List<Task> replacedTasks;
@@ -18,7 +18,6 @@ public class Project {
     private final String description;
     private final Time creationTime;
     private final Time dueTime;
-    private final ProjectData projectData;
     private ProjectStatus status;
 
     public Project(String name, String description, Time creationTime, Time dueTime)
@@ -32,7 +31,6 @@ public class Project {
         this.description = description;
         this.creationTime = creationTime;
         this.dueTime = dueTime;
-        this.projectData = new ProjectData(this);
         this.status = ProjectStatus.ONGOING;
     }
 
@@ -98,13 +96,6 @@ public class Project {
      */
     private List<Task> getReplacedTasks() {
         return List.copyOf(replacedTasks);
-    }
-
-    /**
-     * @return A read-only project proxy that contains project data and getters
-     */
-    public ProjectData getProjectData() {
-        return projectData;
     }
 
     /**

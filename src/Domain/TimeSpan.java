@@ -21,6 +21,9 @@ public class TimeSpan {
      * @return This TimeSpans' total elapsed time, as a Time object
      */
     public Time getTimeElapsed() {
+        if (getStartTime() == null || getEndTime() == null){
+            return null;
+        }
         try {
             return getEndTime().subtract(getStartTime());
         } catch (InvalidTimeException e) {

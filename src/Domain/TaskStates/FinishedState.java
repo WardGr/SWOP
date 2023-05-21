@@ -37,4 +37,9 @@ public class FinishedState implements TaskState {
     @Override
     public void updateAvailabilityNextTask(Task task, Task nextTask) {
     }
+
+    @Override
+    public String toString() {
+        return getStatus().toString();
+    }
 }

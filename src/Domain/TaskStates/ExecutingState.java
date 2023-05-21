@@ -37,4 +37,9 @@ public class ExecutingState implements TaskState {
             task.setState(new PendingState());
         }
     }
+
+    @Override
+    public String toString() {
+        return getStatus().toString();
+    }
 }

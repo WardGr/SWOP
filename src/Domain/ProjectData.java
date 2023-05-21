@@ -3,71 +3,49 @@ package Domain;
 import java.util.List;
 
 /**
- * Read-only data class for a project, containing specific details about this project
+ * Read-only data interface for a project, containing specific details about this project
  */
-public class ProjectData {
-    private final Project project;
+public interface ProjectData {
 
     /**
-     * @param project The project to create a proxy for
+     * @return the projectData object
      */
-    public ProjectData(Project project) {
-        this.project = project;
-    }
-
-    /**
-     * @return the project this object is a proxy of
-     */
-    private Project getProject() {
-        return project;
+    default ProjectData getProjectData() {
+        return this;
     }
 
     /**
      * @return A string containing the projects' name
      */
-    public String getName() {
-        return getProject().getName();
-    }
+    String getName();
 
     /**
      * @return A string containing the projects' description
      */
-    public String getDescription() {
-        return getProject().getDescription();
-    }
+    String getDescription();
 
     /**
      * @return A time object depicting the creation time of this project
      */
-    public Time getCreationTime() {
-        return getProject().getCreationTime();
-    }
+    Time getCreationTime();
 
     /**
      * @return A time object depicting the due time of this project
      */
-    public Time getDueTime() {
-        return getProject().getDueTime();
-    }
+    Time getDueTime();
 
     /**
      * @return A list of names of all tasks currently active (= not replaced) in the project
      */
-    public List<String> getActiveTasksNames() {
-        return getProject().getActiveTasksNames();
-    }
+    List<String> getActiveTasksNames();
 
     /**
      * @return A list of all tasks that have been replaced in the project
      */
-    public List<String> getReplacedTasksNames() {
-        return getProject().getReplacedTasksNames();
-    }
+    List<String> getReplacedTasksNames();
 
     /**
      * @return The projects' status (ONGOING or FINISHED)
      */
-    public ProjectStatus getStatus() {
-        return getProject().getStatus();
-    }
+    ProjectStatus getStatus();
 }

@@ -47,4 +47,9 @@ public class FailedState implements TaskState {
     public void restart(Task task) {
         task.setState(new ExecutingState());
     }
+
+    @Override
+    public String toString() {
+        return getStatus().toString();
+    }
 }

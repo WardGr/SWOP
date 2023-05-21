@@ -35,7 +35,7 @@ public class AvailableState implements TaskState {
 
     @Override
     public String toString() {
-        return "available";
+        return getStatus().toString();
     }
 
     @Override

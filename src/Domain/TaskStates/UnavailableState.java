@@ -56,4 +56,8 @@ public class UnavailableState implements TaskState {
         return !task.getAllNextTasks().contains(prevTask);
     }
 
+    @Override
+    public String toString() {
+        return getStatus().toString();
+    }
 }
