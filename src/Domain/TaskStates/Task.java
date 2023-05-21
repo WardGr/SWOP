@@ -682,4 +682,9 @@ public class Task implements TaskData{
     public void removeNextTask(Task nextTask) {
         nextTask.removePrevTask(this);
     }
+
+    @Override
+    public String toString(){
+        return "(" + getProjectName() + ", " + getName() + ")";
+    }
 }

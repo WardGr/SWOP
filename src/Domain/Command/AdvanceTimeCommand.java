@@ -5,6 +5,11 @@ import Domain.ProjectNotFoundException;
 import Domain.TaskManSystem;
 import Domain.Time;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 public class AdvanceTimeCommand implements Command {
     private final TaskManSystem taskManSystem;
     private final int minutes;
@@ -20,17 +25,24 @@ public class AdvanceTimeCommand implements Command {
     }
 
     @Override
-    public void undo() throws UndoNotPossibleException {
-        throw new UndoNotPossibleException();
+    public String getInformation(){
+        return "Advance time";
     }
 
     @Override
-    public String information() {
-        return "Advance time " + minutes + " minutes";
+    public String getExtendedInformation(){
+        return "Advance time with " + minutes + " minutes";
     }
 
     @Override
-    public boolean undoPossible(){
-        return false;
+    public Map<String,String> getArguments(){
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("minutes", Integer.toString(minutes));
+        return arguments;
+    }
+
+    @Override
+    public List<String> getArgumentNames(){
+        return new LinkedList<>(List.of("minutes"));
     }
 }

@@ -7,34 +7,63 @@ import Domain.TaskManSystem;
 import Domain.TaskNotFoundException;
  import Domain.TaskStates.LoopDependencyGraphException;
 
- public class AddPrevTaskCommand implements Command {
-     private final TaskManSystem taskManSystem;
-     private final String projectName;
-     private final String taskName;
-     private final String nextProjectName;
-     private final String nextTaskName;
+ import java.util.HashMap;
+ import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Map;
 
-     public AddPrevTaskCommand(TaskManSystem taskManSystem, String projectName, String taskName, String nextProjectName, String nextTaskName) {
-         this.taskManSystem = taskManSystem;
-         this.projectName = projectName;
-         this.taskName = taskName;
-         this.nextProjectName = nextProjectName;
-         this.nextTaskName = nextTaskName;
-     }
+public class AddPrevTaskCommand implements Command {
+    private final TaskManSystem taskManSystem;
+    private final String projectName;
+    private final String taskName;
+    private final String prevProjectName;
+    private final String prevTaskName;
 
-     @Override
-     public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-         taskManSystem.addPrevTaskToProject(projectName, taskName, nextProjectName, nextTaskName);
-     }
+    public AddPrevTaskCommand(TaskManSystem taskManSystem, String projectName, String taskName, String prevProjectName, String prevTaskName) {
+        this.taskManSystem = taskManSystem;
+        this.projectName = projectName;
+        this.taskName = taskName;
+        this.prevProjectName = prevProjectName;
+        this.prevTaskName = prevTaskName;
+    }
 
-     @Override
-     public void undo() throws ProjectNotFoundException, TaskNotFoundException {
-         taskManSystem.removePrevTaskFromProject(projectName, taskName, nextProjectName, nextTaskName);
+    @Override
+    public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
+        taskManSystem.addPrevTaskToProject(projectName, taskName, prevProjectName, prevTaskName);
+    }
 
-     }
+    @Override
+    public void undo() throws ProjectNotFoundException, TaskNotFoundException {
+        taskManSystem.removePrevTaskFromProject(projectName, taskName, prevProjectName, prevTaskName);
+    }
 
-     @Override
-     public String information() {
-         return "Add previous task " + nextTaskName + " to task " + taskName;
-     }
+    @Override
+    public boolean undoPossible(){
+        return true;
+    }
+
+    @Override
+    public String getInformation(){
+        return "Add previous task";
+    }
+
+    @Override
+    public String getExtendedInformation(){
+        return "Add previous task (" + prevProjectName + ", " + prevTaskName + ") to task (" + projectName + ", " + taskName + ")";
+    }
+
+    @Override
+    public Map<String,String> getArguments(){
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("projectName", projectName);
+        arguments.put("taskName", taskName);
+        arguments.put("previousProjectName", prevProjectName);
+        arguments.put("previousTaskName", prevTaskName);
+        return arguments;
+    }
+
+    @Override
+    public List<String> getArgumentNames(){
+        return new LinkedList<>(List.of("projectName", "taskName", "previousProjectName", "previousTaskName"));
+    }
  }

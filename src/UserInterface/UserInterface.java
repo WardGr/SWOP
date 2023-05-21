@@ -77,7 +77,7 @@ public class UserInterface {
             case "createproject" -> projectUI.createProject();
             case "deleteproject" -> projectUI.deleteProject();
             case "createtask" -> taskUI.createTask();
-            // TODO delete task
+            case "deletetask" -> taskUI.deleteTask();
             case "advancetime" -> advanceTimeUI.advanceTime();
             case "loadsystem" -> loadSystemUI.loadSystem();
             case "starttask" -> startTaskUI.startTask();
@@ -104,7 +104,7 @@ public class UserInterface {
         System.out.println("createproject:      Shows the project creation prompt and creates a project");
         System.out.println("deleteproject:      Allows the user to delete a project in the system");
         System.out.println("createtask:         Shows the task creation prompt to add a task to a project");
-        // TODO delete task
+        System.out.println("deletetask:         Allows the user to delete a task in the system");
         System.out.println("advancetime:        Allows the user to modify the system time");
         System.out.println("loadsystem:         Allows the user to load projects and tasks into the system");
         System.out.println("starttask:          Allows the user to start a task");

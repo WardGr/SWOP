@@ -3,6 +3,11 @@ package Domain.Command;
 import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 public class FinishTaskCommand implements Command {
 
     private final TaskManSystem taskManSystem;
@@ -28,12 +33,31 @@ public class FinishTaskCommand implements Command {
     }
 
     @Override
-    public String information() {
+    public boolean undoPossible(){
+        return true;
+    }
+
+    @Override
+    public String getInformation(){
+        return "Finish task";
+    }
+
+    @Override
+    public String getExtendedInformation(){
         return "Finish task " + taskName + " in project " + projectName;
     }
 
     @Override
-    public boolean undoPossible(){
-        return true;
+    public Map<String,String> getArguments(){
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("projectName", projectName);
+        arguments.put("taskName", taskName);
+        arguments.put("user", user.getUsername());
+        return arguments;
+    }
+
+    @Override
+    public List<String> getArgumentNames(){
+        return new LinkedList<>(List.of("projectName", "taskName", "user"));
     }
 }

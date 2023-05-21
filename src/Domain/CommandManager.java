@@ -1,106 +1,90 @@
 package Domain;
 
  import Domain.Command.Command;
+ import Domain.Command.CommandData;
+ import Domain.Command.UndoNotPossibleException;
+ import Domain.TaskStates.IncorrectRoleException;
+ import Domain.TaskStates.LoopDependencyGraphException;
 
  import java.util.ArrayList;
+ import java.util.LinkedList;
  import java.util.List;
+ import java.util.Stack;
 
- public class CommandManager {
-     private Node node;
+public class CommandManager {
 
-     public CommandManager() {
-         node = null;
-     }
+    private final Stack<Tuple<Command,User>> executedCommandStack = new Stack<>();
+    private final Stack<Tuple<Command,User>> undoneCommandStack = new Stack<>();
 
-     public void undo(User user) throws Exception {
-         if (node == null) {
-             throw new Exception("No commands to undo");
-         }
-         if (node.getUser() != user) {
-             throw new Exception("Incorrect permission: User is not allowed to undo this command");
-         }
-         node.getcommand().undo();
-         node = node.getPrev();
-     }
+    public CommandManager() {}
 
-     public void redo(User user) throws Exception {
-         if (node == null) {
-             throw new Exception("No commands to redo");
-         }
-         if (node.getUser() != user) {
-             throw new Exception("Incorrect permission: User is not allowed to redo this command");
-         }
-         node.getcommand().execute();
-         node = node.getNext();
-     }
+    public void addExecutedCommand(Command command, User executingUser) {
+        executedCommandStack.push(new Tuple<>(command, executingUser));
+        if (executedCommandStack.size() > 10){
+            executedCommandStack.remove(0);
+        }
+        undoneCommandStack.clear();
+    }
 
-     public List<String> possibleUndoes(User user) {
-         Node current = node;
-         List<String> undoes = new ArrayList<String>();
-         while (current != null && current.getUser() == user) {
-             undoes.add(current.getcommand().information());
-             current = current.getPrev();
-         }
-         return undoes;
-     }
+    public void undoLastCommand(User currentUser) throws EmptyCommandStackException, IncorrectUserException, UndoNotPossibleException {
+        if (executedCommandStack.empty()) {
+            throw new EmptyCommandStackException("There are no executed actions to undo");
+        }
+        Tuple<Command,User> previousCommandTuple = executedCommandStack.peek();
+        if (previousCommandTuple.getSecond() != currentUser &&
+                !currentUser.getRoles().contains(Role.PROJECTMANAGER)) {
+            throw new IncorrectUserException("The current user is not allowed to undo the last executed action");
+        }
+        try {
+            previousCommandTuple.getFirst().undo();
+        } catch (ProjectNotFoundException | EndTimeBeforeStartTimeException | TaskNotFoundException |
+                 IncorrectTaskStatusException | UserAlreadyAssignedToTaskException | LoopDependencyGraphException |
+                 IncorrectRoleException e) {
+            throw new RuntimeException(e);
+        }
+        executedCommandStack.pop();
+        undoneCommandStack.push(previousCommandTuple);
+    }
 
-     public List<String> possibleRedoes(User user) {
-         Node current = node;
-         List<String> redoes = new ArrayList<String>();
-         while (current != null && current.getUser() == user) {
-             redoes.add(current.getcommand().information());
-             current = current.getNext();
-         }
-         return redoes;
-     }
+    public void redoLastUndoneCommand(User currentUser) throws EmptyCommandStackException, IncorrectUserException {
+        if (undoneCommandStack.empty()) {
+            throw new EmptyCommandStackException("There are no undone actions to redo");
+        }
+        Tuple<Command,User> previousUndoneCommandTuple = undoneCommandStack.peek();
+        if (previousUndoneCommandTuple.getSecond() != currentUser &&
+                !currentUser.getRoles().contains(Role.PROJECTMANAGER)) {
+            throw new IncorrectUserException("The current user is not allowed to redo the last undone action");
+        }
+        try{
+            previousUndoneCommandTuple.getFirst().execute();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+        undoneCommandStack.pop();
+        executedCommandStack.push(previousUndoneCommandTuple);
+    }
 
-     public void addExecutedCommand(Command command, User executingUser) {
-         Node newNode = new Node(command, executingUser);
-         if (node == null) {
-             node = newNode;
-         } else {
-             node.setNext(newNode);
-             newNode.setPrev(node);
-             newNode.setNext(null);
-             node = newNode;
-         }
-     }
+    public List<Tuple<CommandData,String>> getPreviousCommandsList(){
+        List<Tuple<CommandData,String>> prevCmdList = new LinkedList<>();
+        for (Tuple<Command,User> prevCmd : executedCommandStack){
+            prevCmdList.add(new Tuple<>(prevCmd.getFirst().getCommandData(), prevCmd.getSecond().getUsername()));
+        }
+        return prevCmdList;
+    }
 
-     private class Node {
-         private final Command command;
-         private Node next;
-         private Node prev;
-         private final User user;
+    public List<Tuple<CommandData,String>> getUndoneCommandsList() {
+        List<Tuple<CommandData, String>> undoneCmdList = new LinkedList<>();
+        for (Tuple<Command,User> undoneCmd : undoneCommandStack){
+            undoneCmdList.add(new Tuple<>(undoneCmd.getFirst().getCommandData(), undoneCmd.getSecond().getUsername()));
+        }
+        return undoneCmdList;
+    }
 
-         public Node(Command command, User user) {
-             this.user = user;
-             this.command = command;
-             this.next = null;
-             this.prev = null;
-         }
+    public CommandData getLastCommand(){
+        return executedCommandStack.peek().getFirst().getCommandData();
+    }
 
-         public Command getcommand() {
-             return command;
-         }
-
-         public Node getNext() {
-             return next;
-         }
-
-         public Node getPrev() {
-             return prev;
-         }
-
-         public void setNext(Node next) {
-             this.next = next;
-         }
-
-         public void setPrev(Node prev) {
-             this.prev = prev;
-         }
-
-         public User getUser() {
-             return user;
-         }
-     }
- }
+    public CommandData getLastUndoneCommand(){
+        return undoneCommandStack.peek().getFirst().getCommandData();
+    }
+}

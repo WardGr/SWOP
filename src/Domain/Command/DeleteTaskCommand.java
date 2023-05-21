@@ -4,6 +4,11 @@ import Domain.ProjectNotFoundException;
 import Domain.TaskManSystem;
 import Domain.TaskNotFoundException;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 public class DeleteTaskCommand implements Command {
 
     private final TaskManSystem taskManSystem;
@@ -22,8 +27,26 @@ public class DeleteTaskCommand implements Command {
     }
 
     @Override
-    public boolean undoPossible() {
-        return false;
+    public String getInformation(){
+        return "Delete task";
+    }
+
+    @Override
+    public String getExtendedInformation(){
+        return "Delete task (" + projectName + ", " + taskName + ")";
+    }
+
+    @Override
+    public Map<String,String> getArguments(){
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("projectName", projectName);
+        arguments.put("taskName", taskName);
+        return arguments;
+    }
+
+    @Override
+    public List<String> getArgumentNames(){
+        return new LinkedList<>(List.of("projectName", "taskName"));
     }
     
 }
