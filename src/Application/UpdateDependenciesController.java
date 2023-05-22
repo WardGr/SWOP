@@ -8,7 +8,7 @@ import Domain.TaskStates.TaskData;
 public class UpdateDependenciesController {
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
-    private final CommandManager commandManager;
+    private final CommandInterface commandManager;
 
 
     /**
@@ -17,7 +17,7 @@ public class UpdateDependenciesController {
      * @param session           The current session to set as active session
      * @param taskManSystem     Object managing the system
      */
-    public UpdateDependenciesController(SessionProxy session, TaskManSystem taskManSystem, CommandManager commandManager) {
+    public UpdateDependenciesController(SessionProxy session, TaskManSystem taskManSystem, CommandInterface commandManager) {
         this.session = session;
         this.taskManSystem = taskManSystem;
         this.commandManager = commandManager;
@@ -37,7 +37,7 @@ public class UpdateDependenciesController {
         return taskManSystem;
     }
 
-    private CommandManager getCommandManager(){
+    private CommandInterface getCommandManager(){
         return commandManager;
     }
 

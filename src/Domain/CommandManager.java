@@ -6,12 +6,11 @@ package Domain;
  import Domain.TaskStates.IncorrectRoleException;
  import Domain.TaskStates.LoopDependencyGraphException;
 
- import java.util.ArrayList;
  import java.util.LinkedList;
  import java.util.List;
  import java.util.Stack;
 
-public class CommandManager {
+public class CommandManager implements CommandInterface {
 
     private final Stack<Tuple<Command,User>> executedCommandStack = new Stack<>();
     private final Stack<Tuple<Command,User>> undoneCommandStack = new Stack<>();
@@ -46,7 +45,7 @@ public class CommandManager {
         undoneCommandStack.push(previousCommandTuple);
     }
 
-    public void redoLastUndoneCommand(User currentUser) throws EmptyCommandStackException, IncorrectUserException {
+    public void redoLast(User currentUser) throws EmptyCommandStackException, IncorrectUserException {
         if (undoneCommandStack.empty()) {
             throw new EmptyCommandStackException("There are no undone actions to redo");
         }
@@ -80,7 +79,7 @@ public class CommandManager {
         return undoneCmdList;
     }
 
-    public CommandData getLastCommand(){
+    public CommandData getLastExecutedCommand(){
         return executedCommandStack.peek().getFirst().getCommandData();
     }
 

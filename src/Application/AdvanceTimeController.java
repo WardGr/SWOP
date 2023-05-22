@@ -14,7 +14,7 @@ public class AdvanceTimeController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
-    private final CommandManager commandManager;
+    private final CommandInterface commandManager;
 
 
     /**
@@ -26,7 +26,7 @@ public class AdvanceTimeController {
     public AdvanceTimeController(
             SessionProxy session,
             TaskManSystem taskManSystem,
-            CommandManager commandManager
+            CommandInterface commandManager
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
@@ -47,7 +47,7 @@ public class AdvanceTimeController {
         return taskManSystem;
     }
 
-    private CommandManager getCommandManager() {
+    private CommandInterface getCommandManager() {
         return commandManager;
     }
 

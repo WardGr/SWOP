@@ -11,7 +11,7 @@ import java.util.Set;
 public class StartTaskController {
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
-    private final CommandManager commandManager;
+    private final CommandInterface commandManager;
 
     /**
      * Creates this controller object
@@ -23,7 +23,7 @@ public class StartTaskController {
     public StartTaskController(
             SessionProxy session,
             TaskManSystem taskManSystem,
-            CommandManager commandManager
+            CommandInterface commandManager
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
@@ -47,7 +47,7 @@ public class StartTaskController {
     /**
      * @return  The object containing the current command manager
      */
-    private CommandManager getCommandManager() {
+    private CommandInterface getCommandManager() {
         return commandManager;
     }
 

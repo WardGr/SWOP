@@ -11,7 +11,7 @@ public class ProjectController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
-    private final CommandManager commandManager;
+    private final CommandInterface commandManager;
 
     /**
      * Creates this controller object
@@ -22,7 +22,7 @@ public class ProjectController {
     public ProjectController(
             SessionProxy session,
             TaskManSystem taskManSystem,
-            CommandManager commandManager
+            CommandInterface commandManager
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
@@ -46,7 +46,7 @@ public class ProjectController {
     /**
      * @return  The object containing the current command manager
      */
-    private CommandManager getCommandManager() {
+    private CommandInterface getCommandManager() {
         return commandManager;
     }
 

@@ -1,18 +1,15 @@
 package Application;
+ import Domain.*;
  import Domain.Command.CommandData;
  import Domain.Command.UndoNotPossibleException;
- import Domain.CommandManager;
- import Domain.EmptyCommandStackException;
- import Domain.IncorrectUserException;
- import Domain.Tuple;
 
  import java.util.List;
 
 public class UndoRedoController {
      private final SessionProxy session;
-     private final CommandManager commandManager;
+     private final CommandInterface commandManager;
 
-     public UndoRedoController(SessionProxy session, CommandManager commandManager) {
+     public UndoRedoController(SessionProxy session, CommandInterface commandManager) {
          this.session = session;
          this.commandManager = commandManager;
      }
@@ -21,7 +18,7 @@ public class UndoRedoController {
          return session;
      }
 
-     private CommandManager getCommandManager(){
+     private CommandInterface getCommandManager(){
          return commandManager;
      }
 
@@ -30,7 +27,7 @@ public class UndoRedoController {
      }
 
      public void redoLastUndoneCommand() throws IncorrectUserException, EmptyCommandStackException {
-         commandManager.redoLastUndoneCommand(getSession().getCurrentUser());
+         commandManager.redoLast(getSession().getCurrentUser());
      }
 
      public List<Tuple<CommandData,String>> getPreviousCommandsList(){
@@ -38,7 +35,7 @@ public class UndoRedoController {
      }
 
      public CommandData getLastCommand(){
-         return getCommandManager().getLastCommand();
+         return getCommandManager().getLastExecutedCommand();
      }
 
     public List<Tuple<CommandData,String>> getUndoneCommandsList(){
