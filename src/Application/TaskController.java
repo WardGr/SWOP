@@ -19,7 +19,7 @@ public class TaskController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
-    private final CommandManager commandManager;
+    private final CommandInterface commandManager;
 
     /**
      * Creates this controller object
@@ -31,7 +31,7 @@ public class TaskController {
     public TaskController(
             SessionProxy session,
             TaskManSystem taskManSystem,
-            CommandManager commandManager
+            CommandInterface commandManager
     ) {
         this.session = session;
         this.taskManSystem = taskManSystem;
@@ -55,7 +55,7 @@ public class TaskController {
     /**
      * @return  The object containing the current command manager
      */
-    private CommandManager getCommandManager() {
+    private CommandInterface getCommandManager() {
         return commandManager;
     }
 

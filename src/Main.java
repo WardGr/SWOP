@@ -13,7 +13,7 @@ public class Main {
             UserManager userManager = new UserManager();
             Session session = new Session();
             SessionProxy sessionProxy = new SessionProxy(session);
-            CommandManager commandManager = new CommandManager();
+            CommandInterface commandManager = new CommandManager();
 
             SessionController sessionController = new SessionController(session, userManager);
             AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandManager);
