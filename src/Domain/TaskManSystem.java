@@ -205,17 +205,21 @@ public class TaskManSystem implements TaskManSystemData {
             throw new ProjectNotFoundException();
         }
 
-        Set<Tuple<Project,String>> prevTasks = new HashSet<>();
-        for (Tuple<String,String> prevTask : prevTaskStrings){
-            String prevProjectName = prevTask.getFirst();
-            String prevTaskName = prevTask.getSecond();
+        Set<Tuple<Project, String>> prevTasks = convertProjectNames(prevTaskStrings);
+        Set<Tuple<Project, String>> nextTasks = convertProjectNames(nextTaskStrings);
 
-            Project prevProject = getProject(prevProjectName);
-            if (prevProject == null){
-                throw new ProjectNotFoundException();
-            }
-            prevTasks.add(new Tuple<>(prevProject, prevTaskName));
-        }
+        project.addNewTask(
+                taskName,
+                description,
+                durationTime,
+                deviation,
+                roles,
+                prevTasks,
+                nextTasks
+        );
+    }
+
+    private Set<Tuple<Project, String>> convertProjectNames(Set<Tuple<String, String>> nextTaskStrings) throws ProjectNotFoundException {
         Set<Tuple<Project,String>> nextTasks = new HashSet<>();
         for (Tuple<String,String> nextTask : nextTaskStrings){
             String nextProjectName = nextTask.getFirst();
@@ -227,17 +231,7 @@ public class TaskManSystem implements TaskManSystemData {
             }
             nextTasks.add(new Tuple<>(nextProject, nextTaskName));
         }
-
-
-        project.addNewTask(
-                taskName,
-                description,
-                durationTime,
-                deviation,
-                roles,
-                prevTasks,
-                nextTasks
-        );
+        return nextTasks;
     }
 
     public void deleteTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
