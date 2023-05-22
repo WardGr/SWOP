@@ -75,6 +75,7 @@ public class TaskTest {
         assertEquals(0, creation.getAcceptableDeviation(),0);
         assertEquals(List.of(Role.SYSADMIN, Role.JAVAPROGRAMMER), creation.getUnfulfilledRoles());
         assertEquals("project1", creation.getProjectName());
+        assertEquals("(project1, Creation)", creation.toString());
 
         assertEquals(0, creation.getNextTaskNames().size());
         assertEquals(0, creation.getPrevTaskNames().size());

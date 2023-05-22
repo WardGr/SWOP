@@ -181,4 +181,10 @@ public class ProjectTest {
         assertEquals(ProjectStatus.ONGOING, project1.getStatus());
 
     }
+
+    @Test
+    public void testProjectState(){
+        assertEquals("ongoing", ProjectStatus.ONGOING.toString());
+        assertEquals("finished", ProjectStatus.FINISHED.toString());
+    }
 }
