@@ -35,7 +35,7 @@ public class UndoRedoController {
      }
 
      public CommandData getLastCommand(){
-         return getCommandManager().getLastExecutedCommand();
+         return getCommandManager().getLastExecutedCommandData();
      }
 
     public List<Tuple<CommandData,String>> getUndoneCommandsList(){
@@ -43,6 +43,6 @@ public class UndoRedoController {
     }
 
     public CommandData getLastUndoneCommand(){
-         return getCommandManager().getLastUndoneCommand();
+         return getCommandManager().getLastUndoneCommandData();
     }
 }

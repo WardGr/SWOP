@@ -18,8 +18,8 @@ public interface CommandInterface {
 
     List<Tuple<CommandData,String>> getUndoneCommandsList();
 
-    CommandData getLastExecutedCommand();
+    CommandData getLastExecutedCommandData();
 
-    CommandData getLastUndoneCommand();
+    CommandData getLastUndoneCommandData();
 
 }
