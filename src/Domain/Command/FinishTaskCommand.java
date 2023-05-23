@@ -28,7 +28,7 @@ public class FinishTaskCommand implements Command {
     }
 
     @Override
-    public void undo() throws UndoNotPossibleException, ProjectNotFoundException, EndTimeBeforeStartTimeException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+    public void undo() throws ProjectNotFoundException, EndTimeBeforeStartTimeException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         taskManSystem.restartTask(projectName, taskName);
     }
 

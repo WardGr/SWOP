@@ -162,6 +162,11 @@ public class ProjectTest {
         assertEquals(ProjectStatus.FINISHED, project1.getStatus());
 
         assertThrows(ProjectNotOngoingException.class, () -> project1.addNewTask("","", new Time(0), 0, List.of(Role.SYSADMIN), new HashSet<>(), new HashSet<>()));
+
+        project1.deleteTask("Replace");
+
+        assertTrue(project1.getActiveTasksNames().contains("Task1"));
+        assertFalse(project1.getReplacedTasksNames().contains("Task1"));
     }
 
     @Test

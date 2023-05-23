@@ -210,6 +210,11 @@ public class Project implements ProjectData {
     }
 
     private void deleteTask(Task task){
+        if (task.getReplacesTaskName() != null){
+            Task replaces = getTask(task.getReplacesTaskName());
+            removeReplacedTask(replaces);
+            addTask(replaces);
+        }
         task.removeAllDependencies();
         removeActiveTask(task);
         removeReplacedTask(task);
@@ -224,10 +229,10 @@ public class Project implements ProjectData {
     }
 
     public void clearTasks(){
-        for (Task task : getTasks()){
+        for (Task task : getReplacedTasks()){
             deleteTask(task);
         }
-        for (Task task : getReplacedTasks()){
+        for (Task task : getTasks()){
             deleteTask(task);
         }
         updateProjectStatus();

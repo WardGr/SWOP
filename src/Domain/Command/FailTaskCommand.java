@@ -14,7 +14,7 @@ public class FailTaskCommand implements Command {
     private final String taskName;
     private final User user;
 
-    public FailTaskCommand(TaskManSystem taskManSystem, String taskName, String projectName, User user){
+    public FailTaskCommand(TaskManSystem taskManSystem, String projectName, String taskName, User user){
         this.taskManSystem = taskManSystem;
         this.projectName = projectName;
         this.taskName = taskName;

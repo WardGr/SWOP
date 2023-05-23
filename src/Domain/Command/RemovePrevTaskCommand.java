@@ -43,7 +43,7 @@ public class RemovePrevTaskCommand implements Command {
 
     @Override
     public String getInformation(){
-        return "Remove next task";
+        return "Remove previous task";
     }
 
     @Override

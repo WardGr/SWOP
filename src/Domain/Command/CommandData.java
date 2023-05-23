@@ -6,26 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 public interface CommandData {
-    default CommandData getCommandData(){
+    default CommandData getCommandData() {
         return this;
     }
 
-    default String getInformation()
-    {
-        return null;
-    }
+    String getInformation();
 
-    default String getExtendedInformation(){
-        return null;
-    }
+    String getExtendedInformation();
 
-    default Map<String,String> getArguments(){
-        return new HashMap<>();
-    }
+    Map<String,String> getArguments();
 
-    default List<String> getArgumentNames(){
-        return new LinkedList<>();
-    }
+    List<String> getArgumentNames();
 
     default boolean undoPossible()
     {
