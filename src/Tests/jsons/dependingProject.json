@@ -6,13 +6,20 @@
       "startMinute": 11,
       "endHour": 16,
       "endMinute": 10
+    },
+    {"name": "nextProject",
+      "description": "Test on project dep",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10
     }
   ],
   "tasks": [
     {
       "name": "previousTask",
       "project": "previousProject",
-      "description": "first LoadSystemTask prev",
+      "description": "first LoadSystemTask prev project",
       "acceptableDeviation": 3.3,
       "dueHour": 16,
       "dueMinute": 10,
@@ -34,8 +41,8 @@
     },
     {
       "name": "nextTask",
-      "project": "previousProject",
-      "description": "second LoadSystemTask prev",
+      "project": "nextProject",
+      "description": "second LoadSystemTask prev project",
       "acceptableDeviation": 3.3,
       "dueHour": 17,
       "dueMinute": 10,

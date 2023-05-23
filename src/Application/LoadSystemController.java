@@ -188,7 +188,7 @@ public class LoadSystemController {
      * @throws DueTimeBeforeCreationTimeException       If a tasks' due time is before its creation time
      * @throws DueBeforeSystemTimeException             If a tasks' due time is before the system time at creation
      */
-    private void load(TreeMap<Time, JSONArray> projects, TreeMap<Time, JSONArray> startedTasks, TreeMap<Time, JSONArray> endedTasks, HashSet<JSONObject> remainingTasks ) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, SessionController.RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, IllegalTaskRolesException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException, ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException, DueBeforeSystemTimeException {
+    private void load(TreeMap<Time, JSONArray> projects, TreeMap<Time, JSONArray> startedTasks, TreeMap<Time, JSONArray> endedTasks, HashSet<JSONObject> remainingTasks ) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, SessionController.RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, IllegalTaskRolesException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException, ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException, DueBeforeSystemTimeException, InvalidFileException {
         while(startedTasks.size() > 0 || endedTasks.size() > 0 || projects.size() > 0){
             if(startedTasks.size() == 0){
                 if (endedTasks.size() == 0) {
@@ -319,7 +319,7 @@ public class LoadSystemController {
      * @throws SessionController.RoleNotFoundException      If a role in the JSONObject could not be parsed to an existing role
      * @throws ProjectNotOngoingException                   If the project the task belongs to is not ongoing
      */
-    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, SessionController.RoleNotFoundException, ProjectNotOngoingException {
+    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, SessionController.RoleNotFoundException, ProjectNotOngoingException, InvalidFileException {
         //standard task fields
         String name = (String) task.get("name");
         String description = (String) task.get("description");
@@ -339,9 +339,9 @@ public class LoadSystemController {
         if(replaces != null){
             getTaskManSystem().replaceTaskInProject(projectName, name, description, dueTime, acceptableDeviation, replaces);
         }else{
-            ArrayList<String> prevTasks = (ArrayList<String>) task.get("previousTasks");
-            // TODO
-            //getTaskManSystem().addTaskToProject(projectName, name, description, dueTime, acceptableDeviation, roles, new HashSet<>(prevTasks), new HashSet<>());
+            ArrayList<Tuple<String, String>> prevTasks = loadPreviousTaskTuple((ArrayList<ArrayList<String>>) task.get("previousTasks"));
+
+            getTaskManSystem().addTaskToProject(projectName, name, description, dueTime, acceptableDeviation, roles, new HashSet<>(prevTasks), new HashSet<>());
         }
         //start the task
         if(getTaskManSystem().getTaskData(projectName, name).getStatus() == Status.AVAILABLE || getTaskManSystem().getTaskData(projectName, name).getStatus() == Status.PENDING){
@@ -405,6 +405,15 @@ public class LoadSystemController {
             }
         }
         throw new SessionController.RoleNotFoundException();
+    }
+
+    private ArrayList<Tuple<String, String>> loadPreviousTaskTuple(ArrayList<ArrayList<String>> prev) throws InvalidFileException {
+        ArrayList<Tuple<String, String>> result = new ArrayList<>();
+        for(ArrayList<String> i : prev){
+            if(i.size() < 2 ) throw new InvalidFileException("previousTask invalid format");
+            else result.add(new Tuple<String, String>(i.get(0), i.get(1)));
+        }
+        return result;
     }
 }
 

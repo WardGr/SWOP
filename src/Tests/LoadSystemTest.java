@@ -19,23 +19,30 @@ public class LoadSystemTest {
     Session session = new Session();
     SessionProxy sessionProxy = new SessionProxy(session);
 
-    //LoadSystemController lsc = new LoadSystemController(sessionProxy, taskManSystem, userManager);
+    CommandManager commandManager = new CommandManager();
+    LoadSystemController lsc = new LoadSystemController(sessionProxy, taskManSystem, userManager, commandManager);
 
     public LoadSystemTest() throws InvalidTimeException {
     }
 
     @Test
     public void testLoadSystem() throws ProjectNotFoundException, TaskNotFoundException, LoginException {
-
-        controller();
-        ui();
+        availableTaskTest();
+        executingTaskTest();
+        pendingTaskTest();
+        finishedTaskTest();
+        failedTaskTest();
+        replacingTaskTest();
+        previousTaskTest();
+        multipleProjectsTest();
+        wrongPathTest();
+        invalidLogicTest();
+        invalidRoleTest();
+        //ui();
 
     }
-
     @Test
-    public void controller() throws ProjectNotFoundException, TaskNotFoundException, LoginException {
-
-        /*
+    public void availableTaskTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
         User manager = userManager.getUser("DieterVH", "computer776");
         session.login(manager);
         try {
@@ -60,7 +67,7 @@ public class LoadSystemTest {
         assertEquals(taskData.getName(), "availableTask");
         assertEquals(taskData.getDescription(), "first LoadSystemTask");
         //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
-        assertEquals(taskData.getNextTasksNames().size(), 0);
+        assertEquals(taskData.getNextTaskNames().size(), 0);
         assertEquals(taskData.getPrevTaskNames().size(), 0);
         assertEquals(taskData.getProjectName(), "availableProject");
         assertNull(taskData.getReplacesTaskName());
@@ -68,11 +75,12 @@ public class LoadSystemTest {
         assertEquals(taskData.getEstimatedDuration().getMinute(), 10);
         assertEquals(3.3, taskData.getAcceptableDeviation(), 0.0);
         assertNull(taskData.getEndTime());
-
-        //tests if available
-        assertEquals(taskData.getStatus(), Status.AVAILABLE);
-        assertTrue(taskData.getUnfulfilledRoles().contains(Role.JAVAPROGRAMMER));
-        assertEquals(taskData.getUnfulfilledRoles().size(), 1);
+        session.logout();
+    }
+    @Test
+    public void executingTaskTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
 
         //test executing task
         try {
@@ -81,7 +89,7 @@ public class LoadSystemTest {
             throw new RuntimeException(e);
         }
 
-        taskData = taskManSystem.getTaskData("executingProject", "executingTask");
+        TaskData taskData = taskManSystem.getTaskData("executingProject", "executingTask");
 
         assertEquals(taskData.getStatus(), Status.EXECUTING);
 
@@ -90,6 +98,12 @@ public class LoadSystemTest {
         assertTrue(taskData.getUserNamesWithRole().containsKey("OlavBl"));
         assertEquals(taskData.getUserNamesWithRole().get("OlavBl"), Role.PYTHONPROGRAMMER);
         assertEquals(taskData.getUserNamesWithRole().get("SamHa"), Role.JAVAPROGRAMMER);
+        session.logout();
+    }
+    @Test
+    public void pendingTaskTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
 
         //test pending task
         try {
@@ -98,12 +112,19 @@ public class LoadSystemTest {
             throw new RuntimeException(e);
         }
 
-        taskData = taskManSystem.getTaskData("pendingProject", "pendingTask");
+        TaskData taskData = taskManSystem.getTaskData("pendingProject", "pendingTask");
 
         assertEquals(taskData.getStatus(), Status.PENDING);
         assertTrue(taskData.getUserNamesWithRole().containsKey("SamHa"));
         assertFalse(taskData.getUserNamesWithRole().containsKey("OlavBl"));
         assertEquals(taskData.getUserNamesWithRole().get("SamHa"), Role.JAVAPROGRAMMER);
+        session.logout();
+    }
+    @Test
+    public void finishedTaskTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
+
 
         //test finished task
         try {
@@ -112,10 +133,16 @@ public class LoadSystemTest {
             throw new RuntimeException(e);
         }
 
-        taskData = taskManSystem.getTaskData("finishedProject", "finishedTask");
+        TaskData taskData = taskManSystem.getTaskData("finishedProject", "finishedTask");
         assertEquals(taskData.getStatus(), Status.FINISHED);
         assertEquals(taskData.getEndTime().getHour(), 3);
         assertEquals(taskData.getEndTime().getMinute(), 10);
+        session.logout();
+    }
+    @Test
+    public void failedTaskTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
 
         //test failed task
         try {
@@ -124,11 +151,16 @@ public class LoadSystemTest {
             throw new RuntimeException(e);
         }
 
-        taskData = taskManSystem.getTaskData("failedProject", "failedTask");
+        TaskData taskData = taskManSystem.getTaskData("failedProject", "failedTask");
         assertEquals(taskData.getStatus(), Status.FAILED);
         assertEquals(taskData.getEndTime().getHour(), 3);
         assertEquals(taskData.getEndTime().getMinute(), 10);
-
+        session.logout();
+    }
+    @Test
+    public void replacingTaskTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
 
         //test replacing task
         try {
@@ -136,7 +168,7 @@ public class LoadSystemTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        taskData = taskManSystem.getTaskData("replaceProject", "replacedTask");
+        TaskData taskData = taskManSystem.getTaskData("replaceProject", "replacedTask");
         assertEquals(taskData.getStatus(), Status.FAILED);
         assertEquals(taskData.getEndTime().getHour(), 3);
         assertEquals(taskData.getEndTime().getMinute(), 11);
@@ -144,8 +176,14 @@ public class LoadSystemTest {
         assertEquals(taskData.getUnfulfilledRoles().size(), 0);
         assertEquals(taskData.getStatus(), Status.EXECUTING);
         assertEquals(taskData.getReplacesTaskName(), "replacedTask");
-        projectData = taskManSystem.getProjectData("replaceProject");
+        ProjectData projectData = taskManSystem.getProjectData("replaceProject");
         assertTrue(projectData.getReplacedTasksNames().contains("replacedTask"));
+        session.logout();
+    }
+    @Test
+    public void previousTaskTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
 
         //test adding prevTask
         try {
@@ -153,14 +191,20 @@ public class LoadSystemTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        taskData = taskManSystem.getTaskData("previousProject", "previousTask");
+        TaskData taskData = taskManSystem.getTaskData("previousProject", "previousTask");
         assertEquals(taskData.getStatus(), Status.EXECUTING);
-        assertTrue(taskData.getNextTasksNames().contains("nextTask"));
+        assertTrue(taskData.getNextTaskNames().contains(new Tuple<>("previousProject","nextTask")));
         taskData = taskManSystem.getTaskData("previousProject", "nextTask");
         assertEquals(taskData.getStatus(), Status.UNAVAILABLE);
-        assertTrue(taskData.getPrevTaskNames().contains("previousTask"));
+        assertTrue(taskData.getPrevTaskNames().contains(new Tuple<>("previousProject","previousTask")));
         assertEquals(taskData.getPrevTaskNames().size(), 1);
-        assertEquals(taskData.getNextTasksNames().size(), 0);
+        assertEquals(taskData.getNextTaskNames().size(), 0);
+        session.logout();
+    }
+    @Test
+    public void multipleProjectsTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
 
         //testing loading multiple projects from 1 file
 
@@ -173,7 +217,7 @@ public class LoadSystemTest {
         //tests basic project fields
         assertEquals(taskManSystem.getSystemTime().getHour(), 15);
         assertEquals(10, taskManSystem.getSystemTime().getMinute());
-        projectData = taskManSystem.getProjectData("availableProject");
+        ProjectData projectData = taskManSystem.getProjectData("availableProject");
         assertEquals(projectData.getName(), "availableProject");
         assertEquals(projectData.getStatus(), ProjectStatus.ONGOING);
         assertEquals(projectData.getDescription(), "first LoadSystemTest");
@@ -201,11 +245,11 @@ public class LoadSystemTest {
         assertEquals(projectData.getDueTime().getMinute(), 10);
 
         //tests basic task fields
-        taskData = taskManSystem.getTaskData("availableProject", "availableTask");
+        TaskData taskData = taskManSystem.getTaskData("availableProject", "availableTask");
         assertEquals(taskData.getName(), "availableTask");
         assertEquals(taskData.getDescription(), "first LoadSystemTask");
         //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
-        assertEquals(taskData.getNextTasksNames().size(), 0);
+        assertEquals(taskData.getNextTaskNames().size(), 0);
         assertEquals(taskData.getPrevTaskNames().size(), 0);
         assertEquals(taskData.getProjectName(), "availableProject");
         assertNull(taskData.getReplacesTaskName());
@@ -235,11 +279,12 @@ public class LoadSystemTest {
         assertEquals(taskData.getUserNamesWithRole().get("HannahEr"), Role.PYTHONPROGRAMMER);
         assertEquals(taskData.getUserNamesWithRole().get("SanderSc"), Role.SYSADMIN);
 
-        try {
-            lsc.LoadSystem("src/Tests/jsons/finishedExtra.json");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        session.logout();
+    }
+    @Test
+    public void wrongPathTest() throws LoginException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
 
         //tests wrong file path error
         try {
@@ -248,6 +293,23 @@ public class LoadSystemTest {
             assertTrue(e instanceof InvalidFileException);
             assertEquals(e.getMessage(), "ERROR: File path is invalid.");
         }
+        session.logout();
+    }
+    @Test
+    public void invalidRoleTest() throws LoginException {
+        session.login(userManager.getUser("WardGr", "minecraft123"));
+        try {
+            lsc.LoadSystem("src/Tests/jsons/availableTask.json");
+        } catch (Exception e) {
+            assertTrue(e instanceof IncorrectPermissionException);
+            assertEquals(e.getMessage(), "You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
+        session.logout();
+    }
+    @Test
+    public void invalidLogicTest() throws LoginException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
 
         //tests invalid file logic && invalidRole exception
         try {
@@ -256,20 +318,7 @@ public class LoadSystemTest {
             assertTrue(e instanceof InvalidFileException);
             assertEquals(e.getMessage(), "ERROR: File logic is invalid so couldn't setup system.");
         }
-
-        //tests to load the system while being logged in with invalid Role
         session.logout();
-        session.login(userManager.getUser("WardGr", "minecraft123"));
-        try {
-            lsc.LoadSystem("src/Tests/jsons/availableTask.json");
-        } catch (Exception e) {
-            assertTrue(e instanceof IncorrectPermissionException);
-            assertEquals(e.getMessage(), "You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
-        }
-
-         */
-
-
     }
 
     @Test

@@ -15,7 +15,10 @@ public class StartTaskCommand implements Command {
     private final String taskName;
     private final User user;
     private final Role role;
-    private final TaskData prevTaskUser;
+    private final Role previousTaskRole;
+    private final String previousProjectName;
+    private final String previousTaskName;
+
 
     public StartTaskCommand(TaskManSystem taskManSystem, String projectName, String taskName, User user, Role role){
         this.taskManSystem = taskManSystem;
@@ -24,8 +27,17 @@ public class StartTaskCommand implements Command {
         this.user = user;
         this.role = role;
 
-        this.prevTaskUser = user.getTaskData();
-
+        TaskData prevTaskUser = user.getTaskData();
+        if (prevTaskUser != null) {
+            this.previousTaskRole = prevTaskUser.getUserNamesWithRole().get(user.getUsername());
+            this.previousProjectName = prevTaskUser.getProjectName();
+            this.previousTaskName = prevTaskUser.getName();
+        }
+        else {
+            this.previousTaskRole = null;
+            this.previousProjectName = null;
+            this.previousTaskName = null;
+        }
     }
 
     @Override
@@ -37,9 +49,10 @@ public class StartTaskCommand implements Command {
     @Override
     public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
         taskManSystem.stopTask(projectName, taskName, user);
-        if (prevTaskUser != null){
-            Role previousRole = prevTaskUser.getUserNamesWithRole().get(user.getUsername());
-            taskManSystem.startTask(prevTaskUser.getProjectName(), prevTaskUser.getName(), user, previousRole);
+
+        // Reinstate previous task
+        if (previousTaskRole != null && previousTaskName != null && previousProjectName != null){
+            taskManSystem.startTask(previousProjectName, previousTaskName, user, previousTaskRole);
         }
     }
 
