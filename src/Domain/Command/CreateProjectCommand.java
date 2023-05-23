@@ -10,10 +10,10 @@ package Domain.Command;
 
 public class CreateProjectCommand implements Command {
 
-    final TaskManSystem taskManSystem;
-    final String projectName;
-    final String projectDescription;
-    final Time dueTime;
+    private final TaskManSystem taskManSystem;
+    private final String projectName;
+    private final String projectDescription;
+    private final Time dueTime;
 
     public CreateProjectCommand(
     TaskManSystem taskManSystem,
@@ -26,14 +26,30 @@ public class CreateProjectCommand implements Command {
         this.dueTime = dueTime;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getProjectDescription() {
+        return projectDescription;
+    }
+
+    private Time getDueTime() {
+        return dueTime;
+    }
+
     @Override
     public void execute() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
-        taskManSystem.createProject(projectName, projectDescription, dueTime);
+        getTaskManSystem().createProject(getProjectName(), getProjectDescription(), getDueTime());
     }
 
     @Override
     public void undo() throws ProjectNotFoundException {
-        taskManSystem.deleteProject(projectName);
+        getTaskManSystem().deleteProject(getProjectName());
     }
 
     @Override
@@ -48,15 +64,15 @@ public class CreateProjectCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Create project " + projectName;
+        return "Create project " + getProjectName();
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("projectDescription", projectDescription);
-        arguments.put("dueTime", dueTime.toString());
+        arguments.put("projectName", getProjectName());
+        arguments.put("projectDescription", getProjectDescription());
+        arguments.put("dueTime", getDueTime().toString());
         return arguments;
     }
 

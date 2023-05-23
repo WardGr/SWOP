@@ -17,9 +17,17 @@ public class DeleteProjectCommand implements Command {
         this.projectName = projectName;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
     @Override
     public void execute() throws ProjectNotFoundException {
-        taskManSystem.deleteProject(projectName);
+        getTaskManSystem().deleteProject(getProjectName());
     }
 
     @Override
@@ -29,13 +37,13 @@ public class DeleteProjectCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Delete project " + projectName;
+        return "Delete project " + getProjectName();
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
+        arguments.put("projectName", getProjectName());
         return arguments;
     }
 

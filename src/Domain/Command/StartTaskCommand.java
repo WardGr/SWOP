@@ -27,9 +27,9 @@ public class StartTaskCommand implements Command {
         this.user = user;
         this.role = role;
 
-        TaskData prevTaskUser = user.getTaskData();
+        TaskData prevTaskUser = getUser().getTaskData();
         if (prevTaskUser != null) {
-            this.previousTaskRole = prevTaskUser.getUserNamesWithRole().get(user.getUsername());
+            this.previousTaskRole = prevTaskUser.getUserNamesWithRole().get(getUser().getUsername());
             this.previousProjectName = prevTaskUser.getProjectName();
             this.previousTaskName = prevTaskUser.getName();
         }
@@ -40,19 +40,51 @@ public class StartTaskCommand implements Command {
         }
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getTaskName() {
+        return taskName;
+    }
+
+    private User getUser() {
+        return user;
+    }
+
+    private Role getRole() {
+        return role;
+    }
+
+    private Role getPreviousTaskRole() {
+        return previousTaskRole;
+    }
+
+    private String getPreviousProjectName() {
+        return previousProjectName;
+    }
+
+    private String getPreviousTaskName() {
+        return previousTaskName;
+    }
+
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
-        taskManSystem.startTask(projectName, taskName, user, role);
+        getTaskManSystem().startTask(getProjectName(), getTaskName(), getUser(), getRole());
 
     }
 
     @Override
     public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
-        taskManSystem.stopTask(projectName, taskName, user);
+        getTaskManSystem().stopTask(getProjectName(), getTaskName(), getUser());
 
         // Reinstate previous task
-        if (previousTaskRole != null && previousTaskName != null && previousProjectName != null){
-            taskManSystem.startTask(previousProjectName, previousTaskName, user, previousTaskRole);
+        if (getPreviousTaskRole() != null && getPreviousTaskName() != null && getPreviousProjectName() != null){
+            getTaskManSystem().startTask(getPreviousProjectName(), getPreviousTaskName(), getUser(), getPreviousTaskRole());
         }
     }
 
@@ -68,16 +100,16 @@ public class StartTaskCommand implements Command {
 
     @Override
     public String getExtendedInformation() {
-        return "Start task " + taskName + " in project " + projectName + " with role " + role.toString();
+        return "Start task " + getTaskName() + " in project " + getProjectName() + " with role " + getRole().toString();
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
-        arguments.put("user", user.getUsername());
-        arguments.put("role", role.toString());
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
+        arguments.put("user", getUser().getUsername());
+        arguments.put("role", getRole().toString());
         return arguments;
     }
 

@@ -13,28 +13,48 @@ import Domain.TaskNotFoundException;
  import java.util.Map;
 
 public class AddNextTaskCommand implements Command {
-    private final TaskManSystem taskmansystem;
+    private final TaskManSystem taskManSystem;
     private final String projectName;
     private final String taskName;
     private final String nextProjectName;
     private final String nextTaskName;
 
     public AddNextTaskCommand(TaskManSystem taskmansystem, String projectName, String taskName, String nextProjectName, String nextTaskName) {
-        this.taskmansystem = taskmansystem;
+        this.taskManSystem = taskmansystem;
         this.projectName = projectName;
         this.taskName = taskName;
         this.nextProjectName = nextProjectName;
         this.nextTaskName = nextTaskName;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getTaskName() {
+        return taskName;
+    }
+
+    private String getNextProjectName() {
+        return nextProjectName;
+    }
+
+    private String getNextTaskName() {
+        return nextTaskName;
+    }
+
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-        taskmansystem.addNextTaskToProject(projectName, taskName, nextProjectName, nextTaskName);
+        getTaskManSystem().addNextTaskToProject(getProjectName(), getTaskName(), getNextProjectName(), getNextTaskName());
     }
 
     @Override
     public void undo() throws ProjectNotFoundException, TaskNotFoundException {
-        taskmansystem.removeNextTaskFromProject(projectName, taskName, nextProjectName, nextTaskName);
+        getTaskManSystem().removeNextTaskFromProject(getProjectName(), getTaskName(), getNextProjectName(), getNextTaskName());
     }
 
     @Override
@@ -49,16 +69,16 @@ public class AddNextTaskCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Add next task (" + nextProjectName + ", " + nextTaskName + ") to task (" + projectName + ", " + taskName + ")";
+        return "Add next task (" + getNextProjectName() + ", " + getNextTaskName() + ") to task (" + getProjectName() + ", " + getTaskName() + ")";
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
-        arguments.put("nextProjectName", nextProjectName);
-        arguments.put("nextTaskName", nextTaskName);
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
+        arguments.put("nextProjectName", getNextProjectName());
+        arguments.put("nextTaskName", getNextTaskName());
         return arguments;
     }
 

@@ -26,14 +26,36 @@ public class RemoveNextTaskCommand implements Command {
         this.nextTaskName = nextTaskName;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getTaskName() {
+        return taskName;
+    }
+
+    private String getNextProjectName() {
+        return nextProjectName;
+    }
+
+    private String getNextTaskName() {
+        return nextTaskName;
+    }
+
+
+
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException {
-        taskManSystem.removeNextTaskFromProject(projectName, taskName, nextProjectName, nextTaskName);
+        getTaskManSystem().removeNextTaskFromProject(getProjectName(), getTaskName(), getNextProjectName() , getNextTaskName() );
     }
 
     @Override
     public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-        taskManSystem.addNextTaskToProject(projectName, taskName, nextProjectName, nextTaskName);
+        getTaskManSystem().addNextTaskToProject(getProjectName(), getTaskName(), getNextProjectName() , getNextTaskName() );
     }
 
     @Override
@@ -48,16 +70,16 @@ public class RemoveNextTaskCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Remove next task (" + nextProjectName + ", " + nextTaskName + ") from task (" + projectName + ", " + taskName + ")";
+        return "Remove next task (" + getNextProjectName() + ", " + getNextTaskName()  + ") from task (" + getProjectName() + ", " + getTaskName() + ")";
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
-        arguments.put("nextProjectName", nextProjectName);
-        arguments.put("nextTaskName", nextTaskName);
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
+        arguments.put("nextProjectName", getNextProjectName());
+        arguments.put("nextTaskName", getNextTaskName() );
         return arguments;
     }
 

@@ -39,14 +39,38 @@ public class ReplaceTaskCommand implements Command {
         return taskManSystem;
     }
 
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getTaskName() {
+        return taskName;
+    }
+
+    private String getDescription() {
+        return description;
+    }
+
+    private Time getDurationTime() {
+        return durationTime;
+    }
+
+    private double getDeviation() {
+        return deviation;
+    }
+
+    private String getReplaces() {
+        return replaces;
+    }
+
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
-        getTaskManSystem().replaceTaskInProject(projectName, taskName, description, durationTime, deviation, replaces);
+        getTaskManSystem().replaceTaskInProject(getProjectName(), getTaskName(), getDescription(), getDurationTime(), getDeviation(), replaces);
     }
 
     @Override
     public void undo() throws ProjectNotFoundException, TaskNotFoundException {
-        getTaskManSystem().deleteTask(projectName, taskName);
+        getTaskManSystem().deleteTask(getProjectName(), getTaskName());
     }
 
     @Override
@@ -61,18 +85,18 @@ public class ReplaceTaskCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Replace task " + replaces + " by task " + taskName + " in project " + projectName;
+        return "Replace task " + getReplaces() + " by task " + getTaskName() + " in project " + getProjectName();
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
-        arguments.put("description", description);
-        arguments.put("durationTime", durationTime.toString());
-        arguments.put("deviation", Double.toString(deviation));
-        arguments.put("replaces", replaces);
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
+        arguments.put("description", getDescription());
+        arguments.put("durationTime", getDurationTime().toString());
+        arguments.put("deviation", Double.toString(getDeviation()));
+        arguments.put("replaces", getReplaces());
         return arguments;
     }
 

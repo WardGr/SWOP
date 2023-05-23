@@ -19,9 +19,17 @@ public class AdvanceTimeCommand implements Command {
         this.minutes = minutes;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private int getMinutes() {
+        return minutes;
+    }
+
     @Override
     public void execute() throws NewTimeBeforeSystemTimeException {
-        taskManSystem.advanceTime(minutes);
+        getTaskManSystem().advanceTime(getMinutes());
     }
 
     @Override
@@ -31,13 +39,13 @@ public class AdvanceTimeCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Advance time with " + minutes + " minutes";
+        return "Advance time with " + getMinutes() + " minutes";
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("minutes", Integer.toString(minutes));
+        arguments.put("minutes", Integer.toString(getMinutes()));
         return arguments;
     }
 

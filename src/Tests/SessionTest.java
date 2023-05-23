@@ -6,15 +6,22 @@ import Domain.Role;
 import Domain.User;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SessionTest {
 
+    @Mock
     private User brewer;
+    @Mock
     private User bossman;
 
     private Session brewerSession;
@@ -33,59 +40,51 @@ public class SessionTest {
 
         Set<Role> bossRoles = new HashSet<>();
         bossRoles.add(Role.PROJECTMANAGER);
-
-        brewer = new User("OlavBl", "peer123", brewerRoles);
-        bossman = new User("WardGr", "minecraft123", bossRoles);
-
         this.brewerRoles = brewerRoles;
         this.bossRoles = bossRoles;
+
+        Mockito.when(brewer.getRoles()).thenReturn(brewerRoles);
+        Mockito.when(bossman.getRoles()).thenReturn(bossRoles);
     }
 
     @Test
-    public void SessionTest() {
+    public void testLogin() {
+        // Login
+        assertFalse(brewerSession.isLoggedIn());
+        assertFalse(bossManSession.isLoggedIn());
 
-        assertTrue(brewerSession.getRoles().isEmpty());
-        assertTrue(bossManSession.getRoles().isEmpty());
+        assertEquals(brewerRoles, brewerSession.login(brewer));
+        assertEquals(bossRoles, bossManSession.login(bossman));
+
+        assertTrue(brewerSession.isLoggedIn());
+        assertTrue(bossManSession.isLoggedIn());
+
+        // Logout
+        brewerSession.logout();
+        bossManSession.logout();
 
         assertFalse(brewerSession.isLoggedIn());
         assertFalse(bossManSession.isLoggedIn());
-        assertNull(brewerSession.getCurrentUser());
-        assertNull(bossManSession.getCurrentUser());
-        brewerSession.login(brewer);
-        assertFalse(bossManSession.isLoggedIn());
-        assertEquals(brewer, brewerSession.getCurrentUser());
-        assertTrue(brewerSession.isLoggedIn());
-        bossManSession.login(bossman);
-        assertTrue(bossManSession.isLoggedIn());
-        assertEquals(bossman, bossManSession.getCurrentUser());
+    }
 
-        assertEquals(brewerRoles, brewerSession.getRoles());
-        assertEquals(bossRoles, bossManSession.getRoles());
+    @Test
+    public void testSessionProxy() {
+        brewerSession.login(brewer);
+        bossManSession.login(bossman);
+
+        SessionProxy brewerProxy = new SessionProxy(brewerSession);
+        SessionProxy bossProxy = new SessionProxy(bossManSession);
+
+        assertFalse(brewerProxy.getRoles().isEmpty());
+        assertFalse(bossProxy.getRoles().isEmpty());
+
+        assertEquals(brewerRoles, brewerProxy.getRoles());
+        assertEquals(bossRoles, bossProxy.getRoles());
 
         brewerSession.logout();
-        assertFalse(brewerSession.isLoggedIn());
-        assertNull(brewerSession.getCurrentUser());
-        assertTrue(brewerSession.getRoles().isEmpty());
-
         bossManSession.logout();
-        assertFalse(bossManSession.isLoggedIn());
-        assertNull(bossManSession.getCurrentUser());
-        assertTrue(bossManSession.getRoles().isEmpty());
 
-        bossManSession.login(brewer);
-        assertEquals(brewer, bossManSession.getCurrentUser());
-        assertEquals(brewerRoles, bossManSession.getRoles());
-        assertTrue(bossManSession.isLoggedIn());
-
-        SessionProxy sessionProxy1 = new SessionProxy(brewerSession);
-        assertTrue(sessionProxy1.getRoles().isEmpty());
-        assertNull(sessionProxy1.getCurrentUser());
-
-        brewerSession.login(brewer);
-        SessionProxy sessionProxy2 = new SessionProxy(brewerSession);
-        assertEquals(sessionProxy2.getRoles(), brewerRoles);
-        assertEquals(sessionProxy2.getCurrentUser(), brewer);
-
-
+        assertTrue(brewerProxy.getRoles().isEmpty());
+        assertTrue(bossProxy.getRoles().isEmpty());
     }
 }

@@ -21,9 +21,22 @@ public class DeleteTaskCommand implements Command {
         this.taskName = taskName;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getTaskName() {
+        return taskName;
+    }
+
+
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException {
-        taskManSystem.deleteTask(projectName, taskName);
+        getTaskManSystem().deleteTask(getProjectName(), getTaskName());
     }
 
     @Override
@@ -33,14 +46,14 @@ public class DeleteTaskCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Delete task (" + projectName + ", " + taskName + ")";
+        return "Delete task (" + getProjectName() + ", " + getTaskName() + ")";
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
         return arguments;
     }
 

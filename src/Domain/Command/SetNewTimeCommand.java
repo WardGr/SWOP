@@ -19,9 +19,17 @@ public class SetNewTimeCommand implements Command {
         this.time = newTime;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private Time getTime() {
+        return time;
+    }
+
     @Override
     public void execute() throws NewTimeBeforeSystemTimeException {
-        taskManSystem.advanceTime(time);
+        getTaskManSystem().advanceTime(getTime());
     }
 
     @Override
@@ -31,13 +39,13 @@ public class SetNewTimeCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Set new time " + time.toString();
+        return "Set new time " + getTime().toString();
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("newTime", time.toString());
+        arguments.put("newTime", getTime().toString());
         return arguments;
     }
 

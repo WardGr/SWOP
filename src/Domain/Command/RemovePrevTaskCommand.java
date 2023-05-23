@@ -26,14 +26,34 @@ public class RemovePrevTaskCommand implements Command {
         this.prevTaskName = prevTaskName;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getTaskName() {
+        return taskName;
+    }
+
+    private String getPrevProjectName() {
+        return prevProjectName;
+    }
+
+    private String getPrevTaskName() {
+        return prevTaskName;
+    }
+
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException {
-        taskManSystem.removePrevTaskFromProject(projectName, taskName, prevProjectName, prevTaskName);
+        getTaskManSystem().removePrevTaskFromProject(getProjectName(), getTaskName(), getPrevProjectName(), getPrevTaskName());
     }
 
     @Override
     public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-        taskManSystem.addPrevTaskToProject(projectName, taskName, prevProjectName, prevTaskName);
+        getTaskManSystem().addPrevTaskToProject(getProjectName(), getTaskName(), getPrevProjectName(), getPrevTaskName());
     }
 
     @Override
@@ -48,16 +68,16 @@ public class RemovePrevTaskCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Remove previous task (" + prevProjectName + ", " + prevTaskName + ") from task (" + projectName + ", " + taskName + ")";
+        return "Remove previous task (" + getPrevProjectName() + ", " + getPrevTaskName() + ") from task (" + getProjectName() + ", " + getTaskName() + ")";
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
-        arguments.put("previousProjectName", prevProjectName);
-        arguments.put("previousTaskName", prevTaskName);
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
+        arguments.put("previousProjectName", getPrevProjectName());
+        arguments.put("previousTaskName", getPrevTaskName());
         return arguments;
     }
 

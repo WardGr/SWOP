@@ -18,7 +18,39 @@ public class CreateTaskCommand implements Command {
     private final Set<Tuple<String,String>> nextTasks;
 
     private TaskManSystem getTaskManSystem() {
-     return taskManSystem;
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getTaskName() {
+        return taskName;
+    }
+
+    private String getDescription() {
+        return description;
+    }
+
+    private Time getDurationTime() {
+        return durationTime;
+    }
+
+    private double getDeviation() {
+        return deviation;
+    }
+
+    private List<Role> getRoles() {
+        return List.copyOf(roles);
+    }
+
+    private Set<Tuple<String,String>> getPreviousTasks() {
+        return Set.copyOf(previousTasks);
+    }
+
+    private Set<Tuple<String,String>> getNextTasks() {
+        return Set.copyOf(nextTasks);
     }
 
     // Ofwel zo, ofwel geven we een task en project mee, dan doen we rechtstreeks project.deletetask en project.addtask ipv nieuwe objecten te maken
@@ -44,12 +76,12 @@ public class CreateTaskCommand implements Command {
 
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException {
-        getTaskManSystem().addTaskToProject(projectName, taskName, description, durationTime, deviation, roles, previousTasks, nextTasks);
+        getTaskManSystem().addTaskToProject(getProjectName(), getTaskName(), getDescription(), getDurationTime(), getDeviation(), getRoles(), getPreviousTasks(), getNextTasks());
     }
 
     @Override
     public void undo() throws TaskNotFoundException, ProjectNotFoundException {
-        getTaskManSystem().deleteTask(projectName, taskName);
+        getTaskManSystem().deleteTask(getProjectName(), getTaskName());
     }
 
     @Override
@@ -64,20 +96,20 @@ public class CreateTaskCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Create task (" + projectName + ", " + taskName + ")";
+        return "Create task (" + getProjectName() + ", " + getTaskName() + ")";
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
-        arguments.put("description", description);
-        arguments.put("durationTime", durationTime.toString());
-        arguments.put("deviation", Double.toString(deviation));
-        arguments.put("roles", roles.toString());
-        arguments.put("previousTasks", previousTasks.toString());
-        arguments.put("nextTasks", nextTasks.toString());
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
+        arguments.put("description", getDescription());
+        arguments.put("durationTime", getDurationTime().toString());
+        arguments.put("deviation", Double.toString(getDeviation()));
+        arguments.put("roles", getRoles().toString());
+        arguments.put("previousTasks", getPreviousTasks().toString());
+        arguments.put("nextTasks", getNextTasks().toString());
         return arguments;
     }
 

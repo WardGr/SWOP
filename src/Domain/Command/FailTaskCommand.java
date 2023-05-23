@@ -21,14 +21,30 @@ public class FailTaskCommand implements Command {
         this.user = user;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private String getProjectName() {
+        return projectName;
+    }
+
+    private String getTaskName() {
+        return taskName;
+    }
+
+    private User getUser() {
+        return user;
+    }
+
     @Override
     public void execute() throws ProjectNotFoundException, EndTimeBeforeStartTimeException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
-        taskManSystem.failTask(projectName, taskName, user);
+        getTaskManSystem().failTask(getProjectName(), getTaskName(), getUser());
     }
 
     @Override
     public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
-        taskManSystem.restartTask(projectName, taskName);
+        getTaskManSystem().restartTask(getProjectName(), getTaskName());
     }
 
     @Override
@@ -43,15 +59,15 @@ public class FailTaskCommand implements Command {
 
     @Override
     public String getExtendedInformation(){
-        return "Fail task " + taskName + " in project " + projectName;
+        return "Fail task " + getTaskName() + " in project " + getProjectName();
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
-        arguments.put("user", user.getUsername());
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
+        arguments.put("user", getUser().getUsername());
         return arguments;
     }
 
