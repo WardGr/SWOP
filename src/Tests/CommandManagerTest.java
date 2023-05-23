@@ -2,11 +2,9 @@ package Tests;
 
 import Domain.*;
 import Domain.Command.AddNextTaskCommand;
-import Domain.Command.Command;
 import Domain.Command.CreateProjectCommand;
 import Domain.Command.UndoNotPossibleException;
 import Domain.TaskStates.IllegalTaskRolesException;
-import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,8 +47,8 @@ public class CommandManagerTest {
         assertNull(commandManager.getLastExecutedCommandData());
         assertNull(commandManager.getLastUndoneCommandData());
 
-        assertEquals(0, commandManager.getPreviousCommandsList().size());
-        assertEquals(0, commandManager.getUndoneCommandsList().size());
+        assertEquals(0, commandManager.getExecutedCommands().size());
+        assertEquals(0, commandManager.getUndoneCommands().size());
     }
 
     @Test
@@ -58,17 +56,17 @@ public class CommandManagerTest {
         commandManager.addExecutedCommand(command, user1);
 
         assertThrows(IncorrectUserException.class, () -> commandManager.undoLastCommand(user2));
-        assertEquals(1, commandManager.getPreviousCommandsList().size());
-        assertEquals(0, commandManager.getUndoneCommandsList().size());
+        assertEquals(1, commandManager.getExecutedCommands().size());
+        assertEquals(0, commandManager.getUndoneCommands().size());
 
         commandManager.undoLastCommand(user1);
-        assertEquals(0, commandManager.getPreviousCommandsList().size());
-        assertEquals(1, commandManager.getUndoneCommandsList().size());
+        assertEquals(0, commandManager.getExecutedCommands().size());
+        assertEquals(1, commandManager.getUndoneCommands().size());
 
         assertThrows(IncorrectUserException.class, () -> commandManager.redoLast(user2));
         commandManager.redoLast(user1);
-        assertEquals(1, commandManager.getPreviousCommandsList().size());
-        assertEquals(0, commandManager.getUndoneCommandsList().size());
+        assertEquals(1, commandManager.getExecutedCommands().size());
+        assertEquals(0, commandManager.getUndoneCommands().size());
     }
 
     @Test
@@ -103,7 +101,7 @@ public class CommandManagerTest {
         commandManager.addExecutedCommand(command2, testUser);
 
         assertEquals(command2.getCommandData(), commandManager.getLastExecutedCommandData());
-        assertEquals(List.of(new Tuple<>(command1.getCommandData(), "Test"), new Tuple<>(command2.getCommandData(), "Test")), commandManager.getPreviousCommandsList());
+        assertEquals(List.of(new Tuple<>(command1.getCommandData(), "Test"), new Tuple<>(command2.getCommandData(), "Test")), commandManager.getExecutedCommands());
 
         commandManager.addExecutedCommand(command3, testUser);
         commandManager.addExecutedCommand(command4, testUser);
@@ -114,12 +112,12 @@ public class CommandManagerTest {
         commandManager.addExecutedCommand(command9, testUser);
         commandManager.addExecutedCommand(command10, testUser);
 
-        assertEquals(10, commandManager.getPreviousCommandsList().size());
+        assertEquals(10, commandManager.getExecutedCommands().size());
 
         commandManager.addExecutedCommand(command11, testUser);
         commandManager.addExecutedCommand(command12, testUser);
 
-        assertEquals(10, commandManager.getPreviousCommandsList().size());
+        assertEquals(10, commandManager.getExecutedCommands().size());
         assertEquals(command12.getCommandData(), commandManager.getLastExecutedCommandData());
 
         commandManager.undoLastCommand(testUser);

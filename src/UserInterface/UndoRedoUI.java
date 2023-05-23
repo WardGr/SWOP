@@ -36,12 +36,12 @@ public class UndoRedoUI {
     }
 
     private void undoForm(Scanner scanner) throws BackException {
-        List<Tuple<CommandData,String>> previousCommands = getController().getPreviousCommandsList();
+        List<Tuple<CommandData,String>> previousCommands = getController().getExecutedCommands();
         if (previousCommands.size() == 0){
             System.out.println("There are no actions that can be undone; Cancelled undo\n");
         } else {
             printPreviousCommandsList(previousCommands);
-            CommandData latestCommand = getController().getLastCommand();
+            CommandData latestCommand = getController().getLastExecutedCommand();
             boolean confirmation = getBooleanInput(scanner,"Confirm that you want to undo the last action: " + latestCommand.getDetails());
 
             if (confirmation){
@@ -88,7 +88,7 @@ public class UndoRedoUI {
     private void redoForm() throws BackException {
         Scanner scanner = new Scanner(System.in);
 
-        List<Tuple<CommandData,String>> undoneCommands = getController().getUndoneCommandsList();
+        List<Tuple<CommandData,String>> undoneCommands = getController().getUndoneCommands();
         if (undoneCommands.size() == 0){
             System.out.println("There are no undone actions that can be redone; Cancelled redo\n");
         } else {
