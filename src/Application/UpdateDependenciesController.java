@@ -68,7 +68,7 @@ public class UpdateDependenciesController {
         }
         AddPrevTaskCommand command = new AddPrevTaskCommand(getTaskManSystem(), projectName, taskName, prevProjectName, prevTaskName);
         command.execute();
-        getCommandManager().addExecutedCommand(command, session.getCurrentUser());
+        getCommandManager().addExecutedCommand(command, getSession().getCurrentUser());
     }
 
     /**
@@ -90,7 +90,7 @@ public class UpdateDependenciesController {
         }
         AddNextTaskCommand command = new AddNextTaskCommand(getTaskManSystem(), projectName, taskName, nextProjectName, nextTaskName);
         command.execute();
-        getCommandManager().addExecutedCommand(command, session.getCurrentUser());
+        getCommandManager().addExecutedCommand(command, getSession().getCurrentUser());
     }
 
     /**
@@ -111,7 +111,7 @@ public class UpdateDependenciesController {
         }
         RemovePrevTaskCommand command = new RemovePrevTaskCommand(getTaskManSystem(), projectName, taskName, prevProjectName, prevTaskName);
         command.execute();
-        getCommandManager().addExecutedCommand(command, session.getCurrentUser());
+        getCommandManager().addExecutedCommand(command, getSession().getCurrentUser());
     }
 
     /**
@@ -132,7 +132,7 @@ public class UpdateDependenciesController {
         }
         RemoveNextTaskCommand command = new RemoveNextTaskCommand(getTaskManSystem(), projectName, taskName, nextProjectName, nextTaskName);
         command.execute();
-        getCommandManager().addExecutedCommand(command, session.getCurrentUser());
+        getCommandManager().addExecutedCommand(command, getSession().getCurrentUser());
     }
 
 
