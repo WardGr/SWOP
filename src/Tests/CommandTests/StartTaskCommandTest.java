@@ -34,15 +34,15 @@ public class StartTaskCommandTest {
         StartTaskCommand command = new StartTaskCommand(taskManSystem, "Project", "Task1", user, Role.SYSADMIN);
 
         assertTrue(command.undoPossible());
-        assertEquals("Start task", command.getInformation());
-        assertEquals("Start task Task1 in project Project with role " + Role.SYSADMIN, command.getExtendedInformation());
+        assertEquals("Start task", command.getName());
+        assertEquals("Start task Task1 in project Project with role " + Role.SYSADMIN, command.getDetails());
         assertEquals(List.of("projectName", "taskName", "user", "role"), command.getArgumentNames());
         assertEquals("Project", command.getArguments().get("projectName"));
         assertEquals("Task1", command.getArguments().get("taskName"));
         assertEquals("TestUser", command.getArguments().get("user"));
         assertEquals(Role.SYSADMIN.toString(), command.getArguments().get("role"));
 
-        assertEquals("Start task", command.getCommandData().getInformation());
+        assertEquals("Start task", command.getCommandData().getName());
     }
 
     @Test

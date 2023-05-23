@@ -23,8 +23,8 @@ public class AdvanceTimeCommandTest {
         AdvanceTimeCommand command = new AdvanceTimeCommand(taskManSystem, 80);
 
         assertFalse(command.undoPossible());
-        assertEquals("Advance time", command.getInformation());
-        assertEquals("Advance time with 80 minutes", command.getExtendedInformation());
+        assertEquals("Advance time", command.getName());
+        assertEquals("Advance time with 80 minutes", command.getDetails());
         assertEquals(List.of("minutes"), command.getArgumentNames());
         assertEquals("80", command.getArguments().get("minutes"));
     }

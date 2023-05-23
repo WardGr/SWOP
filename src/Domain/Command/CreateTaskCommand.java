@@ -6,6 +6,11 @@ package Domain.Command;
 
  import java.util.*;
 
+/**
+ * Implements the Command interface and contains all the data needed to create a task.
+ * This command is used to create a task and add it to a project.
+ * This command can always be undone.
+ */
 public class CreateTaskCommand implements Command {
     private final TaskManSystem taskManSystem;
     private final String projectName;
@@ -74,14 +79,34 @@ public class CreateTaskCommand implements Command {
         this.nextTasks = nextTasks;
     }
 
+    /**
+     * Executes the command to add a next task to a task, using the data provided.
+     *
+     * @throws ProjectNotFoundException         if the project which to add the task to does not exist
+     * @throws TaskNotFoundException            if any of the next or previous tasks do not exist
+     * @throws IncorrectTaskStatusException     if any of the next or previous tasks are not in the correct state to have the newly created task added
+     * @throws TaskNameAlreadyInUseException    if the task name is already in use in the project
+     * @throws IllegalTaskRolesException        if the task roles are not valid
+     * @throws ProjectNotOngoingException       if the project is not in the ongoing state
+     * @throws LoopDependencyGraphException     if the task dependencies would create a loop in the dependency graph
+     */
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException {
         getTaskManSystem().addTaskToProject(getProjectName(), getTaskName(), getDescription(), getDurationTime(), getDeviation(), getRoles(), getPreviousTasks(), getNextTasks());
     }
 
+    /**
+     * Undoes the execution of the command to add a next task to a task.
+     */
     @Override
-    public void undo() throws TaskNotFoundException, ProjectNotFoundException {
-        getTaskManSystem().deleteTask(getProjectName(), getTaskName());
+    public void undo() {
+        try {
+            getTaskManSystem().deleteTask(getProjectName(), getTaskName());
+        }
+        catch (TaskNotFoundException | ProjectNotFoundException e) {
+            // This should never happen
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -90,12 +115,12 @@ public class CreateTaskCommand implements Command {
     }
 
     @Override
-    public String getInformation(){
+    public String getName(){
         return "Create task";
     }
 
     @Override
-    public String getExtendedInformation(){
+    public String getDetails(){
         return "Create task (" + getProjectName() + ", " + getTaskName() + ")";
     }
 

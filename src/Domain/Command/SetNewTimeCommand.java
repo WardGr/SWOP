@@ -10,6 +10,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implements the Command interface and contains all the data needed to set a new time.
+ * This command is used to set a new time in the system.
+ * This command can never be undone.
+ */
 public class SetNewTimeCommand implements Command {
     private final TaskManSystem taskManSystem;
     private final Time time;
@@ -27,18 +32,23 @@ public class SetNewTimeCommand implements Command {
         return time;
     }
 
+    /**
+     * Executes the command to set a new time.
+     *
+     * @throws NewTimeBeforeSystemTimeException if getTime() < getTaskManSystem().getTime()
+     */
     @Override
     public void execute() throws NewTimeBeforeSystemTimeException {
         getTaskManSystem().advanceTime(getTime());
     }
 
     @Override
-    public String getInformation(){
+    public String getName(){
         return "Set new time";
     }
 
     @Override
-    public String getExtendedInformation(){
+    public String getDetails(){
         return "Set new time " + getTime().toString();
     }
 

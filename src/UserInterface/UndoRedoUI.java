@@ -1,7 +1,6 @@
 package UserInterface;
 
 import Application.UndoRedoController;
-import Domain.Command.Command;
 import Domain.Command.CommandData;
 import Domain.Command.UndoNotPossibleException;
 import Domain.EmptyCommandStackException;
@@ -43,7 +42,7 @@ public class UndoRedoUI {
         } else {
             printPreviousCommandsList(previousCommands);
             CommandData latestCommand = getController().getLastCommand();
-            boolean confirmation = getBooleanInput(scanner,"Confirm that you want to undo the last action: " + latestCommand.getExtendedInformation());
+            boolean confirmation = getBooleanInput(scanner,"Confirm that you want to undo the last action: " + latestCommand.getDetails());
 
             if (confirmation){
                 try{
@@ -64,7 +63,7 @@ public class UndoRedoUI {
         System.out.println(" ***** EXECUTED ACTIONS *****");
         System.out.println(" ----- Oldest Action -----");
         for (Tuple<CommandData,String> command : prevCmdList){
-            System.out.print(" - " + command.getFirst().getExtendedInformation() +
+            System.out.print(" - " + command.getFirst().getDetails() +
                     " --- Executed By: " + command.getSecond());
             if (!command.getFirst().undoPossible()){
                 System.out.println(" --- NO UNDO POSSIBLE");
@@ -95,7 +94,7 @@ public class UndoRedoUI {
         } else {
             printUndoneCommandsList(undoneCommands);
             CommandData latestCommand = getController().getLastUndoneCommand();
-            boolean confirmation = getBooleanInput(scanner,"Confirm that you want to redo the last undone action: " + latestCommand.getExtendedInformation());
+            boolean confirmation = getBooleanInput(scanner,"Confirm that you want to redo the last undone action: " + latestCommand.getDetails());
 
             if (confirmation){
                 try{
@@ -114,7 +113,7 @@ public class UndoRedoUI {
         System.out.println(" ***** UNDONE ACTIONS *****");
         System.out.println(" ----- Oldest Undone Action -----");
         for (Tuple<CommandData,String> command : prevCmdList){
-            System.out.println(" - " + command.getFirst().getExtendedInformation() +
+            System.out.println(" - " + command.getFirst().getDetails() +
                     " --- Executed By: " + command.getSecond());
         }
         System.out.println(" ----- Most Recent Undone Action -----");

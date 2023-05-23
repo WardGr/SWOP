@@ -11,6 +11,11 @@ import Domain.TaskNotFoundException;
  import java.util.List;
  import java.util.Map;
 
+/**
+ * Implements the Command interface and contains all the data needed to remove a next task.
+ * This command is used to remove a next task from a task in a project.
+ * This command can always be undone.
+ */
 public class RemoveNextTaskCommand implements Command {
     private final TaskManSystem taskManSystem;
     private final String projectName;
@@ -47,15 +52,30 @@ public class RemoveNextTaskCommand implements Command {
     }
 
 
-
+    /**
+     * Executes the command to remove a next task.
+     *
+     * @throws ProjectNotFoundException if the given projectName does not correspond to an existing project
+     * @throws TaskNotFoundException    if the given taskName does not correspond to an existing task
+     */
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException {
         getTaskManSystem().removeNextTaskFromProject(getProjectName(), getTaskName(), getNextProjectName() , getNextTaskName() );
     }
 
+    /**
+     * Undoes the command to remove a next task.
+     */
     @Override
-    public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
-        getTaskManSystem().addNextTaskToProject(getProjectName(), getTaskName(), getNextProjectName() , getNextTaskName() );
+    public void undo() {
+        try {
+            getTaskManSystem().addNextTaskToProject(getProjectName(), getTaskName(), getNextProjectName() , getNextTaskName() );
+        }
+        catch (ProjectNotFoundException | TaskNotFoundException | IncorrectTaskStatusException |
+               LoopDependencyGraphException e) {
+            // This should never happen
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -64,12 +84,12 @@ public class RemoveNextTaskCommand implements Command {
     }
 
     @Override
-    public String getInformation(){
+    public String getName(){
         return "Remove next task";
     }
 
     @Override
-    public String getExtendedInformation(){
+    public String getDetails(){
         return "Remove next task (" + getNextProjectName() + ", " + getNextTaskName()  + ") from task (" + getProjectName() + ", " + getTaskName() + ")";
     }
 

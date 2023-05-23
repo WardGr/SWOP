@@ -8,6 +8,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implements the Command interface and contains all the data needed to fail a task.
+ * This command is used to fail a task in a project.
+ * This command can always be undone.
+ */
 public class FailTaskCommand implements Command {
     private final TaskManSystem taskManSystem;
     private final String projectName;
@@ -37,14 +42,31 @@ public class FailTaskCommand implements Command {
         return user;
     }
 
+    /**
+     * Executes the command to fail a task.
+     *
+     * @throws ProjectNotFoundException             if the given projectName does not correspond to an existing project
+     * @throws EndTimeBeforeStartTimeException      if the fail time of the task is before the start time
+     * @throws TaskNotFoundException                if the given taskName does not correspond to an existing task
+     * @throws IncorrectTaskStatusException         if the given task is not executing
+     * @throws IncorrectUserException               if the given user is not assigned to the given task
+     */
     @Override
     public void execute() throws ProjectNotFoundException, EndTimeBeforeStartTimeException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException {
         getTaskManSystem().failTask(getProjectName(), getTaskName(), getUser());
     }
 
+    /**
+     * Undoes the command to fail a task.
+     */
     @Override
-    public void undo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
-        getTaskManSystem().restartTask(getProjectName(), getTaskName());
+    public void undo() {
+        try {
+            getTaskManSystem().restartTask(getProjectName(), getTaskName());
+        } catch (ProjectNotFoundException | TaskNotFoundException | IncorrectTaskStatusException | IncorrectRoleException | UserAlreadyAssignedToTaskException e) {
+            // This should never happen
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -53,12 +75,12 @@ public class FailTaskCommand implements Command {
     }
 
     @Override
-    public String getInformation(){
+    public String getName(){
         return "Fail task";
     }
 
     @Override
-    public String getExtendedInformation(){
+    public String getDetails(){
         return "Fail task " + getTaskName() + " in project " + getProjectName();
     }
 

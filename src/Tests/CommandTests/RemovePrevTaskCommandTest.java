@@ -31,8 +31,8 @@ public class RemovePrevTaskCommandTest {
         RemovePrevTaskCommand command = new RemovePrevTaskCommand(taskManSystem, "Project2", "Task2", "Project1", "Task1");
 
         assertTrue(command.undoPossible());
-        assertEquals("Remove previous task", command.getInformation());
-        assertEquals("Remove previous task (Project1, Task1) from task (Project2, Task2)", command.getExtendedInformation());
+        assertEquals("Remove previous task", command.getName());
+        assertEquals("Remove previous task (Project1, Task1) from task (Project2, Task2)", command.getDetails());
         assertEquals(List.of("projectName", "taskName", "previousProjectName", "previousTaskName"), command.getArgumentNames());
         assertEquals("Project2", command.getArguments().get("projectName"));
         assertEquals("Task2", command.getArguments().get("taskName"));

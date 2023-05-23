@@ -8,6 +8,11 @@ package Domain.Command;
  import java.util.List;
  import java.util.Map;
 
+/**
+ * Implements the Command interface and contains all the data needed to create a project.
+ * This command is used to create a project and add it to the system.
+ * This command can always be undone.
+ */
 public class CreateProjectCommand implements Command {
 
     private final TaskManSystem taskManSystem;
@@ -42,14 +47,29 @@ public class CreateProjectCommand implements Command {
         return dueTime;
     }
 
+    /**
+     * Executes the command, creating a new project with the saved name, description and due time.
+     *
+     * @throws ProjectNameAlreadyInUseException  if the given project name is already in use
+     * @throws DueBeforeSystemTimeException      if the given due time is before the current time of the system
+     */
     @Override
     public void execute() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
         getTaskManSystem().createProject(getProjectName(), getProjectDescription(), getDueTime());
     }
 
+    /**
+     * Undoes the command, deleting the project with the saved name, description and due time and restoring the previous state.
+     */
     @Override
-    public void undo() throws ProjectNotFoundException {
-        getTaskManSystem().deleteProject(getProjectName());
+    public void undo() {
+        try {
+            getTaskManSystem().deleteProject(getProjectName());
+        }
+        catch (ProjectNotFoundException e) {
+            // This should never happen
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -58,12 +78,12 @@ public class CreateProjectCommand implements Command {
     }
 
     @Override
-    public String getInformation(){
+    public String getName(){
         return "Create project";
     }
 
     @Override
-    public String getExtendedInformation(){
+    public String getDetails(){
         return "Create project " + getProjectName();
     }
 

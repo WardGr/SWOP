@@ -91,11 +91,7 @@ public class CommandManager implements CommandInterface {
                 !currentUser.getRoles().contains(Role.PROJECTMANAGER)) {
             throw new IncorrectUserException("The current user is not allowed to undo the last executed action");
         }
-        try {
-            getLastExecutedCommand().undo();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        getLastExecutedCommand().undo();
         addUndoneCommand(getLastExecutedCommand(), getUserLastExecutedCommand());
         removeLastExecutedCommand();
     }

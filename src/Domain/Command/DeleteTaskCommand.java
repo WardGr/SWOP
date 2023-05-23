@@ -9,6 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implements the Command interface and contains all the data needed to delete a task.
+ * This command is used to delete a task.
+ * This command can never be undone.
+ */
 public class DeleteTaskCommand implements Command {
 
     private final TaskManSystem taskManSystem;
@@ -34,18 +39,24 @@ public class DeleteTaskCommand implements Command {
     }
 
 
+    /**
+     * Deletes a task in a project.
+     *
+     * @throws ProjectNotFoundException    If the given projectName does not correspond to an existing project
+     * @throws TaskNotFoundException       If the given taskName does not correspond to an existing task
+     */
     @Override
     public void execute() throws ProjectNotFoundException, TaskNotFoundException {
         getTaskManSystem().deleteTask(getProjectName(), getTaskName());
     }
 
     @Override
-    public String getInformation(){
+    public String getName(){
         return "Delete task";
     }
 
     @Override
-    public String getExtendedInformation(){
+    public String getDetails(){
         return "Delete task (" + getProjectName() + ", " + getTaskName() + ")";
     }
 

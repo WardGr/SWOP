@@ -23,11 +23,11 @@ public class UndoRedoController {
      }
 
      public void undoLastCommand() throws IncorrectUserException, EmptyCommandStackException, UndoNotPossibleException {
-         commandManager.undoLastCommand(getSession().getCurrentUser());
+         getCommandManager().undoLastCommand(getSession().getCurrentUser());
      }
 
      public void redoLastUndoneCommand() throws IncorrectUserException, EmptyCommandStackException {
-         commandManager.redoLast(getSession().getCurrentUser());
+         getCommandManager().redoLast(getSession().getCurrentUser());
      }
 
      public List<Tuple<CommandData,String>> getPreviousCommandsList(){

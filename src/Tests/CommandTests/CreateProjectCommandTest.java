@@ -22,8 +22,8 @@ public class CreateProjectCommandTest {
         CreateProjectCommand command = new CreateProjectCommand(taskManSystem, "Project", "test", new Time(10));
 
         assertTrue(command.undoPossible());
-        assertEquals("Create project", command.getInformation());
-        assertEquals("Create project Project", command.getExtendedInformation());
+        assertEquals("Create project", command.getName());
+        assertEquals("Create project Project", command.getDetails());
         assertEquals(List.of("projectName", "projectDescription", "dueTime"), command.getArgumentNames());
         assertEquals("Project", command.getArguments().get("projectName"));
         assertEquals("test", command.getArguments().get("projectDescription"));
