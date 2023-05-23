@@ -65,7 +65,7 @@ public class Project implements ProjectData {
     /**
      * @return an IMMUTABLE list of the current project tasks
      */
-    public List<Task> getTasks() {
+    private List<Task> getTasks() {
         return List.copyOf(tasks);
     }
 
@@ -293,21 +293,6 @@ public class Project implements ProjectData {
     }
 
     /**
-     * Gets the status of the task within this project corresponding to the given task name
-     *
-     * @param taskName Name of the task for which to retrieve the current status
-     * @return Current status of the task corresponding to taskName
-     * @throws TaskNotFoundException if taskName does not correspond to an existing task within this project
-     */
-    public Status getStatus(String taskName) throws TaskNotFoundException {
-        Task task = getTask(taskName);
-        if (task == null) {
-            throw new TaskNotFoundException();
-        }
-        return task.getStatus();
-    }
-
-    /**
      * Sets the start time of the given task, and changes its status according to the given system time
      *
      * @param taskName    Name of the status of which to change the status
@@ -354,6 +339,7 @@ public class Project implements ProjectData {
             throw new TaskNotFoundException();
         }
         task.restart();
+        updateProjectStatus();
     }
 
 
