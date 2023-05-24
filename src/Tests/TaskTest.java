@@ -204,6 +204,7 @@ public class TaskTest {
         assertNull(currentTask.getReplacementTaskName());
 
         currentTask.replaceTask(replacementTask);
+        assertThrows(IncorrectTaskStatusException.class, () -> currentTask.replaceTask(nextTask));
         assertEquals("Current Task", replacementTask.getReplacesTaskName());
         assertEquals("Replacement Task", currentTask.getReplacementTaskName());
         assertEquals(Status.AVAILABLE, replacementTask.getStatus());
