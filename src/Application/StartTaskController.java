@@ -77,13 +77,20 @@ public class StartTaskController {
      * @throws IncorrectRoleException               If the given role is not necessary for the given task or if the current user does not have this role
      * @throws UserAlreadyAssignedToTaskException   If the current user is already assigned to this task
      */
-    public void startTask(String projectName, String taskName, Role role) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
+    public void startTask(String projectName, String taskName, Role role, boolean confirmation) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectRoleException, UserAlreadyAssignedToTaskException {
         if (!startTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with a developer role to start a task");
+        }
+        if (startTaskNeedsConfirmation() && !confirmation){
+            throw new IncorrectPermissionException("Starting of the task needs confirmation and isn't confirmed");
         }
         StartTaskCommand cmd = new StartTaskCommand(getTaskManSystem(), projectName, taskName, getSession().getCurrentUser(), role);
         cmd.execute();
         getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
+    }
+
+    public boolean startTaskNeedsConfirmation(){
+        return getUserTaskData() != null && getUserTaskData().getStatus() == Status.PENDING;
     }
 
 

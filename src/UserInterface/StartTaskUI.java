@@ -146,35 +146,15 @@ public class StartTaskUI {
                 }
 
                 // PENDING TASK
-                if (getController().getUserTaskData() != null && getController().getUserTaskData().getStatus() == Status.PENDING) {
+                boolean confirmation = false;
+                if (getController().startTaskNeedsConfirmation()) {
                     String pendingTaskName = getController().getUserTaskData().getName();
-
                     System.out.println("You are already pending for task " + pendingTaskName);
-                    System.out.println("Confirm you want to stop pending for task " + pendingTaskName + " and start working on task " + taskName + "? (y/n)");
-                    answer = scanner.nextLine();
-                    if (answer.equals("BACK")) {
-                        System.out.println("Cancelled starting task " + taskName);
-                        return;
-                    }
 
-                    while (!answer.equals("y") && !answer.equals("n")) {
-                        System.out.println("Confirm you want to stop pending for task " + pendingTaskName + " and start working on task " + taskName + "? (y/n)");
-                        answer = scanner.nextLine();
-                        if (answer.equals("BACK")) {
-                            System.out.println("Cancelled starting task " + taskName);
-                            return;
-                        }
-                    }
-                    System.out.println();
-
-                    if (answer.equals("n")) {
-                        System.out.println("Cancelled starting task " + taskName);
-                        return;
-
-                    }
+                    confirmation = getBooleanInput(scanner, "Confirm you want to stop pending for task " + pendingTaskName + " and start working on task " + taskName + "?");
                 }
 
-                getController().startTask(projectName, taskName, role);
+                getController().startTask(projectName, taskName, role, confirmation);
                 System.out.println("Successfully started working on task " + taskName + " in project " + projectName +
                         " as " + role);
 
@@ -192,6 +172,8 @@ public class StartTaskUI {
                 System.out.println("ERROR: Given task does not have the right status to start");
             } catch (UserAlreadyAssignedToTaskException e) {
                 System.out.println("ERROR: User is already executing a task");
+            } catch (BackException e){
+                System.out.println("Cancelled Starting Task");
             }
         }
     }
@@ -206,7 +188,6 @@ public class StartTaskUI {
         for (ProjectData projectData : getController().getTaskManSystemData().getOngoingProjectsData()) {
 
             for (TaskData taskData : projectData.getAvailableAndPendingTasksData()) {
-                // TODO: dit is eigenlijk ook geen UI-logica
                 Set<Role> userRoles = getController().getUserRoles();
                 userRoles.retainAll(taskData.getUnfulfilledRoles());
 
@@ -256,5 +237,29 @@ public class StartTaskUI {
             System.out.println("No users are committed to this task.");
         }
         System.out.println();
+    }
+
+
+    private boolean getBooleanInput(Scanner scanner, String message) throws BackException {
+        System.out.println(message + " (y/n)");
+        String answer = scanner.nextLine();
+        if (answer.equals("BACK")) {
+            throw new BackException();
+        }
+
+        while (!answer.equals("y") && !answer.equals("n")) {
+            System.out.println("\nInput has to be 'y' or 'n', try again");
+            System.out.println(message + " (y/n)");
+            answer = scanner.nextLine();
+            if (answer.equals("BACK")) {
+                throw new BackException();
+            }
+        }
+
+        return answer.equals("y");
+    }
+
+    private static class BackException extends Exception {
+        public BackException() {super();}
     }
 }
