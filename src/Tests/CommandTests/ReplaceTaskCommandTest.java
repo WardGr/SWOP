@@ -33,8 +33,8 @@ public class ReplaceTaskCommandTest {
         ReplaceTaskCommand command = new ReplaceTaskCommand(taskManSystem, "Project", "Replace", "test", new Time(5), 0.2, "Task1");
 
         assertTrue(command.undoPossible());
-        assertEquals("Replace task", command.getInformation());
-        assertEquals("Replace task Task1 by task Replace in project Project", command.getExtendedInformation());
+        assertEquals("Replace task", command.getName());
+        assertEquals("Replace task Task1 by task Replace in project Project", command.getDetails());
         assertEquals(List.of("projectName", "taskName", "description", "durationTime", "deviation", "replaces"), command.getArgumentNames());
         assertEquals("Project", command.getArguments().get("projectName"));
         assertEquals("Replace", command.getArguments().get("taskName"));
@@ -43,7 +43,7 @@ public class ReplaceTaskCommandTest {
         assertEquals("0.2", command.getArguments().get("deviation"));
         assertEquals("Task1", command.getArguments().get("replaces"));
 
-        assertEquals("Replace task", command.getCommandData().getInformation());
+        assertEquals("Replace task", command.getCommandData().getName());
     }
 
     @Test

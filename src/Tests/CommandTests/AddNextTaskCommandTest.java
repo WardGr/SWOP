@@ -6,7 +6,6 @@ import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,8 +30,8 @@ public class AddNextTaskCommandTest {
         AddNextTaskCommand command = new AddNextTaskCommand(taskManSystem, "Project1", "Task1", "Project2", "Task2");
 
         assertTrue(command.undoPossible());
-        assertEquals("Add next task", command.getInformation());
-        assertEquals("Add next task (Project2, Task2) to task (Project1, Task1)", command.getExtendedInformation());
+        assertEquals("Add next task", command.getName());
+        assertEquals("Add next task (Project2, Task2) to task (Project1, Task1)", command.getDetails());
         assertEquals(List.of("projectName", "taskName", "nextProjectName", "nextTaskName"), command.getArgumentNames());
         assertEquals("Project1", command.getArguments().get("projectName"));
         assertEquals("Task1", command.getArguments().get("taskName"));

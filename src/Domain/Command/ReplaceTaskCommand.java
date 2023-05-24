@@ -7,6 +7,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implements the Command interface and contains all the data needed to replace a task.
+ * This command is used to replace a task in a project.
+ * This command can always be undone.
+ */
 public class ReplaceTaskCommand implements Command {
 
     private final TaskManSystem taskManSystem;
@@ -39,14 +44,55 @@ public class ReplaceTaskCommand implements Command {
         return taskManSystem;
     }
 
-    @Override
-    public void execute() throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
-        getTaskManSystem().replaceTaskInProject(projectName, taskName, description, durationTime, deviation, replaces);
+    private String getProjectName() {
+        return projectName;
     }
 
+    private String getTaskName() {
+        return taskName;
+    }
+
+    private String getDescription() {
+        return description;
+    }
+
+    private Time getDurationTime() {
+        return durationTime;
+    }
+
+    private double getDeviation() {
+        return deviation;
+    }
+
+    private String getReplaces() {
+        return replaces;
+    }
+
+    /**
+     * Executes the command to replace a task.
+     *
+     * @throws ProjectNotFoundException         if the given projectName does not correspond to an existing project
+     * @throws TaskNotFoundException            if replaces does not correspond to the name of an existing task
+     * @throws TaskNameAlreadyInUseException    if the given taskName is already in use in the project
+     * @throws IncorrectTaskStatusException     if the task is failed
+     */
     @Override
-    public void undo() throws ProjectNotFoundException, TaskNotFoundException {
-        getTaskManSystem().deleteTask(projectName, taskName);
+    public void execute() throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException {
+        getTaskManSystem().replaceTaskInProject(getProjectName(), getTaskName(), getDescription(), getDurationTime(), getDeviation(), getReplaces());
+    }
+
+    /**
+     * Undoes the command to replace a task.
+     */
+    @Override
+    public void undo() {
+        try {
+            getTaskManSystem().deleteTask(getProjectName(), getTaskName());
+        }
+        catch (ProjectNotFoundException | TaskNotFoundException e) {
+            // This should never happen
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -55,24 +101,24 @@ public class ReplaceTaskCommand implements Command {
     }
 
     @Override
-    public String getInformation(){
+    public String getName(){
         return "Replace task";
     }
 
     @Override
-    public String getExtendedInformation(){
-        return "Replace task " + replaces + " by task " + taskName + " in project " + projectName;
+    public String getDetails(){
+        return "Replace task " + getReplaces() + " by task " + getTaskName() + " in project " + getProjectName();
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("projectName", projectName);
-        arguments.put("taskName", taskName);
-        arguments.put("description", description);
-        arguments.put("durationTime", durationTime.toString());
-        arguments.put("deviation", Double.toString(deviation));
-        arguments.put("replaces", replaces);
+        arguments.put("projectName", getProjectName());
+        arguments.put("taskName", getTaskName());
+        arguments.put("description", getDescription());
+        arguments.put("durationTime", getDurationTime().toString());
+        arguments.put("deviation", Double.toString(getDeviation()));
+        arguments.put("replaces", getReplaces());
         return arguments;
     }
 

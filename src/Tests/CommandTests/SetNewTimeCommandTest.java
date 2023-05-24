@@ -23,8 +23,8 @@ public class SetNewTimeCommandTest {
         SetNewTimeCommand command = new SetNewTimeCommand(taskManSystem, new Time(80));
 
         assertFalse(command.undoPossible());
-        assertEquals("Set new time", command.getInformation());
-        assertEquals("Set new time 1 hour(s), 20 minute(s)", command.getExtendedInformation());
+        assertEquals("Set new time", command.getName());
+        assertEquals("Set new time 1 hour(s), 20 minute(s)", command.getDetails());
         assertEquals(List.of("newTime"), command.getArgumentNames());
         assertEquals("1 hour(s), 20 minute(s)", command.getArguments().get("newTime"));
     }

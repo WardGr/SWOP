@@ -10,6 +10,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implements the Command interface and contains all the data needed to advance the time of the system.
+ * This command is used to advance the time of the system with a given amount of minutes.
+ * This command can not be undone.
+ */
 public class AdvanceTimeCommand implements Command {
     private final TaskManSystem taskManSystem;
     private final int minutes;
@@ -19,25 +24,40 @@ public class AdvanceTimeCommand implements Command {
         this.minutes = minutes;
     }
 
+    private TaskManSystem getTaskManSystem() {
+        return taskManSystem;
+    }
+
+    private int getMinutes() {
+        return minutes;
+    }
+
+    /**
+     * Advances the time of the system with the given amount of minutes.
+     * This command can not be undone.
+     *
+     * @post the time of the system is advanced with the given amount of minutes
+     * @throws NewTimeBeforeSystemTimeException if the new time is before the current time of the system
+     */
     @Override
     public void execute() throws NewTimeBeforeSystemTimeException {
-        taskManSystem.advanceTime(minutes);
+        getTaskManSystem().advanceTime(getMinutes());
     }
 
     @Override
-    public String getInformation(){
+    public String getName(){
         return "Advance time";
     }
 
     @Override
-    public String getExtendedInformation(){
-        return "Advance time with " + minutes + " minutes";
+    public String getDetails(){
+        return "Advance time with " + getMinutes() + " minutes";
     }
 
     @Override
     public Map<String,String> getArguments(){
         Map<String,String> arguments = new HashMap<>();
-        arguments.put("minutes", Integer.toString(minutes));
+        arguments.put("minutes", Integer.toString(getMinutes()));
         return arguments;
     }
 

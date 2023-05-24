@@ -28,8 +28,8 @@ public class DeleteTaskCommandTest {
         DeleteTaskCommand command = new DeleteTaskCommand(taskManSystem, "Project", "Task");
 
         assertFalse(command.undoPossible());
-        assertEquals("Delete task", command.getInformation());
-        assertEquals("Delete task (Project, Task)", command.getExtendedInformation());
+        assertEquals("Delete task", command.getName());
+        assertEquals("Delete task (Project, Task)", command.getDetails());
         assertEquals(List.of("projectName", "taskName"), command.getArgumentNames());
         assertEquals("Project", command.getArguments().get("projectName"));
         assertEquals("Task", command.getArguments().get("taskName"));

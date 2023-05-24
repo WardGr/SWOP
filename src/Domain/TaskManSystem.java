@@ -442,7 +442,7 @@ public class TaskManSystem implements TaskManSystemData {
      * @param nextTaskName    The name of the next task
      * @throws TaskNotFoundException        if taskName or nextTaskName do not correspond to an existing task within the given project
      * @throws ProjectNotFoundException     if the given projectName does not correspond to an existing project
-     * @throws IncorrectTaskStatusException if the task corresponding to taskName is not available or unavailable
+     * @throws IncorrectTaskStatusException if the task corresponding to nextTaskName is not available or unavailable
      * @throws LoopDependencyGraphException if adding this task causes a loop in the dependency graph of the given project
      * @post if the task corresponding to nextTaskName is AVAILABLE, then sets taskName's status to UNAVAILABLE
      */

@@ -32,14 +32,14 @@ public class FailTaskCommandTest {
         FailTaskCommand command = new FailTaskCommand(taskManSystem, "Project", "Task1", user);
 
         assertTrue(command.undoPossible());
-        assertEquals("Fail task", command.getInformation());
-        assertEquals("Fail task Task1 in project Project", command.getExtendedInformation());
+        assertEquals("Fail task", command.getName());
+        assertEquals("Fail task Task1 in project Project", command.getDetails());
         assertEquals(List.of("projectName", "taskName", "user"), command.getArgumentNames());
         assertEquals("Project", command.getArguments().get("projectName"));
         assertEquals("Task1", command.getArguments().get("taskName"));
         assertEquals("TestUser", command.getArguments().get("user"));
 
-        assertEquals("Fail task", command.getCommandData().getInformation());
+        assertEquals("Fail task", command.getCommandData().getName());
     }
 
     @Test

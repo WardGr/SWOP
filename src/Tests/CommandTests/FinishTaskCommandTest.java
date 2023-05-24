@@ -33,14 +33,14 @@ public class FinishTaskCommandTest {
         FinishTaskCommand command = new FinishTaskCommand(taskManSystem, "Project", "Task1", user);
 
         assertTrue(command.undoPossible());
-        assertEquals("Finish task", command.getInformation());
-        assertEquals("Finish task Task1 in project Project", command.getExtendedInformation());
+        assertEquals("Finish task", command.getName());
+        assertEquals("Finish task Task1 in project Project", command.getDetails());
         assertEquals(List.of("projectName", "taskName", "user"), command.getArgumentNames());
         assertEquals("Project", command.getArguments().get("projectName"));
         assertEquals("Task1", command.getArguments().get("taskName"));
         assertEquals("TestUser", command.getArguments().get("user"));
 
-        assertEquals("Finish task", command.getCommandData().getInformation());
+        assertEquals("Finish task", command.getCommandData().getName());
     }
 
     @Test

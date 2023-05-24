@@ -30,8 +30,8 @@ public class AddPrevTaskCommandTest {
         AddPrevTaskCommand command = new AddPrevTaskCommand(taskManSystem, "Project2", "Task2", "Project1", "Task1");
 
         assertTrue(command.undoPossible());
-        assertEquals("Add previous task", command.getInformation());
-        assertEquals("Add previous task (Project1, Task1) to task (Project2, Task2)", command.getExtendedInformation());
+        assertEquals("Add previous task", command.getName());
+        assertEquals("Add previous task (Project1, Task1) to task (Project2, Task2)", command.getDetails());
         assertEquals(List.of("projectName", "taskName", "previousProjectName", "previousTaskName"), command.getArgumentNames());
         assertEquals("Project2", command.getArguments().get("projectName"));
         assertEquals("Task2", command.getArguments().get("taskName"));

@@ -158,7 +158,7 @@ public class TaskController {
         if (!taskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        Command cmd = new ReplaceTaskCommand(
+        ReplaceTaskCommand replaceTaskCommand = new ReplaceTaskCommand(
                 getTaskManSystem(),
                 projectName,
                 taskName,
@@ -167,7 +167,8 @@ public class TaskController {
                 deviation,
                 replaces
         );
-        getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
+        replaceTaskCommand.execute();
+        getCommandManager().addExecutedCommand(replaceTaskCommand, getSession().getCurrentUser());
     }
 
     /**

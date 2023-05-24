@@ -28,8 +28,8 @@ public class CreateTaskCommandTest {
         CreateTaskCommand command = new CreateTaskCommand(taskManSystem, "Project", "Task", "test", new Time(10), 0.2, List.of(Role.SYSADMIN), Set.of(new Tuple<>("Project", "Task1")), new HashSet<>());
 
         assertTrue(command.undoPossible());
-        assertEquals("Create task", command.getInformation());
-        assertEquals("Create task (Project, Task)", command.getExtendedInformation());
+        assertEquals("Create task", command.getName());
+        assertEquals("Create task (Project, Task)", command.getDetails());
         assertEquals(List.of("projectName", "taskName", "description", "durationTime", "deviation", "roles", "previousTasks", "nextTasks"), command.getArgumentNames());
         assertEquals("Project", command.getArguments().get("projectName"));
         assertEquals("Task", command.getArguments().get("taskName"));
@@ -40,7 +40,7 @@ public class CreateTaskCommandTest {
         assertEquals("[(Project, Task1)]", command.getArguments().get("previousTasks"));
         assertEquals("[]", command.getArguments().get("nextTasks"));
 
-        assertEquals("Create task", command.getCommandData().getInformation());
+        assertEquals("Create task", command.getCommandData().getName());
     }
 
     @Test

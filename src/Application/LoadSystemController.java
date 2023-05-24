@@ -274,7 +274,6 @@ public class LoadSystemController {
      * @param started    Map of tasks to add all started tasks to
      * @param ended      Map of tasks to add all ended tasks to
      * @param remaining  Map of tasks to add all tasks not started/ended to
-     *
      * @throws InvalidTimeException if any time in the JSONObject contains a negative integer or a minute field > 59
      */
     private void handleTask(JSONObject task, Map<Time, JSONArray> started, Map<Time, JSONArray> ended, HashSet<JSONObject> remaining) throws InvalidTimeException {

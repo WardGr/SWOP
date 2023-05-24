@@ -31,8 +31,8 @@ public class RemoveNextTaskCommandTest {
         RemoveNextTaskCommand command = new RemoveNextTaskCommand(taskManSystem, "Project1", "Task1", "Project2", "Task2");
 
         assertTrue(command.undoPossible());
-        assertEquals("Remove next task", command.getInformation());
-        assertEquals("Remove next task (Project2, Task2) from task (Project1, Task1)", command.getExtendedInformation());
+        assertEquals("Remove next task", command.getName());
+        assertEquals("Remove next task (Project2, Task2) from task (Project1, Task1)", command.getDetails());
         assertEquals(List.of("projectName", "taskName", "nextProjectName", "nextTaskName"), command.getArgumentNames());
         assertEquals("Project1", command.getArguments().get("projectName"));
         assertEquals("Task1", command.getArguments().get("taskName"));
