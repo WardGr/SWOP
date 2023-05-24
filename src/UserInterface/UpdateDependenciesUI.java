@@ -155,18 +155,15 @@ public class UpdateDependenciesUI {
      */
     private void showOngoingProjects() throws IncorrectPermissionException {
         System.out.println("***** UNFINISHED PROJECTS *****");
-        if (getController().getTaskManSystemData().getProjectNames().size() == 0) {
+
+        for (ProjectData projectData : getController().getTaskManSystemData().getOngoingProjectsData()) {
+            System.out.println(" - " + projectData.getName());
+        }
+
+        if (getController().getTaskManSystemData().getOngoingProjectsData().isEmpty()) {
             System.out.println(" --- There are no unfinished projects in the system");
         }
-        for (String projectName : getController().getTaskManSystemData().getProjectNames()) {
-            try {
-                if (getController().getProjectData(projectName).getStatus() == ProjectStatus.ONGOING) {
-                    System.out.println(" - " + projectName);
-                }
-            } catch (ProjectNotFoundException e) {
-                throw new RuntimeException();
-            }
-        }
+
         System.out.println();
     }
 
@@ -182,12 +179,12 @@ public class UpdateDependenciesUI {
         ProjectData projectData = getController().getProjectData(projectName);
 
         System.out.println("***** TASKS in " + projectName + " *****");
-        if (projectData.getActiveTasksNames().size() == 0) {
+        if (projectData.getTasksData().isEmpty()) {
             System.out.println("There are no active tasks in this project");
         }
 
-        for (String taskName : projectData.getActiveTasksNames()){
-            System.out.println(" - " + taskName + " --- Status: " + getController().getTaskData(projectName, taskName).getStatus());
+        for (TaskData task : projectData.getTasksData()){
+            System.out.println(" - " + task.getName() + " --- Status: " + task.getStatus());
         }
         System.out.println();
     }
@@ -209,66 +206,42 @@ public class UpdateDependenciesUI {
         Set<Tuple<String,String>> possiblePrevTasks = new HashSet<>();
         Set<Tuple<String,String>> possibleNextTasks = new HashSet<>();
 
-        for (String possibleProjectName : taskManSystemData.getProjectNames()) {
-            ProjectData possibleProjectData = getController().getProjectData(possibleProjectName);
-
-            for (String prevTaskName : possibleProjectData.getActiveTasksNames()) {
-                Tuple<String,String> prevTask = new Tuple<>(possibleProjectName, prevTaskName);
-
-                if ( !taskData.getPrevTaskNames().contains(prevTask) &&
-                        taskData.canSafelyAddPrevTask(prevTask) ) {
-                    possiblePrevTasks.add(prevTask);
-                }
-            }
-
-            for (String nextTaskName : possibleProjectData.getActiveTasksNames()) {
-                Tuple<String,String> nextTask = new Tuple<>(possibleProjectName, nextTaskName);
-                TaskData nextTaskData = getController().getTaskData(possibleProjectName, nextTaskName);
-
-                if ( !taskData.getNextTaskNames().contains(nextTask) &&
-                        nextTaskData.canSafelyAddPrevTask(new Tuple<>(projectName, taskName)) ) {
-                    possibleNextTasks.add(nextTask);
-                }
-            }
+        for (ProjectData possibleProjectData : taskManSystemData.getProjectsData()) {
+            possiblePrevTasks.addAll(possibleProjectData.getPossiblePrevTasks(taskData).stream().map(t -> new Tuple<>(possibleProjectData.getName(), t.getName())).collect(Collectors.toSet()));
+            possibleNextTasks.addAll(possibleProjectData.getPossibleNextTasks(taskData).stream().map(t -> new Tuple<>(possibleProjectData.getName(), t.getName())).collect(Collectors.toSet()));
         }
+
 
         System.out.print("\nPrevious tasks: ");
-        if (taskData.getPrevTaskNames().size() == 0) {
+        if (taskData.getPrevTasksData().isEmpty()) {
             System.out.println("There are no previous tasks.");
-        } else {
-            System.out.println(
-                    taskData.getPrevTaskNames().stream().
-                            map(Object::toString).
-                            collect(Collectors.joining(", ")));
         }
+        for (TaskData prevTaskData : taskData.getPrevTasksData()) {
+            System.out.print("Task \"" + prevTaskData.getName() + "\" in project \"" + prevTaskData.getProjectName() + "\"");
+        }
+
         System.out.print("Next tasks: ");
-        if (taskData.getNextTaskNames().size() == 0) {
+        if (taskData.getNextTasksData().isEmpty()) {
             System.out.println("There are no next tasks.");
-        } else {
-            System.out.println(
-                    taskData.getNextTaskNames().stream().
-                            map(Object::toString).
-                            collect(Collectors.joining(", ")));
+        }
+        for (TaskData nextTaskData : taskData.getNextTasksData()) {
+            System.out.print("Task \"" + nextTaskData.getName() + "\" in project \"" + nextTaskData.getProjectName() + "\"");
         }
 
-        System.out.print("Possible previous tasks: ");
-        if (possiblePrevTasks.size() == 0) {
+        System.out.print("Possible tasks to add as previous task: ");
+        if (possiblePrevTasks.isEmpty()) {
             System.out.println("There are no possible previous tasks to add.");
-        } else {
-            System.out.println(
-                    possiblePrevTasks.stream().
-                            map(Object::toString).
-                            collect(Collectors.joining(", ")));
+        }
+        for (Tuple<String,String> possiblePrevTask : possiblePrevTasks) {
+            System.out.print("Task \"" + possiblePrevTask.getSecond() + "\" in project \"" + possiblePrevTask.getFirst() + "\"");
         }
 
-        System.out.print("Possible next tasks: ");
-        if (possibleNextTasks.size() == 0) {
+        System.out.print("Possible tasks to add as next task: ");
+        if (possibleNextTasks.isEmpty()) {
             System.out.println("There are no possible next tasks to add.");
-        } else {
-            System.out.println(
-                    possibleNextTasks.stream().
-                            map(Object::toString).
-                            collect(Collectors.joining(", ")));
+        }
+        for(Tuple<String,String> possibleNextTask : possibleNextTasks) {
+            System.out.print("Task \"" + possibleNextTask.getSecond() + "\" in project \"" + possibleNextTask.getFirst() + "\"");
         }
         System.out.println();
 

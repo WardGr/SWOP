@@ -92,7 +92,7 @@ interface TaskState {
      * @param prevTask The name of the task corresponding to the task to add as previous task
      * @return true if task is UNAVAILABLE or AVAILABLE and adding (the task corresponding to) prevTask does not introduce a loop in the dependency graph
      */
-    default boolean canSafelyAddPrevTask(Task task, Tuple<String,String> prevTask) {
+    default boolean canSafelyAddPrevTask(Task task, TaskData prevTask) {
         return false;
     }
 

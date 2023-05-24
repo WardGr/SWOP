@@ -121,9 +121,12 @@ public class Task implements TaskData{
         }
     }
 
+
+
     /**
      * @return A string with the name of the project this task is part of
      */
+    @Override
     public String getProjectName() {
         return projectName;
     }
@@ -131,6 +134,7 @@ public class Task implements TaskData{
     /**
      * @param projectName The name of the project to replace the current project with
      */
+
     void setProjectName(String projectName) {
         this.projectName = projectName;
     }
@@ -138,6 +142,7 @@ public class Task implements TaskData{
     /**
      * @return A string containing the name of this task
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -145,6 +150,7 @@ public class Task implements TaskData{
     /**
      * @return A string containing the description of this task
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -152,6 +158,7 @@ public class Task implements TaskData{
     /**
      * @return This tasks' acceptable deviation from the estimated duration
      */
+    @Override
     public double getAcceptableDeviation() {
         return acceptableDeviation;
     }
@@ -159,6 +166,7 @@ public class Task implements TaskData{
     /**
      * @return A time object representing this tasks' estimated duration
      */
+    @Override
     public Time getEstimatedDuration() {
         return estimatedDuration;
     }
@@ -180,6 +188,7 @@ public class Task implements TaskData{
     /**
      * @return Status enum depicting this tasks' internal state
      */
+    @Override
     public Status getStatus() {
         return getState().getStatus();
     }
@@ -194,12 +203,23 @@ public class Task implements TaskData{
     /**
      * @return A string depicting the name of the task that replaces this task
      */
+    @Override
     public String getReplacementTaskName() {
         if (getReplacementTask() == null) {
             return null;
         } else {
             return getReplacementTask().getName();
         }
+    }
+
+    @Override
+    public List<TaskData> getPrevTasksData() {
+        return getPrevTasks().stream().map(Task::getTaskData).toList();
+    }
+
+    @Override
+    public List<TaskData> getNextTasksData() {
+        return getNextTasks().stream().map(Task::getTaskData).toList();
     }
 
     /**
@@ -219,6 +239,7 @@ public class Task implements TaskData{
     /**
      * @return A string depicting the name of the task that the task replaces
      */
+    @Override
     public String getReplacesTaskName() {
         if (getReplacesTask() == null) {
             return null;
@@ -326,16 +347,6 @@ public class Task implements TaskData{
         return new LinkedList<>(prevTasks);
     }
 
-    /**
-     * @return A list of the names of all previous tasks of the task
-     */
-    public Set<Tuple<String,String>> getPrevTaskNames() {
-        Set<Tuple<String,String>> prevTasksNames = new HashSet<>();
-        for (Task prevTask : getPrevTasks()) {
-            prevTasksNames.add( new Tuple<>(prevTask.getProjectName(), prevTask.getName()) );
-        }
-        return prevTasksNames;
-    }
 
     /**
      * @return Mutable list of all tasks that this task should be completed before
@@ -344,16 +355,6 @@ public class Task implements TaskData{
         return new LinkedList<>(nextTasks);
     }
 
-    /**
-     * @return A list of the names of all next tasks of the task
-     */
-    public Set<Tuple<String,String>> getNextTaskNames() {
-        Set<Tuple<String,String>> nextTasksNames = new HashSet<>();
-        for (Task nextTask : getNextTasks()) {
-            nextTasksNames.add( new Tuple<>(nextTask.getProjectName(), nextTask.getName()) );
-        }
-        return nextTasksNames;
-    }
 
     /**
      * @return Start time if this is set, null otherwise
@@ -646,7 +647,7 @@ public class Task implements TaskData{
      * @param prevTask Name of the task to test adding
      * @return true if adding (the task corresponding to) prevTask does not introduce a loop in the dependency graph, false otherwise
      */
-    public boolean canSafelyAddPrevTask(Tuple<String,String> prevTask) {
+    public boolean canSafelyAddPrevTask(TaskData prevTask) {
         return getState().canSafelyAddPrevTask(this, prevTask);
     }
 

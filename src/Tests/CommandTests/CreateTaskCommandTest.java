@@ -4,6 +4,7 @@ import Domain.*;
 import Domain.Command.CreateTaskCommand;
 import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.TaskData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,15 +48,18 @@ public class CreateTaskCommandTest {
     public void testExecuteAndUndo() throws ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, InvalidTimeException {
         CreateTaskCommand command = new CreateTaskCommand(taskManSystem, "Project", "Task", "test", new Time(10), 0.2, List.of(Role.SYSADMIN), Set.of(new Tuple<>("Project", "Task1")), new HashSet<>());
 
-        assertFalse(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Task"));
+        ProjectData project = taskManSystem.getProjectData("Project");
 
+        assertEquals(1, project.getTasksData().size());
         command.execute();
+        assertEquals(2, project.getTasksData().size());
 
-        assertTrue(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Task"));
+        TaskData task    = taskManSystem.getTaskData("Project", "Task");
+        assertTrue(project.getTasksData().contains(task));
 
         command.undo();
-
-        assertFalse(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Task"));
+        assertEquals(1, project.getTasksData().size());
+        assertFalse(project.getTasksData().contains(task));
     }
 }
 

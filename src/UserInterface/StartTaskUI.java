@@ -197,30 +197,21 @@ public class StartTaskUI {
     }
 
     /**
-     * Pretty-prints a list of all available or pending tasks currently in the system
+     * Pretty-prints a list of all available or pending tasks which the current user can start
      *
      * @throws IncorrectPermissionException if the user is not logged-in as a developer\
      */
     private void printTasksList() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException {
         System.out.println("***** LIST OF AVAILABLE OR PENDING TASKS *****");
-        for (String projectName : getController().getTaskManSystemData().getProjectNames()) {
+        for (ProjectData projectData : getController().getTaskManSystemData().getOngoingProjectsData()) {
 
-            ProjectData projectData = getController().getProjectData(projectName);
+            for (TaskData taskData : projectData.getAvailableAndPendingTasksData()) {
+                // TODO: dit is eigenlijk ook geen UI-logica
+                Set<Role> userRoles = getController().getUserRoles();
+                userRoles.retainAll(taskData.getUnfulfilledRoles());
 
-            if (projectData.getStatus() == ProjectStatus.ONGOING) {
-                for (String taskName : projectData.getActiveTasksNames()) {
-
-                    TaskData taskData = getController().getTaskData(projectName, taskName);
-
-                    if (taskData.getStatus() == Status.AVAILABLE || taskData.getStatus() == Status.PENDING) {
-
-                        Set<Role> userRoles = getController().getUserRoles();
-                        userRoles.retainAll(taskData.getUnfulfilledRoles());
-
-                        if (userRoles.size() > 0) {
-                            System.out.println(" - Task: " + taskName + ", belonging to Project: " + projectName);
-                        }
-                    }
+                if (userRoles.size() > 0) {
+                    System.out.println(" - Task: " + taskData.getName() + ", belonging to Project: " + projectData.getName());
                 }
             }
         }

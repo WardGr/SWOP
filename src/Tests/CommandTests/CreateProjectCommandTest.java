@@ -34,15 +34,19 @@ public class CreateProjectCommandTest {
     public void testExecuteAndUndo() throws ProjectNotFoundException, InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
         CreateProjectCommand command = new CreateProjectCommand(taskManSystem, "Project", "", new Time(0));
 
-        assertFalse(taskManSystem.getTaskManSystemData().getProjectNames().contains("Project"));
+        TaskManSystemData taskManSystemData = taskManSystem.getTaskManSystemData();
 
+        // Before the command no projects
+        assertTrue(taskManSystemData.getProjectsData().isEmpty());
         command.execute();
+        assertEquals(1, taskManSystemData.getProjectsData().size());
 
-        assertTrue(taskManSystem.getTaskManSystemData().getProjectNames().contains("Project"));
+        ProjectData       project           = taskManSystem.getProjectData("Project");
+        assertTrue(taskManSystemData.getProjectsData().contains(project));
 
         command.undo();
-
-        assertFalse(taskManSystem.getTaskManSystemData().getProjectNames().contains("Project"));
+        assertTrue(taskManSystemData.getProjectsData().isEmpty());
+        assertFalse(taskManSystemData.getProjectsData().contains(project));
     }
 }
 

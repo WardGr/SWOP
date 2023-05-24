@@ -67,8 +67,8 @@ public class LoadSystemTest {
         assertEquals(taskData.getName(), "availableTask");
         assertEquals(taskData.getDescription(), "first LoadSystemTask");
         //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
-        assertEquals(taskData.getNextTaskNames().size(), 0);
-        assertEquals(taskData.getPrevTaskNames().size(), 0);
+        assertTrue(taskData.getNextTasksData().isEmpty());
+        assertTrue(taskData.getPrevTasksData().isEmpty());
         assertEquals(taskData.getProjectName(), "availableProject");
         assertNull(taskData.getReplacesTaskName());
         assertEquals(taskData.getEstimatedDuration().getHour(), 16);
@@ -168,16 +168,17 @@ public class LoadSystemTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        TaskData taskData = taskManSystem.getTaskData("replaceProject", "replacedTask");
-        assertEquals(taskData.getStatus(), Status.FAILED);
-        assertEquals(taskData.getEndTime().getHour(), 3);
-        assertEquals(taskData.getEndTime().getMinute(), 11);
-        taskData = taskManSystem.getTaskData("replaceProject", "replacesTask");
-        assertEquals(taskData.getUnfulfilledRoles().size(), 0);
-        assertEquals(taskData.getStatus(), Status.EXECUTING);
-        assertEquals(taskData.getReplacesTaskName(), "replacedTask");
+        TaskData replacedTask = taskManSystem.getTaskData("replaceProject", "replacedTask");
+        assertEquals(replacedTask.getStatus(), Status.FAILED);
+        assertEquals(replacedTask.getEndTime().getHour(), 3);
+        assertEquals(replacedTask.getEndTime().getMinute(), 11);
+        TaskData replacesTask = taskManSystem.getTaskData("replaceProject", "replacesTask");
+        assertEquals(replacesTask.getUnfulfilledRoles().size(), 0);
+        assertEquals(replacesTask.getStatus(), Status.EXECUTING);
+        assertEquals(replacesTask.getReplacesTaskName(), "replacedTask");
+
         ProjectData projectData = taskManSystem.getProjectData("replaceProject");
-        assertTrue(projectData.getReplacedTasksNames().contains("replacedTask"));
+        assertTrue(projectData.getReplacedTasksData().contains(replacedTask));
         session.logout();
     }
     @Test
@@ -192,13 +193,14 @@ public class LoadSystemTest {
             throw new RuntimeException(e);
         }
         TaskData taskData = taskManSystem.getTaskData("previousProject", "previousTask");
+        TaskData nextTask = taskManSystem.getTaskData("previousProject", "nextTask");
+
         assertEquals(taskData.getStatus(), Status.EXECUTING);
-        assertTrue(taskData.getNextTaskNames().contains(new Tuple<>("previousProject","nextTask")));
-        taskData = taskManSystem.getTaskData("previousProject", "nextTask");
-        assertEquals(taskData.getStatus(), Status.UNAVAILABLE);
-        assertTrue(taskData.getPrevTaskNames().contains(new Tuple<>("previousProject","previousTask")));
-        assertEquals(taskData.getPrevTaskNames().size(), 1);
-        assertEquals(taskData.getNextTaskNames().size(), 0);
+        assertTrue(taskData.getNextTasksData().contains(nextTask));
+        assertEquals(nextTask.getStatus(), Status.UNAVAILABLE);
+        assertTrue(nextTask.getPrevTasksData().contains(taskData));
+        assertEquals(nextTask.getPrevTasksData().size(), 1);
+        assertTrue(nextTask.getNextTasksData().isEmpty());
         session.logout();
     }
     @Test
@@ -249,8 +251,8 @@ public class LoadSystemTest {
         assertEquals(taskData.getName(), "availableTask");
         assertEquals(taskData.getDescription(), "first LoadSystemTask");
         //assertEquals(taskData.getRequiredRoles().get(0), Role.JAVAPROGRAMMER);
-        assertEquals(taskData.getNextTaskNames().size(), 0);
-        assertEquals(taskData.getPrevTaskNames().size(), 0);
+        assertTrue(taskData.getNextTasksData().isEmpty());
+        assertTrue(taskData.getPrevTasksData().isEmpty());
         assertEquals(taskData.getProjectName(), "availableProject");
         assertNull(taskData.getReplacesTaskName());
         assertEquals(taskData.getEstimatedDuration().getHour(), 16);
@@ -319,74 +321,5 @@ public class LoadSystemTest {
             assertEquals(e.getMessage(), "ERROR: File logic is invalid so couldn't setup system.");
         }
         session.logout();
-    }
-
-    @Test
-    public void ui() throws LoginException {
-
-        /*
-        LoadSystemUI lsu = new LoadSystemUI(lsc);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(out));
-
-        //Tests user has not the right permission
-        User manager = userManager.getUser("SamHa", "trein123");
-        session.login(manager);
-        lsu.loadSystem();
-        assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
-        out.reset();
-
-        //Tests user has right permission but wants to go back
-        manager = userManager.getUser("DieterVH", "computer776");
-        session.login(manager);
-        System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
-        lsu.loadSystem();
-        assertEquals(
-                """
-                        Type BACK to cancel system load at any time
-                        *********** SYSTEM LOAD FORM ***********
-                        please enter the path of the load file:\s
-                        Cancelled system load
-                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
-        out.reset();
-
-        //Tests when a user succesfully loads a system
-        System.setIn(new ByteArrayInputStream("src/Tests/jsons/multipleProjects.json\n".getBytes()));
-        lsu.loadSystem();
-        assertEquals(
-                """
-                        Type BACK to cancel system load at any time
-                        *********** SYSTEM LOAD FORM ***********
-                        please enter the path of the load file:\s
-                        system succesfully loaded
-                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
-        out.reset();
-
-        //Tests when a user gives an invalid file path
-        System.setIn(new ByteArrayInputStream("src/src/loadTest.json\n".getBytes()));
-        lsu.loadSystem();
-        assertEquals(
-                """
-                        Type BACK to cancel system load at any time
-                        *********** SYSTEM LOAD FORM ***********
-                        please enter the path of the load file:\s
-                        ERROR: File path is invalid.
-                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
-        out.reset();
-
-        //Tests when a user gives a  file with invalid logic
-        System.setIn(new ByteArrayInputStream("src/Tests/jsons/invalidRole.json\n".getBytes()));
-        lsu.loadSystem();
-        assertEquals(
-                """
-                        Type BACK to cancel system load at any time
-                        *********** SYSTEM LOAD FORM ***********
-                        please enter the path of the load file:\s
-                        ERROR: File logic is invalid so couldn't setup system.
-                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
-        out.reset();
-
-         */
-
     }
 }

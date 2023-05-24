@@ -111,7 +111,7 @@ public class AdvanceTimeUI {
                 amountMinutes = Integer.parseInt(amountMinutesString);
                 break;
             } catch (NumberFormatException e) {
-                System.out.println("Given system minute is not an integer, please try again");
+                System.out.println("ERROR: Given system minute is not an integer, please try again");
                 amountMinutesString = scanner.nextLine();
             }
         }

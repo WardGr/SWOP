@@ -41,8 +41,8 @@ public class UndoRedoUI {
             System.out.println("There are no actions that can be undone; Cancelled undo\n");
         } else {
             printPreviousCommandsList(previousCommands);
-            CommandData latestCommand = getController().getLastExecutedCommand();
-            boolean confirmation = getBooleanInput(scanner,"Confirm that you want to undo the last action: " + latestCommand.getDetails());
+            CommandData lastExecutedCommand = getController().getLastExecutedCommand();
+            boolean confirmation = getBooleanInput(scanner,"Are you sure that you want to undo the last action? " + lastExecutedCommand.getDetails());
 
             if (confirmation){
                 try{
@@ -66,7 +66,7 @@ public class UndoRedoUI {
             System.out.print(" - " + command.getFirst().getDetails() +
                     " --- Executed By: " + command.getSecond());
             if (!command.getFirst().undoPossible()){
-                System.out.println(" --- NO UNDO POSSIBLE");
+                System.out.println(" --- CANNOT BE UNDONE");
             } else {
                 System.out.println();
             }

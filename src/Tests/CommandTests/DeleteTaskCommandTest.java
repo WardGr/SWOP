@@ -5,6 +5,7 @@ import Domain.Command.DeleteTaskCommand;
 import Domain.Command.UndoNotPossibleException;
 import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.TaskData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,12 +41,13 @@ public class DeleteTaskCommandTest {
     public void testExecuteAndUndo() throws ProjectNotFoundException, TaskNotFoundException {
         DeleteTaskCommand command = new DeleteTaskCommand(taskManSystem, "Project", "Task");
 
-        assertTrue(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Task"));
+        ProjectData       projectData       = taskManSystem.getProjectData("Project");
+        TaskData          taskData          = taskManSystem.getTaskData("Project", "Task");
 
+        assertTrue(projectData.getTasksData().contains(taskData));
         command.execute();
 
-        assertFalse(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Task"));
-
+        assertFalse(projectData.getTasksData().contains(taskData));
         assertThrows(UndoNotPossibleException.class, command::undo);
     }
 }

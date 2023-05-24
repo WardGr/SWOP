@@ -56,16 +56,6 @@ public interface TaskData {
     String getReplacesTaskName();
 
     /**
-     * @return A list of the names of all previous tasks of the task
-     */
-    Set<Tuple<String,String>> getPrevTaskNames();
-
-    /**
-     * @return A list of the names of all next tasks of the task
-     */
-    Set<Tuple<String,String>> getNextTaskNames();
-
-    /**
      * @return A time object depicting this tasks' start time
      */
     Time getStartTime();
@@ -91,6 +81,17 @@ public interface TaskData {
     String getProjectName();
 
     /**
+     * @return A list of task data of all previous tasks of this task
+     */
+    List<TaskData> getPrevTasksData();
+
+    /**
+     * @return A list of task data of all next tasks of this task
+     */
+    List<TaskData> getNextTasksData();
+
+
+    /**
      * Checks if it is safe to add (the task corresponding to) the given prevTask as previous task to this task
      * without introducing loops in the dependency graph
      *
@@ -98,5 +99,5 @@ public interface TaskData {
      * @return true if (the task corresponding to) the given prevTask can safely be added as a previous task to
      * this proxy's task without introducing a loop in the dependency graph, false otherwise
      */
-    boolean canSafelyAddPrevTask(Tuple<String,String> prevTask);
+    boolean canSafelyAddPrevTask(TaskData prevTask);
 }

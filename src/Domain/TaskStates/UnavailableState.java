@@ -35,9 +35,9 @@ public class UnavailableState implements TaskState {
     }
 
     @Override
-    public boolean canSafelyAddPrevTask(Task task, Tuple<String,String> prevTask) {
+    public boolean canSafelyAddPrevTask(Task task, TaskData prevTask) {
         for (Task nextTask : task.getAllNextTasks()) {
-            if ( prevTask.equals( new Tuple<>(nextTask.getProjectName(), nextTask.getName()) ) ){
+            if ( prevTask.getProjectName().equals(nextTask.getProjectName()) &&  prevTask.getName().equals(nextTask.getName())) {
                 return false;
             }
         }

@@ -77,8 +77,8 @@ public class TaskTest {
         assertEquals("project1", creation.getProjectName());
         assertEquals("(project1, Creation)", creation.toString());
 
-        assertEquals(0, creation.getNextTaskNames().size());
-        assertEquals(0, creation.getPrevTaskNames().size());
+        assertTrue(creation.getNextTasksData().isEmpty());
+        assertTrue(creation.getPrevTasksData().isEmpty());
         assertNull(creation.getReplacesTaskName());
         assertNull(creation.getReplacementTaskName());
         assertNull(creation.getStartTime());
@@ -208,18 +208,20 @@ public class TaskTest {
         assertEquals("Replacement Task", currentTask.getReplacementTaskName());
         assertEquals(Status.AVAILABLE, replacementTask.getStatus());
 
-        assertEquals(Set.of(new Tuple<>("project1", "Next Task")), replacementTask.getNextTaskNames());
-        assertEquals(Set.of(new Tuple<>("project1", "Previous Task")), replacementTask.getPrevTaskNames());
-        assertEquals(0, currentTask.getNextTaskNames().size());
-        assertEquals(0, currentTask.getPrevTaskNames().size());
+        assertEquals(1, replacementTask.getNextTasksData().size());
+        assertEquals(1, replacementTask.getPrevTasksData().size());
+        assertTrue(currentTask.getNextTasksData().isEmpty());
+        assertTrue(currentTask.getPrevTasksData().isEmpty());
     }
 
     @Test
     public void testPreviousDependencies() throws IncorrectTaskStatusException, LoopDependencyGraphException, InvalidTimeException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
-        assertFalse(prevTask.canSafelyAddPrevTask(new Tuple<>("project1", "Next Task")));
-        assertFalse(currentTask.canSafelyAddPrevTask(new Tuple<>("project1", "Current Task")));
-        assertTrue(prevTask.canSafelyAddPrevTask(new Tuple<>("project2", "Task 2")));
-        assertTrue(nextTask.canSafelyAddPrevTask(new Tuple<>("project1", "Current Task")));
+
+
+        assertFalse(prevTask.canSafelyAddPrevTask(nextTask.getTaskData()));
+        assertFalse(currentTask.canSafelyAddPrevTask(currentTask.getTaskData()));
+        assertTrue(prevTask.canSafelyAddPrevTask(task2.getTaskData()));
+        assertTrue(nextTask.canSafelyAddPrevTask(currentTask.getTaskData()));
 
         assertThrows(LoopDependencyGraphException.class, () -> prevTask.addPrevTask(nextTask));
         assertThrows(LoopDependencyGraphException.class, () -> currentTask.addPrevTask(currentTask));
@@ -232,11 +234,11 @@ public class TaskTest {
         assertEquals(Status.AVAILABLE, currentTask.getStatus());
         currentTask.addPrevTask(prevTask);
         assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
-        assertEquals(Set.of(new Tuple<>("project1", "Previous Task")), currentTask.getPrevTaskNames());
+        assertEquals(List.of(prevTask), currentTask.getPrevTasksData());
 
         currentTask.removePrevTask(prevTask);
         currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
-        assertFalse(currentTask.canSafelyAddPrevTask(new Tuple<>("project1", "Previous Task")));
+        assertFalse(currentTask.canSafelyAddPrevTask(prevTask.getTaskData()));
         assertThrows(IncorrectTaskStatusException.class, () -> currentTask.addPrevTask(prevTask));
     }
 
@@ -251,7 +253,7 @@ public class TaskTest {
         assertEquals(Status.AVAILABLE, currentTask.getStatus());
         prevTask.addNextTask(currentTask);
         assertEquals(Status.UNAVAILABLE, currentTask.getStatus());
-        assertEquals(Set.of(new Tuple<>("project1", "Current Task")), prevTask.getNextTaskNames());
+        assertEquals(1, prevTask.getNextTasksData().size());
 
         prevTask.removeNextTask(currentTask);
         currentTask.start(new Time(0), sysAdmin, Role.SYSADMIN);
@@ -289,10 +291,10 @@ public class TaskTest {
     @Test
     public void testDeletingCurrentTask(){
         currentTask.removeAllDependencies();
-        assertEquals(0, currentTask.getPrevTaskNames().size());
-        assertEquals(0, currentTask.getNextTaskNames().size());
-        assertEquals(0, nextTask.getPrevTaskNames().size());
-        assertEquals(0, prevTask.getNextTaskNames().size());
+        assertTrue(currentTask.getPrevTasksData().isEmpty());
+        assertTrue(currentTask.getNextTasksData().isEmpty());
+        assertTrue(nextTask.getPrevTasksData().isEmpty());
+        assertTrue(nextTask.getNextTasksData().isEmpty());
     }
 
     @Test

@@ -66,10 +66,11 @@ public class TaskManSystemTest {
     }
 
     @Test
-    public void testAddTaskToProject() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IllegalTaskRolesException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException {
+    public void testAddTaskToProject() throws InvalidTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IllegalTaskRolesException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException {
         // Add task in second project depending on task in first project
         taskManSystem.addTaskToProject("Second Project", "Dependent", "", new Time(40), 0.2, List.of(Role.SYSADMIN), Set.of(new Tuple<>("New Project", "New Task")), Set.of());
-        assertEquals(Set.of(new Tuple<>("New Project", "New Task")), taskManSystem.getTaskData("Second Project", "Dependent").getPrevTaskNames());
+
+        assertEquals(1, taskManSystem.getTaskData("Second Project", "Dependent").getPrevTasksData().size());
         assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("New Project", "New Task").getStatus());
         assertEquals(Status.UNAVAILABLE, taskManSystem.getTaskData("Second Project", "Dependent").getStatus());
         taskManSystem.deleteProject("Second Project");
@@ -170,12 +171,12 @@ public class TaskManSystemTest {
     @Test
     public void addRemoveNextTask() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         taskManSystem.addNextTaskToProject("New Project", "New Task", "Second Project", "Second Task");
-        assertEquals(Set.of(new Tuple<>("Second Project", "Second Task")), taskManSystem.getTaskData("New Project", "New Task").getNextTaskNames());
-        assertEquals(Set.of(new Tuple<>("New Project", "New Task")), taskManSystem.getTaskData("Second Project", "Second Task").getPrevTaskNames());
+        assertEquals(1, taskManSystem.getTaskData("New Project", "New Task").getNextTasksData().size());
+        assertEquals(1, taskManSystem.getTaskData("Second Project", "Second Task").getPrevTasksData().size());
 
         taskManSystem.removeNextTaskFromProject("New Project", "New Task", "Second Project", "Second Task");
-        assertEquals(Set.of(), taskManSystem.getTaskData("New Project", "New Task").getNextTaskNames());
-        assertEquals(Set.of(), taskManSystem.getTaskData("Second Project", "Second Task").getPrevTaskNames());
+        assertTrue(taskManSystem.getTaskData("New Project", "New Task").getNextTasksData().isEmpty());
+        assertTrue(taskManSystem.getTaskData("Second Project", "Second Task").getPrevTasksData().isEmpty());
 
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.addNextTaskToProject("", "", "", ""));
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.removeNextTaskFromProject("", "", "", ""));
@@ -184,12 +185,12 @@ public class TaskManSystemTest {
     @Test
     public void addRemovePrevTask() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         taskManSystem.addPrevTaskToProject("New Project", "New Task", "Second Project", "Second Task");
-        assertEquals(Set.of(new Tuple<>("Second Project", "Second Task")), taskManSystem.getTaskData("New Project", "New Task").getPrevTaskNames());
-        assertEquals(Set.of(new Tuple<>("New Project", "New Task")), taskManSystem.getTaskData("Second Project", "Second Task").getNextTaskNames());
+        assertEquals(1, taskManSystem.getTaskData("New Project", "New Task").getPrevTasksData().size());
+        assertEquals(1, taskManSystem.getTaskData("Second Project", "Second Task").getNextTasksData().size());
 
         taskManSystem.removePrevTaskFromProject("New Project", "New Task", "Second Project", "Second Task");
-        assertEquals(Set.of(), taskManSystem.getTaskData("New Project", "New Task").getPrevTaskNames());
-        assertEquals(Set.of(), taskManSystem.getTaskData("Second Project", "Second Task").getNextTaskNames());
+        assertTrue(taskManSystem.getTaskData("New Project", "New Task").getPrevTasksData().isEmpty());
+        assertTrue(taskManSystem.getTaskData("Second Project", "Second Task").getNextTasksData().isEmpty());
 
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.addPrevTaskToProject("", "", "", ""));
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.removePrevTaskFromProject("", "", "", ""));

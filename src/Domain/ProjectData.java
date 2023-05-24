@@ -1,5 +1,8 @@
 package Domain;
 
+import Domain.TaskStates.TaskData;
+
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -34,18 +37,46 @@ public interface ProjectData {
      */
     Time getDueTime();
 
-    /**
-     * @return A list of names of all tasks currently active (= not replaced) in the project
-     */
-    List<String> getActiveTasksNames();
-
-    /**
-     * @return A list of all tasks that have been replaced in the project
-     */
-    List<String> getReplacedTasksNames();
 
     /**
      * @return The projects' status (ONGOING or FINISHED)
      */
     ProjectStatus getStatus();
+
+    /**
+     * @return  A list of data of all tasks in this project
+     */
+    List<TaskData> getTasksData();
+
+    /**
+     * @return  A list of data of all tasks in this project that have been replaced
+     */
+    List<TaskData> getReplacedTasksData();
+
+    /**
+     * @return  A list of data of all tasks in this project that are available or pending
+     */
+    default List<TaskData> getAvailableAndPendingTasksData() {
+        return getTasksData().stream().filter(t -> t.getStatus() == Status.AVAILABLE || t.getStatus() == Status.PENDING).toList();
+    }
+
+    default List<TaskData> getReplaceableTasksData() {
+        return getTasksData().stream().filter(t -> t.getStatus() == Status.FAILED).toList();
+    }
+
+    default List<TaskData> getPossiblePrevTasks(TaskData taskData) {
+        return getTasksData().stream().filter(t -> !taskData.getPrevTasksData().contains(t) &&
+                taskData.canSafelyAddPrevTask(t)).toList();
+    }
+
+    default List<TaskData> getPossibleNextTasks(TaskData taskData) {
+        return getTasksData().stream().filter(t -> !taskData.getNextTasksData().contains(t) &&
+                t.canSafelyAddPrevTask(taskData)).toList();
+    }
+
+    default int getTotalTaskCount() {
+        return getTasksData().size() + getReplacedTasksData().size();
+    }
+
+
 }

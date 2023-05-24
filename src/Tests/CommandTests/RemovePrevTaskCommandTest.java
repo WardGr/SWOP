@@ -4,6 +4,7 @@ import Domain.*;
 import Domain.Command.RemovePrevTaskCommand;
 import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.TaskData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,15 +45,18 @@ public class RemovePrevTaskCommandTest {
     public void testExecuteAndUndo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, LoopDependencyGraphException {
         RemovePrevTaskCommand command = new RemovePrevTaskCommand(taskManSystem, "Project2", "Task2", "Project1", "Task1");
 
-        assertTrue(taskManSystem.getTaskData("Project1", "Task1").getNextTaskNames().contains(new Tuple<>("Project2", "Task2")));
-        assertTrue(taskManSystem.getTaskData("Project2", "Task2").getPrevTaskNames().contains(new Tuple<>("Project1", "Task1")));
+        TaskData taskData1 = taskManSystem.getTaskData("Project1", "Task1");
+        TaskData taskData2 = taskManSystem.getTaskData("Project2", "Task2");
+
+        assertTrue(taskData1.getNextTasksData().contains(taskData2));
+        assertTrue(taskData2.getPrevTasksData().contains(taskData1));
 
         command.execute();
-        assertFalse(taskManSystem.getTaskData("Project1", "Task1").getNextTaskNames().contains(new Tuple<>("Project2", "Task2")));
-        assertFalse(taskManSystem.getTaskData("Project2", "Task2").getPrevTaskNames().contains(new Tuple<>("Project1", "Task1")));
+        assertFalse(taskData1.getNextTasksData().contains(taskData2));
+        assertFalse(taskData2.getPrevTasksData().contains(taskData1));
 
         command.undo();
-        assertTrue(taskManSystem.getTaskData("Project1", "Task1").getNextTaskNames().contains(new Tuple<>("Project2", "Task2")));
-        assertTrue(taskManSystem.getTaskData("Project2", "Task2").getPrevTaskNames().contains(new Tuple<>("Project1", "Task1")));
+        assertTrue(taskData1.getNextTasksData().contains(taskData2));
+        assertTrue(taskData2.getPrevTasksData().contains(taskData1));
     }
 }

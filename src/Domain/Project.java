@@ -80,6 +80,16 @@ public class Project implements ProjectData {
         return names;
     }
 
+    @Override
+    public List<TaskData> getTasksData() {
+        return getTasks().stream().map(Task::getTaskData).toList();
+    }
+
+    @Override
+    public List<TaskData> getReplacedTasksData() {
+        return getReplacedTasks().stream().map(Task::getTaskData).toList();
+    }
+
     /**
      * @return A list of names of tasks that are replaced in this project
      */
@@ -209,6 +219,7 @@ public class Project implements ProjectData {
         tasks.add(task);
     }
 
+
     private void deleteTask(Task task){
         if (task.getReplacesTaskName() != null){
             Task replaces = getTask(task.getReplacesTaskName());
@@ -220,6 +231,12 @@ public class Project implements ProjectData {
         removeReplacedTask(task);
     }
 
+    /**
+     * Deletes the given task from the list of active tasks
+     *
+     * @param taskName                  Name of the task to be removed to the list of active tasks
+     * @throws TaskNotFoundException    if the taskname does not correspond to a task inside this project
+     */
     public void deleteTask(String taskName) throws TaskNotFoundException {
         Task task = getTask(taskName);
         if (task == null){
@@ -228,6 +245,9 @@ public class Project implements ProjectData {
         deleteTask(task);
     }
 
+    /**
+     * Clears all tasks from the project
+     */
     public void clearTasks(){
         for (Task task : getReplacedTasks()){
             deleteTask(task);
@@ -323,6 +343,15 @@ public class Project implements ProjectData {
         task.start(startTime, currentUser, role);
     }
 
+    /**
+     * Stops the given task //TODO: ik stop voor vandaag
+     *
+     * @param taskName
+     * @param currentUser
+     * @throws TaskNotFoundException
+     * @throws IncorrectTaskStatusException
+     * @throws IncorrectUserException
+     */
     public void stopTask(
             String taskName,
             User currentUser

@@ -5,6 +5,7 @@ import Domain.Command.ReplaceTaskCommand;
 import Domain.TaskStates.IllegalTaskRolesException;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.TaskStates.TaskData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,24 +51,35 @@ public class ReplaceTaskCommandTest {
     public void testExecuteAndUndo() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, EndTimeBeforeStartTimeException, IncorrectUserException, IncorrectRoleException, UserAlreadyAssignedToTaskException, TaskNameAlreadyInUseException, InvalidTimeException {
         ReplaceTaskCommand command = new ReplaceTaskCommand(taskManSystem, "Project", "Replace", "test", new Time(5), 0.2, "Task1");
 
-        assertTrue(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Task1"));
-        assertFalse(taskManSystem.getProjectData("Project").getReplacedTasksNames().contains("Task1"));
-        assertFalse(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Replace"));
-        assertFalse(taskManSystem.getProjectData("Project").getReplacedTasksNames().contains("Replace"));
+        TaskData taskData1 = taskManSystem.getTaskData("Project", "Task1");
+        ProjectData projectData = taskManSystem.getProjectData("Project");
+
+
+        assertTrue(projectData.getTasksData().contains(taskData1));
+        assertFalse(projectData.getReplacedTasksData().contains(taskData1));
+        assertEquals(1, projectData.getTasksData().size());
+        assertTrue(projectData.getReplacedTasksData().isEmpty());
 
         command.execute();
+        assertEquals(1, projectData.getReplacedTasksData().size());
+        assertEquals(1, projectData.getTasksData().size());
 
-        assertFalse(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Task1"));
-        assertTrue(taskManSystem.getProjectData("Project").getReplacedTasksNames().contains("Task1"));
-        assertTrue(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Replace"));
-        assertFalse(taskManSystem.getProjectData("Project").getReplacedTasksNames().contains("Replace"));
+        TaskData taskReplace = taskManSystem.getTaskData("Project", "Replace");
+
+        assertFalse(projectData.getTasksData().contains(taskData1));
+        assertTrue(projectData.getReplacedTasksData().contains(taskData1));
+        assertTrue(projectData.getTasksData().contains(taskReplace));
+        assertFalse(projectData.getReplacedTasksData().contains(taskReplace));
 
         command.undo();
+        assertEquals(1, projectData.getTasksData().size());
+        assertTrue(projectData.getReplacedTasksData().isEmpty());
 
-        assertTrue(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Task1"));
-        assertFalse(taskManSystem.getProjectData("Project").getReplacedTasksNames().contains("Task1"));
-        assertFalse(taskManSystem.getProjectData("Project").getActiveTasksNames().contains("Replace"));
-        assertFalse(taskManSystem.getProjectData("Project").getReplacedTasksNames().contains("Replace"));    }
+        assertTrue(projectData.getTasksData().contains(taskData1));
+        assertFalse(projectData.getReplacedTasksData().contains(taskData1));
+        assertFalse(projectData.getTasksData().contains(taskReplace));
+        assertFalse(projectData.getReplacedTasksData().contains(taskReplace));
+    }
 }
 
 

@@ -52,6 +52,14 @@ public class TaskManSystem implements TaskManSystemData {
     }
 
     /**
+     * @return List of immutable project data
+     */
+    @Override
+    public List<ProjectData> getProjectsData() {
+        return getProjects().stream().map(Project::getProjectData).toList();
+    }
+
+    /**
      * Returns the project corresponding to the given project name if no such project exists then returns null
      *
      * @param projectName Name of the project

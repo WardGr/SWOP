@@ -102,14 +102,8 @@ public class ShowProjectsUI {
      * @throws IncorrectPermissionException if current session is not held by a project manager
      */
     private void showProjectsWithStatuses() throws IncorrectPermissionException {
-        List<String> projectNames = getController().getTaskManSystemData().getProjectNames();
-        for (String projectName : projectNames) {
-            try {
-                ProjectStatus status = getController().getProjectData(projectName).getStatus();
-                System.out.println(projectName + ", status: " + status.toString());
-            } catch (ProjectNotFoundException e) {
-                System.out.println("The given project could not be found\n");
-            }
+        for (ProjectData project : getController().getTaskManSystemData().getProjectsData()) {
+            System.out.println(project.getName() + ", status: " + project.getStatus());
         }
     }
 
@@ -133,10 +127,10 @@ public class ShowProjectsUI {
         System.out.println();
         System.out.println("Tasks:");
 
-        if (projectData.getActiveTasksNames().size() > 0) {
+        if (!projectData.getTasksData().isEmpty()) {
             int index = 1;
-            for (String taskName : projectData.getActiveTasksNames()) {
-                System.out.println(index++ + ". " + taskName);
+            for (TaskData task : projectData.getTasksData()) {
+                System.out.println(index++ + ". " + task.getName());
             }
         } else {
             System.out.println("There are no active tasks attached to this project.");
@@ -145,17 +139,12 @@ public class ShowProjectsUI {
         System.out.println();
         System.out.println("Replaced Tasks:");
 
-        if (projectData.getReplacedTasksNames().size() > 0) {
+        if (!projectData.getReplacedTasksData().isEmpty()) {
             int index = 1;
-            for (String taskName : projectData.getReplacedTasksNames()) {
-                try {
-                    System.out.print(index++ + ". " + taskName);
-                    String replacedBy = getController().getTaskData(projectName, taskName).getReplacementTaskName();
-                    if (replacedBy != null) {
-                        System.out.print(" - Replaced by: " + replacedBy);
-                    }
-                } catch (TaskNotFoundException e) {
-                    System.out.print("\n The given task could not be found");
+            for (TaskData task : projectData.getReplacedTasksData()) {
+                System.out.print(index++ + ". " + task.getName());
+                if (task.getReplacementTaskName() != null) {
+                    System.out.print(" - Replaced by: " + task.getReplacementTaskName());
                 }
                 System.out.println();
             }
@@ -220,17 +209,17 @@ public class ShowProjectsUI {
         }
 
         System.out.println("Unfulfilled roles:");
-        if (taskData.getUnfulfilledRoles().size() > 0) {
+        if (!taskData.getUnfulfilledRoles().isEmpty()) {
             for (Role role : taskData.getUnfulfilledRoles()) {
                 System.out.println("- " + role.toString());
             }
         } else {
-            System.out.println("All roles are filled in.");
+            System.out.println("All roles are fulfilled.");
         }
         System.out.println();
 
         System.out.println("Committed users:");
-        if (taskData.getUserNamesWithRole().size() > 0) {
+        if (!taskData.getUserNamesWithRole().isEmpty()) {
             taskData.getUserNamesWithRole().forEach((userName, role) -> System.out.println("- " + userName + " as " + role.toString()));
         } else {
             System.out.println("No users are committed to this task.");
@@ -239,10 +228,10 @@ public class ShowProjectsUI {
 
 
         System.out.println("Next tasks:");
-        if (taskData.getNextTaskNames().size() > 0) {
+        if (!taskData.getNextTasksData().isEmpty()) {
             int i = 1;
-            for (Tuple<String,String> nextTask : taskData.getNextTaskNames()) {
-                System.out.println(i++ + ". " + nextTask.getSecond() + " --- Belonging to project: " + nextTask.getFirst());
+            for (TaskData nextTask : taskData.getNextTasksData()) {
+                System.out.println(i++ + ". " + nextTask.getName() + " --- Belonging to project: " + nextTask.getProjectName());
             }
         } else {
             System.out.println("- There are no next tasks");
@@ -250,10 +239,10 @@ public class ShowProjectsUI {
 
 
         System.out.println("Previous tasks:");
-        if (taskData.getPrevTaskNames().size() > 0) {
+        if (!taskData.getPrevTasksData().isEmpty()) {
             int i = 1;
-            for (Tuple<String,String> prevTask : taskData.getPrevTaskNames()) {
-                System.out.println(i++ + ". " + prevTask.getSecond() + " --- Belonging to project: " + prevTask.getFirst());
+            for (TaskData prevTask : taskData.getPrevTasksData()) {
+                System.out.println(i++ + ". " + prevTask.getName() + " --- Belonging to project: " + prevTask.getProjectName());
             }
         } else {
             System.out.println("- There are no previous tasks");

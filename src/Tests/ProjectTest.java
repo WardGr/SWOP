@@ -4,6 +4,7 @@ import Domain.*;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.IllegalTaskRolesException;
+import Domain.TaskStates.TaskData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,8 +78,8 @@ public class ProjectTest {
 
         project2.addNewTask("Task2", "", new Time(0), 0, List.of(Role.SYSADMIN), Set.of(new Tuple<>(project1, "Task1")), Set.of(new Tuple<>(project1, "Task3")));
 
-        assertTrue(project2.getTaskData("Task2").getPrevTaskNames().contains(new Tuple<>("Project 1", "Task1")));
-        assertTrue(project2.getTaskData("Task2").getNextTaskNames().contains(new Tuple<>("Project 1", "Task3")));
+        assertTrue(project2.getTaskData("Task2").getPrevTasksData().contains(project1.getTaskData("Task1")));
+        assertTrue(project2.getTaskData("Task2").getNextTasksData().contains(project1.getTaskData("Task3")));
     }
 
     @Test
@@ -90,17 +91,22 @@ public class ProjectTest {
         assertThrows(TaskNotFoundException.class, () -> project2.addPrevTask("Task", project1, "Task1"));
         assertThrows(TaskNotFoundException.class, () -> project2.addNextTask("Task", project1, "Task1"));
 
+
+        TaskData task1 = project1.getTaskData("Task1");
+        TaskData task2 = project2.getTaskData("Task2");
+        TaskData task3 = project1.getTaskData("Task3");
+
         project2.removePrevTask("Task2", project1, "Task1");
         project2.removeNextTask("Task2", project1, "Task3");
 
-        assertEquals(0, project2.getTaskData("Task2").getPrevTaskNames().size());
-        assertEquals(0, project2.getTaskData("Task2").getNextTaskNames().size());
+        assertTrue(task2.getPrevTasksData().isEmpty());
+        assertTrue(task2.getNextTasksData().isEmpty());
 
         project2.addPrevTask("Task2", project1, "Task3");
         project2.addNextTask("Task2", project1, "Task1");
 
-        assertTrue(project2.getTaskData("Task2").getPrevTaskNames().contains(new Tuple<>("Project 1", "Task3")));
-        assertTrue(project2.getTaskData("Task2").getNextTaskNames().contains(new Tuple<>("Project 1", "Task1")));
+        assertTrue(task2.getPrevTasksData().contains(task3));
+        assertTrue(task2.getNextTasksData().contains(task1));
     }
 
     @Test

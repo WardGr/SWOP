@@ -96,7 +96,7 @@ public class TaskUI {
 
             if (replacement) {
                 try {
-                    printReplacableTasks(projectName);
+                    printReplaceableTasks(projectName);
 
                     System.out.println("This task is a replacement for task:");
                     String replaces = scanner.nextLine();
@@ -169,24 +169,17 @@ public class TaskUI {
     }
 
     /**
-     * Prints all projects with the ONGOING status to the user
+     * Prints all projects with the ONGOING status to the user, or a message if there are no ongoing projects
      */
     private void printOngoingProjects() {
         System.out.println("-- Ongoing Projects --");
-        List<String> ongoingProjectsNames = getController().getTaskManSystemData().getProjectNames();
-        ongoingProjectsNames.removeIf(e -> {
-            try {
-                return getController().getProjectData(e).getStatus() == ProjectStatus.FINISHED;
-            } catch (ProjectNotFoundException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-        if (ongoingProjectsNames.size() > 0) {
-            for (String projectName : ongoingProjectsNames) {
-                System.out.println(" - " + projectName);
-            }
-        } else {
-            System.out.println(" - There is no ongoing project in the system.");
+
+        List<ProjectData> ongoingProjects = getController().getTaskManSystemData().getOngoingProjectsData();
+        for (ProjectData projectData : ongoingProjects) {
+            System.out.println(" - " + projectData.getName());
+        }
+        if (ongoingProjects.isEmpty()) {
+            System.out.println(" - No ongoing projects");
         }
     }
 
@@ -196,14 +189,18 @@ public class TaskUI {
      * @param projectName               Project name of which to print all replacable tasks
      * @throws ProjectNotFoundException if the given projectName does not correspond to an existing project within the system
      */
-    private void printReplacableTasks(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
+    private void printReplaceableTasks(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
         System.out.println("-- Tasks that can be replaced --");
 
-        for (String taskName : getController().getProjectData(projectName).getActiveTasksNames()) {
-            if (getController().getTaskData(projectName, taskName).getStatus() == Status.FAILED) {
-                System.out.println(" - " + taskName);
-            }
+        List<TaskData> replaceableTasks = getController().getProjectData(projectName).getReplaceableTasksData();
+        for (TaskData taskData : replaceableTasks) {
+            System.out.println(" - " + taskData.getName());
         }
+
+        if (replaceableTasks.isEmpty()) {
+            System.out.println(" - No replaceable tasks");
+        }
+
     }
 
 
@@ -369,24 +366,22 @@ public class TaskUI {
     private void printProjectsList() throws ProjectNotFoundException {
         System.out.println(" *** PROJECTS ***");
         TaskManSystemData taskManSystemData = getController().getTaskManSystemData();
-        for (String projectName : taskManSystemData.getProjectNames()){
-            ProjectData projectData = getController().getProjectData(projectName);
-            int nbOfTasks = projectData.getActiveTasksNames().size() + projectData.getReplacedTasksNames().size();
-            System.out.println(" - " + projectName + " | Containing " + nbOfTasks + " Tasks");
+        for (ProjectData projectData : taskManSystemData.getProjectsData()){
+            System.out.println(" - " + projectData.getName() + " | Containing " + projectData.getTotalTaskCount() + " Tasks");
         }
     }
 
     private void printTasksList(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
         ProjectData projectData = getController().getProjectData(projectName);
         System.out.println(" *** TASKS in " + projectName + " ***");
-        if (projectData.getActiveTasksNames().size() + projectData.getReplacedTasksNames().size() == 0) {
+        if (projectData.getTasksData().isEmpty() && projectData.getReplacedTasksData().isEmpty()) {
             System.out.println("There are no tasks in this project");
         }
-        for (String taskName : projectData.getActiveTasksNames()){
-            System.out.println(" - " + taskName);
+        for (TaskData task : projectData.getTasksData()){
+            System.out.println(" - " + task.getName());
         }
-        for (String replacedTaskName : projectData.getReplacedTasksNames()){
-            System.out.println(" - " + replacedTaskName + " - Replaced by: " + getController().getTaskData(projectName, replacedTaskName).getReplacementTaskName());
+        for (TaskData task : projectData.getReplacedTasksData()){
+            System.out.println(" - " + task.getName() + " - Replaced by: " + task.getReplacementTaskName());
         }
         System.out.println();
     }

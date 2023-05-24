@@ -39,12 +39,14 @@ public class DeleteProjectCommandTest {
     public void testExecuteAndUndo() throws ProjectNotFoundException {
         DeleteProjectCommand command = new DeleteProjectCommand(taskManSystem, "Project");
 
-        assertTrue(taskManSystem.getTaskManSystemData().getProjectNames().contains("Project"));
+        TaskManSystemData taskManSystemData = taskManSystem.getTaskManSystemData();
+        ProjectData       projectData       = taskManSystem.getProjectData("Project");
 
+
+        assertTrue(taskManSystemData.getProjectsData().contains(projectData));
         command.execute();
 
-        assertFalse(taskManSystem.getTaskManSystemData().getProjectNames().contains("Project"));
-
+        assertFalse(taskManSystem.getProjectsData().contains(projectData));
         assertThrows(UndoNotPossibleException.class, command::undo);
     }
 }
