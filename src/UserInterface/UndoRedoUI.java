@@ -1,10 +1,12 @@
 package UserInterface;
 
+import Application.IncorrectPermissionException;
 import Application.UndoRedoController;
 import Domain.Command.CommandData;
 import Domain.Command.UndoNotPossibleException;
 import Domain.EmptyCommandStackException;
 import Domain.IncorrectUserException;
+import Domain.Role;
 import Domain.Tuple;
 
 import java.util.List;
@@ -27,11 +29,15 @@ public class UndoRedoUI {
     }
 
     public void undo() {
-        Scanner scanner = new Scanner(System.in);
-        try {
-            undoForm(scanner);
-        } catch (BackException e){
-            System.out.println("Cancelled undo\n");
+        if (getController().undoRedoPreconditions()) {
+            Scanner scanner = new Scanner(System.in);
+            try {
+                undoForm(scanner);
+            } catch (BackException e){
+                System.out.println("Cancelled undo\n");
+            }
+        } else {
+            System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role or a Developer role to call this function");
         }
     }
 
@@ -78,10 +84,14 @@ public class UndoRedoUI {
 
 
     public void redo() {
-        try {
-            redoForm();
-        } catch (BackException e){
-            System.out.println("Cancelled redo\n");
+        if (getController().undoRedoPreconditions()) {
+            try {
+                redoForm();
+            } catch (BackException e){
+                System.out.println("Cancelled redo\n");
+            }
+        } else {
+            System.out.println("You must be logged in with the " + Role.PROJECTMANAGER + " role or a Developer role to call this function");
         }
     }
 
