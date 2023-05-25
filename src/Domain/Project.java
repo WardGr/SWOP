@@ -220,13 +220,18 @@ public class Project implements ProjectData {
     }
 
 
+    /**
+     * Deletes the given task from the list of active tasks
+     *
+     * @param task  Task to be removed to the list of active tasks
+     */
     private void deleteTask(Task task){
         if (task.getReplacesTaskName() != null){
             Task replaces = getTask(task.getReplacesTaskName());
             removeReplacedTask(replaces);
             addTask(replaces);
         }
-        task.removeAllDependencies();
+        task.clearTask();
         removeActiveTask(task);
         removeReplacedTask(task);
     }
@@ -352,7 +357,7 @@ public class Project implements ProjectData {
      * @throws IncorrectTaskStatusException
      * @throws IncorrectUserException
      */
-    public void stopTask(
+    public void undoStartTask(
             String taskName,
             User currentUser
     )
@@ -361,10 +366,10 @@ public class Project implements ProjectData {
         if (task == null) {
             throw new TaskNotFoundException();
         }
-        task.stop(currentUser);
+        task.undoStart(currentUser);
     }
 
-    public void restartTask(
+    public void undoEndTask(
             String taskName
     )
             throws TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
@@ -372,7 +377,7 @@ public class Project implements ProjectData {
         if (task == null) {
             throw new TaskNotFoundException();
         }
-        task.restart();
+        task.undoEnd();
         updateProjectStatus();
     }
 

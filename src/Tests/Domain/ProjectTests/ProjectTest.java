@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.HashSet;
@@ -115,8 +114,8 @@ public class ProjectTest {
         project1.startTask("Task1", new Time(0), user, Role.SYSADMIN);
         assertEquals(Status.EXECUTING, project1.getTaskData("Task1").getStatus());
 
-        assertThrows(TaskNotFoundException.class, () -> project1.stopTask("Test", user));
-        project1.stopTask("Task1", user);
+        assertThrows(TaskNotFoundException.class, () -> project1.undoStartTask("Test", user));
+        project1.undoStartTask("Task1", user);
         assertEquals(Status.AVAILABLE, project1.getTaskData("Task1").getStatus());
     }
 
@@ -132,8 +131,8 @@ public class ProjectTest {
         assertEquals(Status.FAILED, project2.getTaskData("Task").getStatus());
         assertEquals(ProjectStatus.ONGOING, project1.getStatus());
 
-        assertThrows(TaskNotFoundException.class, () -> project2.restartTask("Test"));
-        project2.restartTask("Task");
+        assertThrows(TaskNotFoundException.class, () -> project2.undoEndTask("Test"));
+        project2.undoEndTask("Task");
         assertEquals(Status.EXECUTING, project2.getTaskData("Task").getStatus());
         assertEquals(ProjectStatus.ONGOING, project2.getStatus());
 
@@ -141,7 +140,7 @@ public class ProjectTest {
         assertEquals(Status.FINISHED, project2.getTaskData("Task").getStatus());
         assertEquals(ProjectStatus.FINISHED, project2.getStatus());
 
-        project2.restartTask("Task");
+        project2.undoEndTask("Task");
         assertEquals(Status.EXECUTING, project2.getTaskData("Task").getStatus());
         assertEquals(ProjectStatus.ONGOING, project2.getStatus());
     }

@@ -24,9 +24,6 @@ interface TaskState {
         throw new IncorrectTaskStatusException("Task must be available or pending to be started");
     }
 
-    default void stopOneUser(Task task) throws IncorrectTaskStatusException {
-        throw new IncorrectTaskStatusException("Task must be pending or executing to be stopped"); // no way dat ge undo kunt doen als in available is, want dan hebt ge nog niks gestart
-    }
 
     /**
      * Returns the finishedStatus of the given task (early, on time, delayed)
@@ -56,8 +53,27 @@ interface TaskState {
      */
     default void updateAvailability(Task task) {}
 
+    /**
+     * Undoes start of the given task by the given user, transitioning from
+     * EXECUTING -> PENDING
+     * PENDING -> AVAILABLE
+     *
+     * @param task                              Task to undo the start of
+     * @throws IncorrectTaskStatusException     if the task is not executing or pending
+     */
+    default void undoStart(Task task) throws IncorrectTaskStatusException {
+        throw new IncorrectTaskStatusException("Task must be pending or executing to be stopped"); // no way dat ge undo kunt doen als in available is, want dan hebt ge nog niks gestart
+    }
 
-    default void restart(Task task) throws IncorrectTaskStatusException {
+    /**
+     * Undoes the end of the given task, transitioning from
+     * FINISHED -> EXECUTING
+     * FAILED -> EXECUTING
+     *
+     * @param task                          Task to undo the end of
+     * @throws IncorrectTaskStatusException if the task is not finished or failed
+     */
+    default void undoEnd(Task task) throws IncorrectTaskStatusException {
         throw new IncorrectTaskStatusException("Task is not in the finished or failed state"); // no way dat ge undo kunt doen als in available is, want dan hebt ge nog niks gestart
     }
 

@@ -30,7 +30,7 @@ public class FinishedState implements TaskState {
     }
 
     @Override
-    public void restart(Task task) {
+    public void undoEnd(Task task) {
         task.setState(new ExecutingState());
     }
 

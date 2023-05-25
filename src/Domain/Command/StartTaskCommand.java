@@ -98,7 +98,7 @@ public class StartTaskCommand implements Command {
     @Override
     public void undo() {
         try {
-            getTaskManSystem().stopTask(getProjectName(), getTaskName(), getUser());
+            getTaskManSystem().undoStartTask(getProjectName(), getTaskName(), getUser());
             // Reinstate previous task if it was pending
             if (getPreviousTaskRole() != null && getPreviousTaskName() != null && getPreviousProjectName() != null){
                 getTaskManSystem().startTask(getPreviousProjectName(), getPreviousTaskName(), getUser(), getPreviousTaskRole());

@@ -414,19 +414,33 @@ public class Task implements TaskData{
         getState().start(this, startTime, currentUser, role);
     }
 
-    public void stop(User currentUser)
+    /**
+     * Undoes the task starting
+     *
+     * @param currentUser                    User that started the task
+     * @throws IncorrectTaskStatusException  if this task is not executing or pending
+     * @throws IncorrectUserException        if the given user is not assigned to this task
+     */
+    public void undoStart(User currentUser)
             throws IncorrectTaskStatusException, IncorrectUserException {
         if (!getCommittedUsers().contains(currentUser)){
             throw new IncorrectUserException("Given user is not assigned to this task");
         }
-        getState().stopOneUser( this);
+        getState().undoStart( this);
         currentUser.endTask();
         uncommitUser(currentUser);
         clearTimeSpan();
     }
 
-    public void restart() throws IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
-        getState().restart(this);
+    /**
+     * Undoes the task finishing or failing
+     *
+     * @throws IncorrectTaskStatusException         if this task is not finished or failed
+     * @throws UserAlreadyAssignedToTaskException   if a user is already assigned to a task
+     * @throws IncorrectRoleException               if a user commits to a task with a role that is not required
+     */
+    public void undoEnd() throws IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        getState().undoEnd(this);
         for (Task nextTask : getNextTasks()){
             nextTask.updateAvailability();
         }
@@ -505,7 +519,6 @@ public class Task implements TaskData{
     /**
      * Removes all previous tasks from this tasks' list of previous tasks and sets the involved tasks' states accordingly
      *
-     * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
      */
     private void clearPrevTasks() {
         for (Task prevTask : getPrevTasks()) {
@@ -516,7 +529,6 @@ public class Task implements TaskData{
     /**
      * Removes all next tasks from this tasks' list of next tasks and sets the involved tasks' states accordingly
      *
-     * @throws IncorrectTaskStatusException if the current task is not AVAILABLE or UNAVAILABLE
      */
     private void clearNextTasks() {
         for (Task nextTask : getNextTasks()) {
@@ -524,7 +536,10 @@ public class Task implements TaskData{
         }
     }
 
-    public void removeAllDependencies() {
+    /**
+     * Clears this task to its initial state
+     */
+    public void clearTask() {
         clearPrevTasks();
         clearNextTasks();
         clearTimeSpan();
@@ -536,9 +551,7 @@ public class Task implements TaskData{
             getReplacesTask().setReplacementTask(null);
             setReplacesTask(null);
         }
-        if (!getCommittedUsers().isEmpty()){
-            setState(new AvailableState());
-        }
+        updateAvailability();
         for (User user : getCommittedUsers()) {
             user.endTask();
             uncommitUser(user);
@@ -615,7 +628,6 @@ public class Task implements TaskData{
     /**
      * Updates this tasks' availability, setting it to AVAILABLE or UNAVAILABLE according to its' previous tasks
      *
-     * @throws IncorrectTaskStatusException if the task is not AVAILABLE or UNAVAILABLE
      */
     void updateAvailability() {
         getState().updateAvailability(this);
@@ -666,7 +678,6 @@ public class Task implements TaskData{
      * Removes the given previous task from this task, updating the involved tasks' states according to the system rules
      *
      * @param prevTask Task to remove as previous task
-     * @throws IncorrectTaskStatusException if this task is not AVAILABLE or UNAVAILABLE
      */
     public void removePrevTask(Task prevTask) {
         removePrevTaskDirectly(prevTask);

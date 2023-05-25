@@ -121,15 +121,15 @@ public class TaskManSystemTest {
 
         // Restart finished task
         taskManSystem.finishTask("New Project", "New Task", user);
-        taskManSystem.restartTask("New Project", "New Task");
+        taskManSystem.undoEndTask("New Project", "New Task");
         assertEquals(Status.EXECUTING, taskManSystem.getTaskData("New Project", "New Task").getStatus());
 
         // Restart failed task
         taskManSystem.failTask("New Project", "New Task", user);
-        taskManSystem.restartTask("New Project", "New Task");
+        taskManSystem.undoEndTask("New Project", "New Task");
         assertEquals(Status.EXECUTING, taskManSystem.getTaskData("New Project", "New Task").getStatus());
 
-        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.restartTask("", ""));
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.undoEndTask("", ""));
     }
 
 
@@ -137,10 +137,10 @@ public class TaskManSystemTest {
     public void testStopTask() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException, IncorrectUserException {
         taskManSystem.startTask("New Project", "New Task", user, Role.SYSADMIN);
 
-        taskManSystem.stopTask("New Project", "New Task", user);
+        taskManSystem.undoStartTask("New Project", "New Task", user);
         assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("New Project", "New Task").getStatus());
 
-        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.stopTask("", "", user));
+        assertThrows(ProjectNotFoundException.class, () -> taskManSystem.undoStartTask("", "", user));
     }
 
     @Test
