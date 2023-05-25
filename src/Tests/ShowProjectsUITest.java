@@ -22,7 +22,6 @@ import static org.junit.Assert.assertEquals;
 public class ShowProjectsUITest {
     @Test
     public void testShowProjectsUI() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
-        /*
         Session session = new Session();
         SessionProxy sessionProxy = new SessionProxy(session);
         TaskManSystem tsm = new TaskManSystem(new Time(0));
@@ -91,7 +90,7 @@ public class ShowProjectsUITest {
         out.reset();
 
         tsm.addTaskToProject("Project1", "Task1", "Description1", new Time(100), 5, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
-        tsm.addTaskToProject("Project1", "otherTask", "This is a followup task", new Time(100), 5, List.of(Role.PYTHONPROGRAMMER) , Set.of("Task1"), new HashSet<>());
+        tsm.addTaskToProject("Project1", "otherTask", "This is a followup task", new Time(100), 5, List.of(Role.PYTHONPROGRAMMER) , Set.of(new Tuple<>("Project1","Task1")), new HashSet<>());
         tsm.addTaskToProject("Project2", "Task2", "Description2", new Time(100), 5, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
 
         out.reset();
@@ -268,7 +267,7 @@ public class ShowProjectsUITest {
                 No users are committed to this task.
                         
                 Next tasks:
-                1. otherTask
+                1. otherTask --- Belonging to project: Project1
                 Previous tasks:
                 - There are no previous tasks
                         
@@ -296,7 +295,7 @@ public class ShowProjectsUITest {
                 Next tasks:
                 - There are no next tasks
                 Previous tasks:
-                1. Task1
+                1. Task1 --- Belonging to project: Project1
                         
                 Type the name of a task to see more details, or type "BACK" to choose another project:
                 Type "BACK" to cancel
@@ -344,10 +343,10 @@ public class ShowProjectsUITest {
                 End Time:           0 hour(s), 5 minute(s)
                         
                 Unfulfilled roles:
-                - Python programmer
+                All roles are fulfilled.
                                 
                 Committed users:
-                No users are committed to this task.
+                - OlavBl as Python programmer
                         
                 Next tasks:
                 - There are no next tasks
@@ -428,7 +427,7 @@ public class ShowProjectsUITest {
                 End Time:           Task has not ended yet
                         
                 Unfulfilled roles:
-                All roles are filled in.
+                All roles are fulfilled.
                                 
                 Committed users:
                 - OlavBl as Python programmer
@@ -488,10 +487,10 @@ public class ShowProjectsUITest {
                 End Time:           0 hour(s), 20 minute(s)
                         
                 Unfulfilled roles:
-                - Python programmer
+                All roles are fulfilled.
                                 
                 Committed users:
-                No users are committed to this task.
+                - OlavBl as Python programmer
                         
                 Next tasks:
                 - There are no next tasks
@@ -506,8 +505,6 @@ public class ShowProjectsUITest {
                 Type the name of a project to see more details:
                 """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
-
-         */
 
     }
 }
