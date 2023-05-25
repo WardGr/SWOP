@@ -11,7 +11,7 @@ package Domain.Command;
 public interface Command extends CommandData {
 
     /**
-     * Executes the command, changing the state of the system.
+     * Executes the command, changing the state of the system accordingly.
      *
      * @throws ProjectNotFoundException             if a project with the given name does not exist
      * @throws TaskNotFoundException                if a task with the given name does not exist
@@ -28,7 +28,7 @@ public interface Command extends CommandData {
      * @throws UserAlreadyAssignedToTaskException   if one of the given users is already assigned to the task
      * @throws IncorrectRoleException               if one of the given users does not have its corresponding role
      */
-     void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException;
+     void execute() throws ProjectNotFoundException, IncorrectTaskStatusException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException, TaskNotFoundException;
 
     /**
      * Undoes the command, changing the state of the system back to the state before the command was executed.

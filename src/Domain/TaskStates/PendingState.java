@@ -31,7 +31,7 @@ public class PendingState implements TaskState {
     }
 
     @Override
-    public void stopOneUser(Task task) {
+    public void undoStart(Task task) {
         if (task.getCommittedUsers().size() - 1 == 0) {
             task.setState(new AvailableState());
         }
