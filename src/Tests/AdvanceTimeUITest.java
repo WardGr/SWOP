@@ -17,9 +17,8 @@ public class AdvanceTimeUITest {
 
     @Test
     public void testAdvanceTimeUI() throws InvalidTimeException, IOException, IncorrectPermissionException {
-        /*
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            System.setOut(new PrintStream(out));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
         Set<Role> WardRoles = new HashSet<>();
         WardRoles.add(Role.PROJECTMANAGER);
         WardRoles.add(Role.JAVAPROGRAMMER);
@@ -42,13 +41,17 @@ public class AdvanceTimeUITest {
         chouffe.login(dieter);
         Session unemplSession = new Session();
 
+        CommandManager commandManagerOmer = new CommandManager();
+        CommandManager commandManagerDuvel = new CommandManager();
+        CommandManager commandManagerChouffe = new CommandManager();
+
         TaskManSystem tmsOmer = new TaskManSystem(new Time(12));
         TaskManSystem tmsDuvel = new TaskManSystem(new Time(17));
         TaskManSystem tmsChouffe = new TaskManSystem(new Time(63));
 
-        AdvanceTimeController atcOmer = new AdvanceTimeController(new SessionProxy(omer), tmsOmer);
-        AdvanceTimeController atcDuvel = new AdvanceTimeController(new SessionProxy(duvel), tmsDuvel);
-        AdvanceTimeController atcChouffe = new AdvanceTimeController(new SessionProxy(chouffe), tmsChouffe);
+        AdvanceTimeController atcOmer = new AdvanceTimeController(new SessionProxy(omer), tmsOmer, commandManagerOmer);
+        AdvanceTimeController atcDuvel = new AdvanceTimeController(new SessionProxy(duvel), tmsDuvel, commandManagerDuvel);
+        AdvanceTimeController atcChouffe = new AdvanceTimeController(new SessionProxy(chouffe), tmsChouffe, commandManagerChouffe);
 
         AdvanceTimeUI atuiOmer = new AdvanceTimeUI(atcOmer);
         AdvanceTimeUI atuiDuvel = new AdvanceTimeUI(atcDuvel);
@@ -261,8 +264,6 @@ public class AdvanceTimeUITest {
                 Given system minute is not an integer, please try again
                 """.replaceAll("\n|\r\n", System.getProperty("line.separator"))));
         assertEquals(new Time(305), tmsChouffe.getSystemTime());
-
-         */
 
     }
 }
