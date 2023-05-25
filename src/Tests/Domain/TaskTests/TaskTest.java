@@ -306,7 +306,7 @@ public class TaskTest {
         assertNull(sysAdmin.getTaskData());
         assertEquals(List.of(Role.SYSADMIN), prevTask.getUnfulfilledRoles());
         assertEquals(0, prevTask.getUserNamesWithRole().size());
-        assertEquals(Status.AVAILABLE, prevTask.getStatus());
+        assertEquals(Status.EXECUTING, prevTask.getStatus());
     }
 
     @Test
@@ -318,7 +318,7 @@ public class TaskTest {
         currentTask.finish(sysAdmin, new Time(0));
 
         currentTask.clearTask();
-        assertEquals(Status.AVAILABLE, currentTask.getStatus());
+        assertEquals(Status.FINISHED, currentTask.getStatus());
     }
 
     @Test
