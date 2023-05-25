@@ -78,7 +78,6 @@ public class AdvanceTimeController {
         if (!advanceTimePreconditions()) {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
-        getTaskManSystem().advanceTime(newTime);
         SetNewTimeCommand cmd = new SetNewTimeCommand(getTaskManSystem(), newTime);
         cmd.execute();
         getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
@@ -96,7 +95,6 @@ public class AdvanceTimeController {
         if (!advanceTimePreconditions()) {
             throw new IncorrectPermissionException("Incorrect permission: User is not a project manager or developer");
         }
-        getTaskManSystem().advanceTime(advanceMinutes);
         AdvanceTimeCommand cmd = new AdvanceTimeCommand(getTaskManSystem(), advanceMinutes);
         cmd.execute();
         getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
