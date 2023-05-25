@@ -62,7 +62,7 @@ public class FailTaskCommand implements Command {
     @Override
     public void undo() {
         try {
-            getTaskManSystem().restartTask(getProjectName(), getTaskName());
+            getTaskManSystem().undoEndTask(getProjectName(), getTaskName());
         } catch (ProjectNotFoundException | TaskNotFoundException | IncorrectTaskStatusException | IncorrectRoleException | UserAlreadyAssignedToTaskException e) {
             // This should never happen
             throw new RuntimeException(e);

@@ -141,6 +141,12 @@ public class TaskManSystem implements TaskManSystemData {
         }
     }
 
+    /**
+     * Deletes the project with the given name, if it exists in the current system
+     *
+     * @param projectName               Name of the project to delete
+     * @throws ProjectNotFoundException if the given projectName does not correspond to an existing project within the system
+     */
     public void deleteProject(String projectName) throws ProjectNotFoundException {
         Project project = getProject(projectName);
         if (project == null) {
@@ -150,6 +156,10 @@ public class TaskManSystem implements TaskManSystemData {
         deleteProject(project);
     }
 
+    /**
+     * Removes the given project from the current list of projects
+     * @param project Project to remove
+     */
     private void deleteProject(Project project) {
         projects.remove(project);
     }
@@ -227,6 +237,12 @@ public class TaskManSystem implements TaskManSystemData {
         );
     }
 
+    /**
+     * Retrieves the project with the given names and returns a set of tuples of those projects and the given task names
+     * @param nextTaskStrings   Set of tuples of project names and task names
+     * @return                  Set of tuples of projects and task names
+     * @throws ProjectNotFoundException  if one of the project names does not correspond to an existing project
+     */
     private Set<Tuple<Project, String>> convertProjectNames(Set<Tuple<String, String>> nextTaskStrings) throws ProjectNotFoundException {
         Set<Tuple<Project,String>> nextTasks = new HashSet<>();
         for (Tuple<String,String> nextTask : nextTaskStrings){
@@ -242,6 +258,14 @@ public class TaskManSystem implements TaskManSystemData {
         return nextTasks;
     }
 
+    /**
+     * Deletes the task with the given name from the project with the given name
+     *
+     * @param projectName   Name of the project from which to delete the task
+     * @param taskName      Name of the task to delete
+     * @throws ProjectNotFoundException  if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException     if the given task name does not correspond to a task within the given project
+     */
     public void deleteTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
         Project project = getProject(projectName);
         if (project == null){
@@ -317,7 +341,18 @@ public class TaskManSystem implements TaskManSystemData {
         );
     }
 
-    public void stopTask(
+    /**
+     * Undoes the start of the given task
+     *
+     * @param projectName   name of the project to which the task belongs
+     * @param taskName      name of the task to undo the start of
+     * @param currentUser   user that started the task
+     * @throws ProjectNotFoundException         if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException            if the given task name does not correspond to an existing task within the given project
+     * @throws IncorrectTaskStatusException     if the task status is not EXECUTING or PENDING
+     * @throws IncorrectUserException           if the given user is not the user that started the task
+     */
+    public void undoStartTask(
             String projectName,
             String taskName,
             User currentUser
@@ -327,11 +362,31 @@ public class TaskManSystem implements TaskManSystemData {
         if (project == null) {
             throw new ProjectNotFoundException();
         }
-        project.stopTask(
+        project.undoStartTask(
                 taskName,
                 currentUser
         );
     }
+
+    /**
+     * Undoes the end of the given task
+     *
+     * @param projectName   name of the project to which the task belongs
+     * @param taskName      name of the task to undo the end of
+     * @throws ProjectNotFoundException             if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException                if the given task name does not correspond to an existing task within the given project
+     * @throws IncorrectTaskStatusException         if the task status is not FINISHED or FAILED
+     * @throws UserAlreadyAssignedToTaskException   if the given user is already assigned to the task (should not happen)
+     * @throws IncorrectRoleException               if this role is not necessary for the given task (should not happen)
+     */
+    public void undoEndTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        Project project = getProject(projectName);
+        if (project == null) {
+            throw new ProjectNotFoundException();
+        }
+        project.undoEndTask(taskName);
+    }
+
 
     /**
      * Advances the system time
@@ -388,14 +443,6 @@ public class TaskManSystem implements TaskManSystemData {
             throw new ProjectNotFoundException();
         }
         project.finishTask(taskName, user, getSystemTime());
-    }
-
-    public void restartTask(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
-        Project project = getProject(projectName);
-        if (project == null) {
-            throw new ProjectNotFoundException();
-        }
-        project.restartTask(taskName);
     }
 
 
