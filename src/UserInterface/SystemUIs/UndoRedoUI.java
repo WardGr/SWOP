@@ -11,6 +11,9 @@ import Domain.DataClasses.Tuple;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Separates domain from UI for the undo/redo use-case
+ */
 public class UndoRedoUI {
     private final UndoRedoController controller;
 
@@ -27,6 +30,9 @@ public class UndoRedoUI {
         return controller;
     }
 
+    /**
+     * Initial method called to start the UI and show the menu
+     */
     public void undo() {
         if (getController().undoRedoPreconditions()) {
             Scanner scanner = new Scanner(System.in);
@@ -40,6 +46,12 @@ public class UndoRedoUI {
         }
     }
 
+    /**
+     * Prints the undo form, allows the user to undo the last action
+     *
+     * @param scanner           Scanner object used to get user input
+     * @throws BackException    if the user types "BACK" at any time
+     */
     private void undoForm(Scanner scanner) throws BackException {
         List<Tuple<CommandData,String>> previousCommands = getController().getExecutedCommands();
         if (previousCommands.size() == 0){
@@ -64,6 +76,10 @@ public class UndoRedoUI {
         }
     }
 
+    /**
+     * Prints the commands of the previously executed commands
+     * @param prevCmdList   List of previously executed commands along with the user who executed them
+     */
     private void printPreviousCommandsList(List<Tuple<CommandData,String>> prevCmdList){
         System.out.println(" ***** EXECUTED ACTIONS *****");
         System.out.println(" ----- Oldest Action -----");
@@ -80,8 +96,9 @@ public class UndoRedoUI {
         System.out.println();
     }
 
-
-
+    /**
+     * Initial method called to start the UI and show the redo menu
+     */
     public void redo() {
         if (getController().undoRedoPreconditions()) {
             try {
@@ -94,6 +111,10 @@ public class UndoRedoUI {
         }
     }
 
+    /**
+     * Prints the redo form, allows the user to redo the last undone action
+     * @throws BackException  if the user types "BACK" at any time
+     */
     private void redoForm() throws BackException {
         Scanner scanner = new Scanner(System.in);
 
@@ -118,6 +139,10 @@ public class UndoRedoUI {
         }
     }
 
+    /**
+     * Prints the commands of all commands that have been undone
+     * @param prevCmdList   List of previously undone commands along with the user who executed them
+     */
     private void printUndoneCommandsList(List<Tuple<CommandData,String>> prevCmdList){
         System.out.println(" ***** UNDONE ACTIONS *****");
         System.out.println(" ----- Oldest Undone Action -----");
@@ -130,7 +155,13 @@ public class UndoRedoUI {
     }
 
 
-
+    /**
+     * Gets a boolean input from the user
+     * @param scanner   Scanner object used to get user input
+     * @param message   Message to be displayed to the user
+     * @return          True if the user inputs "y", false if the user inputs "n"
+     * @throws BackException    if the user types "BACK" at any time
+     */
     private boolean getBooleanInput(Scanner scanner, String message) throws BackException {
         System.out.println(message + " (y/n)");
         String answer = scanner.nextLine();

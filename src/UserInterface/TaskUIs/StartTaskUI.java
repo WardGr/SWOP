@@ -56,6 +56,12 @@ public class StartTaskUI {
         }
     }
 
+    /**
+     * Shows the start task form and starts the task if the given information is valid
+     *
+     * @throws BackException                    if the user input BACK to cancel the operation
+     * @throws IncorrectPermissionException     if the user is not logged in as a developer
+     */
     private void startTaskForm() throws BackException, IncorrectPermissionException {
         Scanner scanner = new Scanner(System.in);
 
@@ -221,6 +227,14 @@ public class StartTaskUI {
     }
 
 
+    /**
+     * Translates user input to a boolean
+     *
+     * @param scanner           the scanner to read input from
+     * @param message           the message to show to the user if the input is invalid
+     * @return                  true if the user inputted 'y', false if the user inputted 'n'
+     * @throws BackException    if the user inputted 'BACK'
+     */
     private boolean getBooleanInput(Scanner scanner, String message) throws BackException {
         System.out.println(message + " (y/n)\n");
         String answer = scanner.nextLine();

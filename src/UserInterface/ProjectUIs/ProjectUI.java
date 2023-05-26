@@ -14,7 +14,7 @@ import Domain.User.Role;
 import java.util.Scanner;
 
 /**
- * Handles user input for the createproject use-case, requests necessary domain-level information from the Application.CreateProjectController
+ * Handles user input for the create and delete use-case, requests necessary domain-level information from the Application.ProjectController
  */
 public class ProjectUI {
 
@@ -133,6 +133,9 @@ public class ProjectUI {
         }
     }
 
+    /**
+     * Does the initial project deletion request, checks if the user has the projectmanager role
+     */
     public void deleteProject() {
         if (getController().projectPreconditions()) {
             try {
@@ -145,6 +148,10 @@ public class ProjectUI {
         }
     }
 
+    /**
+     * Shows the project deletion form allows the user to delete the project if the given information is valid according to system
+     * @throws IncorrectPermissionException     if the user is not logged in as a projectmanager
+     */
     private void deleteProjectForm() throws IncorrectPermissionException{
         Scanner scanner = new Scanner(System.in);
 
@@ -170,6 +177,10 @@ public class ProjectUI {
         }
     }
 
+    /**
+     * Prints a list of all projects in the system along with the number of tasks they contain
+     * @throws IncorrectPermissionException    if the user is not logged in as a projectmanager
+     */
     private void printProjectList() throws IncorrectPermissionException {
         System.out.println(" *** PROJECT LIST ***");
         TaskManSystemData taskManSystemData = getController().getTaskManSystemData();

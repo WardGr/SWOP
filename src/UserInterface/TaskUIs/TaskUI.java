@@ -212,6 +212,14 @@ public class TaskUI {
     }
 
 
+    /**
+     * Retrieves user integer input
+     *
+     * @param scanner           Scanner to read input from
+     * @param tryAgainMessage   Message to print when the given input is not an integer
+     * @return                  Integer inputted by the user
+     * @throws BackException    If the user inputs "BACK"
+     */
     private int getIntegerInput(Scanner scanner, String tryAgainMessage) throws BackException{
         String string = scanner.nextLine();
 
@@ -231,6 +239,14 @@ public class TaskUI {
         return integer;
     }
 
+    /**
+     * Retrieves user double input
+     *
+     * @param scanner           Scanner to read input from
+     * @param tryAgainMessage   Message to print when the given input is not a double
+     * @return                  Double inputted by the user
+     * @throws BackException    If the user inputs "BACK"
+     */
     private double getDoubleInput(Scanner scanner, String tryAgainMessage) throws BackException{
         String string = scanner.nextLine();
 
@@ -250,6 +266,13 @@ public class TaskUI {
         return doubleValue;
     }
 
+    /**
+     * Retrieves user boolean input
+     * @param scanner   Scanner to read input from
+     * @param message   Message to print to the user
+     * @return          True if user inputs "y", false if user inputs "n"
+     * @throws BackException    If the user inputs "BACK"
+     */
     private boolean getBooleanInput(Scanner scanner, String message) throws BackException {
         System.out.println(message + " (y/n)");
         String answer = scanner.nextLine();
@@ -269,6 +292,13 @@ public class TaskUI {
         return answer.equals("y");
     }
 
+    /**
+     * Gets roles inputted by the user, translating the input to a list of roles
+     *
+     * @param scanner   Scanner to read input from
+     * @return          List of roles inputted by the user
+     * @throws BackException    If the user inputs "BACK"
+     */
     private List<Role> getRolesInput(Scanner scanner) throws BackException {
         List<Role> roles = new LinkedList<>();
 
@@ -293,6 +323,14 @@ public class TaskUI {
         return roles;
     }
 
+    /**
+     * Gets the tasks inputted by the user, translating the input to a set of tuples of the given tasks project name and its task names
+     *
+     * @param scanner           Scanner to read input from
+     * @param message           Message to print to the user
+     * @return                  Set of tuples of the given tasks project name and its task names
+     * @throws BackException    If the user inputs "BACK"
+     */
     private Set<Tuple<String,String>> getTaskSet(Scanner scanner, String message) throws BackException {
         Set<Tuple<String,String>> tasks = new HashSet<>();
 
@@ -317,6 +355,10 @@ public class TaskUI {
     }
 
 
+    /**
+     * Initial request from the UserInterface class to the deletetask usecase, checks permissions and then prints the
+     * delete task form
+     */
     public void deleteTask(){
         if (getController().taskPreconditions()) {
             try {
@@ -331,6 +373,12 @@ public class TaskUI {
         }
     }
 
+    /**
+     * Shows the task deletion form to the user, asking for the project name and task name of the task to be deleted
+     *
+     * @throws IncorrectPermissionException     If the user is not logged in with the correct role
+     * @throws BackException                    If the user inputs "BACK"
+     */
     private void deleteTaskForm() throws IncorrectPermissionException, BackException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Use 'BACK' to return to main menu\n");
@@ -371,6 +419,11 @@ public class TaskUI {
         }
     }
 
+    /**
+     * Prints the list of all projects to the user, along with the number of tasks in each project
+     *
+     * @throws ProjectNotFoundException
+     */
     private void printProjectsList() throws ProjectNotFoundException {
         System.out.println(" *** PROJECTS ***");
         TaskManSystemData taskManSystemData = getController().getTaskManSystemData();
@@ -379,6 +432,13 @@ public class TaskUI {
         }
     }
 
+    /**
+     * Prints the list of all tasks in the given project to the user
+     *
+     * @param projectName               Name of the project to print the tasks of
+     * @throws ProjectNotFoundException If the given project name could not be found
+     * @throws TaskNotFoundException    If the given task name could not be found
+     */
     private void printTasksList(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
         ProjectData projectData = getController().getProjectData(projectName);
         System.out.println(" *** TASKS in " + projectName + " ***");
@@ -394,6 +454,16 @@ public class TaskUI {
         System.out.println();
     }
 
+    /**
+     * Asks the user for confirmation to delete the given task
+     *
+     * @param scanner       Scanner to read input from
+     * @param projectName   Name of the project the task to be deleted is in
+     * @param taskName      Name of the task to be deleted
+     * @throws BackException                If the user inputs "BACK"
+     * @throws ProjectNotFoundException     If the given project name could not be found
+     * @throws TaskNotFoundException        If the given task name could not be found
+     */
     private boolean confirmTaskDeletion(Scanner scanner, String projectName, String taskName) throws BackException, ProjectNotFoundException, TaskNotFoundException {
         TaskData taskData = getController().getTaskData(projectName, taskName);
 

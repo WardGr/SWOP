@@ -68,10 +68,10 @@ public class UpdateDependenciesControllerTest {
         languages.add(Role.JAVAPROGRAMMER);
         languages.add(Role.PYTHONPROGRAMMER);
         omer.login(ward);
-        tms.createProject("Omer", "Omer brewery project", new Time(20));
-        tms.addTaskToProject("Omer", "Brew", "Brewing beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
-        tms.addTaskToProject("Omer", "Sell", "Selling beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
-        tms.addTaskToProject("Omer", "Clean", "Cleaning beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.createProject("Omer", "Omer brewery project", new Time(20));
+        taskManSystem.addTaskToProject("Omer", "Brew", "Brewing beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Omer", "Sell", "Selling beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Omer", "Clean", "Cleaning beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
         udc.addNextTask("Omer", "Brew", "Sell");
         udc.addPrevTask("Omer", "Clean", "Sell");
 
@@ -105,10 +105,10 @@ public class UpdateDependenciesControllerTest {
         assertEquals(0, udc.getTaskData("Omer", "Clean").getNextTasksNames().size());
 
         assertEquals(1, udc.getTaskManSystemData().getProjectNames().size());
-        tms.createProject("Omer2", "Omer brewery project", new Time(20));
+        taskManSystem.createProject("Omer2", "Omer brewery project", new Time(20));
         assertEquals(2, udc.getTaskManSystemData().getProjectNames().size());
         assertEquals(new Time(11), udc.getTaskManSystemData().getSystemTime());
-        tms.advanceTime(new Time(12));
+        taskManSystem.advanceTime(new Time(12));
         assertEquals(new Time(12), udc.getTaskManSystemData().getSystemTime());
 
         omer.logout();
@@ -119,13 +119,13 @@ public class UpdateDependenciesControllerTest {
         assertThrows(IncorrectPermissionException.class, () -> udc.removePrevTask("Project", "Task", "PreviousTask"));
 
         omer.login(ward);
-        tms.createProject("Duvel", "Duvel brewery project", new Time(20));
-        tms.addTaskToProject("Duvel", "Brew", "Brewing beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
-        tms.addTaskToProject("Duvel", "Sell", "Selling beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
-        tms.addTaskToProject("Duvel", "Clean", "Cleaning beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
-        tms.addTaskToProject("Duvel", "Hire brewer", "Hiring a brewer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
-        tms.addTaskToProject("Duvel", "Hire cleaner", "Hiring a cleaner", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
-        tms.addTaskToProject("Duvel", "Hire seller", "Hiring a seller", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.createProject("Duvel", "Duvel brewery project", new Time(20));
+        taskManSystem.addTaskToProject("Duvel", "Brew", "Brewing beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Duvel", "Sell", "Selling beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Duvel", "Clean", "Cleaning beer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Duvel", "Hire brewer", "Hiring a brewer", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Duvel", "Hire cleaner", "Hiring a cleaner", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Duvel", "Hire seller", "Hiring a seller", new Time(10), 3, languages, new HashSet<>(), new HashSet<>());
         udc.addNextTask("Duvel", "Brew", "Sell");
         udc.addNextTask("Duvel", "Hire brewer", "Hire cleaner");
         udc.addPrevTask("Duvel", "Brew", "Hire brewer");

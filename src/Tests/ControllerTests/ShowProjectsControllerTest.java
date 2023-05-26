@@ -54,7 +54,7 @@ public class ShowProjectsControllerTest {
         assertThrows(IncorrectPermissionException.class, () -> developerController.getProjectData("hoi"));
         assertThrows(ProjectNotFoundException.class, () -> managerController.getProjectData("HOI"));
 
-        assertNotNull(managerController.getProjectData("SimpleProject")); // Beetje belachelijk om heel die string hier te hardcoden...
+        assertNotNull(managerController.getProjectData("SimpleProject")); // Beetje belachelijk om heel die string hier te hardcoden..
 
         assertThrows(IncorrectPermissionException.class, () -> developerController.getTaskData("SimpleProject", "SimpleTask"));
         assertThrows(ProjectNotFoundException.class, () -> managerController.getTaskData("gwrf", "regtt"));
