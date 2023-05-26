@@ -1,4 +1,4 @@
-package Tests;
+package Tests.UITests;
 
 import Application.Session.Session;
 import Application.Session.SessionProxy;
