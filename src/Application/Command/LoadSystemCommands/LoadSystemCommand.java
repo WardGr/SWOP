@@ -36,20 +36,17 @@ public class LoadSystemCommand implements Command {
     private final String path;
     private final UserManager userManager;
     private final TaskManSystem taskManSystem;
-    private final SessionProxy session;
 
 
     /**
      * Creates this commands object
      *
      * @param path              The filepath of the file that loads the system
-     * @param session           The current session to set as active session
      * @param taskManSystem     The system class to set as current system
      * @param userManager       The class managing all users in the system
      */
-    public LoadSystemCommand(String path, SessionProxy session, TaskManSystem taskManSystem, UserManager userManager) {
+    public LoadSystemCommand(String path, TaskManSystem taskManSystem, UserManager userManager) {
         this.path = path;
-        this.session = session;
         this.taskManSystem = taskManSystem;
         this.userManager = userManager;
     }
@@ -66,13 +63,6 @@ public class LoadSystemCommand implements Command {
      */
     private TaskManSystem getTaskManSystem() {
         return taskManSystem;
-    }
-
-    /**
-     * @return  The session data object with currently logged-in user
-     */
-    private SessionProxy getSession() {
-        return session;
     }
 
 

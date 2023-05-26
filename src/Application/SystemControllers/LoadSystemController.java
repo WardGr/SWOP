@@ -87,7 +87,7 @@ public class LoadSystemController {
         if (!loadSystemPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         }
-        LoadSystemCommand cmd = new LoadSystemCommand(filepath, getSession(), getTaskManSystem(), getUserManager());
+        LoadSystemCommand cmd = new LoadSystemCommand(filepath, getTaskManSystem(), getUserManager());
         cmd.execute();
         getCommandManager().addExecutedCommand(cmd, getSession().getCurrentUser());
     }
