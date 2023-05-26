@@ -20,10 +20,7 @@ import UserInterface.SystemUIs.AdvanceTimeUI;
 import UserInterface.SystemUIs.LoadSystemUI;
 import UserInterface.SystemUIs.SessionUI;
 import UserInterface.SystemUIs.UndoRedoUI;
-import UserInterface.TaskUIs.EndTaskUI;
-import UserInterface.TaskUIs.StartTaskUI;
-import UserInterface.TaskUIs.TaskUI;
-import UserInterface.TaskUIs.UpdateDependenciesUI;
+import UserInterface.TaskUIs.*;
 
 /**
  * Creates the initial objects and starts the UI
@@ -42,7 +39,8 @@ public class Main {
             AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandManager);
             ProjectController createProjectController = new ProjectController(sessionProxy, taskManSystem, commandManager);
             ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
-            TaskController taskController = new TaskController(sessionProxy, taskManSystem, commandManager);
+            CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem, commandManager);
+            DeleteTaskController deleteTaskController = new DeleteTaskController(sessionProxy, taskManSystem, commandManager);
             LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager, commandManager);
             StartTaskController startTaskController = new StartTaskController(sessionProxy, taskManSystem, commandManager);
             EndTaskController endTaskController = new EndTaskController(sessionProxy, taskManSystem, commandManager);
@@ -53,7 +51,8 @@ public class Main {
             AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);
             ProjectUI projectUI = new ProjectUI(createProjectController);
             ShowProjectsUI showProjectsUI = new ShowProjectsUI(showProjectsController);
-            TaskUI taskUI = new TaskUI(taskController);
+            CreateTaskUI createTaskUI = new CreateTaskUI(createTaskController);
+            DeleteTaskUI deleteTaskUI = new DeleteTaskUI(deleteTaskController);
             LoadSystemUI loadSystemUI = new LoadSystemUI(loadSystemController);
             StartTaskUI startTaskUI = new StartTaskUI(startTaskController);
             EndTaskUI endTaskUI = new EndTaskUI(endTaskController);
@@ -65,7 +64,8 @@ public class Main {
                     advanceTimeUI,
                     projectUI,
                     showProjectsUI,
-                    taskUI,
+                    createTaskUI,
+                    deleteTaskUI,
                     loadSystemUI,
                     startTaskUI,
                     endTaskUI,

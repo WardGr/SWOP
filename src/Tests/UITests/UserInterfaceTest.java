@@ -20,10 +20,7 @@ import UserInterface.SystemUIs.AdvanceTimeUI;
 import UserInterface.SystemUIs.LoadSystemUI;
 import UserInterface.SystemUIs.SessionUI;
 import UserInterface.SystemUIs.UndoRedoUI;
-import UserInterface.TaskUIs.EndTaskUI;
-import UserInterface.TaskUIs.StartTaskUI;
-import UserInterface.TaskUIs.TaskUI;
-import UserInterface.TaskUIs.UpdateDependenciesUI;
+import UserInterface.TaskUIs.*;
 import org.junit.Test;
 import UserInterface.*;
 
@@ -47,9 +44,11 @@ public class UserInterfaceTest {
         AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandManager);
         ProjectController createProjectController = new ProjectController(sessionProxy, taskManSystem, commandManager);
         ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
-        TaskController taskController = new TaskController(sessionProxy, taskManSystem, commandManager);
+        CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem, commandManager);
         LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager, commandManager);
         StartTaskController startTaskController = new StartTaskController(sessionProxy, taskManSystem, commandManager);
+        DeleteTaskController deleteTaskController = new DeleteTaskController(sessionProxy, taskManSystem, commandManager);
+        DeleteTaskUI deleteTaskUI = new DeleteTaskUI(deleteTaskController);
         StartTaskUI startTaskUI = new StartTaskUI(startTaskController);
         EndTaskController endTaskController = new EndTaskController(sessionProxy, taskManSystem, commandManager);
         EndTaskUI endTaskUI = new EndTaskUI(endTaskController);
@@ -62,7 +61,7 @@ public class UserInterfaceTest {
         AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);
         ProjectUI projectUI = new ProjectUI(createProjectController);
         ShowProjectsUI showProjectsUI = new ShowProjectsUI(showProjectsController);
-        TaskUI taskUI = new TaskUI(taskController);
+        CreateTaskUI createTaskUI = new CreateTaskUI(createTaskController);
         LoadSystemUI loadSystemUI = new LoadSystemUI(loadSystemController);
 
         UserInterface UI = new UserInterface(
@@ -70,7 +69,8 @@ public class UserInterfaceTest {
                 advanceTimeUI,
                 projectUI,
                 showProjectsUI,
-                taskUI,
+                createTaskUI,
+                deleteTaskUI,
                 loadSystemUI,
                 startTaskUI,
                 endTaskUI,
