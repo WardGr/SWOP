@@ -6,10 +6,7 @@ import UserInterface.SystemUIs.AdvanceTimeUI;
 import UserInterface.SystemUIs.LoadSystemUI;
 import UserInterface.SystemUIs.SessionUI;
 import UserInterface.SystemUIs.UndoRedoUI;
-import UserInterface.TaskUIs.EndTaskUI;
-import UserInterface.TaskUIs.StartTaskUI;
-import UserInterface.TaskUIs.TaskUI;
-import UserInterface.TaskUIs.UpdateDependenciesUI;
+import UserInterface.TaskUIs.*;
 
 import java.util.Scanner;
 
@@ -22,7 +19,8 @@ public class UserInterface {
     private final SessionUI sessionUI;
     private final ShowProjectsUI showProjectsUI;
     private final ProjectUI projectUI;
-    private final TaskUI taskUI;
+    private final CreateTaskUI createTaskUI;
+    private final DeleteTaskUI deleteTaskUI;
     private final AdvanceTimeUI advanceTimeUI;
     private final LoadSystemUI loadSystemUI;
     private final StartTaskUI startTaskUI;
@@ -38,7 +36,8 @@ public class UserInterface {
             AdvanceTimeUI advanceTimeUI,
             ProjectUI projectUI,
             ShowProjectsUI showProjectsUI,
-            TaskUI taskUI,
+            CreateTaskUI createTaskUI,
+            DeleteTaskUI deleteTaskUI,
             LoadSystemUI loadSystemUI,
             StartTaskUI startTaskUI,
             EndTaskUI endTaskUI,
@@ -49,7 +48,8 @@ public class UserInterface {
         this.advanceTimeUI = advanceTimeUI;
         this.projectUI = projectUI;
         this.showProjectsUI = showProjectsUI;
-        this.taskUI = taskUI;
+        this.createTaskUI = createTaskUI;
+        this.deleteTaskUI = deleteTaskUI;
         this.loadSystemUI = loadSystemUI;
         this.startTaskUI = startTaskUI;
         this.endTaskUI = endTaskUI;
@@ -87,8 +87,8 @@ public class UserInterface {
             case "showprojects" -> showProjectsUI.showProjects();
             case "createproject" -> projectUI.createProject();
             case "deleteproject" -> projectUI.deleteProject();
-            case "createtask" -> taskUI.createTask();
-            case "deletetask" -> taskUI.deleteTask();
+            case "createtask" -> createTaskUI.createTask();
+            case "deletetask" -> deleteTaskUI.deleteTask();
             case "advancetime" -> advanceTimeUI.advanceTime();
             case "loadsystem" -> loadSystemUI.loadSystem();
             case "starttask" -> startTaskUI.startTask();

@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * Separates domain from UI for the createtask use-case
  */
-public class TaskController {
+public class CreateTaskController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
@@ -40,7 +40,7 @@ public class TaskController {
      * @param taskManSystem     The system object to set as current system
      * @param commandManager    The object that manages the commands in the system
      */
-    public TaskController(
+    public CreateTaskController(
             SessionProxy session,
             TaskManSystem taskManSystem,
             CommandInterface commandManager
@@ -126,31 +126,6 @@ public class TaskController {
         );
         createTaskCommand.execute();
         getCommandManager().addExecutedCommand(createTaskCommand, getSession().getCurrentUser());
-    }
-
-    /**
-     * Returns whether the given task needs confirmation to be deleted according to how we defined it
-     *
-     * @param projectName       Name of project the task is in
-     * @param taskName          Name of task to be deleted
-     * @return  Whether the task needs confirmation to be deleted
-     * @throws ProjectNotFoundException  if the given project name does not correspond to an existing project
-     * @throws TaskNotFoundException     if the given task name does not correspond to an existing task within the given project
-     */
-    public boolean needDeleteConfirmation(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
-        TaskData taskData = getTaskData(projectName, taskName);
-        return taskData.getStatus() == Status.PENDING || taskData.getStatus() == Status.EXECUTING;
-    }
-
-    public void deleteTask(String projectName, String taskName, boolean confirmation) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, UnconfirmedActionException {
-        if (!taskPreconditions()) {
-            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
-        } else if (needDeleteConfirmation(projectName, taskName) && !confirmation){
-            throw new UnconfirmedActionException("Deleting a Pending or Executing task is not confirmed.");
-        }
-        DeleteTaskCommand deleteTaskCommand = new DeleteTaskCommand(getTaskManSystem(), projectName, taskName);
-        deleteTaskCommand.execute();
-        getCommandManager().addExecutedCommand(deleteTaskCommand, getSession().getCurrentUser());
     }
 
     /**

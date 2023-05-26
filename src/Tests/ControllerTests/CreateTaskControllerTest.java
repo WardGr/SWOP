@@ -1,7 +1,7 @@
 package Tests.ControllerTests;
 
 import Application.Session.SessionProxy;
-import Application.TaskControllers.TaskController;
+import Application.TaskControllers.CreateTaskController;
 import Application.Command.CommandManager;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;
@@ -18,14 +18,14 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-public class TaskControllerTest {
+public class CreateTaskControllerTest {
 
     // We define two separate systems, one with projectmanager and one with programmer roles, to test the different permissions
     // without having to login and logout all the time
-    private TaskController managerTaskController;
+    private CreateTaskController managerCreateTaskController;
     private Session managerSession;
     private Set<Role> rolesManager;
-    private TaskController programmerTaskController;
+    private CreateTaskController programmerCreateTaskController;
     private Set<Role> rolesProgrammer;
     private Session programmerSession;
 
@@ -55,19 +55,19 @@ public class TaskControllerTest {
         programmerTaskManSystem.createProject("Project 1", "Project 1 description", new Time(1000));
         CommandManager programmerCommandManager = new CommandManager();
 
-        this.managerTaskController = new TaskController(sessionProxy, managerTaskManSystem, managerCommandManager);
+        this.managerCreateTaskController = new CreateTaskController(sessionProxy, managerTaskManSystem, managerCommandManager);
         this.managerSession = managerSession;
         this.rolesManager = rolesManager;
 
-        this.programmerTaskController = new TaskController(sessionProxy2, programmerTaskManSystem, programmerCommandManager);
+        this.programmerCreateTaskController = new CreateTaskController(sessionProxy2, programmerTaskManSystem, programmerCommandManager);
         this.programmerSession = programmerSession;
         this.rolesProgrammer = rolesProgrammer;
     }
 
     @Test
     public void testTaskPreconditions() {
-        assertTrue(managerTaskController.taskPreconditions());
-        assertFalse(programmerTaskController.taskPreconditions());
+        assertTrue(managerCreateTaskController.taskPreconditions());
+        assertFalse(programmerCreateTaskController.taskPreconditions());
     }
 
     @Test
@@ -75,8 +75,9 @@ public class TaskControllerTest {
         List<Role> taskRoles = new LinkedList<>();
         taskRoles.add(Role.JAVAPROGRAMMER);
 
-        managerTaskController.createTask("Project 1", "Task 1", "Task 1 description", new Time(1000), 0.1, taskRoles, new HashSet<>(), new HashSet<>());
-        assertEquals("Task 1", managerTaskController.getTaskData("Project 1", "Task 1").getName());
+        managerCreateTaskController.createTask("Project 1", "Task 1", "Task 1 description", new Time(1000), 0.1, taskRoles, new HashSet<>(), new HashSet<>());
+        assertEquals("Task 1", managerCreateTaskController.getTaskData("Project 1", "Task 1").getName());
+
 
 
 
