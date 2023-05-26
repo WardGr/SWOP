@@ -23,7 +23,7 @@ public class Session {
     /**
      * @return Returns the current user logged in
      */
-    User getCurrentUser() {
+    public User getCurrentUser() {
         return currentUser;
     }
 
@@ -37,7 +37,7 @@ public class Session {
     /**
      * @return Set of roles the currently logged-in user has, or an empty set if there is no such user
      */
-    Set<Role> getRoles() {
+    public Set<Role> getRoles() {
         if (getCurrentUser() == null) {
             return new HashSet<>();
         }

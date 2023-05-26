@@ -1,7 +1,12 @@
 package Tests.UITests;
 
+import Application.Session;
+import Application.SessionProxy;
+import Application.UpdateDependenciesController;
+import Domain.Command.CommandManager;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
 import Domain.Project.ProjectNameAlreadyInUseException;
 import Domain.Project.ProjectNotOngoingException;
 import Domain.Project.TaskNotFoundException;
@@ -11,16 +16,26 @@ import Domain.Task.LoopDependencyGraphException;
 import Domain.TaskManSystem.DueBeforeSystemTimeException;
 import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
 import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.IncorrectUserException;
+import Domain.User.Role;
+import Domain.User.User;
 import Domain.User.UserAlreadyAssignedToTaskException;
+import UserInterface.UpdateDependenciesUI;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
 public class UpdateDependenciesUITest {
     @Test
     public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectUserException {
-        /*
 
         // Setup test environment
 
@@ -39,8 +54,10 @@ public class UpdateDependenciesUITest {
 
         TaskManSystem taskManSystem = new TaskManSystem(systemtime);
 
-        UpdateDependenciesController developerController = new UpdateDependenciesController(developerSessionProxy, taskManSystem);
-        UpdateDependenciesController managerController = new UpdateDependenciesController(managerSessionProxy, taskManSystem);
+        CommandManager commandManager = new CommandManager();
+
+        UpdateDependenciesController developerController = new UpdateDependenciesController(developerSessionProxy, taskManSystem, commandManager);
+        UpdateDependenciesController managerController = new UpdateDependenciesController(managerSessionProxy, taskManSystem, commandManager);
 
         UpdateDependenciesUI developerUI = new UpdateDependenciesUI(developerController);
         UpdateDependenciesUI managerUI = new UpdateDependenciesUI(managerController);
@@ -120,15 +137,15 @@ public class UpdateDependenciesUITest {
                          - Project 1
                         
                         Give the name of the project you want to update:
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: available
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: available
                         
                         Give the name of the task you want to update:
                         ERROR: Given task name could not be found, try again.
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: available
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: available
                         
                         Give the name of the task you want to update:
                         Returning to project menu...
@@ -143,7 +160,7 @@ public class UpdateDependenciesUITest {
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("Project 1\nTask 1\naddnext Task 2\nBACK\nBACK\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 1\naddnext Project 1, Task 2\nBACK\nBACK\nBACK\n".getBytes()));
         managerUI.updateDependencies();
         assertEquals(
                 """
@@ -153,27 +170,30 @@ public class UpdateDependenciesUITest {
                          - Project 1
                                                 
                         Give the name of the project you want to update:
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: available
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: available
                                                 
                         Give the name of the task you want to update:
+                                                
                         Previous tasks: There are no previous tasks.
                         Next tasks: There are no next tasks.
-                        Possible previous tasks: Task 2
-                        Possible next tasks: Task 2
+                        Possible tasks to add as previous task:  - Task "Task 2" in project "Project 1"
+                        Possible tasks to add as next task:  - Task "Task 2" in project "Project 1"
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                                                
                         Previous tasks: There are no previous tasks.
-                        Next tasks: Task 2
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                        Next tasks: Task "Task 2" in project "Project 1"Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
                         Returning to task menu...
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: unavailable
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: unavailable
                                                 
                         Give the name of the task you want to update:
                         Returning to project menu...
@@ -188,216 +208,332 @@ public class UpdateDependenciesUITest {
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("Project 1\nTask 1\nremovenext Task 2\nBACK\nBACK\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 1\nremovenext Project 1, Task 2\nBACK\nBACK\nBACK\n".getBytes()));
         managerUI.updateDependencies();
         assertEquals(
                 """
                         You can always use 'BACK' to return to previous menu
-                        
+                                                
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
-                        
+                                                
                         Give the name of the project you want to update:
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: unavailable
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: unavailable
+                         
                         Give the name of the task you want to update:
+                         
                         Previous tasks: There are no previous tasks.
-                        Next tasks: Task 2
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                        Next tasks: Task "Task 2" in project "Project 1"Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                         
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                         
                         Previous tasks: There are no previous tasks.
                         Next tasks: There are no next tasks.
-                        Possible previous tasks: Task 2
-                        Possible next tasks: Task 2
+                        Possible tasks to add as previous task:  - Task "Task 2" in project "Project 1"
+                        Possible tasks to add as next task:  - Task "Task 2" in project "Project 1"
+                         
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
                         Returning to task menu...
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: available
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: available
+                         
                         Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
-                        
+                         
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
-                        
+                         
                         Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\naddprev Task 1\nBACK\nBACK\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\naddprev Project 1, Task 1\nBACK\nBACK\nBACK\n".getBytes()));
         managerUI.updateDependencies();
         assertEquals(
                 """
                         You can always use 'BACK' to return to previous menu
-                        
+                                                
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
-                        
+                                                
                         Give the name of the project you want to update:
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: available
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: available
+                                                
                         Give the name of the task you want to update:
+                                                
                         Previous tasks: There are no previous tasks.
                         Next tasks: There are no next tasks.
-                        Possible previous tasks: Task 1
-                        Possible next tasks: Task 1
+                        Possible tasks to add as previous task:  - Task "Task 1" in project "Project 1"
+                        Possible tasks to add as next task:  - Task "Task 1" in project "Project 1"
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
                         Returning to task menu...
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: unavailable
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: unavailable
+                                                
                         Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
-                        
+                                                
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
-                        
+                                                
                         Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\naddnext Task 1\naddnext HOI\nremoveprev HOI\nremovenext HOI\nh\nh e\nBACK\nBACK\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\naddnext Project 1, Task 1\naddnext Project 1, HOI\nremoveprev HOI, Task 1\nremoveprev HOI\nh\nh e, c\nBACK\nBACK\nBACK\n".getBytes()));
         managerUI.updateDependencies();
         assertEquals(
                 """
                         You can always use 'BACK' to return to previous menu
-                        
+                                                
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
-                        
+                                                
                         Give the name of the project you want to update:
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: unavailable
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: unavailable
+                                                
                         Give the name of the task you want to update:
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
-                        ERROR: The given task could not safely be added/removed, try again.
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                        ERROR: The given task could not safely be added, try again.
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
                         ERROR: The given task could not be found, try again.
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
-                        ERROR: Given task name is not present in previous tasks, try again.
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                        ERROR: The given task could not be found, try again.
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
-                        ERROR: Given task name is not present in next tasks, try again.
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                                                
+                        The given project and task names are not in the correct form, try again.
+                                                
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
                         ERROR: Unrecognized command, try again.
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
                         ERROR: Unrecognized command, try again.
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
                         Returning to task menu...
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: unavailable
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: unavailable
+                                                
                         Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
-                        
+                                                
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
-                        
+                                                
                         Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\nremoveprev Task 1\nBACK\nBACK\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\naddnext Project 1, Task 1\nBACK\nBACK\nBACK\n".getBytes()));
         managerUI.updateDependencies();
         assertEquals(
                 """
                         You can always use 'BACK' to return to previous menu
-                        
+                                                
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
-                        
+                                                
                         Give the name of the project you want to update:
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: unavailable
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: unavailable
+                                                
                         Give the name of the task you want to update:
-                        Previous tasks: Task 1
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: There are no possible previous tasks to add.
-                        Possible next tasks: There are no possible next tasks to add.
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
-                        Previous tasks: There are no previous tasks.
-                        Next tasks: There are no next tasks.
-                        Possible previous tasks: Task 1
-                        Possible next tasks: Task 1
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                        ERROR: The given task could not safely be added, try again.
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
                         Please put in the desired command:
-                           addprev/addnext/removeprev/removenext <taskName>
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
                         Returning to task menu...
-                        ***** (UN)AVAILABLE TASKS *****
-                         - Task 1 with status: available
-                         - Task 2 with status: available
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: unavailable
+                                                
                         Give the name of the task you want to update:
                         Returning to project menu...
                         You can always use 'BACK' to return to previous menu
-                        
+                                                
                         ***** UNFINISHED PROJECTS *****
                          - Project 1
-                        
+                                                
+                        Give the name of the project you want to update:
+                        Quiting updating task dependencies
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
+                out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\nremoveprev Project 1, Task 1\nBACK\nBACK\nBACK\n".getBytes()));
+        managerUI.updateDependencies();
+        assertEquals(
+                """
+                        You can always use 'BACK' to return to previous menu
+                                                
+                        ***** UNFINISHED PROJECTS *****
+                         - Project 1
+                                                
+                        Give the name of the project you want to update:
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: unavailable
+                                                
+                        Give the name of the task you want to update:
+                                                
+                        Previous tasks: Task "Task 1" in project "Project 1"Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
+                        Please put in the desired command:
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                                                
+                        Previous tasks: There are no previous tasks.
+                        Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task:  - Task "Task 1" in project "Project 1"
+                        Possible tasks to add as next task:  - Task "Task 1" in project "Project 1"
+                                                
+                        Please put in the desired command:
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                        Returning to task menu...
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: available
+                                                
+                        Give the name of the task you want to update:
+                        Returning to project menu...
+                        You can always use 'BACK' to return to previous menu
+                                                
+                        ***** UNFINISHED PROJECTS *****
+                         - Project 1
+                                                
+                        Give the name of the project you want to update:
+                        Quiting updating task dependencies
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
+                out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\nremoveprev WRONG, Task 1\nBACK\nBACK\nBACK\n".getBytes()));
+        managerUI.updateDependencies();
+        assertEquals(
+                """
+                        You can always use 'BACK' to return to previous menu
+                                                
+                        ***** UNFINISHED PROJECTS *****
+                         - Project 1
+                                                
+                        Give the name of the project you want to update:
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: available
+                                                
+                        Give the name of the task you want to update:
+                                                
+                        Previous tasks: There are no previous tasks.
+                        Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task:  - Task "Task 1" in project "Project 1"
+                        Possible tasks to add as next task:  - Task "Task 1" in project "Project 1"
+                                                
+                        Please put in the desired command:
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                        ERROR: The given task could not be found, try again.
+                                                
+                        Previous tasks: There are no previous tasks.
+                        Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task:  - Task "Task 1" in project "Project 1"
+                        Possible tasks to add as next task:  - Task "Task 1" in project "Project 1"
+                                                
+                        Please put in the desired command:
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                        Returning to task menu...
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: available
+                         - Task 2 --- Status: available
+                                                
+                        Give the name of the task you want to update:
+                        Returning to project menu...
+                        You can always use 'BACK' to return to previous menu
+                                                
+                        ***** UNFINISHED PROJECTS *****
+                         - Project 1
+                                                
                         Give the name of the project you want to update:
                         Quiting updating task dependencies
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
@@ -410,7 +546,7 @@ public class UpdateDependenciesUITest {
         taskManSystem.startTask("Project 1", "Task 2", developer, Role.PYTHONPROGRAMMER);
         taskManSystem.advanceTime(20);
 
-        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\nBACK\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\nBACK\nBACK\nBACK\n".getBytes()));
         managerUI.updateDependencies();
         assertEquals(
                 """
@@ -420,13 +556,23 @@ public class UpdateDependenciesUITest {
                          - Project 1
                                                 
                         Give the name of the project you want to update:
-                        ***** (UN)AVAILABLE TASKS *****
-                        There are no (un)available tasks in this project
-                        
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: finished
+                         - Task 2 --- Status: executing
+                                                
                         Give the name of the task you want to update:
-                        ERROR: Chosen task is not (un)available
-                        ***** (UN)AVAILABLE TASKS *****
-                        There are no (un)available tasks in this project
+                                                
+                        Previous tasks: There are no previous tasks.
+                        Next tasks: There are no next tasks.
+                        Possible tasks to add as previous task: There are no possible previous tasks to add.
+                        Possible tasks to add as next task: There are no possible next tasks to add.
+                                                
+                        Please put in the desired command:
+                           addprev/addnext/removeprev/removenext <projectName, taskName>
+                        Returning to task menu...
+                        ***** TASKS in Project 1 *****
+                         - Task 1 --- Status: finished
+                         - Task 2 --- Status: executing
                                                 
                         Give the name of the task you want to update:
                         Returning to project menu...
@@ -442,8 +588,6 @@ public class UpdateDependenciesUITest {
         out.reset();
 
         taskManSystem.finishTask("Project 1", "Task 2", developer);
-
-         */
 
     }
 }
