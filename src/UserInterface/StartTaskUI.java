@@ -48,11 +48,16 @@ public class StartTaskUI {
             System.out.println("ERROR: You need a developer role to call this function.");
             return;
         }
-        if (getController().getUserTaskData() != null && getController().getUserTaskData().getStatus() == Status.EXECUTING) {
-            System.out.println("ERROR: You are already working on an executing task.");
-            return;
+        try {
+            startTaskForm();
+        } catch (BackException e) {
+            System.out.println("Cancelled starting task");
+        } catch (IncorrectPermissionException e) {
+            System.out.println("ERROR: " + e.getMessage());
         }
+    }
 
+    private void startTaskForm() throws BackException, IncorrectPermissionException {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -75,11 +80,6 @@ public class StartTaskUI {
 
                 TaskData taskData = getController().getTaskData(projectName, taskName);
 
-                if (taskData.getStatus() != Status.AVAILABLE && taskData.getStatus() != Status.PENDING) {
-                    System.out.println("ERROR: The given task is not available or pending");
-                    break;
-                }
-
                 System.out.print("You have roles: ");
                 Set<Role> userRoles = getController().getUserRoles();
                 if (userRoles.size() > 0) {
@@ -89,14 +89,18 @@ public class StartTaskUI {
                                     collect(Collectors.joining(", ")));
                 } else {
                     System.out.println("You currently don't have any roles");
-                    return;
                 }
                 System.out.print("Task requires roles: ");
                 List<Role> taskRoles = taskData.getUnfulfilledRoles();
-                System.out.println(
-                        taskRoles.stream().
-                                map(Object::toString).
-                                collect(Collectors.joining(", ")));
+                if (taskRoles.size() > 0) {
+                    System.out.println(
+                            taskRoles.stream().
+                                    map(Object::toString).
+                                    collect(Collectors.joining(", ")));
+                } else {
+                    System.out.println("The task doesn't require any roles");
+                }
+
                 Role role = null;
                 while (role == null) {
                     System.out.println("Give the role you want to fulfill in task " + taskName + ":");
@@ -112,42 +116,17 @@ public class StartTaskUI {
                         case ("python programmer") -> role = Role.PYTHONPROGRAMMER;
                         default -> System.out.println("Unrecognized developer role");
                     }
-                    if (role != null && !taskData.getUnfulfilledRoles().contains(role)) {
-                        System.out.println("ERROR: The given role is not required in this task.");
-                        role = null;
-                    }
                 }
 
                 //CONFIRM
                 showTask(taskData);
-                System.out.println("Start working on this task as a " + role +
+                boolean startTaskConfirmation = getBooleanInput(scanner, "Start working on this task as a " + role +
                         " at the current system time: " +
-                        getController().getTaskManSystemData().getSystemTime().toString());
+                        getController().getTaskManSystemData().getSystemTime().toString() + "\nConfirm?");
 
-                System.out.println("Confirm? (y/n)");
-                String answer = scanner.nextLine();
-                if (answer.equals("BACK")) {
+                if (!startTaskConfirmation) {
                     System.out.println("Cancelled starting task " + taskName);
                     return;
-                }
-
-                while (!answer.equals("y") && !answer.equals("n")) {
-                    System.out.println("Start working on this task as a " + role +
-                            " at the current system time: " +
-                            getController().getTaskManSystemData().getSystemTime().toString());
-                    System.out.println("Confirm? (y/n)");
-                    answer = scanner.nextLine();
-                    if (answer.equals("BACK")) {
-                        System.out.println("Cancelled starting task " + taskName);
-                        return;
-                    }
-                }
-                System.out.println();
-
-                if (answer.equals("n")) {
-                    System.out.println("Cancelled starting task " + taskName);
-                    return;
-
                 }
 
                 // PENDING TASK
@@ -171,14 +150,12 @@ public class StartTaskUI {
                 System.out.println("ERROR: Given project could not be found");
             } catch (TaskNotFoundException e) {
                 System.out.println("ERROR: Given task could not be found");
-            } catch (IncorrectPermissionException | IncorrectRoleException e) {
+            } catch (IncorrectRoleException e) {
                 System.out.println("ERROR: " + e.getMessage());
             } catch (IncorrectTaskStatusException e) {
                 System.out.println("ERROR: Given task does not have the right status to start");
             } catch (UserAlreadyAssignedToTaskException e) {
                 System.out.println("ERROR: User is already executing a task");
-            } catch (BackException e){
-                System.out.println("Cancelled Starting Task");
             }
         }
     }
@@ -246,15 +223,15 @@ public class StartTaskUI {
 
 
     private boolean getBooleanInput(Scanner scanner, String message) throws BackException {
-        System.out.println(message + " (y/n)");
+        System.out.println(message + " (y/n)\n");
         String answer = scanner.nextLine();
         if (answer.equals("BACK")) {
             throw new BackException();
         }
 
         while (!answer.equals("y") && !answer.equals("n")) {
-            System.out.println("\nInput has to be 'y' or 'n', try again");
-            System.out.println(message + " (y/n)");
+            System.out.println("Input has to be 'y' or 'n', try again");
+            System.out.println(message + " (y/n)\n");
             answer = scanner.nextLine();
             if (answer.equals("BACK")) {
                 throw new BackException();

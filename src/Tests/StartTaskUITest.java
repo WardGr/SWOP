@@ -1,7 +1,12 @@
 package Tests;
 
+import Application.Session;
+import Application.SessionProxy;
+import Application.StartTaskController;
+import Domain.Command.CommandManager;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
 import Domain.Project.ProjectNameAlreadyInUseException;
 import Domain.Project.ProjectNotOngoingException;
 import Domain.Project.TaskNotFoundException;
@@ -10,22 +15,34 @@ import Domain.Task.IncorrectTaskStatusException;
 import Domain.Task.LoopDependencyGraphException;
 import Domain.TaskManSystem.DueBeforeSystemTimeException;
 import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.IncorrectUserException;
+import Domain.User.Role;
+import Domain.User.User;
 import Domain.User.UserAlreadyAssignedToTaskException;
+import UserInterface.StartTaskUI;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
 public class StartTaskUITest {
     @Test
     public void test() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, EndTimeBeforeStartTimeException, IncorrectUserException {
-        /*
         Session session = new Session();
         SessionProxy sessionProxy = new SessionProxy(session);
 
         TaskManSystem taskManSystem = new TaskManSystem(new Time(0));
 
-        StartTaskController controller = new StartTaskController(sessionProxy, taskManSystem);
+        CommandManager commandManager = new CommandManager();
+
+        StartTaskController controller = new StartTaskController(sessionProxy, taskManSystem, commandManager);
         StartTaskUI startTaskUI = new StartTaskUI(controller);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
@@ -44,13 +61,129 @@ public class StartTaskUITest {
         taskManSystem.createProject("Project 1", "Description 1", new Time(6));
         taskManSystem.addTaskToProject("Project 1", "Task 1", "Description 1", new Time(50), 0.1, List.of(Role.PYTHONPROGRAMMER, Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
         taskManSystem.addTaskToProject("Project 1", "Task 2", "Description 2", new Time(20), 0.1, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
-        taskManSystem.startTask("Project 1", "Task 2", developer, Role.PYTHONPROGRAMMER);
 
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\nsysadmin\ny\nBACK\n".getBytes()));
         startTaskUI.startTask();
         assertEquals(
                 """
-                        ERROR: You are already working on an executing task.
+                        ***** LIST OF AVAILABLE OR PENDING TASKS *****
+                         - Task: Task 1, belonging to Project: Project 1
+                         - Task: Task 2, belonging to Project: Project 1
+                        
+                        Please give the project name you want to start working in:
+                        Please give the task name you want to start working on in project Project 1:
+                        You have roles: Python programmer
+                        Task requires roles: Python programmer
+                        Give the role you want to fulfill in task Task 2:
+                        ******** TASK DETAILS ********
+                        Task Name:            Task 2
+                        Belonging to project: Project 1
+                        Description:          Description 2
+                        Estimated Duration:   0 hour(s), 20 minute(s)
+                        Status:               available
+                       
+                        Replaces Task:      Replaces no tasks
+                         
+                        Required roles:
+                        - Python programmer
+                       
+                        Committed users:
+                        No users are committed to this task.
+                       
+                        Start working on this task as a system administration developer at the current system time: 0 hour(s), 0 minute(s)
+                        Confirm? (y/n)
+                       
+                        ERROR: Given role is not required in the task
+                        ***** LIST OF AVAILABLE OR PENDING TASKS *****
+                         - Task: Task 1, belonging to Project: Project 1
+                         - Task: Task 2, belonging to Project: Project 1
+                       
+                        Please give the project name you want to start working in:
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
+                out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        taskManSystem.startTask("Project 1", "Task 2", developer, Role.PYTHONPROGRAMMER);
+
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\npython programmer\ny\nBACK\n".getBytes()));
+        startTaskUI.startTask();
+        assertEquals(
+                """
+                       ***** LIST OF AVAILABLE OR PENDING TASKS *****
+                        - Task: Task 1, belonging to Project: Project 1
+                       
+                       Please give the project name you want to start working in:
+                       Please give the task name you want to start working on in project Project 1:
+                       You have roles: Python programmer
+                       Task requires roles: The task doesn't require any roles
+                       Give the role you want to fulfill in task Task 2:
+                       ******** TASK DETAILS ********
+                       Task Name:            Task 2
+                       Belonging to project: Project 1
+                       Description:          Description 2
+                       Estimated Duration:   0 hour(s), 20 minute(s)
+                       Status:               executing
+                       
+                       Replaces Task:      Replaces no tasks
+                       
+                       Required roles:
+                       All roles are filled in.
+                       
+                       Committed users:
+                       - OlavBl as Python programmer
+                       
+                       Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
+                       Confirm? (y/n)
+                       
+                       ERROR: Given task does not have the right status to start
+                       ***** LIST OF AVAILABLE OR PENDING TASKS *****
+                        - Task: Task 1, belonging to Project: Project 1
+                       
+                       Please give the project name you want to start working in:
+                       Cancelled starting task
+                       """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
+                out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 1\npython programmer\ny\nBACK\n".getBytes()));
+        startTaskUI.startTask();
+        assertEquals(
+                """
+                         ***** LIST OF AVAILABLE OR PENDING TASKS *****
+                          - Task: Task 1, belonging to Project: Project 1
+                                                
+                         Please give the project name you want to start working in:
+                         Please give the task name you want to start working on in project Project 1:
+                         You have roles: Python programmer
+                         Task requires roles: Python programmer, Python programmer
+                         Give the role you want to fulfill in task Task 1:
+                         ******** TASK DETAILS ********
+                         Task Name:            Task 1
+                         Belonging to project: Project 1
+                         Description:          Description 1
+                         Estimated Duration:   0 hour(s), 50 minute(s)
+                         Status:               available
+                                                
+                         Replaces Task:      Replaces no tasks
+                                                
+                         Required roles:
+                         - Python programmer
+                         - Python programmer
+                                                
+                         Committed users:
+                         No users are committed to this task.
+                                                
+                         Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
+                         Confirm? (y/n)
+                                                
+                         ERROR: User is already executing a task
+                         ***** LIST OF AVAILABLE OR PENDING TASKS *****
+                          - Task: Task 1, belonging to Project: Project 1
+                                                
+                         Please give the project name you want to start working in:
+                         Cancelled starting task
+                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -86,16 +219,19 @@ public class StartTaskUITest {
         out.reset();
 
         // Testing non available/pending task
-        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 2\nBACK".getBytes()));
         startTaskUI.startTask();
         assertEquals(
                 """
                         ***** LIST OF AVAILABLE OR PENDING TASKS *****
                          - Task: Task 1, belonging to Project: Project 1
-                        
+                                                
                         Please give the project name you want to start working in:
                         Please give the task name you want to start working on in project Project 1:
-                        ERROR: The given task is not available or pending
+                        You have roles: Python programmer
+                        Task requires roles: The task doesn't require any roles
+                        Give the role you want to fulfill in task Task 2:
+                        Cancelled starting task Task 2
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -171,8 +307,10 @@ public class StartTaskUITest {
                                                 
                         You are already pending for task Task 1
                         Confirm you want to stop pending for task Task 1 and start working on task Task 1? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Confirm you want to stop pending for task Task 1 and start working on task Task 1? (y/n)
-                                                
+                        
                         Successfully started working on task Task 1 in project Project 1 as Python programmer
                                                 
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
@@ -209,7 +347,8 @@ public class StartTaskUITest {
                                                 
                         Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
                         Confirm? (y/n)
-                        Cancelled starting task Task 1
+                        
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -244,12 +383,15 @@ public class StartTaskUITest {
                                                 
                         Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
                         Confirm? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
                         Confirm? (y/n)
                         
                         You are already pending for task Task 1
                         Confirm you want to stop pending for task Task 1 and start working on task Task 1? (y/n)
-                        Cancelled starting task Task 1
+                        
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -287,8 +429,11 @@ public class StartTaskUITest {
                         
                         You are already pending for task Task 1
                         Confirm you want to stop pending for task Task 1 and start working on task Task 1? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Confirm you want to stop pending for task Task 1 and start working on task Task 1? (y/n)
-                        Cancelled starting task Task 1
+                        
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -323,11 +468,11 @@ public class StartTaskUITest {
                                                 
                         Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
                         Confirm? (y/n)
-                        
+                                                
                         You are already pending for task Task 1
                         Confirm you want to stop pending for task Task 1 and start working on task Task 1? (y/n)
-                        
-                        Cancelled starting task Task 1
+                                                
+                        ERROR: Starting of the task needs confirmation and isn't confirmed
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -362,9 +507,12 @@ public class StartTaskUITest {
                                                 
                         Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
                         Confirm? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
                         Confirm? (y/n)
-                        Cancelled starting task Task 1
+                        
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -430,15 +578,31 @@ public class StartTaskUITest {
                 """
                         ***** LIST OF AVAILABLE OR PENDING TASKS *****
                          - Task: Task 1, belonging to Project: Project 1
-                        
+                                                
                         Please give the project name you want to start working in:
                         Please give the task name you want to start working on in project Project 1:
                         You have roles: Python programmer
                         Task requires roles: Python programmer
                         Give the role you want to fulfill in task Task 1:
-                        ERROR: The given role is not required in this task.
-                        Give the role you want to fulfill in task Task 1:
-                        Cancelled starting task Task 1
+                        ******** TASK DETAILS ********
+                        Task Name:            Task 1
+                        Belonging to project: Project 1
+                        Description:          Description 1
+                        Estimated Duration:   0 hour(s), 50 minute(s)
+                        Status:               pending
+                                                
+                        Replaces Task:      Replaces no tasks
+                                                
+                        Required roles:
+                        - Python programmer
+                                                
+                        Committed users:
+                        - OlavBl as Python programmer
+                                                
+                        Start working on this task as a system administration developer at the current system time: 0 hour(s), 0 minute(s)
+                        Confirm? (y/n)
+                                                
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -450,15 +614,31 @@ public class StartTaskUITest {
                 """
                         ***** LIST OF AVAILABLE OR PENDING TASKS *****
                          - Task: Task 1, belonging to Project: Project 1
-                        
+                                                
                         Please give the project name you want to start working in:
                         Please give the task name you want to start working on in project Project 1:
                         You have roles: Python programmer
                         Task requires roles: Python programmer
                         Give the role you want to fulfill in task Task 1:
-                        ERROR: The given role is not required in this task.
-                        Give the role you want to fulfill in task Task 1:
-                        Cancelled starting task Task 1
+                        ******** TASK DETAILS ********
+                        Task Name:            Task 1
+                        Belonging to project: Project 1
+                        Description:          Description 1
+                        Estimated Duration:   0 hour(s), 50 minute(s)
+                        Status:               pending
+                                                
+                        Replaces Task:      Replaces no tasks
+                                                
+                        Required roles:
+                        - Python programmer
+                                                
+                        Committed users:
+                        - OlavBl as Python programmer
+                                                
+                        Start working on this task as a Java programmer at the current system time: 0 hour(s), 0 minute(s)
+                        Confirm? (y/n)
+                                                
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -556,11 +736,10 @@ public class StartTaskUITest {
                         
                         Start working on this task as a Python programmer at the current system time: 0 hour(s), 0 minute(s)
                         Confirm? (y/n)
-                        Cancelled starting task Task 2 Repl
+                        
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
-
-         */
     }
 }
