@@ -2,11 +2,11 @@ package Application.TaskControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandInterface;
-import Domain.Command.UpdateDependenciesCommands.AddNextTaskCommand;
-import Domain.Command.UpdateDependenciesCommands.AddPrevTaskCommand;
-import Domain.Command.UpdateDependenciesCommands.RemoveNextTaskCommand;
-import Domain.Command.UpdateDependenciesCommands.RemovePrevTaskCommand;
+import Application.Command.CommandInterface;
+import Application.Command.UpdateDependenciesCommands.AddNextTaskCommand;
+import Application.Command.UpdateDependenciesCommands.AddPrevTaskCommand;
+import Application.Command.UpdateDependenciesCommands.RemoveNextTaskCommand;
+import Application.Command.UpdateDependenciesCommands.RemovePrevTaskCommand;
 import Domain.Project.ProjectData;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.IncorrectTaskStatusException;

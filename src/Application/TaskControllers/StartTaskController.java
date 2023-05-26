@@ -2,8 +2,8 @@ package Application.TaskControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandInterface;
-import Domain.Command.TaskCommands.StartTaskCommand;
+import Application.Command.CommandInterface;
+import Application.Command.TaskCommands.StartTaskCommand;
 import Domain.Project.ProjectData;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.IncorrectTaskStatusException;

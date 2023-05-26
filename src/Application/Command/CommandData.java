@@ -1,4 +1,4 @@
-package Domain.Command;
+package Application.Command;
 
 import java.util.List;
 import java.util.Map;

@@ -3,7 +3,7 @@ package Tests.UITests;
 import Application.TaskControllers.EndTaskController;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandManager;
+import Application.Command.CommandManager;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectNameAlreadyInUseException;

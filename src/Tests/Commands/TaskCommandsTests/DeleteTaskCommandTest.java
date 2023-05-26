@@ -1,7 +1,7 @@
 package Tests.Commands.TaskCommandsTests;
 
-import Domain.Command.TaskCommands.DeleteTaskCommand;
-import Domain.Command.UndoNotPossibleException;
+import Application.Command.TaskCommands.DeleteTaskCommand;
+import Application.Command.UndoNotPossibleException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectData;

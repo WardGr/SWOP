@@ -1,6 +1,6 @@
 package Tests.Commands.TaskCommandsTests;
 
-import Domain.Command.TaskCommands.CreateTaskCommand;
+import Application.Command.TaskCommands.CreateTaskCommand;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.DataClasses.Tuple;

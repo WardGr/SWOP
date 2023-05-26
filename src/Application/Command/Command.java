@@ -1,4 +1,4 @@
-package Domain.Command;
+package Application.Command;
 
  import Application.IncorrectPermissionException;
  import Application.SystemControllers.InvalidFileException;

@@ -1,6 +1,6 @@
-package Domain.Command.TaskCommands;
+package Application.Command.TaskCommands;
 
- import Domain.Command.Command;
+ import Application.Command.Command;
  import Domain.DataClasses.Time;
  import Domain.DataClasses.Tuple;
  import Domain.Project.ProjectNotOngoingException;

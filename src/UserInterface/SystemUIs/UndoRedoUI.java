@@ -1,9 +1,9 @@
 package UserInterface.SystemUIs;
 
 import Application.SystemControllers.UndoRedoController;
-import Domain.Command.CommandData;
-import Domain.Command.UndoNotPossibleException;
-import Domain.Command.EmptyCommandStackException;
+import Application.Command.CommandData;
+import Application.Command.UndoNotPossibleException;
+import Application.Command.EmptyCommandStackException;
 import Domain.User.IncorrectUserException;
 import Domain.User.Role;
 import Domain.DataClasses.Tuple;

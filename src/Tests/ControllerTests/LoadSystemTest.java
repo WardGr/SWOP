@@ -6,7 +6,7 @@ import Application.Session.Session;
 import Application.Session.SessionProxy;
 import Application.SystemControllers.InvalidFileException;
 import Application.SystemControllers.LoadSystemController;
-import Domain.Command.CommandManager;
+import Application.Command.CommandManager;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectData;

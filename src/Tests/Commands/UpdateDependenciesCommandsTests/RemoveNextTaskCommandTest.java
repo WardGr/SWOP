@@ -1,6 +1,6 @@
 package Tests.Commands.UpdateDependenciesCommandsTests;
 
-import Domain.Command.UpdateDependenciesCommands.RemoveNextTaskCommand;
+import Application.Command.UpdateDependenciesCommands.RemoveNextTaskCommand;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.DataClasses.Tuple;

@@ -1,7 +1,7 @@
 package Tests.Commands.ProjectCommandsTests;
 
-import Domain.Command.ProjectCommands.DeleteProjectCommand;
-import Domain.Command.UndoNotPossibleException;
+import Application.Command.ProjectCommands.DeleteProjectCommand;
+import Application.Command.UndoNotPossibleException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectData;

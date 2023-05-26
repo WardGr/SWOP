@@ -2,10 +2,10 @@ package Application.TaskControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandInterface;
-import Domain.Command.TaskCommands.CreateTaskCommand;
-import Domain.Command.TaskCommands.DeleteTaskCommand;
-import Domain.Command.TaskCommands.ReplaceTaskCommand;
+import Application.Command.CommandInterface;
+import Application.Command.TaskCommands.CreateTaskCommand;
+import Application.Command.TaskCommands.DeleteTaskCommand;
+import Application.Command.TaskCommands.ReplaceTaskCommand;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.DataClasses.Tuple;

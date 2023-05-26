@@ -1,7 +1,7 @@
 package Tests.Commands.AdvanceTimeCommandsTests;
 
-import Domain.Command.AdvanceTimeCommands.SetNewTimeCommand;
-import Domain.Command.UndoNotPossibleException;
+import Application.Command.AdvanceTimeCommands.SetNewTimeCommand;
+import Application.Command.UndoNotPossibleException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.TaskManSystem.DueBeforeSystemTimeException;

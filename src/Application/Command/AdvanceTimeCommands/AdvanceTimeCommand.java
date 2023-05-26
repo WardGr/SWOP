@@ -1,6 +1,6 @@
-package Domain.Command.AdvanceTimeCommands;
+package Application.Command.AdvanceTimeCommands;
 
-import Domain.Command.Command;
+import Application.Command.Command;
 import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
 import Domain.TaskManSystem.TaskManSystem;
 

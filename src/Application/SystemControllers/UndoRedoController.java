@@ -1,9 +1,9 @@
 package Application.SystemControllers;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandData;
-import Domain.Command.CommandInterface;
-import Domain.Command.EmptyCommandStackException;
-import Domain.Command.UndoNotPossibleException;
+import Application.Command.CommandData;
+import Application.Command.CommandInterface;
+import Application.Command.EmptyCommandStackException;
+import Application.Command.UndoNotPossibleException;
 import Domain.DataClasses.Tuple;
 import Domain.User.IncorrectUserException;
 import Domain.User.Role;

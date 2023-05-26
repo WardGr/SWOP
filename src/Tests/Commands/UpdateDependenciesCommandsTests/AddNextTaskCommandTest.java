@@ -1,6 +1,6 @@
 package Tests.Commands.UpdateDependenciesCommandsTests;
 
-import Domain.Command.UpdateDependenciesCommands.AddNextTaskCommand;
+import Application.Command.UpdateDependenciesCommands.AddNextTaskCommand;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectNameAlreadyInUseException;

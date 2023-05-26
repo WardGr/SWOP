@@ -1,6 +1,6 @@
-package Domain.Command.TaskCommands;
+package Application.Command.TaskCommands;
 
-import Domain.Command.Command;
+import Application.Command.Command;
 import Domain.TaskManSystem.ProjectNotFoundException;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.Project.TaskNotFoundException;

@@ -1,4 +1,4 @@
-package Domain.Command;
+package Application.Command;
 
  import Domain.DataClasses.Tuple;
  import Domain.User.IncorrectUserException;

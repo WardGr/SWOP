@@ -1,6 +1,6 @@
-package Domain.Command.ProjectCommands;
+package Application.Command.ProjectCommands;
 
- import Domain.Command.Command;
+ import Application.Command.Command;
  import Domain.DataClasses.Time;
  import Domain.Project.ProjectNameAlreadyInUseException;
  import Domain.TaskManSystem.DueBeforeSystemTimeException;
