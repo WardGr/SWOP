@@ -1,8 +1,8 @@
 package Tests;
 
-import Application.Session;
-import Application.SessionProxy;
-import Application.UndoRedoController;
+import Application.Session.Session;
+import Application.Session.SessionProxy;
+import Application.SystemControllers.UndoRedoController;
 import Domain.Command.AdvanceTimeCommands.AdvanceTimeCommand;
 import Domain.Command.AdvanceTimeCommands.SetNewTimeCommand;
 import Domain.Command.CommandManager;
@@ -18,8 +18,7 @@ import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.IncorrectUserException;
 import Domain.User.Role;
 import Domain.User.User;
-import UserInterface.AdvanceTimeUI;
-import UserInterface.UndoRedoUI;
+import UserInterface.SystemUIs.UndoRedoUI;
 import org.junit.Before;
 import org.junit.Test;
 

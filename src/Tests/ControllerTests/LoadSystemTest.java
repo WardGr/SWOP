@@ -57,7 +57,7 @@ public class LoadSystemTest {
         User manager = userManager.getUser("DieterVH", "computer776");
         session.login(manager);
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/availableTask.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/availableTask.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -95,7 +95,7 @@ public class LoadSystemTest {
 
         //test executing task
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/executingTask.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/executingTask.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -118,7 +118,7 @@ public class LoadSystemTest {
 
         //test pending task
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/pendingTask.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/pendingTask.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -139,7 +139,7 @@ public class LoadSystemTest {
 
         //test finished task
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/finishedTask.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/finishedTask.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -157,7 +157,7 @@ public class LoadSystemTest {
 
         //test failed task
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/failedTask.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/failedTask.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -175,7 +175,7 @@ public class LoadSystemTest {
 
         //test replacing task
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/replaceTask.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/replaceTask.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -199,7 +199,7 @@ public class LoadSystemTest {
 
         //test adding prevTask
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/previousTask.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/previousTask.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -221,7 +221,7 @@ public class LoadSystemTest {
 
         //test adding prevTask
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/dependingProject.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/dependingProject.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -244,7 +244,7 @@ public class LoadSystemTest {
         //testing loading multiple projects from 1 file
 
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/multipleProjects.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/multipleProjects.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -323,7 +323,7 @@ public class LoadSystemTest {
 
         //tests wrong file path error
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/InvalidLogicTest.json.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/InvalidLogicTest.json.json");
         } catch (Exception e) {
             assertTrue(e instanceof InvalidFileException);
             assertEquals(e.getMessage(), "ERROR: File path is invalid.");
@@ -334,7 +334,7 @@ public class LoadSystemTest {
     public void invalidRoleTest() throws LoginException {
         session.login(userManager.getUser("WardGr", "minecraft123"));
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/availableTask.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/availableTask.json");
         } catch (Exception e) {
             assertTrue(e instanceof IncorrectPermissionException);
             assertEquals(e.getMessage(), "You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
@@ -348,7 +348,7 @@ public class LoadSystemTest {
 
         //tests invalid file logic && invalidRole exception
         try {
-            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/invalidRole.json");
+            lsc.LoadSystem("src/Tests/ControllerTests/jsons/invalidRole.json");
         } catch (Exception e) {
             assertTrue(e instanceof InvalidFileException);
             assertEquals(e.getMessage(), "ERROR: File logic is invalid so couldn't setup system.");

@@ -1,8 +1,8 @@
 package Tests.UITests;
 
-import Application.Session;
-import Application.SessionProxy;
-import Application.UpdateDependenciesController;
+import Application.Session.Session;
+import Application.Session.SessionProxy;
+import Application.TaskControllers.UpdateDependenciesController;
 import Domain.Command.CommandManager;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.DataClasses.InvalidTimeException;
@@ -21,7 +21,7 @@ import Domain.User.IncorrectUserException;
 import Domain.User.Role;
 import Domain.User.User;
 import Domain.User.UserAlreadyAssignedToTaskException;
-import UserInterface.UpdateDependenciesUI;
+import UserInterface.TaskUIs.UpdateDependenciesUI;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
