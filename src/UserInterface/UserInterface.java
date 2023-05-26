@@ -1,5 +1,16 @@
 package UserInterface;
 
+import UserInterface.ProjectUIs.ProjectUI;
+import UserInterface.ProjectUIs.ShowProjectsUI;
+import UserInterface.SystemUIs.AdvanceTimeUI;
+import UserInterface.SystemUIs.LoadSystemUI;
+import UserInterface.SystemUIs.SessionUI;
+import UserInterface.SystemUIs.UndoRedoUI;
+import UserInterface.TaskUIs.EndTaskUI;
+import UserInterface.TaskUIs.StartTaskUI;
+import UserInterface.TaskUIs.TaskUI;
+import UserInterface.TaskUIs.UpdateDependenciesUI;
+
 import java.util.Scanner;
 
 /**
