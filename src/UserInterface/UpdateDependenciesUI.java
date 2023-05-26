@@ -139,7 +139,7 @@ public class UpdateDependenciesUI {
                             case ("removenext") -> getController().removeNextTask(projectName, taskName, dependentProjectName, dependentTaskName);
                             default -> System.out.println("ERROR: Unrecognized command, try again.");
                         }
-                    } catch (TaskNotFoundException e) {
+                    } catch (ProjectNotFoundException | TaskNotFoundException e) {
                         System.out.println("ERROR: The given task could not be found, try again.");
                     } catch (IncorrectTaskStatusException | LoopDependencyGraphException e) {
                         System.out.println("ERROR: The given task could not safely be added, try again.");
@@ -237,7 +237,7 @@ public class UpdateDependenciesUI {
             System.out.println("There are no possible previous tasks to add.");
         }
         for (Tuple<String,String> possiblePrevTask : possiblePrevTasks) {
-            System.out.print("Task \"" + possiblePrevTask.getSecond() + "\" in project \"" + possiblePrevTask.getFirst() + "\"");
+            System.out.println(" - Task \"" + possiblePrevTask.getSecond() + "\" in project \"" + possiblePrevTask.getFirst() + "\"");
         }
 
         System.out.print("Possible tasks to add as next task: ");
@@ -245,7 +245,7 @@ public class UpdateDependenciesUI {
             System.out.println("There are no possible next tasks to add.");
         }
         for(Tuple<String,String> possibleNextTask : possibleNextTasks) {
-            System.out.print("Task \"" + possibleNextTask.getSecond() + "\" in project \"" + possibleNextTask.getFirst() + "\"");
+            System.out.println(" - Task \"" + possibleNextTask.getSecond() + "\" in project \"" + possibleNextTask.getFirst() + "\"");
         }
         System.out.println();
 
