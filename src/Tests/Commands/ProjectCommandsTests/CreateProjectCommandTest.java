@@ -1,7 +1,14 @@
 package Tests.Commands.ProjectCommandsTests;
 
-import Domain.*;
-import Domain.Command.CreateProjectCommand;
+import Domain.Command.ProjectCommands.CreateProjectCommand;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.Project.ProjectData;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.TaskManSystem.TaskManSystemData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +48,7 @@ public class CreateProjectCommandTest {
         command.execute();
         assertEquals(1, taskManSystemData.getProjectsData().size());
 
-        ProjectData       project           = taskManSystem.getProjectData("Project");
+        ProjectData project           = taskManSystem.getProjectData("Project");
         assertTrue(taskManSystemData.getProjectsData().contains(project));
 
         command.undo();

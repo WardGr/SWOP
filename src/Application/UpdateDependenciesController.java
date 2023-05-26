@@ -1,9 +1,19 @@
 package Application;
 
-import Domain.*;
-import Domain.Command.*;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskData;
+import Domain.Command.CommandInterface;
+import Domain.Command.UpdateDependenciesCommands.AddNextTaskCommand;
+import Domain.Command.UpdateDependenciesCommands.AddPrevTaskCommand;
+import Domain.Command.UpdateDependenciesCommands.RemoveNextTaskCommand;
+import Domain.Command.UpdateDependenciesCommands.RemovePrevTaskCommand;
+import Domain.Project.ProjectData;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.TaskManSystem.TaskManSystemData;
+import Domain.Task.LoopDependencyGraphException;
+import Domain.Task.TaskData;
+import Domain.User.Role;
 
 public class UpdateDependenciesController {
     private final SessionProxy session;

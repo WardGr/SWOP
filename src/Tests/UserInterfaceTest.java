@@ -1,8 +1,11 @@
 package Tests;
 
-import Domain.InvalidTimeException;
+import Domain.Command.CommandManager;
+import Domain.DataClasses.Time;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.UserManager;
 import org.junit.Test;
-import Domain.*;
 import Application.*;
 import UserInterface.*;
 

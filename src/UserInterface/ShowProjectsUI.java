@@ -2,11 +2,14 @@ package UserInterface;
 
 import Application.IncorrectPermissionException;
 import Application.ShowProjectsController;
-import Domain.*;
-import Domain.TaskStates.FinishedStatus;
-import Domain.TaskStates.TaskData;
+import Domain.Project.ProjectData;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.Task.FinishedStatus;
+import Domain.Task.TaskData;
+import Domain.User.Role;
 
-import java.util.List;
 import java.util.Scanner;
 
 /**

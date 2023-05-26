@@ -3,7 +3,7 @@ package UserInterface;
 import Application.IncorrectPermissionException;
 import Application.InvalidFileException;
 import Application.LoadSystemController;
-import Domain.*;
+import Domain.User.Role;
 
 import java.util.Scanner;
 

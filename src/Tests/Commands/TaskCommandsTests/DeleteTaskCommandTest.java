@@ -1,11 +1,18 @@
 package Tests.Commands.TaskCommandsTests;
 
-import Domain.*;
-import Domain.Command.DeleteTaskCommand;
+import Domain.Command.TaskCommands.DeleteTaskCommand;
 import Domain.Command.UndoNotPossibleException;
-import Domain.TaskStates.IllegalTaskRolesException;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskData;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.Project.ProjectData;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.Project.ProjectNotOngoingException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.*;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.Role;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +48,7 @@ public class DeleteTaskCommandTest {
     public void testExecuteAndUndo() throws ProjectNotFoundException, TaskNotFoundException {
         DeleteTaskCommand command = new DeleteTaskCommand(taskManSystem, "Project", "Task");
 
-        ProjectData       projectData       = taskManSystem.getProjectData("Project");
+        ProjectData projectData       = taskManSystem.getProjectData("Project");
         TaskData          taskData          = taskManSystem.getTaskData("Project", "Task");
 
         assertTrue(projectData.getTasksData().contains(taskData));

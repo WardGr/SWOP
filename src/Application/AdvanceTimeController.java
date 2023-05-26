@@ -1,11 +1,15 @@
 package Application;
 
-import Domain.*;
-
 import java.util.Set;
 
-import Domain.Command.AdvanceTimeCommand;
-import Domain.Command.SetNewTimeCommand;
+import Domain.Command.AdvanceTimeCommands.AdvanceTimeCommand;
+import Domain.Command.AdvanceTimeCommands.SetNewTimeCommand;
+import Domain.Command.CommandInterface;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.Role;
 
 /**
  * Separates domain from UI for the advancetime use-case

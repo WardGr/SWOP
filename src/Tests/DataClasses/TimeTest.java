@@ -1,7 +1,7 @@
 package Tests.DataClasses;
 
-import Domain.InvalidTimeException;
-import Domain.Time;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
 import org.junit.Before;
 import org.junit.Test;
 

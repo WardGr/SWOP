@@ -1,8 +1,14 @@
 package Tests.Domain.TaskTests;
 
-import Domain.*;
-import Domain.TaskStates.*;
+import Domain.DataClasses.EndTimeBeforeStartTimeException;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.Task.*;
 
+import Domain.User.IncorrectUserException;
+import Domain.User.Role;
+import Domain.User.User;
+import Domain.User.UserAlreadyAssignedToTaskException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

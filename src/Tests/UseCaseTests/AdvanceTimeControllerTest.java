@@ -1,7 +1,8 @@
 package Tests.UseCaseTests;
 
 import Application.IncorrectPermissionException;
-import Domain.*;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
 import org.junit.Test;
 
 public class AdvanceTimeControllerTest {

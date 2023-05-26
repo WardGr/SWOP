@@ -2,8 +2,8 @@ package Tests.DataClasses;
 
 import Application.Session;
 import Application.SessionProxy;
-import Domain.Role;
-import Domain.User;
+import Domain.User.Role;
+import Domain.User.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

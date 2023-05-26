@@ -1,9 +1,20 @@
 package Tests.UseCaseTests;
 
 import Application.*;
-import Domain.*;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.IllegalTaskRolesException;
+import Domain.DataClasses.EndTimeBeforeStartTimeException;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.Project.DueTimeBeforeCreationTimeException;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.Project.ProjectNotOngoingException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.Task.TaskNameAlreadyInUseException;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.Task.LoopDependencyGraphException;
+import Domain.Task.IllegalTaskRolesException;
+import Domain.User.IncorrectUserException;
 import org.junit.Test;
 
 public class UpdateDependenciesControllerTest {

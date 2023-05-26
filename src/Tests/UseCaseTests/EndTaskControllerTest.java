@@ -1,10 +1,17 @@
 package Tests.UseCaseTests;
 
 import Application.IncorrectPermissionException;
-import Domain.*;
-import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.IllegalTaskRolesException;
+import Domain.DataClasses.EndTimeBeforeStartTimeException;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.Project.ProjectNotOngoingException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.*;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.User.IncorrectUserException;
+import Domain.User.UserAlreadyAssignedToTaskException;
 import org.junit.Test;
 
 public class EndTaskControllerTest {

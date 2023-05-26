@@ -2,12 +2,16 @@ package UserInterface;
 
 import Application.IncorrectPermissionException;
 import Application.UpdateDependenciesController;
-import Domain.*;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskData;
+import Domain.DataClasses.Tuple;
+import Domain.Project.ProjectData;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystemData;
+import Domain.Task.LoopDependencyGraphException;
+import Domain.Task.TaskData;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -1,18 +1,12 @@
 package Application;
 
-import Domain.*;
-import Domain.Command.LoadSystemCommand;
-import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.IllegalTaskRolesException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
+import Domain.Command.CommandInterface;
+import Domain.Command.LoadSystemCommands.LoadSystemCommand;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.Role;
+import Domain.User.User;
+import Domain.User.UserManager;
 
 /**
  * Separates domain from UI for the loadsystem use-case

@@ -1,6 +1,6 @@
 package Tests.DataClasses;
 
-import Domain.Tuple;
+import Domain.DataClasses.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 

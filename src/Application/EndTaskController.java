@@ -1,9 +1,19 @@
 package Application;
 
-import Domain.*;
-import Domain.Command.FailTaskCommand;
-import Domain.Command.FinishTaskCommand;
-import Domain.TaskStates.TaskData;
+import Domain.Command.CommandInterface;
+import Domain.Command.TaskCommands.FailTaskCommand;
+import Domain.Command.TaskCommands.FinishTaskCommand;
+import Domain.DataClasses.EndTimeBeforeStartTimeException;
+import Domain.Project.ProjectData;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.TaskManSystem.TaskManSystemData;
+import Domain.Task.Status;
+import Domain.Task.TaskData;
+import Domain.User.IncorrectUserException;
+import Domain.User.Role;
 
 import java.util.Set;
 

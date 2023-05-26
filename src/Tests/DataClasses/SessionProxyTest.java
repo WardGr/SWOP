@@ -1,7 +1,8 @@
 package Tests.DataClasses;
 import Application.Session;
 import Application.SessionProxy;
-import Domain.*;
+import Domain.User.Role;
+import Domain.User.User;
 import org.junit.Test;
 
 import java.util.HashSet;

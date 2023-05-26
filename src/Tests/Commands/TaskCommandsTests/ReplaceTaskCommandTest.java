@@ -1,11 +1,21 @@
 package Tests.Commands.TaskCommandsTests;
 
-import Domain.*;
-import Domain.Command.ReplaceTaskCommand;
-import Domain.TaskStates.IllegalTaskRolesException;
-import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskData;
+import Domain.Command.TaskCommands.ReplaceTaskCommand;
+import Domain.DataClasses.EndTimeBeforeStartTimeException;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.Project.ProjectData;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.Project.ProjectNotOngoingException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.*;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.IncorrectUserException;
+import Domain.User.Role;
+import Domain.User.User;
+import Domain.User.UserAlreadyAssignedToTaskException;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -2,10 +2,10 @@ package UserInterface;
 
 import Application.AdvanceTimeController;
 import Application.IncorrectPermissionException;
-import Domain.InvalidTimeException;
-import Domain.NewTimeBeforeSystemTimeException;
-import Domain.Role;
-import Domain.Time;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
+import Domain.User.Role;
+import Domain.DataClasses.Time;
 
 import java.util.Scanner;
 

@@ -1,18 +1,16 @@
 package Tests;
 
-import Application.ProjectController;
-import Application.Session;
-import Application.SessionProxy;
-import Domain.*;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.IllegalTaskRolesException;
-import UserInterface.ProjectUI;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.Project.ProjectNotOngoingException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.Task.TaskNameAlreadyInUseException;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.Task.LoopDependencyGraphException;
+import Domain.Task.IllegalTaskRolesException;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 

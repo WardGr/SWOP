@@ -1,10 +1,15 @@
 package Tests.Domain.ProjectTests;
 
-import Domain.*;
-import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.IllegalTaskRolesException;
-import Domain.TaskStates.TaskData;
+import Domain.DataClasses.EndTimeBeforeStartTimeException;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.DataClasses.Tuple;
+import Domain.Project.*;
+import Domain.Task.*;
+import Domain.User.IncorrectUserException;
+import Domain.User.Role;
+import Domain.User.User;
+import Domain.User.UserAlreadyAssignedToTaskException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

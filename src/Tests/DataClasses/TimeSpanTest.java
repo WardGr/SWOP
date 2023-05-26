@@ -1,9 +1,9 @@
 package Tests.DataClasses;
 
-import Domain.EndTimeBeforeStartTimeException;
-import Domain.InvalidTimeException;
-import Domain.Time;
-import Domain.TimeSpan;
+import Domain.DataClasses.EndTimeBeforeStartTimeException;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.DataClasses.TimeSpan;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

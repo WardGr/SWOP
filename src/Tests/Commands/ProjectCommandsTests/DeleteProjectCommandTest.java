@@ -1,10 +1,22 @@
 package Tests.Commands.ProjectCommandsTests;
 
-import Domain.*;
-import Domain.Command.DeleteProjectCommand;
+import Domain.Command.ProjectCommands.DeleteProjectCommand;
 import Domain.Command.UndoNotPossibleException;
-import Domain.TaskStates.IllegalTaskRolesException;
-import Domain.TaskStates.LoopDependencyGraphException;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.Project.ProjectData;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.Project.ProjectNotOngoingException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.Task.TaskNameAlreadyInUseException;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.TaskManSystem.TaskManSystemData;
+import Domain.Task.IllegalTaskRolesException;
+import Domain.Task.LoopDependencyGraphException;
+import Domain.User.Role;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,7 +52,7 @@ public class DeleteProjectCommandTest {
         DeleteProjectCommand command = new DeleteProjectCommand(taskManSystem, "Project");
 
         TaskManSystemData taskManSystemData = taskManSystem.getTaskManSystemData();
-        ProjectData       projectData       = taskManSystem.getProjectData("Project");
+        ProjectData projectData       = taskManSystem.getProjectData("Project");
 
 
         assertTrue(taskManSystemData.getProjectsData().contains(projectData));

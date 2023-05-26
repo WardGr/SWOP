@@ -1,13 +1,20 @@
 package Application;
 
-import Domain.*;
-import Domain.Command.Command;
-import Domain.Command.CreateTaskCommand;
-import Domain.Command.DeleteTaskCommand;
-import Domain.Command.ReplaceTaskCommand;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.IllegalTaskRolesException;
-import Domain.TaskStates.TaskData;
+import Domain.Command.CommandInterface;
+import Domain.Command.TaskCommands.CreateTaskCommand;
+import Domain.Command.TaskCommands.DeleteTaskCommand;
+import Domain.Command.TaskCommands.ReplaceTaskCommand;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.DataClasses.Tuple;
+import Domain.Project.ProjectData;
+import Domain.Project.ProjectNotOngoingException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.*;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.TaskManSystem.TaskManSystemData;
+import Domain.User.Role;
 
 import java.util.List;
 import java.util.Set;

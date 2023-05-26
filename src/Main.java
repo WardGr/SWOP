@@ -1,5 +1,10 @@
 import Application.*;
-import Domain.*;
+import Domain.Command.CommandInterface;
+import Domain.Command.CommandManager;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.UserManager;
 import UserInterface.*;
 
 /**

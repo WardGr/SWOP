@@ -2,8 +2,13 @@ package UserInterface;
 
 import Application.EndTaskController;
 import Application.IncorrectPermissionException;
-import Domain.*;
-import Domain.TaskStates.TaskData;
+import Domain.DataClasses.EndTimeBeforeStartTimeException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.Task.Status;
+import Domain.Task.TaskData;
+import Domain.User.IncorrectUserException;
 
 import java.util.Scanner;
 

@@ -1,7 +1,11 @@
 package Application;
-import Domain.*;
 import Domain.Command.CommandData;
+import Domain.Command.CommandInterface;
+import Domain.Command.EmptyCommandStackException;
 import Domain.Command.UndoNotPossibleException;
+import Domain.DataClasses.Tuple;
+import Domain.User.IncorrectUserException;
+import Domain.User.Role;
 
 import java.util.List;
 import java.util.Set;

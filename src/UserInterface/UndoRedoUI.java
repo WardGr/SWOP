@@ -1,13 +1,12 @@
 package UserInterface;
 
-import Application.IncorrectPermissionException;
 import Application.UndoRedoController;
 import Domain.Command.CommandData;
 import Domain.Command.UndoNotPossibleException;
-import Domain.EmptyCommandStackException;
-import Domain.IncorrectUserException;
-import Domain.Role;
-import Domain.Tuple;
+import Domain.Command.EmptyCommandStackException;
+import Domain.User.IncorrectUserException;
+import Domain.User.Role;
+import Domain.DataClasses.Tuple;
 
 import java.util.List;
 import java.util.Scanner;

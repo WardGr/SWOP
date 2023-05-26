@@ -1,13 +1,12 @@
 package Tests.Domain.UserTest;
 
 import Application.LoginException;
-import Domain.*;
+import Domain.User.Role;
+import Domain.User.UserManager;
+import Domain.User.UserNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;

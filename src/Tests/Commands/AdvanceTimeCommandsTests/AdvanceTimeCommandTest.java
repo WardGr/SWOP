@@ -1,8 +1,12 @@
 package Tests.Commands.AdvanceTimeCommandsTests;
 
-import Domain.*;
-import Domain.Command.AdvanceTimeCommand;
+import Domain.Command.AdvanceTimeCommands.AdvanceTimeCommand;
 import Domain.Command.UndoNotPossibleException;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
+import Domain.TaskManSystem.TaskManSystem;
 import org.junit.Before;
 import org.junit.Test;
 

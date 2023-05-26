@@ -1,8 +1,10 @@
 package Tests.UseCaseTests;
 
 import Application.IncorrectPermissionException;
-import Domain.DueBeforeSystemTimeException;
-import Domain.*;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
 import org.junit.Test;
 
 public class CreateProjectControllerTest {

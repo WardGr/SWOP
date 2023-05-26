@@ -1,10 +1,17 @@
 package Tests.Commands.UpdateDependenciesCommandsTests;
 
-import Domain.*;
-import Domain.Command.RemoveNextTaskCommand;
-import Domain.TaskStates.IllegalTaskRolesException;
-import Domain.TaskStates.LoopDependencyGraphException;
-import Domain.TaskStates.TaskData;
+import Domain.Command.UpdateDependenciesCommands.RemoveNextTaskCommand;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.DataClasses.Tuple;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.Project.ProjectNotOngoingException;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.*;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.Role;
 import org.junit.Before;
 import org.junit.Test;
 

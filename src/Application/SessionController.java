@@ -1,8 +1,8 @@
 package Application;
 
-import Domain.Role;
-import Domain.User;
-import Domain.UserManager;
+import Domain.User.Role;
+import Domain.User.User;
+import Domain.User.UserManager;
 
 import java.util.Set;
 

@@ -1,7 +1,7 @@
 package Tests.UseCaseTests;
 
 import Application.*;
-import Domain.*;
+import Domain.User.UserManager;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

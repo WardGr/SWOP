@@ -2,10 +2,15 @@ package UserInterface;
 
 import Application.IncorrectPermissionException;
 import Application.StartTaskController;
-import Domain.*;
-import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.TaskData;
-import Domain.UserAlreadyAssignedToTaskException;
+import Domain.Project.ProjectData;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.Task.IncorrectRoleException;
+import Domain.Task.Status;
+import Domain.Task.TaskData;
+import Domain.User.Role;
+import Domain.User.UserAlreadyAssignedToTaskException;
 
 import java.util.List;
 import java.util.Scanner;

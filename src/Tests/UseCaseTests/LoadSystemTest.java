@@ -1,14 +1,20 @@
 package Tests.UseCaseTests;
 
 import Application.*;
-import Domain.*;
-import Domain.TaskStates.TaskData;
-import UserInterface.LoadSystemUI;
+import Domain.Command.CommandManager;
+import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.Project.ProjectData;
+import Domain.Project.ProjectStatus;
+import Domain.Project.TaskNotFoundException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.Task.Status;
+import Domain.Task.TaskData;
+import Domain.User.Role;
+import Domain.User.User;
+import Domain.User.UserManager;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import static org.junit.Assert.*;
 
@@ -210,7 +216,7 @@ public class LoadSystemTest {
 
         //test adding prevTask
         try {
-            lsc.LoadSystem("src/Tests/jsons/dependingProject.json");
+            lsc.LoadSystem("src/Tests/UseCaseTests/jsons/dependingProject.json");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

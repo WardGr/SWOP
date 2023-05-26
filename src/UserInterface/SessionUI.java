@@ -2,7 +2,7 @@ package UserInterface;
 
 import Application.SessionController;
 import Application.LoginException;
-import Domain.Role;
+import Domain.User.Role;
 
 import java.util.Scanner;
 import java.util.Set;

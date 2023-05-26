@@ -1,8 +1,16 @@
 package Application;
 
-import Domain.*;
-import Domain.Command.CreateProjectCommand;
-import Domain.Command.DeleteProjectCommand;
+import Domain.Command.CommandInterface;
+import Domain.Command.ProjectCommands.CreateProjectCommand;
+import Domain.Command.ProjectCommands.DeleteProjectCommand;
+import Domain.DataClasses.Time;
+import Domain.Project.ProjectData;
+import Domain.Project.ProjectNameAlreadyInUseException;
+import Domain.TaskManSystem.DueBeforeSystemTimeException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.TaskManSystem.TaskManSystemData;
+import Domain.User.Role;
 
 /**
  * Separates domain from UI for the createproject use-case

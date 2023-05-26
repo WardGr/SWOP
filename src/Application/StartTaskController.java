@@ -1,10 +1,18 @@
 package Application;
 
-import Domain.*;
-import Domain.Command.StartTaskCommand;
-import Domain.TaskStates.IncorrectRoleException;
-import Domain.TaskStates.TaskData;
-import Domain.UserAlreadyAssignedToTaskException;
+import Domain.Command.CommandInterface;
+import Domain.Command.TaskCommands.StartTaskCommand;
+import Domain.Project.ProjectData;
+import Domain.Project.TaskNotFoundException;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.TaskManSystem.TaskManSystemData;
+import Domain.Task.IncorrectRoleException;
+import Domain.Task.Status;
+import Domain.Task.TaskData;
+import Domain.User.Role;
+import Domain.User.UserAlreadyAssignedToTaskException;
 
 import java.util.Set;
 
