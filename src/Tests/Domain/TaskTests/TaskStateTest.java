@@ -1,7 +1,7 @@
 package Tests.Domain.TaskTests;
 
-import Domain.Task.Status;
 import Domain.Task.*;
+import Domain.Task.Status;
 import org.junit.Before;
 import org.junit.Test;
 

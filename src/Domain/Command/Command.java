@@ -7,6 +7,8 @@ package Domain.Command;
  import Domain.Project.ProjectNotOngoingException;
  import Domain.Project.TaskNotFoundException;
  import Domain.Task.*;
+ import Domain.Task.IncorrectTaskStatusException;
+ import Domain.Task.LoopDependencyGraphException;
  import Domain.TaskManSystem.DueBeforeSystemTimeException;
  import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
  import Domain.TaskManSystem.ProjectNotFoundException;

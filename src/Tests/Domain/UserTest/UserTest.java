@@ -3,6 +3,8 @@ package Tests.Domain.UserTest;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Task.*;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.Task.LoopDependencyGraphException;
 import Domain.User.Role;
 import Domain.User.User;
 import Domain.User.UserAlreadyAssignedToTaskException;

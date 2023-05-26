@@ -6,6 +6,8 @@ import Domain.DataClasses.Time;
 import Domain.DataClasses.Tuple;
 import Domain.Project.*;
 import Domain.Task.*;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.Task.LoopDependencyGraphException;
 import Domain.User.IncorrectUserException;
 import Domain.User.Role;
 import Domain.User.User;

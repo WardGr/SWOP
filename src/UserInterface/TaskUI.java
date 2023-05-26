@@ -10,6 +10,8 @@ import Domain.Project.ProjectData;
 import Domain.Project.ProjectNotOngoingException;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.*;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.Task.LoopDependencyGraphException;
 import Domain.TaskManSystem.ProjectNotFoundException;
 import Domain.TaskManSystem.TaskManSystemData;
 import Domain.User.Role;

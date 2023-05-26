@@ -1,5 +1,7 @@
 package Domain.Task;
 
+import Domain.Task.Task;
+
 /**
  * Statuses a task can have
  *

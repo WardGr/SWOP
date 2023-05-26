@@ -5,6 +5,10 @@ import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Task.*;
 
+import Domain.Task.FinishedStatus;
+import Domain.Task.IncorrectTaskStatusException;
+import Domain.Task.LoopDependencyGraphException;
+import Domain.Task.Status;
 import Domain.User.IncorrectUserException;
 import Domain.User.Role;
 import Domain.User.User;
