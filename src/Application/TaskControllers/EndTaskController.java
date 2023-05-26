@@ -2,9 +2,9 @@ package Application.TaskControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandInterface;
-import Domain.Command.TaskCommands.FailTaskCommand;
-import Domain.Command.TaskCommands.FinishTaskCommand;
+import Application.Command.CommandInterface;
+import Application.Command.TaskCommands.FailTaskCommand;
+import Application.Command.TaskCommands.FinishTaskCommand;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.Project.ProjectData;
 import Domain.Project.TaskNotFoundException;

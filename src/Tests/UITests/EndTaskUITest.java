@@ -3,7 +3,7 @@ package Tests.UITests;
 import Application.TaskControllers.EndTaskController;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandManager;
+import Application.Command.CommandManager;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectNameAlreadyInUseException;
@@ -36,9 +36,9 @@ public class EndTaskUITest {
         //create EndTaskUi
         Session s = new Session();
         SessionProxy sw = new SessionProxy(s);
-        TaskManSystem tms = new TaskManSystem(new Time(0, 0));
+        TaskManSystem taskManSystem = new TaskManSystem(new Time(0, 0));
         CommandManager commandManager = new CommandManager();
-        EndTaskController ec = new EndTaskController(sw, tms, commandManager);
+        EndTaskController ec = new EndTaskController(sw, taskManSystem, commandManager);
         EndTaskUI etui = new EndTaskUI(ec);
         UserManager um = new UserManager();
 
@@ -60,11 +60,11 @@ public class EndTaskUITest {
 
         //Back ingeven
         System.setOut(new PrintStream(out));
-        tms.createProject("Duvel", "Duvel moortgat brewery", new Time(117));
+        taskManSystem.createProject("Duvel", "Duvel moortgat brewery", new Time(117));
         ArrayList<Role> roles = new ArrayList<>();
         roles.add(Role.PYTHONPROGRAMMER);
-        tms.addTaskToProject("Duvel", "Password", "find old passwords", new Time(112), 0.12, roles, new HashSet<>(), new HashSet<>());
-        tms.startTask("Duvel", "Password", um.getUser("WardGr"), Role.PYTHONPROGRAMMER);
+        taskManSystem.addTaskToProject("Duvel", "Password", "find old passwords", new Time(112), 0.12, roles, new HashSet<>(), new HashSet<>());
+        taskManSystem.startTask("Duvel", "Password", um.getUser("WardGr"), Role.PYTHONPROGRAMMER);
         System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
         etui.endTask();
         assertEquals("""
@@ -104,9 +104,9 @@ public class EndTaskUITest {
         //finish task
         System.setOut(new PrintStream(out));
         System.setIn(new ByteArrayInputStream("fail\n".getBytes()));
-        tms.createProject("Omer", "Omer vandergisten brewery", new Time(117));
-        tms.addTaskToProject("Omer", "Hiring", "hire new brewer", new Time(112), 0.12, roles, new HashSet<>(), new HashSet<>());
-        tms.startTask("Omer", "Hiring", um.getUser("WardGr"), Role.PYTHONPROGRAMMER);
+        taskManSystem.createProject("Omer", "Omer vandergisten brewery", new Time(117));
+        taskManSystem.addTaskToProject("Omer", "Hiring", "hire new brewer", new Time(112), 0.12, roles, new HashSet<>(), new HashSet<>());
+        taskManSystem.startTask("Omer", "Hiring", um.getUser("WardGr"), Role.PYTHONPROGRAMMER);
         etui.endTask();
         assertEquals("""
                 You are currently working on task: Hiring, belonging to project: Omer

@@ -9,7 +9,7 @@ import Application.SystemControllers.AdvanceTimeController;
 import Application.SystemControllers.LoadSystemController;
 import Application.SystemControllers.UndoRedoController;
 import Application.TaskControllers.*;
-import Domain.Command.CommandManager;
+import Application.Command.CommandManager;
 import Domain.DataClasses.Time;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.TaskManSystem.TaskManSystem;

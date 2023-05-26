@@ -110,7 +110,7 @@ public class ProjectControllerTest {
         });
 
 
-        tms.advanceTime(new Time(2000));
+        taskManSystem.advanceTime(new Time(2000));
         assertThrows(DueBeforeSystemTimeException.class, () -> {
             cpc.createProject("Bockor", "Brew Bockor beer", 2, 30);
         });

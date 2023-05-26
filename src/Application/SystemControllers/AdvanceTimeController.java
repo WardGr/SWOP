@@ -4,9 +4,9 @@ import java.util.Set;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Domain.Command.AdvanceTimeCommands.AdvanceTimeCommand;
-import Domain.Command.AdvanceTimeCommands.SetNewTimeCommand;
-import Domain.Command.CommandInterface;
+import Application.Command.AdvanceTimeCommands.AdvanceTimeCommand;
+import Application.Command.AdvanceTimeCommands.SetNewTimeCommand;
+import Application.Command.CommandInterface;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;

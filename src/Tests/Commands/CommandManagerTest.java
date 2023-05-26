@@ -1,10 +1,10 @@
 package Tests.Commands;
 
-import Domain.Command.CommandManager;
-import Domain.Command.EmptyCommandStackException;
-import Domain.Command.UpdateDependenciesCommands.AddNextTaskCommand;
-import Domain.Command.ProjectCommands.CreateProjectCommand;
-import Domain.Command.UndoNotPossibleException;
+import Application.Command.CommandManager;
+import Application.Command.EmptyCommandStackException;
+import Application.Command.UpdateDependenciesCommands.AddNextTaskCommand;
+import Application.Command.ProjectCommands.CreateProjectCommand;
+import Application.Command.UndoNotPossibleException;
 import Domain.DataClasses.Time;
 import Domain.DataClasses.Tuple;
 import Domain.Project.ProjectNameAlreadyInUseException;

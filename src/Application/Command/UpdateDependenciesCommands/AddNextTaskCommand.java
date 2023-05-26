@@ -1,6 +1,6 @@
-package Domain.Command.UpdateDependenciesCommands;
+package Application.Command.UpdateDependenciesCommands;
 
-import Domain.Command.Command;
+import Application.Command.Command;
 import Domain.Task.IncorrectTaskStatusException;
 import Domain.TaskManSystem.ProjectNotFoundException;
 import Domain.TaskManSystem.TaskManSystem;

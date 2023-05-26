@@ -2,10 +2,10 @@ package Application.TaskControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandInterface;
-import Domain.Command.TaskCommands.CreateTaskCommand;
-import Domain.Command.TaskCommands.DeleteTaskCommand;
-import Domain.Command.TaskCommands.ReplaceTaskCommand;
+import Application.Command.CommandInterface;
+import Application.Command.TaskCommands.CreateTaskCommand;
+import Application.Command.TaskCommands.DeleteTaskCommand;
+import Application.Command.TaskCommands.ReplaceTaskCommand;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.DataClasses.Tuple;
@@ -128,6 +128,15 @@ public class TaskController {
         getCommandManager().addExecutedCommand(createTaskCommand, getSession().getCurrentUser());
     }
 
+    /**
+     * Returns whether the given task needs confirmation to be deleted according to how we defined it
+     *
+     * @param projectName       Name of project the task is in
+     * @param taskName          Name of task to be deleted
+     * @return  Whether the task needs confirmation to be deleted
+     * @throws ProjectNotFoundException  if the given project name does not correspond to an existing project
+     * @throws TaskNotFoundException     if the given task name does not correspond to an existing task within the given project
+     */
     public boolean needDeleteConfirmation(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
         TaskData taskData = getTaskData(projectName, taskName);
         return taskData.getStatus() == Status.PENDING || taskData.getStatus() == Status.EXECUTING;

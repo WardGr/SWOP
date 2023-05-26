@@ -1,7 +1,7 @@
 package Tests.UITests;
 
 import Application.IncorrectPermissionException;
-import Domain.Command.CommandManager;
+import Application.Command.CommandManager;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;
 import Domain.User.User;

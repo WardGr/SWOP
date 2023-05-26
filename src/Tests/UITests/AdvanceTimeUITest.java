@@ -4,7 +4,7 @@ import Application.SystemControllers.AdvanceTimeController;
 import Application.IncorrectPermissionException;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandManager;
+import Application.Command.CommandManager;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.TaskManSystem.TaskManSystem;

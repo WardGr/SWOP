@@ -1,6 +1,6 @@
 package Tests.Commands.ProjectCommandsTests;
 
-import Domain.Command.ProjectCommands.CreateProjectCommand;
+import Application.Command.ProjectCommands.CreateProjectCommand;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectData;

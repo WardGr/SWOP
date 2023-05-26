@@ -1,6 +1,6 @@
 package Tests.Commands.TaskCommandsTests;
 
-import Domain.Command.TaskCommands.StartTaskCommand;
+import Application.Command.TaskCommands.StartTaskCommand;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;

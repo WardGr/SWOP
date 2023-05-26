@@ -35,15 +35,15 @@ public class StartTaskControllerTest {
         current.login(java);
         TaskManSystem tms = new TaskManSystem(new Time(0));
 
-        tms.createProject("Omer", "Project for the Omer brewery", new Time(2000));
+        taskManSystem.createProject("Omer", "Project for the Omer brewery", new Time(2000));
         List roles = new ArrayList<>();
         roles.add(Role.JAVAPROGRAMMER);
         roles.add(Role.PYTHONPROGRAMMER);
-        tms.addTaskToProject("Omer", "Hire brewer", "Get suitable brewer", new Time(10), .3, roles, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Omer", "Hire brewer", "Get suitable brewer", new Time(10), .3, roles, new HashSet<>(), new HashSet<>());
 
         SessionProxy wrapper = new SessionProxy(current);
 
-        assertEquals(Status.AVAILABLE, tms.getTaskData("Omer", "Hire brewer").getStatus());
+        assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
 
         StartTaskController stc = new StartTaskController(wrapper, tms);
         assertTrue(stc.startTaskPreconditions());
@@ -53,7 +53,7 @@ public class StartTaskControllerTest {
         stc.startTask("Omer", "Hire brewer", Role.JAVAPROGRAMMER);
         assertEquals("Hire brewer", stc.getUserTaskData().getName());
 
-        assertEquals(Status.PENDING, tms.getTaskData("Omer", "Hire brewer").getStatus());
+        assertEquals(Status.PENDING, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
 
 
         assertEquals("Omer", stc.getProjectData("Omer").getName());
@@ -67,16 +67,16 @@ public class StartTaskControllerTest {
         stc.startTask("Omer", "Hire brewer", Role.PYTHONPROGRAMMER);
         assertEquals("Hire brewer", stc.getUserTaskData().getName());
 
-        assertEquals(Status.EXECUTING, tms.getTaskData("Omer", "Hire brewer").getStatus());
+        assertEquals(Status.EXECUTING, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
         assertEquals(new Time(0), stc.getTaskManSystemData().getSystemTime());
 
-        tms.advanceTime(32);
+        taskManSystem.advanceTime(32);
         assertEquals(new Time(32), stc.getTaskManSystemData().getSystemTime());
 
         assertEquals(1, stc.getTaskManSystemData().getProjectNames().size());
         assertTrue(stc.getTaskManSystemData().getProjectNames().contains("Omer"));
 
-        tms.createProject("Test", "Brew Beer", new Time(2030));
+        taskManSystem.createProject("Test", "Brew Beer", new Time(2030));
         assertTrue(stc.getTaskManSystemData().getProjectNames().contains("Test"));
         assertEquals(2, stc.getTaskManSystemData().getProjectNames().size());
         assertEquals(new Time(32), stc.getProjectData("Test").getCreationTime());

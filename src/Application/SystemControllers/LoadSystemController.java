@@ -2,8 +2,8 @@ package Application.SystemControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Domain.Command.CommandInterface;
-import Domain.Command.LoadSystemCommands.LoadSystemCommand;
+import Application.Command.CommandInterface;
+import Application.Command.LoadSystemCommands.LoadSystemCommand;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;
