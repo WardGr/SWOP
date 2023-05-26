@@ -1,7 +1,7 @@
 package Tests.DataClasses;
 
-import Application.Session;
-import Application.SessionProxy;
+import Application.Session.Session;
+import Application.Session.SessionProxy;
 import Domain.User.Role;
 import Domain.User.User;
 import org.junit.Before;

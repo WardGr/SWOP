@@ -1,6 +1,6 @@
 package Tests.Domain.UserTest;
 
-import Application.LoginException;
+import Application.Session.LoginException;
 import Domain.User.Role;
 import Domain.User.UserManager;
 import Domain.User.UserNotFoundException;

@@ -1,4 +1,12 @@
-import Application.*;
+import Application.ProjectControllers.ProjectController;
+import Application.ProjectControllers.ShowProjectsController;
+import Application.Session.Session;
+import Application.Session.SessionController;
+import Application.Session.SessionProxy;
+import Application.SystemControllers.AdvanceTimeController;
+import Application.SystemControllers.LoadSystemController;
+import Application.SystemControllers.UndoRedoController;
+import Application.TaskControllers.*;
 import Domain.Command.CommandInterface;
 import Domain.Command.CommandManager;
 import Domain.DataClasses.InvalidTimeException;
@@ -6,6 +14,16 @@ import Domain.DataClasses.Time;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.UserManager;
 import UserInterface.*;
+import UserInterface.ProjectUIs.ProjectUI;
+import UserInterface.ProjectUIs.ShowProjectsUI;
+import UserInterface.SystemUIs.AdvanceTimeUI;
+import UserInterface.SystemUIs.LoadSystemUI;
+import UserInterface.SystemUIs.SessionUI;
+import UserInterface.SystemUIs.UndoRedoUI;
+import UserInterface.TaskUIs.EndTaskUI;
+import UserInterface.TaskUIs.StartTaskUI;
+import UserInterface.TaskUIs.TaskUI;
+import UserInterface.TaskUIs.UpdateDependenciesUI;
 
 /**
  * Creates the initial objects and starts the UI

@@ -1,6 +1,6 @@
 package Domain.User;
 
-import Application.LoginException;
+import Application.Session.LoginException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
