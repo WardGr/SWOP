@@ -307,9 +307,8 @@ public class TaskUI {
                 String projectName = inputSplit[0];
                 String taskName = inputSplit[1];
                 tasks.add(new Tuple<>(projectName, taskName));
-
-                input = scanner.nextLine();
             }
+            input = scanner.nextLine();
         }
 
         return tasks;
@@ -356,6 +355,7 @@ public class TaskUI {
                 }
 
                 getController().deleteTask(projectName, taskName, confirmation);
+                System.out.println("Successfully deleted Task\n");
                 return;
 
             } catch (ProjectNotFoundException e) {
