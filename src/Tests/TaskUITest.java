@@ -1,7 +1,9 @@
 package Tests;
 
+import Domain.Command.CommandManager;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
 import Domain.Project.DueTimeBeforeCreationTimeException;
 import Domain.Project.ProjectNameAlreadyInUseException;
 import Domain.Project.ProjectNotOngoingException;
@@ -10,8 +12,12 @@ import Domain.Task.*;
 import Domain.TaskManSystem.DueBeforeSystemTimeException;
 import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
 import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.IncorrectUserException;
+import Domain.User.Role;
+import Domain.User.User;
 import Domain.User.UserAlreadyAssignedToTaskException;
+import org.junit.Before;
 import org.junit.Test;
 import Application.*;
 import UserInterface.*;

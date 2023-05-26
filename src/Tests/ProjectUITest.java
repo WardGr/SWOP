@@ -1,6 +1,10 @@
 package Tests;
 
 import Application.IncorrectPermissionException;
+import Domain.Command.CommandManager;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.Role;
+import Domain.User.User;
 import UserInterface.ProjectUI;
 import Application.ProjectController;
 import Application.Session;
@@ -18,6 +22,12 @@ import Domain.Task.LoopDependencyGraphException;
 import Domain.Task.IllegalTaskRolesException;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
