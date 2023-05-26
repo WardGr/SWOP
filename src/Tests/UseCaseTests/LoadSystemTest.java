@@ -204,6 +204,28 @@ public class LoadSystemTest {
         session.logout();
     }
     @Test
+    public void dependingProject() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
+        User manager = userManager.getUser("DieterVH", "computer776");
+        session.login(manager);
+
+        //test adding prevTask
+        try {
+            lsc.LoadSystem("src/Tests/jsons/dependingProject.json");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        TaskData taskData = taskManSystem.getTaskData("previousProject", "previousTask");
+        TaskData nextTask = taskManSystem.getTaskData("nextProject", "nextTask");
+
+        assertEquals(taskData.getStatus(), Status.EXECUTING);
+        assertTrue(taskData.getNextTasksData().contains(nextTask));
+        assertEquals(nextTask.getStatus(), Status.UNAVAILABLE);
+        assertTrue(nextTask.getPrevTasksData().contains(taskData));
+        assertEquals(nextTask.getPrevTasksData().size(), 1);
+        assertTrue(nextTask.getNextTasksData().isEmpty());
+        session.logout();
+    }
+    @Test
     public void multipleProjectsTest() throws LoginException, ProjectNotFoundException, TaskNotFoundException {
         User manager = userManager.getUser("DieterVH", "computer776");
         session.login(manager);

@@ -1,5 +1,7 @@
 package Domain.Command;
 
+ import Application.IncorrectPermissionException;
+ import Application.InvalidFileException;
  import Domain.*;
  import Domain.TaskStates.IllegalTaskRolesException;
  import Domain.TaskStates.IncorrectRoleException;
@@ -28,7 +30,11 @@ public interface Command extends CommandData {
      * @throws UserAlreadyAssignedToTaskException   if one of the given users is already assigned to the task
      * @throws IncorrectRoleException               if one of the given users does not have its corresponding role
      */
+<<<<<<< HEAD
+     void execute() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException, InvalidFileException, IncorrectPermissionException;
+=======
      void execute() throws ProjectNotFoundException, IncorrectTaskStatusException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, TaskNameAlreadyInUseException, IllegalTaskRolesException, ProjectNotOngoingException, LoopDependencyGraphException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectUserException, UserAlreadyAssignedToTaskException, IncorrectRoleException, TaskNotFoundException;
+>>>>>>> 44cbe0374687ee1dd7db77ba3719595bc3b0b52b
 
     /**
      * Undoes the command, changing the state of the system back to the state before the command was executed.
