@@ -92,8 +92,8 @@ public class EndTaskController {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         TaskData userTaskData = getUserTaskData();
-        if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING) {
-            throw new IncorrectPermissionException("You are not executing a task");
+        if (userTaskData == null) {
+            throw new IncorrectPermissionException("You are not assigned to a task");
         }
         FinishTaskCommand cmd = new FinishTaskCommand(getTaskManSystem(), userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
         cmd.execute();
@@ -115,8 +115,8 @@ public class EndTaskController {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         TaskData userTaskData = getUserTaskData();
-        if (userTaskData == null || userTaskData.getStatus() != Status.EXECUTING) {
-            throw new IncorrectPermissionException("You are not executing a task");
+        if (userTaskData == null) {
+            throw new IncorrectPermissionException("You are not assigned to a task");
         }
         FailTaskCommand cmd = new FailTaskCommand(getTaskManSystem(), userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
         cmd.execute();
