@@ -166,6 +166,9 @@ public class ProjectUI {
     private void printProjectList() throws IncorrectPermissionException {
         System.out.println(" *** PROJECT LIST ***");
         TaskManSystemData taskManSystemData = getController().getTaskManSystemData();
+        if (taskManSystemData.getProjectsData().size() == 0){
+            System.out.println("There are currently no projects in the system.");
+        }
         for (ProjectData projectData : taskManSystemData.getProjectsData()){
             System.out.println("- " + projectData.getName() + " --- Containing " + projectData.getTotalTaskCount() + " Task(s)");
         }

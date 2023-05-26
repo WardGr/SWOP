@@ -1,5 +1,6 @@
 package Tests;
 
+import Application.IncorrectPermissionException;
 import Application.ProjectController;
 import Application.Session;
 import Application.SessionProxy;
@@ -7,6 +8,7 @@ import Domain.*;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.IllegalTaskRolesException;
 import UserInterface.ProjectUI;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -17,11 +19,14 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 
 public class ProjectUITest {
+    private ProjectUI developerUI;
+    private ProjectUI managerUI;
 
-    @Test
-    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException {
+    private ProjectController developerController;
+    private ProjectController managerController;
 
-        /*
+    @Before
+    public void setUp() throws InvalidTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IllegalTaskRolesException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
         // Setup test environment
         Time systemtime = new Time(70);
 
@@ -46,11 +51,17 @@ public class ProjectUITest {
         taskManSystem.createProject("SimpleProject", "Cool description", new Time(100));
         taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
 
-        ProjectController managerController = new ProjectController(managerSessionProxy, taskManSystem);
-        ProjectController developerController = new ProjectController(developerSessionProxy, taskManSystem);
+        CommandManager commandManager = new CommandManager();
 
-        ProjectUI developerUI = new ProjectUI(developerController);
-        ProjectUI managerUI = new ProjectUI(managerController);
+        managerController = new ProjectController(managerSessionProxy, taskManSystem, commandManager);
+        developerController = new ProjectController(developerSessionProxy, taskManSystem, commandManager);
+
+        developerUI = new ProjectUI(developerController);
+        managerUI = new ProjectUI(managerController);
+    }
+
+    @Test
+    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, InvalidTimeException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
@@ -236,20 +247,66 @@ public class ProjectUITest {
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        /*
-        assertEquals(2, taskManSystem.getProjectNames().size());
-        assertEquals(taskManSystem.getProjectData("NewProject"),
+    }
+
+    @Test
+    public void testSuccessfulDeletion(){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("SimpleProject\n".getBytes()));
+        managerUI.deleteProject();
+        assertEquals(
                 """
-                        Project Name:  NewProject
-                        Description:   COOLo
-                        Creation Time: 1 hours, 10 minutes
-                        Due Time:      2 hours, 0 minutes
-                        Status:        ongoing
-                        """);
+                         *** PROJECT LIST ***
+                        - SimpleProject --- Containing 1 Task(s)
+                                                
+                        Project Name to Delete (type 'BACK' to return):\s
+                        Project successfully deleted
+                        
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
 
+    @Test
+    public void testNoTasksInSystem() throws ProjectNotFoundException, IncorrectPermissionException {
+        managerController.deleteProject("SimpleProject");
 
-         */
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
 
+        System.setIn(new ByteArrayInputStream("SimpleProject\nBACK\n".getBytes()));
+        managerUI.deleteProject();
+        assertEquals(
+                """
+                         *** PROJECT LIST ***
+                        There are currently no projects in the system.
+                                                
+                        Project Name to Delete (type 'BACK' to return):\s
+                                                
+                        WARNING: Project couldn't be found, try again
+                                                
+                         *** PROJECT LIST ***
+                        There are currently no projects in the system.
+                                                
+                        Project Name to Delete (type 'BACK' to return):\s
+                        Project deletion cancelled
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
+
+    @Test
+    public void testIncorrectPermission(){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
+        developerUI.deleteProject();
+        assertEquals(
+                """
+                        You must be logged in with the project manager role to call this function
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
     }
 
 

@@ -1,9 +1,11 @@
 package Tests;
 
 import Domain.*;
+import Domain.Command.Command;
 import Domain.TaskStates.IncorrectRoleException;
 import Domain.TaskStates.LoopDependencyGraphException;
 import Domain.TaskStates.IllegalTaskRolesException;
+import org.junit.Before;
 import org.junit.Test;
 import Application.*;
 import UserInterface.*;
@@ -18,30 +20,48 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 public class TaskUITest {
+    private User manager;
+    private User developer;
+    private User developer2;
+    private TaskManSystem taskManSystem;
+    private TaskController managerController;
+    private TaskController developerController;
+    private TaskUI managerUI;
+    private TaskUI developerUI;
 
-    @Test
-    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
-
-        /*
-        // Setup test environment
+    @Before
+    public void setUp() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, IllegalTaskRolesException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException {
         Session managerSession = new Session();
         SessionProxy managerSessionProxy = new SessionProxy(managerSession);
         Session developerSession = new Session();
         SessionProxy developerSessionProxy = new SessionProxy(developerSession);
-        User manager = new User("DieterVH", "computer776", Set.of(Role.PROJECTMANAGER));
-        User developer = new User("SamHa", "trein123", Set.of(Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER));
-        User developer2 = new User("SamHa2", "trein123", Set.of(Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER));
+        manager = new User("DieterVH", "computer776", Set.of(Role.PROJECTMANAGER));
+        developer = new User("SamHa", "trein123", Set.of(Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER));
+        developer2 = new User("SamHa2", "trein123", Set.of(Role.PYTHONPROGRAMMER, Role.JAVAPROGRAMMER));
 
         managerSession.login(manager);
         developerSession.login(developer);
 
-        TaskManSystem taskManSystem = new TaskManSystem(new Time(0));
+        taskManSystem = new TaskManSystem(new Time(0));
 
-        CreateTaskController managerController = new CreateTaskController(managerSessionProxy, taskManSystem);
-        CreateTaskController developerController = new CreateTaskController(developerSessionProxy, taskManSystem);
+        CommandManager commandManager = new CommandManager();
 
-        TaskUI developerUI = new TaskUI(developerController);
-        TaskUI managerUI = new TaskUI(managerController);
+        managerController = new TaskController(managerSessionProxy, taskManSystem, commandManager);
+        developerController = new TaskController(developerSessionProxy, taskManSystem, commandManager);
+
+        developerUI = new TaskUI(developerController);
+        managerUI = new TaskUI(managerController);
+
+        taskManSystem.createProject("TestProject","",new Time(5));
+        taskManSystem.addTaskToProject("TestProject", "TestTask1", "", new Time(5), 0.2, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("TestProject", "TestTask2", "", new Time(5), 0.2, List.of(Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
+
+    }
+
+    @Test
+    public void test() throws ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, IncorrectUserException, InvalidTimeException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, DueTimeBeforeCreationTimeException, ProjectNotOngoingException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        // Setup test environment
+        taskManSystem.deleteProject("TestProject");
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
@@ -53,9 +73,11 @@ public class TaskUITest {
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********
                         -- Ongoing Projects --
-                         - There is no ongoing project in the system.
+                         - No ongoing projects
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -63,7 +85,12 @@ public class TaskUITest {
         taskManSystem.addTaskToProject("SimpleProject", "SimpleTask", "Cool description", new Time(40), 0.1, List.of(Role.JAVAPROGRAMMER, Role.PYTHONPROGRAMMER), new HashSet<>(), new HashSet<>());
 
         developerUI.createTask();
-        assertEquals("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function\n".replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString());
+        assertEquals(
+                """
+                        
+                        You must be logged in with the project manager role to call this function
+                        
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
         System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
@@ -75,7 +102,9 @@ public class TaskUITest {
                         -- Ongoing Projects --
                          - SimpleProject
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -89,7 +118,9 @@ public class TaskUITest {
                          - SimpleProject
                         Project name of an ongoing project to add the task to:
                         Task name:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -104,7 +135,9 @@ public class TaskUITest {
                         Project name of an ongoing project to add the task to:
                         Task name:
                         Task description:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -121,7 +154,9 @@ public class TaskUITest {
                         Task name:
                         Task description:
                         Task duration hours:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -139,7 +174,9 @@ public class TaskUITest {
                         Task description:
                         Task duration hours:
                         Given task duration is not an integer, please input an integer and try again
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -156,7 +193,9 @@ public class TaskUITest {
                         Task description:
                         Task duration hours:
                         Task duration minutes:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -176,7 +215,9 @@ public class TaskUITest {
                         Task duration hours:
                         Task duration minutes:
                         Given task duration is not an integer, please input an integer and try again
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -195,7 +236,9 @@ public class TaskUITest {
                         Task duration hours:
                         Task duration minutes:
                         Task deviation:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -216,7 +259,9 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Given task deviation is not a double, please input an integer and try again
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -237,7 +282,9 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -258,8 +305,11 @@ public class TaskUITest {
                         Task deviation:
                         Is this a replacement task? (y/n)
                         -- Tasks that can be replaced --
+                         - No replaceable tasks
                         This task is a replacement for task:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -280,8 +330,12 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -302,10 +356,14 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -326,16 +384,20 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
                         (Unrecognized developer role)
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
-        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\nsysadmin\n.\nSimpleTask\n.\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\nsysadmin\n.\nSimpleProject / SimpleTask\n.\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -351,17 +413,23 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                                                
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
-                        Cancelled task creation
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
-        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\nsysadmin\n.\nSimpleTask\n.\n.\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\nsysadmin\n.\nSimpleProject / SimpleTask\n.\n.\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -377,11 +445,16 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        
                         Task NewTask successfully added to project SimpleProject
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
@@ -410,6 +483,8 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         -- Tasks that can be replaced --
                          - SimpleTask
@@ -436,6 +511,7 @@ public class TaskUITest {
                         Task deviation:
                         Is this a replacement task? (y/n)
                         -- Tasks that can be replaced --
+                         - No replaceable tasks
                         This task is a replacement for task:
                         ERROR: The task to replace is not failed, please try again
                                                
@@ -445,7 +521,9 @@ public class TaskUITest {
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -477,7 +555,9 @@ public class TaskUITest {
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
                         Task name:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -500,6 +580,7 @@ public class TaskUITest {
                         Task deviation:
                         Is this a replacement task? (y/n)
                         -- Tasks that can be replaced --
+                         - No replaceable tasks
                         This task is a replacement for task:
                         ERROR: The given minutes are not of a valid format (0-59)
                                                
@@ -509,7 +590,9 @@ public class TaskUITest {
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -531,6 +614,7 @@ public class TaskUITest {
                         Task deviation:
                         Is this a replacement task? (y/n)
                         -- Tasks that can be replaced --
+                         - No replaceable tasks
                         This task is a replacement for task:
                         ERROR: the given task to replace does not exist
                                                
@@ -540,7 +624,9 @@ public class TaskUITest {
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -562,6 +648,7 @@ public class TaskUITest {
                         Task deviation:
                         Is this a replacement task? (y/n)
                         -- Tasks that can be replaced --
+                         - No replaceable tasks
                         This task is a replacement for task:
                         ERROR: the given task name is already in use
                                                
@@ -571,7 +658,9 @@ public class TaskUITest {
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -593,6 +682,7 @@ public class TaskUITest {
                         Task deviation:
                         Is this a replacement task? (y/n)
                         -- Tasks that can be replaced --
+                         - No replaceable tasks
                         This task is a replacement for task:
                         ERROR: the given task name is already in use
                                               
@@ -602,12 +692,14 @@ public class TaskUITest {
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                        
+                        Cancelled Task Creation
+                        
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
 
-        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\njava programmer\nsysadmin\npython programmer\n.\nSimpleTask\n.\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\njava programmer\nsysadmin\npython programmer\n.\nSimpleProject / SimpleTask\n.\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -623,16 +715,22 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                                                
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
-                        Cancelled task creation
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\njava programmer\nsysadmin\npython programmer\n.\nSimpleTask\n.\nSimpleTask\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\njava programmer\nsysadmin\npython programmer\n.\nSimpleProject / SimpleTask\n.\nSimpleProject / SimpleTask\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -648,12 +746,18 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
-                        Cancelled task creation
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                                
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -673,15 +777,20 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Cancelled task creation
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                             
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\nsysadmin\n.\nSimpleTask\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nd\nn\nsysadmin\n.\nSimpleProject / SimpleTask\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -697,15 +806,20 @@ public class TaskUITest {
                         Task duration minutes:
                         Task deviation:
                         Is this a replacement task? (y/n)
+                                                
+                        Input has to be 'y' or 'n', try again
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Cancelled task creation
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                               
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nn\nsysadmin\n.\nSimpleTask\n.\n.\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("IncorrectProject\nNewTask\nCool description\n3\n20\n0.3\nn\nsysadmin\n.\nSimpleProject / SimpleTask\n.\n.\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -723,8 +837,11 @@ public class TaskUITest {
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                                
                         ERROR: Given project does not exist
                                                 
                         Type BACK to cancel task creation at any time
@@ -733,7 +850,9 @@ public class TaskUITest {
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                                                
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -755,17 +874,22 @@ public class TaskUITest {
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                                
                         ERROR: The given task name is already in use
-                        
+                                                
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********
                         -- Ongoing Projects --
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                                                
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -787,21 +911,26 @@ public class TaskUITest {
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                                
                         ERROR: The given minutes are not of a valid format (0-59)
-                        
+                                                
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********
                         -- Ongoing Projects --
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                                                
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\nHOI\n.\n.\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\nSimpleProject / HOI\n.\n.\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -819,21 +948,26 @@ public class TaskUITest {
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                                
                         ERROR: A given previous or next task name can't be found
-                        
+                                                
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********
                         -- Ongoing Projects --
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                                                
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\n.\nSimpleTask\n.\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("SimpleProject\nTEST\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\n.\nSimpleProject / SimpleTask\n.\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -851,21 +985,26 @@ public class TaskUITest {
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                                
                         ERROR: One of the next tasks is not (un)available
-                        
+                                                
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********
                         -- Ongoing Projects --
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                                                
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\nNewTask\n.\nNewTask\n.\nBACK\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("SimpleProject\nNewTask2\nCool description\n3\n50\n0.3\nn\nsysadmin\n.\nSimpleProject / NewTask\n.\nSimpleProject / NewTask\n.\nBACK\n".getBytes()));
         managerUI.createTask();
         assertEquals(
                 """
@@ -883,17 +1022,22 @@ public class TaskUITest {
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                                
                         ERROR: Given list of tasks introduces a loop
-                        
+                                                
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********
                         -- Ongoing Projects --
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                                                
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
@@ -921,21 +1065,258 @@ public class TaskUITest {
                         Is this a replacement task? (y/n)
                         Give developer roles needed for this task, end with a '.'
                         You can choose from: sysadmin, java programmer, python programmer
-                        Tasks that this task depends on, enter '.' to stop adding new tasks:
-                        Tasks that depend on this task, enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that this task depends on
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                        Give projectName and taskName of tasks that depend on this task
+                        Follow the form: <projectName / taskName>, and enter '.' to stop adding new tasks:
+                                                
                         ERROR: Project is already finished
-                        
+                                                
                         Type BACK to cancel task creation at any time
                         *********** TASK CREATION FORM ***********
                         -- Ongoing Projects --
                          - SimpleProject
                          - SimpleProject2
                         Project name of an ongoing project to add the task to:
-                        Cancelled task creation
+                                                
+                        Cancelled Task Creation
+                                                
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
 
-         */
+    }
 
+    @Test
+    public void testSuccessfulDeletion(){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("TestProject\nTestTask2\ny\n".getBytes()));
+        managerUI.deleteTask();
+        assertEquals(
+                """
+                        Use 'BACK' to return to main menu
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                         *** TASKS in TestProject ***
+                         - TestTask1
+                         - TestTask2
+                                                
+                        Give the task name you want to delete:
+                        Successfully deleted Task
+                        
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
+
+    @Test
+    public void testBackProject(){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("BACK\n".getBytes()));
+        managerUI.deleteTask();
+        assertEquals(
+                """
+                        Use 'BACK' to return to main menu
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                                                
+                        Cancelled Task Deletion
+                        
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
+
+    @Test
+    public void testBackTask(){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("TestProject\nBACK\n".getBytes()));
+        managerUI.deleteTask();
+        assertEquals(
+                """
+                        Use 'BACK' to return to main menu
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                         *** TASKS in TestProject ***
+                         - TestTask1
+                         - TestTask2
+                                                
+                        Give the task name you want to delete:
+                                                
+                        Cancelled Task Deletion
+                                                
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
+
+    @Test
+    public void testWrongProjectName(){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("WRONG\nBACK\n".getBytes()));
+        managerUI.deleteTask();
+        assertEquals(
+                """
+                        Use 'BACK' to return to main menu
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                        Given project name could not be found, try again
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                                                
+                        Cancelled Task Deletion
+                        
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
+
+    @Test
+    public void testWrongTaskName(){
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("TestProject\nWRONG\nBACK\n".getBytes()));
+        managerUI.deleteTask();
+        assertEquals(
+                """
+                        Use 'BACK' to return to main menu
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                         *** TASKS in TestProject ***
+                         - TestTask1
+                         - TestTask2
+                                                
+                        Give the task name you want to delete:
+                        Given task name could not be found, try again
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                                                
+                        Cancelled Task Deletion
+                        
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
+
+    @Test
+    public void testConfirmingTaskDeletion() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        taskManSystem.startTask("TestProject", "TestTask2", developer, Role.PYTHONPROGRAMMER);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("TestProject\nTestTask2\ny\n".getBytes()));
+        managerUI.deleteTask();
+        assertEquals(
+                """
+                        Use 'BACK' to return to main menu
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                         *** TASKS in TestProject ***
+                         - TestTask1
+                         - TestTask2
+                                                
+                        Give the task name you want to delete:
+                                                
+                        Task TestTask2 has status executing
+                           With users committed:\s
+                        SamHa
+                        Confirm you want to delete this task. (y/n)
+                        Successfully deleted Task
+                                                
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
+
+    @Test
+    public void testNoConfirmingTaskDeletion() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        taskManSystem.startTask("TestProject", "TestTask2", developer, Role.PYTHONPROGRAMMER);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("TestProject\nTestTask2\nn\nBACK\n".getBytes()));
+        managerUI.deleteTask();
+        assertEquals(
+                """
+                        Use 'BACK' to return to main menu
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                         *** TASKS in TestProject ***
+                         - TestTask1
+                         - TestTask2
+                                                
+                        Give the task name you want to delete:
+                                                
+                        Task TestTask2 has status executing
+                           With users committed:\s
+                        SamHa
+                        Confirm you want to delete this task. (y/n)
+                        Deleting a Pending or Executing task is not confirmed.
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                                                
+                        Cancelled Task Deletion
+                        
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
+    }
+
+    @Test
+    public void testWrongConfirmingTaskDeletion() throws ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, IncorrectRoleException {
+        taskManSystem.startTask("TestProject", "TestTask2", developer, Role.PYTHONPROGRAMMER);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        System.setIn(new ByteArrayInputStream("TestProject\nTestTask2\noh\ny\n".getBytes()));
+        managerUI.deleteTask();
+        assertEquals(
+                """
+                        Use 'BACK' to return to main menu
+                                                
+                         *** PROJECTS ***
+                         - TestProject | Containing 2 Tasks
+                        Give the project name in which you want to delete a task:
+                         *** TASKS in TestProject ***
+                         - TestTask1
+                         - TestTask2
+                                                
+                        Give the task name you want to delete:
+                                                
+                        Task TestTask2 has status executing
+                           With users committed:\s
+                        SamHa
+                        Confirm you want to delete this task. (y/n)
+                        
+                        Input has to be 'y' or 'n', try again
+                        Confirm you want to delete this task. (y/n)
+                        Successfully deleted Task
+                                                
+                        """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")), out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
+        out.reset();
     }
 }
