@@ -1,6 +1,13 @@
 package Tests.ControllerTests;
 
+import Application.Command.CommandManager;
+import Application.Session.Session;
+import Application.Session.SessionProxy;
+import Application.TaskControllers.EndTaskController;
+import Application.TaskControllers.StartTaskController;
 import Domain.DataClasses.InvalidTimeException;
+import Domain.DataClasses.Time;
+import Domain.Project.ProjectData;
 import Domain.Project.ProjectNameAlreadyInUseException;
 import Domain.Project.ProjectNotOngoingException;
 import Domain.Project.TaskNotFoundException;
@@ -10,14 +17,37 @@ import Domain.Task.LoopDependencyGraphException;
 import Domain.TaskManSystem.DueBeforeSystemTimeException;
 import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
 import Domain.TaskManSystem.ProjectNotFoundException;
+import Domain.TaskManSystem.TaskManSystem;
+import Domain.User.Role;
+import Domain.User.User;
 import Domain.User.UserAlreadyAssignedToTaskException;
+import org.junit.Before;
 import org.junit.Test;
 import Application.*;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.*;
+
 public class StartTaskControllerTest {
-    @Test
-    public void test() throws InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, ProjectNotFoundException, TaskNameAlreadyInUseException, TaskNotFoundException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, IncorrectPermissionException, UserAlreadyAssignedToTaskException, IncorrectRoleException, NewTimeBeforeSystemTimeException {
-        /*
+
+    private StartTaskController stc;
+    private TaskManSystem taskManSystem;
+    private Session current;
+    private User java;
+    private User python;
+    private User sysadmin;
+    private User man;
+
+    @Before
+    public void setUp() throws Exception {
+        this.current = new Session();
+        this.taskManSystem = new TaskManSystem(new Time(0));
+
         Set<Role> javaRole = new HashSet<>();
         javaRole.add(Role.JAVAPROGRAMMER);
         Set<Role> pythonRole = new HashSet<>();
@@ -26,31 +56,62 @@ public class StartTaskControllerTest {
         sysadminRole.add(Role.SYSADMIN);
         Set<Role> projectmanRole = new HashSet<>();
         projectmanRole.add(Role.PROJECTMANAGER);
-        User java = new User("Java", "java", javaRole);
-        User python = new User("Python", "python", pythonRole);
-        User sysadmin = new User("Sys", "sys", sysadminRole);
-        User man = new User("Pm", "pm", projectmanRole);
 
-        Session current = new Session();
+        this.java = new User("Java", "java", javaRole);
+        this.python = new User("Python", "python", pythonRole);
+        this.sysadmin = new User("Sys", "sys", sysadminRole);
+        this.man = new User("Pm", "pm", projectmanRole);
+
         current.login(java);
-        TaskManSystem tms = new TaskManSystem(new Time(0));
 
         taskManSystem.createProject("Omer", "Project for the Omer brewery", new Time(2000));
-        List roles = new ArrayList<>();
+        List<Role> roles = new LinkedList<>();
         roles.add(Role.JAVAPROGRAMMER);
         roles.add(Role.PYTHONPROGRAMMER);
         taskManSystem.addTaskToProject("Omer", "Hire brewer", "Get suitable brewer", new Time(10), .3, roles, new HashSet<>(), new HashSet<>());
+        taskManSystem.addTaskToProject("Omer", "Buy ingredients", "Get ingredients for the beer", new Time(2), .3, roles, new HashSet<>(), new HashSet<>());
+
 
         SessionProxy wrapper = new SessionProxy(current);
+        CommandManager commandManager = new CommandManager();
 
+        this.stc = new StartTaskController(wrapper, taskManSystem, commandManager);
         assertEquals(Status.AVAILABLE, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
-
-        StartTaskController stc = new StartTaskController(wrapper, tms);
         assertTrue(stc.startTaskPreconditions());
         assertTrue(stc.getUserRoles().contains(Role.JAVAPROGRAMMER));
         assertEquals(1, stc.getUserRoles().size());
+    }
 
-        stc.startTask("Omer", "Hire brewer", Role.JAVAPROGRAMMER);
+    @Test
+    public void testIncorrectPermissions() {
+        current.logout();
+        current.login(man);
+        assertTrue(stc.getUserRoles().contains(Role.PROJECTMANAGER));
+        assertEquals(1, stc.getUserRoles().size());
+        assertFalse(stc.startTaskPreconditions());
+
+        assertThrows(IncorrectPermissionException.class, () -> stc.startTask("Omer", "Brew Beer", Role.PROJECTMANAGER, true));
+        assertThrows(IncorrectPermissionException.class, () -> stc.getProjectData("Omer"));
+        assertThrows(IncorrectPermissionException.class, () -> stc.getProjectData("Test"));
+        assertThrows(IncorrectPermissionException.class, stc::getTaskManSystemData);
+        assertThrows(IncorrectPermissionException.class, () -> stc.getTaskData("Omer", "Brew Beer"));
+        assertThrows(IncorrectPermissionException.class, () -> stc.getProjectData("Omer"));
+        assertThrows(IncorrectPermissionException.class, () -> stc.getProjectData("Test"));
+
+        current.logout();
+        assertThrows(IncorrectPermissionException.class, () -> stc.getProjectData("Omer"));
+        assertThrows(IncorrectPermissionException.class, () -> stc.getProjectData("Test"));
+        assertThrows(IncorrectPermissionException.class, stc::getTaskManSystemData);
+        assertThrows(IncorrectPermissionException.class, () -> stc.getTaskData("Omer", "Brew Beer"));
+        assertThrows(IncorrectPermissionException.class, () -> stc.getProjectData("Omer"));
+        assertThrows(IncorrectPermissionException.class, () -> stc.getProjectData("Test"));
+
+    }
+
+    @Test
+    public void testStart() throws Exception {
+
+        stc.startTask("Omer", "Hire brewer", Role.JAVAPROGRAMMER, true);
         assertEquals("Hire brewer", stc.getUserTaskData().getName());
 
         assertEquals(Status.PENDING, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
@@ -64,7 +125,7 @@ public class StartTaskControllerTest {
         assertTrue(stc.startTaskPreconditions());
         assertTrue(stc.getUserRoles().contains(Role.PYTHONPROGRAMMER));
         assertEquals(1, stc.getUserRoles().size());
-        stc.startTask("Omer", "Hire brewer", Role.PYTHONPROGRAMMER);
+        stc.startTask("Omer", "Hire brewer", Role.PYTHONPROGRAMMER, true);
         assertEquals("Hire brewer", stc.getUserTaskData().getName());
 
         assertEquals(Status.EXECUTING, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
@@ -73,12 +134,12 @@ public class StartTaskControllerTest {
         taskManSystem.advanceTime(32);
         assertEquals(new Time(32), stc.getTaskManSystemData().getSystemTime());
 
-        assertEquals(1, stc.getTaskManSystemData().getProjectNames().size());
-        assertTrue(stc.getTaskManSystemData().getProjectNames().contains("Omer"));
+        assertEquals(1, stc.getTaskManSystemData().getProjectsData().size());
+        assertTrue(stc.getTaskManSystemData().getProjectsData().stream().map(ProjectData::getName).toList().contains("Omer"));
 
         taskManSystem.createProject("Test", "Brew Beer", new Time(2030));
-        assertTrue(stc.getTaskManSystemData().getProjectNames().contains("Test"));
-        assertEquals(2, stc.getTaskManSystemData().getProjectNames().size());
+        assertTrue(stc.getTaskManSystemData().getProjectsData().stream().map(ProjectData::getName).toList().contains("Test"));
+        assertEquals(2, stc.getTaskManSystemData().getProjectsData().size());
         assertEquals(new Time(32), stc.getProjectData("Test").getCreationTime());
         assertEquals(new Time(2030), stc.getProjectData("Test").getDueTime());
 
@@ -92,55 +153,5 @@ public class StartTaskControllerTest {
         assertEquals(2, stc.getTaskData("Omer", "Hire brewer").getUserNamesWithRole().size());
         assertTrue(stc.getTaskData("Omer", "Hire brewer").getUserNamesWithRole().containsKey("Java"));
         assertTrue(stc.getTaskData("Omer", "Hire brewer").getUserNamesWithRole().containsKey("Python"));
-        current.logout();
-        current.login(man);
-        assertTrue(stc.getUserRoles().contains(Role.PROJECTMANAGER));
-        assertEquals(1, stc.getUserRoles().size());
-        assertFalse(stc.startTaskPreconditions());
-        assertThrows(IncorrectPermissionException.class, () -> {
-           stc.startTask("Omer", "Brew Beer", Role.PROJECTMANAGER);
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getProjectData("Omer");
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getProjectData("Test");
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getTaskManSystemData();
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getTaskData("Omer", "Brew Beer");
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getProjectData("Omer");
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getProjectData("Test");
-        });
-
-
-        current.logout();
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getProjectData("Omer");
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getProjectData("Test");
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getTaskManSystemData();
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getTaskData("Omer", "Brew Beer");
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getProjectData("Omer");
-        });
-        assertThrows(IncorrectPermissionException.class, () -> {
-            stc.getProjectData("Test");
-        });
-
-         */
-
     }
 }

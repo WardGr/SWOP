@@ -4,39 +4,61 @@ import Application.Session.LoginException;
 import Application.Session.Session;
 import Application.Session.SessionController;
 import Domain.User.UserManager;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class SessionControllerTest {
 
+    Session omer;
+    UserManager um;
+    SessionController sc;
+
+    @Before
+    public void setUp() throws Exception {
+        this.omer = new Session();
+        this.um = new UserManager();
+        this.sc = new SessionController(omer, um);
+    }
+
     @Test
-    public void testSessionController() throws LoginException {
-
-        Session omer = new Session();
-        UserManager um = new UserManager();
-        SessionController sc = new SessionController(omer, um);
-
-        assertFalse(sc.logout());
+    public void testPrecondition() throws Exception {
         assertTrue(sc.loginPrecondition());
-        // enter wrong username / password
+        sc.login("WardGr", "minecraft123");
+        assertFalse(sc.loginPrecondition());
+        sc.logout();
+        assertTrue(sc.loginPrecondition());
+    }
+
+    @Test
+    public void loginTest() throws LoginException {
+        sc.login("WardGr", "minecraft123");
+        assertEquals("WardGr", omer.getCurrentUser().getUsername());
+    }
+
+    @Test
+    public void logoutTest() throws LoginException {
+        assertFalse(sc.logout());
+        sc.login("WardGr", "minecraft123");
+        assertTrue(sc.logout());
+        assertNull(omer.getCurrentUser());
+    }
+
+    @Test
+    public void testWrongUsernamePassword() {
         assertThrows(LoginException.class, () -> sc.login("Thomas", "1234"));
         assertThrows(LoginException.class, () -> sc.login("WardGr", "toilet573"));
         assertThrows(LoginException.class, () -> sc.login("OlavBl", "minecraft123"));
         assertTrue(sc.loginPrecondition());
+    }
 
+    @Test
+    public void testAlreadyLoggedIn() throws LoginException {
         sc.login("WardGr", "minecraft123");
-        assertFalse(sc.loginPrecondition());
-
-        //login while already logged in
-        assertThrows(LoginException.class, () -> sc.login("OlavBl", "toilet573"));
         assertThrows(LoginException.class, () -> sc.login("WardGr", "minecraft123"));
         assertFalse(sc.loginPrecondition());
-
         assertTrue(sc.logout());
         assertTrue(sc.loginPrecondition());
-        assertFalse(sc.logout());
-
-
     }
 }

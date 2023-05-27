@@ -81,8 +81,4 @@ public class SessionController {
         getSession().logout();
         return true;
     }
-
-    public static class RoleNotFoundException extends Exception{
-        public RoleNotFoundException(){super();}
-    }
 }

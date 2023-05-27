@@ -118,7 +118,7 @@ public class LoadSystemCommand implements Command {
         } catch (ParseException | InvalidTimeException | NewTimeBeforeSystemTimeException | UserNotFoundException |
                  ProjectNotFoundException | TaskNotFoundException | TaskNameAlreadyInUseException |
                  IncorrectTaskStatusException | UserAlreadyAssignedToTaskException |
-                 SessionController.RoleNotFoundException |
+                 RoleNotFoundException |
                  LoopDependencyGraphException | IncorrectRoleException | IllegalTaskRolesException |
                  EndTimeBeforeStartTimeException | IncorrectUserException | ProjectNotOngoingException |
                  ProjectNameAlreadyInUseException | DueTimeBeforeCreationTimeException | DueBeforeSystemTimeException e) {
@@ -168,7 +168,7 @@ public class LoadSystemCommand implements Command {
      * @throws NewTimeBeforeSystemTimeException         If creating a task before systemtime
      * @throws TaskNameAlreadyInUseException            If a two or more tasks in any of the tasks maps/set share a name
      * @throws UserAlreadyAssignedToTaskException       If a user is assigned to the same task twice
-     * @throws SessionController.RoleNotFoundException  If a role string does not correspond to an existing role enum
+     * @throws RoleNotFoundException  If a role string does not correspond to an existing role enum
      * @throws LoopDependencyGraphException             If there is a loop in the dependency graph of the projects
      * @throws IncorrectRoleException                   If a user is assigned to a task with a role that this task does not need
      * @throws IllegalTaskRolesException                If attempting to create a task without roles, or roles containing non-developer roles
@@ -179,7 +179,7 @@ public class LoadSystemCommand implements Command {
      * @throws DueTimeBeforeCreationTimeException       If a tasks' due time is before its creation time
      * @throws DueBeforeSystemTimeException             If a tasks' due time is before the system time at creation
      */
-    private void load(TreeMap<Time, JSONArray> projects, TreeMap<Time, JSONArray> startedTasks, TreeMap<Time, JSONArray> endedTasks, HashSet<JSONObject> remainingTasks ) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, SessionController.RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, IllegalTaskRolesException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException, ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException, DueBeforeSystemTimeException, InvalidFileException {
+    private void load(TreeMap<Time, JSONArray> projects, TreeMap<Time, JSONArray> startedTasks, TreeMap<Time, JSONArray> endedTasks, HashSet<JSONObject> remainingTasks ) throws InvalidTimeException, NewTimeBeforeSystemTimeException, UserNotFoundException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, UserAlreadyAssignedToTaskException, RoleNotFoundException, LoopDependencyGraphException, IncorrectRoleException, IllegalTaskRolesException, EndTimeBeforeStartTimeException, IncorrectUserException, ProjectNotOngoingException, ProjectNameAlreadyInUseException, DueTimeBeforeCreationTimeException, DueBeforeSystemTimeException, InvalidFileException {
         while(startedTasks.size() > 0 || endedTasks.size() > 0 || projects.size() > 0){
             if(startedTasks.size() == 0){
                 if (endedTasks.size() == 0) {
@@ -306,10 +306,10 @@ public class LoadSystemCommand implements Command {
      * @throws IllegalTaskRolesException                    If the roles in the JSONObject are empty, or contain non-developer roles
      * @throws UserAlreadyAssignedToTaskException           If the given user in the JSONObject is already assigned to this task
      * @throws IncorrectRoleException                       If the given user in the JSONObject does not have the given role, or
-     * @throws SessionController.RoleNotFoundException      If a role in the JSONObject could not be parsed to an existing role
+     * @throws RoleNotFoundException      If a role in the JSONObject could not be parsed to an existing role
      * @throws ProjectNotOngoingException                   If the project the task belongs to is not ongoing
      */
-    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, SessionController.RoleNotFoundException, ProjectNotOngoingException, InvalidFileException {
+    private void startTask(JSONObject task) throws UserNotFoundException, InvalidTimeException, ProjectNotFoundException, TaskNotFoundException, TaskNameAlreadyInUseException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, RoleNotFoundException, ProjectNotOngoingException, InvalidFileException {
         //standard task fields
         String name = (String) task.get("name");
         String description = (String) task.get("description");
@@ -380,9 +380,9 @@ public class LoadSystemCommand implements Command {
      *
      * @param   role  String to parse as a Role enum
      * @return  Role Enum corresponding to the given role
-     * @throws SessionController.RoleNotFoundException if the given String does not correspond to an existing role
+     * @throws RoleNotFoundException if the given String does not correspond to an existing role
      */
-    private Role findRole(String role) throws SessionController.RoleNotFoundException {
+    private Role findRole(String role) throws RoleNotFoundException {
         switch (role) {
             case "SYSADMIN" -> {
                 return Role.SYSADMIN;
@@ -394,7 +394,7 @@ public class LoadSystemCommand implements Command {
                 return Role.PYTHONPROGRAMMER;
             }
         }
-        throw new SessionController.RoleNotFoundException();
+        throw new RoleNotFoundException();
     }
 
     private ArrayList<Tuple<String, String>> loadPreviousTaskTuple(ArrayList<ArrayList<String>> prev) throws InvalidFileException {
@@ -405,6 +405,13 @@ public class LoadSystemCommand implements Command {
         }
         return result;
     }
+
+
+    public static class RoleNotFoundException extends Exception{
+        public RoleNotFoundException(){super();}
+    }
+
+
 
     @Override
     public String getName() {
