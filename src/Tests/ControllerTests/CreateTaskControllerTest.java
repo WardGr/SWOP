@@ -1,8 +1,11 @@
 package Tests.ControllerTests;
 
+import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
 import Application.TaskControllers.CreateTaskController;
 import Application.Command.CommandManager;
+import Domain.Task.Task;
+import Domain.Task.TaskData;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;
 import Domain.User.User;
@@ -25,9 +28,11 @@ public class CreateTaskControllerTest {
     private CreateTaskController managerCreateTaskController;
     private Session managerSession;
     private Set<Role> rolesManager;
+    private TaskManSystem managerTaskManSystem;
     private CreateTaskController programmerCreateTaskController;
     private Set<Role> rolesProgrammer;
     private Session programmerSession;
+    private TaskManSystem programmerTaskManSystem;
 
 
     @Before
@@ -47,11 +52,11 @@ public class CreateTaskControllerTest {
         User programmerUser = new User("WardGr", "peer123", rolesProgrammer);
         programmerSession.login(programmerUser);
 
-        TaskManSystem managerTaskManSystem = new TaskManSystem(new Time(0));
+        this.managerTaskManSystem = new TaskManSystem(new Time(0));
         managerTaskManSystem.createProject("Project 1", "Project 1 description", new Time(1000));
         CommandManager managerCommandManager = new CommandManager();
 
-        TaskManSystem programmerTaskManSystem = new TaskManSystem(new Time(0));
+        this.programmerTaskManSystem = new TaskManSystem(new Time(0));
         programmerTaskManSystem.createProject("Project 1", "Project 1 description", new Time(1000));
         CommandManager programmerCommandManager = new CommandManager();
 
@@ -77,13 +82,38 @@ public class CreateTaskControllerTest {
 
         managerCreateTaskController.createTask("Project 1", "Task 1", "Task 1 description", new Time(1000), 0.1, taskRoles, new HashSet<>(), new HashSet<>());
         assertEquals("Task 1", managerCreateTaskController.getTaskData("Project 1", "Task 1").getName());
+        assertThrows(IncorrectPermissionException.class, () -> programmerCreateTaskController.createTask("Project 1", "Task 2", "Task 2 description", new Time(1000), 0.1, taskRoles, new HashSet<>(), new HashSet<>()));
+    }
 
+    @Test
+    public void testReplaceTask() throws Exception {
+        List<Role> taskRoles = new LinkedList<>();
+        taskRoles.add(Role.JAVAPROGRAMMER);
 
+        managerCreateTaskController.createTask("Project 1", "Task 1", "Task 1 description", new Time(1000), 0.1, taskRoles, new HashSet<>(), new HashSet<>());
+        failTask("Project 1", "Task 1", programmerSession.getCurrentUser(), Role.JAVAPROGRAMMER);
+        managerCreateTaskController.replaceTask("Project 1", "Task 2", "Task 2 description", new Time(1000), 0.1, "Task 1");
 
+        TaskData task1 = managerCreateTaskController.getTaskData("Project 1", "Task 1");
+        TaskData task2 = managerCreateTaskController.getTaskData("Project 1", "Task 2");
 
+        assertEquals("Task 2", managerCreateTaskController.getTaskData("Project 1", "Task 2").getName());
 
+        assertEquals(List.of(task2), managerCreateTaskController.getProjectData("Project 1").getTasksData());
+        assertEquals(List.of(task1), managerCreateTaskController.getProjectData("Project 1").getReplacedTasksData());
 
+        assertThrows(IncorrectPermissionException.class, () -> programmerCreateTaskController.replaceTask("Project 1", "Task 3", "Task 3 description", new Time(1000), 0.1, "Task 1"));
+    }
 
+    @Test
+    public void testGetTMSData() {
+        assertEquals(managerTaskManSystem, managerCreateTaskController.getTaskManSystemData());
+        assertEquals(programmerTaskManSystem, programmerCreateTaskController.getTaskManSystemData());
+    }
+
+    private void failTask(String projectName, String taskName, User user, Role role) throws Exception {
+        managerTaskManSystem.startTask(projectName, taskName, user, role);
+        managerTaskManSystem.failTask(projectName, taskName, user);
     }
 
 }
