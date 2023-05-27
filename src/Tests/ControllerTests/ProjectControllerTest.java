@@ -1,21 +1,11 @@
 package Tests.ControllerTests;
 
 import Application.IncorrectPermissionException;
-import Application.Session.Session;
-import Application.Session.SessionProxy;
 import Domain.DataClasses.InvalidTimeException;
-import Domain.DataClasses.Time;
 import Domain.TaskManSystem.DueBeforeSystemTimeException;
 import Domain.Project.ProjectNameAlreadyInUseException;
 import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
-import Domain.TaskManSystem.TaskManSystem;
-import Domain.User.Role;
-import Domain.User.User;
-import Application.ProjectControllers.ProjectController;
 import org.junit.Test;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

@@ -1,6 +1,7 @@
 package Tests.UITests;
 
-import Application.ProjectControllers.ProjectController;
+import Application.ProjectControllers.CreateProjectController;
+import Application.ProjectControllers.DeleteProjectController;
 import Application.ProjectControllers.ShowProjectsController;
 import Application.Session.Session;
 import Application.Session.SessionController;
@@ -14,7 +15,8 @@ import Domain.DataClasses.Time;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.UserManager;
-import UserInterface.ProjectUIs.ProjectUI;
+import UserInterface.ProjectUIs.CreateProjectUI;
+import UserInterface.ProjectUIs.DeleteProjectUI;
 import UserInterface.ProjectUIs.ShowProjectsUI;
 import UserInterface.SystemUIs.AdvanceTimeUI;
 import UserInterface.SystemUIs.LoadSystemUI;
@@ -42,7 +44,8 @@ public class UserInterfaceTest {
 
         SessionController sessionController = new SessionController(session, userManager);
         AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandManager);
-        ProjectController createProjectController = new ProjectController(sessionProxy, taskManSystem, commandManager);
+        CreateProjectController createProjectController = new CreateProjectController(sessionProxy, taskManSystem, commandManager);
+        DeleteProjectController deleteProjectController = new DeleteProjectController(sessionProxy, taskManSystem, commandManager);
         ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
         CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem, commandManager);
         LoadSystemController loadSystemController = new LoadSystemController(sessionProxy, taskManSystem, userManager, commandManager);
@@ -59,7 +62,8 @@ public class UserInterfaceTest {
 
         SessionUI sessionUI = new SessionUI(sessionController);
         AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);
-        ProjectUI projectUI = new ProjectUI(createProjectController);
+        CreateProjectUI createProjectUI = new CreateProjectUI(createProjectController);
+        DeleteProjectUI deleteProjectUI = new DeleteProjectUI(deleteProjectController);
         ShowProjectsUI showProjectsUI = new ShowProjectsUI(showProjectsController);
         CreateTaskUI createTaskUI = new CreateTaskUI(createTaskController);
         LoadSystemUI loadSystemUI = new LoadSystemUI(loadSystemController);
@@ -67,7 +71,8 @@ public class UserInterfaceTest {
         UserInterface UI = new UserInterface(
                 sessionUI,
                 advanceTimeUI,
-                projectUI,
+                createProjectUI,
+                deleteProjectUI,
                 showProjectsUI,
                 createTaskUI,
                 deleteTaskUI,

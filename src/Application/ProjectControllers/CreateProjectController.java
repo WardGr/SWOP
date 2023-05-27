@@ -17,7 +17,7 @@ import Domain.User.Role;
 /**
  * Separates domain from UI for the createproject use-case
  */
-public class ProjectController {
+public class CreateProjectController {
 
     private final SessionProxy session;
     private final TaskManSystem taskManSystem;
@@ -29,7 +29,7 @@ public class ProjectController {
      * @param session           The current session to set as active session
      * @param taskManSystem     The system object to set as current system
      */
-    public ProjectController(
+    public CreateProjectController(
             SessionProxy session,
             TaskManSystem taskManSystem,
             CommandInterface commandManager
@@ -86,15 +86,6 @@ public class ProjectController {
         CreateProjectCommand createProjectCommand = new CreateProjectCommand(getTaskManSystem(), projectName, projectDescription, dueTime);
         createProjectCommand.execute();
         getCommandManager().addExecutedCommand(createProjectCommand, getSession().getCurrentUser());
-    }
-
-    public void deleteProject(String projectName) throws IncorrectPermissionException, ProjectNotFoundException {
-        if (!projectPreconditions()) {
-            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
-        }
-        DeleteProjectCommand deleteProjectCommand = new DeleteProjectCommand(taskManSystem, projectName);
-        deleteProjectCommand.execute();
-        getCommandManager().addExecutedCommand(deleteProjectCommand, getSession().getCurrentUser());
     }
 
 

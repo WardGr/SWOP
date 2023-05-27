@@ -1,4 +1,5 @@
-import Application.ProjectControllers.ProjectController;
+import Application.ProjectControllers.CreateProjectController;
+import Application.ProjectControllers.DeleteProjectController;
 import Application.ProjectControllers.ShowProjectsController;
 import Application.Session.Session;
 import Application.Session.SessionController;
@@ -14,7 +15,8 @@ import Domain.DataClasses.Time;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.UserManager;
 import UserInterface.*;
-import UserInterface.ProjectUIs.ProjectUI;
+import UserInterface.ProjectUIs.CreateProjectUI;
+import UserInterface.ProjectUIs.DeleteProjectUI;
 import UserInterface.ProjectUIs.ShowProjectsUI;
 import UserInterface.SystemUIs.AdvanceTimeUI;
 import UserInterface.SystemUIs.LoadSystemUI;
@@ -37,7 +39,8 @@ public class Main {
 
             SessionController sessionController = new SessionController(session, userManager);
             AdvanceTimeController advanceTimeController = new AdvanceTimeController(sessionProxy, taskManSystem, commandManager);
-            ProjectController createProjectController = new ProjectController(sessionProxy, taskManSystem, commandManager);
+            CreateProjectController createProjectController = new CreateProjectController(sessionProxy, taskManSystem, commandManager);
+            DeleteProjectController deleteProjectController = new DeleteProjectController(sessionProxy, taskManSystem, commandManager);
             ShowProjectsController showProjectsController = new ShowProjectsController(sessionProxy, taskManSystem);
             CreateTaskController createTaskController = new CreateTaskController(sessionProxy, taskManSystem, commandManager);
             DeleteTaskController deleteTaskController = new DeleteTaskController(sessionProxy, taskManSystem, commandManager);
@@ -49,7 +52,8 @@ public class Main {
 
             SessionUI sessionUI = new SessionUI(sessionController);
             AdvanceTimeUI advanceTimeUI = new AdvanceTimeUI(advanceTimeController);
-            ProjectUI projectUI = new ProjectUI(createProjectController);
+            CreateProjectUI createProjectUI = new CreateProjectUI(createProjectController);
+            DeleteProjectUI deleteProjectUI = new DeleteProjectUI(deleteProjectController);
             ShowProjectsUI showProjectsUI = new ShowProjectsUI(showProjectsController);
             CreateTaskUI createTaskUI = new CreateTaskUI(createTaskController);
             DeleteTaskUI deleteTaskUI = new DeleteTaskUI(deleteTaskController);
@@ -62,7 +66,8 @@ public class Main {
             UserInterface UI = new UserInterface(
                     sessionUI,
                     advanceTimeUI,
-                    projectUI,
+                    createProjectUI,
+                    deleteProjectUI,
                     showProjectsUI,
                     createTaskUI,
                     deleteTaskUI,
