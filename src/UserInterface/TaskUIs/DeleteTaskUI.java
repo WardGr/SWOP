@@ -2,17 +2,10 @@ package UserInterface.TaskUIs;
 
 import Application.TaskControllers.DeleteTaskController;
 import Application.TaskControllers.UnconfirmedActionException;
-import Application.TaskControllers.CreateTaskController;
 import Application.IncorrectPermissionException;
-import Domain.DataClasses.InvalidTimeException;
-import Domain.DataClasses.Time;
-import Domain.DataClasses.Tuple;
 import Domain.Project.ProjectData;
-import Domain.Project.ProjectNotOngoingException;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.*;
-import Domain.Task.IncorrectTaskStatusException;
-import Domain.Task.LoopDependencyGraphException;
 import Domain.TaskManSystem.ProjectNotFoundException;
 import Domain.TaskManSystem.TaskManSystemData;
 import Domain.User.Role;
@@ -50,7 +43,7 @@ public class DeleteTaskUI {
      * delete task form
      */
     public void deleteTask(){
-        if (getController().taskPreconditions()) {
+        if (getController().deleteTaskPreconditions()) {
             try {
                 deleteTaskForm();
             } catch (IncorrectPermissionException e) {
@@ -114,7 +107,7 @@ public class DeleteTaskUI {
      *
      * @throws ProjectNotFoundException
      */
-    private void printProjectsList() throws ProjectNotFoundException {
+    private void printProjectsList() throws ProjectNotFoundException, IncorrectPermissionException {
         System.out.println(" *** PROJECTS ***");
         TaskManSystemData taskManSystemData = getController().getTaskManSystemData();
         for (ProjectData projectData : taskManSystemData.getProjectsData()){
@@ -129,7 +122,7 @@ public class DeleteTaskUI {
      * @throws ProjectNotFoundException If the given project name could not be found
      * @throws TaskNotFoundException    If the given task name could not be found
      */
-    private void printTasksList(String projectName) throws ProjectNotFoundException, TaskNotFoundException {
+    private void printTasksList(String projectName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         ProjectData projectData = getController().getProjectData(projectName);
         System.out.println(" *** TASKS in " + projectName + " ***");
         if (projectData.getTasksData().isEmpty() && projectData.getReplacedTasksData().isEmpty()) {
@@ -154,7 +147,7 @@ public class DeleteTaskUI {
      * @throws ProjectNotFoundException     If the given project name could not be found
      * @throws TaskNotFoundException        If the given task name could not be found
      */
-    private boolean confirmTaskDeletion(Scanner scanner, String projectName, String taskName) throws BackException, ProjectNotFoundException, TaskNotFoundException {
+    private boolean confirmTaskDeletion(Scanner scanner, String projectName, String taskName) throws BackException, ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         TaskData taskData = getController().getTaskData(projectName, taskName);
 
         System.out.println("\nTask " + taskName + " has status " + taskData.getStatus());

@@ -3,26 +3,15 @@ package Application.TaskControllers;
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
 import Application.Command.CommandInterface;
-import Application.Command.TaskCommands.CreateTaskCommand;
 import Application.Command.TaskCommands.DeleteTaskCommand;
-import Application.Command.TaskCommands.ReplaceTaskCommand;
-import Domain.DataClasses.InvalidTimeException;
-import Domain.DataClasses.Time;
-import Domain.DataClasses.Tuple;
 import Domain.Project.ProjectData;
-import Domain.Project.ProjectNotOngoingException;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.*;
-import Domain.Task.IncorrectTaskStatusException;
-import Domain.Task.LoopDependencyGraphException;
 import Domain.Task.Status;
 import Domain.TaskManSystem.ProjectNotFoundException;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.TaskManSystem.TaskManSystemData;
 import Domain.User.Role;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Separates domain from UI for the createtask use-case
@@ -74,7 +63,7 @@ public class DeleteTaskController {
     /**
      * @return whether the preconditions for the createtask use-case are met
      */
-    public boolean taskPreconditions() {
+    public boolean deleteTaskPreconditions() {
         return getSession().getRoles().contains(Role.PROJECTMANAGER);
     }
 
@@ -88,7 +77,7 @@ public class DeleteTaskController {
      * @throws ProjectNotFoundException  if the given project name does not correspond to an existing project
      * @throws TaskNotFoundException     if the given task name does not correspond to an existing task within the given project
      */
-    public boolean needDeleteConfirmation(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+    public boolean needDeleteConfirmation(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
         TaskData taskData = getTaskData(projectName, taskName);
         return taskData.getStatus() == Status.PENDING || taskData.getStatus() == Status.EXECUTING;
     }
@@ -105,7 +94,7 @@ public class DeleteTaskController {
      * @throws UnconfirmedActionException       if the user did not confirm the deletion of the task
      */
     public void deleteTask(String projectName, String taskName, boolean confirmation) throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, UnconfirmedActionException {
-        if (!taskPreconditions()) {
+        if (!deleteTaskPreconditions()) {
             throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
         } else if (needDeleteConfirmation(projectName, taskName) && !confirmation){
             throw new UnconfirmedActionException("Deleting a Pending or Executing task is not confirmed.");
@@ -118,7 +107,10 @@ public class DeleteTaskController {
     /**
      * @return  A read-only data object containing information about the current task manager system
      */
-    public TaskManSystemData getTaskManSystemData() {
+    public TaskManSystemData getTaskManSystemData() throws IncorrectPermissionException {
+        if (!deleteTaskPreconditions()) {
+            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
         return getTaskManSystem().getTaskManSystemData();
     }
 
@@ -129,7 +121,10 @@ public class DeleteTaskController {
      * @return                              Read-only ProjectData object containing specific information about the project
      * @throws ProjectNotFoundException     If projectName does not correspond to an existing project in the current system
      */
-    public ProjectData getProjectData(String projectName) throws ProjectNotFoundException {
+    public ProjectData getProjectData(String projectName) throws ProjectNotFoundException, IncorrectPermissionException {
+        if (!deleteTaskPreconditions()) {
+            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
         return getTaskManSystem().getProjectData(projectName);
     }
 
@@ -143,7 +138,10 @@ public class DeleteTaskController {
      * @throws ProjectNotFoundException If projectName does not correspond to an existing project
      * @throws TaskNotFoundException    If taskName does not correspond to an existing task within the given project
      */
-    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException {
+    public TaskData getTaskData(String projectName, String taskName) throws ProjectNotFoundException, TaskNotFoundException, IncorrectPermissionException {
+        if (!deleteTaskPreconditions()) {
+            throw new IncorrectPermissionException("You must be logged in with the " + Role.PROJECTMANAGER + " role to call this function");
+        }
         return getTaskManSystem().getTaskData(projectName, taskName);
     }
 }
