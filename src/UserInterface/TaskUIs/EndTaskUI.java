@@ -2,6 +2,7 @@ package UserInterface.TaskUIs;
 
 import Application.TaskControllers.EndTaskController;
 import Application.IncorrectPermissionException;
+import Application.TaskControllers.NoCurrentTaskException;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.IncorrectTaskStatusException;
@@ -87,6 +88,8 @@ public class EndTaskUI {
             System.out.println("ERROR: " + e.getMessage());
         } catch (EndTimeBeforeStartTimeException e) {
             System.out.println("ERROR: The end time is before the start time of the task.");
+        } catch (NoCurrentTaskException e) {
+            System.out.println("ERROR: You are currently not working on a task.");
         }
     }
 

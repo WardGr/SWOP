@@ -4,6 +4,7 @@ import Application.Command.CommandManager;
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
 import Application.TaskControllers.EndTaskController;
+import Application.TaskControllers.NoCurrentTaskException;
 import Domain.DataClasses.Time;
 import Application.Session.Session;
 
@@ -90,8 +91,7 @@ public class EndTaskControllerTest {
 
 
     @Test
-    public void integrateTest() throws ProjectNotFoundException, TaskNotFoundException, InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException, TaskNameAlreadyInUseException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException, IllegalTaskRolesException, UserAlreadyAssignedToTaskException, IncorrectRoleException, NewTimeBeforeSystemTimeException, EndTimeBeforeStartTimeException, IncorrectPermissionException, IncorrectUserException {
-
+    public void integrationTest() throws Exception {
         assertTrue(etc.endTaskPreconditions());
         taskManSystem.startTask("Omer", "Hire brewer", java, Role.JAVAPROGRAMMER);
         assertEquals(Status.PENDING, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
@@ -210,7 +210,6 @@ public class EndTaskControllerTest {
         current.login(java);
         etc.finishCurrentTask();
         assertEquals(Status.FINISHED, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
-
     }
 
     @Test
@@ -224,6 +223,12 @@ public class EndTaskControllerTest {
         assertThrows(IncorrectPermissionException.class, () -> etc.getTaskData("Omer", "Buy ingredients"));
         assertThrows(IncorrectPermissionException.class, () -> etc.getTaskData("Omer", "Make beer"));
         assertThrows(IncorrectPermissionException.class, () -> etc.getProjectData("Test"));
+        assertThrows(IncorrectPermissionException.class, () -> etc.finishCurrentTask());
+        assertThrows(IncorrectPermissionException.class, () -> etc.failCurrentTask());
+        current.logout();
+        current.login(java);
+        assertThrows(NoCurrentTaskException.class, () -> etc.finishCurrentTask());
+        assertThrows(NoCurrentTaskException.class, () -> etc.failCurrentTask());
     }
 
     @Test

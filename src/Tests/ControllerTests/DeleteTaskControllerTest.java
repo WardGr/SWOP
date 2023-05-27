@@ -112,6 +112,7 @@ public class DeleteTaskControllerTest {
         assertEquals(1, taskManSystem.getProjectData("Duvel").getTotalTaskCount());
     }
 
+
     @Test
     public void testGetters() throws Exception {
         assertEquals(taskManSystem.getProjectsData(), deleteTaskController.getTaskManSystemData().getProjectsData());

@@ -87,13 +87,13 @@ public class EndTaskController {
      * @throws IncorrectUserException               If the user is not properly assigned to this task
      * @throws EndTimeBeforeStartTimeException      If the current system time is somehow before the start time of this task
      */
-    public void finishCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+    public void finishCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException, NoCurrentTaskException {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         TaskData userTaskData = getUserTaskData();
         if (userTaskData == null) {
-            throw new IncorrectPermissionException("You are not assigned to a task");
+            throw new NoCurrentTaskException("You are not assigned to a task");
         }
         FinishTaskCommand cmd = new FinishTaskCommand(getTaskManSystem(), userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
         cmd.execute();
@@ -110,13 +110,13 @@ public class EndTaskController {
      * @throws IncorrectUserException               If the user is not properly assigned to this task
      * @throws EndTimeBeforeStartTimeException      If the current system time is somehow before the start time of this task
      */
-    public void failCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException {
+    public void failCurrentTask() throws IncorrectPermissionException, ProjectNotFoundException, TaskNotFoundException, IncorrectTaskStatusException, IncorrectUserException, EndTimeBeforeStartTimeException, NoCurrentTaskException {
         if (!endTaskPreconditions()) {
             throw new IncorrectPermissionException("You need a developer role to call this function");
         }
         TaskData userTaskData = getUserTaskData();
         if (userTaskData == null) {
-            throw new IncorrectPermissionException("You are not assigned to a task");
+            throw new NoCurrentTaskException("You are not assigned to a task");
         }
         FailTaskCommand cmd = new FailTaskCommand(getTaskManSystem(), userTaskData.getProjectName(), userTaskData.getName(), getSession().getCurrentUser());
         cmd.execute();

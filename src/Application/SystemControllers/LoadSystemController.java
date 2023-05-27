@@ -62,16 +62,6 @@ public class LoadSystemController {
     }
 
     /**
-     * Resets the taskmansystem (clearing all projects and setting the time to 0) and ends all tasks for every user
-     */
-    private void clear() throws InvalidTimeException {
-        getTaskManSystem().reset();
-        for (User user : getUserManager().getUsers()) {
-            user.endTask();
-        }
-    }
-
-    /**
      * @return Whether the user is logged in as a project manager
      */
     public boolean loadSystemPreconditions() {

@@ -5,6 +5,7 @@ import Application.Session.Session;
 import Application.Session.SessionProxy;
 import Application.TaskControllers.EndTaskController;
 import Application.TaskControllers.StartTaskController;
+import Application.TaskControllers.UnconfirmedActionException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectData;
@@ -38,9 +39,9 @@ public class StartTaskControllerTest {
     private StartTaskController stc;
     private TaskManSystem taskManSystem;
     private Session current;
-    private User java;
     private User python;
     private User sysadmin;
+    private User java;
     private User man;
 
     @Before
@@ -83,6 +84,26 @@ public class StartTaskControllerTest {
     }
 
     @Test
+    public void testPreconditions() {
+        assertTrue(stc.getUserRoles().contains(Role.JAVAPROGRAMMER));
+        assertTrue(stc.startTaskPreconditions());
+
+        current.logout();
+        assertFalse(stc.startTaskPreconditions());
+
+        current.login(python);
+        assertTrue(stc.startTaskPreconditions());
+        current.logout();
+
+        current.login(sysadmin);
+        assertTrue(stc.startTaskPreconditions());
+        current.logout();
+
+        current.login(man);
+        assertFalse(stc.startTaskPreconditions());
+    }
+
+    @Test
     public void testIncorrectPermissions() {
         current.logout();
         current.login(man);
@@ -115,6 +136,7 @@ public class StartTaskControllerTest {
         assertEquals("Hire brewer", stc.getUserTaskData().getName());
 
         assertEquals(Status.PENDING, taskManSystem.getTaskData("Omer", "Hire brewer").getStatus());
+        assertThrows(UnconfirmedActionException.class, () -> stc.startTask("Omer", "Hire brewer", Role.JAVAPROGRAMMER, false));
 
 
         assertEquals("Omer", stc.getProjectData("Omer").getName());

@@ -2,6 +2,7 @@ package UserInterface.TaskUIs;
 
 import Application.IncorrectPermissionException;
 import Application.TaskControllers.StartTaskController;
+import Application.TaskControllers.UnconfirmedActionException;
 import Domain.Project.ProjectData;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.IncorrectTaskStatusException;
@@ -155,7 +156,7 @@ public class StartTaskUI {
                 System.out.println("ERROR: Given project could not be found");
             } catch (TaskNotFoundException e) {
                 System.out.println("ERROR: Given task could not be found");
-            } catch (IncorrectRoleException e) {
+            } catch (IncorrectRoleException | UnconfirmedActionException e) {
                 System.out.println("ERROR: " + e.getMessage());
             } catch (IncorrectTaskStatusException e) {
                 System.out.println("ERROR: Given task does not have the right status to start");

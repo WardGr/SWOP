@@ -23,17 +23,15 @@ import static org.junit.Assert.*;
 public class DeleteProjectControllerTest {
 
     private Session session;
-    private User projectManager;
     private User incorrect;
-    private TaskManSystem taskManSystem;
     private DeleteProjectController deleteProjectController;
 
     @Before
     public void setUp() throws Exception {
         this.session = new Session();
-        this.projectManager = new User("DieterVH", "computer776", Set.of(Role.PROJECTMANAGER));
+        User projectManager = new User("DieterVH", "computer776", Set.of(Role.PROJECTMANAGER));
         this.incorrect = new User("OlavBl", "peer123", Set.of(Role.PYTHONPROGRAMMER));
-        this.taskManSystem = new TaskManSystem(new Time(0));
+        TaskManSystem taskManSystem = new TaskManSystem(new Time(0));
         this.deleteProjectController = new DeleteProjectController(new SessionProxy(session), taskManSystem, new CommandManager());
         session.login(projectManager);
 
