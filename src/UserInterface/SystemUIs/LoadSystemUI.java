@@ -1,7 +1,7 @@
 package UserInterface.SystemUIs;
 
 import Application.IncorrectPermissionException;
-import Application.SystemControllers.InvalidFileException;
+import Application.Command.LoadSystemCommands.InvalidFileException;
 import Application.SystemControllers.LoadSystemController;
 import Domain.User.Role;
 

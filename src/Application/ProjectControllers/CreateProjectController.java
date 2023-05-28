@@ -1,10 +1,9 @@
 package Application.ProjectControllers;
 
-import Application.IncorrectPermissionException;
-import Application.Session.SessionProxy;
 import Application.Command.CommandInterface;
 import Application.Command.ProjectCommands.CreateProjectCommand;
-import Application.Command.ProjectCommands.DeleteProjectCommand;
+import Application.IncorrectPermissionException;
+import Application.Session.SessionProxy;
 import Domain.DataClasses.Time;
 import Domain.Project.ProjectData;
 import Domain.Project.ProjectNameAlreadyInUseException;
