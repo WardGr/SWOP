@@ -1,8 +1,6 @@
 package Application.Command.LoadSystemCommands;
 
 import Application.*;
-import Application.Session.SessionController;
-import Application.Session.SessionProxy;
 import Application.SystemControllers.InvalidFileException;
 import Application.Command.Command;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;

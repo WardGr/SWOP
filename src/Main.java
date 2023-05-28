@@ -2,7 +2,7 @@ import Application.ProjectControllers.CreateProjectController;
 import Application.ProjectControllers.DeleteProjectController;
 import Application.ProjectControllers.ShowProjectsController;
 import Application.Session.Session;
-import Application.Session.SessionController;
+import Application.SystemControllers.SessionController;
 import Application.Session.SessionProxy;
 import Application.SystemControllers.AdvanceTimeController;
 import Application.SystemControllers.LoadSystemController;

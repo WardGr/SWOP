@@ -5,9 +5,12 @@ import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
 import Domain.DataClasses.Tuple;
 import Domain.Project.*;
-import Domain.Task.*;
+import Domain.Task.TaskData;
 import Domain.Task.IncorrectTaskStatusException;
 import Domain.Task.LoopDependencyGraphException;
+import Domain.Task.TaskNameAlreadyInUseException;
+import Domain.Task.IllegalTaskRolesException;
+import Domain.Task.IncorrectRoleException;
 import Domain.User.IncorrectUserException;
 import Domain.User.Role;
 import Domain.User.User;
@@ -429,8 +432,8 @@ public class TaskManSystem implements TaskManSystemData {
      * @post systemTime.getTotalMinutes() == 0
      */
     public void reset() throws InvalidTimeException {
-        projects = new LinkedList<>();
-        systemTime = new Time(0);
+        this.projects = new LinkedList<>();
+        this.systemTime = new Time(0);
     }
 
 

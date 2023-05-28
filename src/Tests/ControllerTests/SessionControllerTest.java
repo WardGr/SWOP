@@ -2,7 +2,7 @@ package Tests.ControllerTests;
 
 import Application.Session.LoginException;
 import Application.Session.Session;
-import Application.Session.SessionController;
+import Application.SystemControllers.SessionController;
 import Domain.User.UserManager;
 import org.junit.Before;
 import org.junit.Test;
