@@ -1,0 +1,67 @@
+{
+  "projects": [
+    {"name": "previousProject",
+      "description": "Test on task prev",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10
+    },
+    {"name": "nextProject",
+      "description": "Test on project dep",
+      "startHour": 1,
+      "startMinute": 11,
+      "endHour": 16,
+      "endMinute": 10
+    }
+  ],
+  "tasks": [
+    {
+      "name": "previousTask",
+      "project": "previousProject",
+      "description": "first LoadSystemTask prev project",
+      "acceptableDeviation": 3.3,
+      "dueHour": 16,
+      "dueMinute": 10,
+      "startHour": 2,
+      "startMinute": 10,
+      "endHour": null,
+      "endMinute": null,
+      "replaces": null,
+      "previousTasks": [],
+      "users": [
+        {
+          "user": "SamHa",
+          "role": "JAVAPROGRAMMER"
+        }
+      ],
+      "roles": [
+        "JAVAPROGRAMMER"
+      ]
+    },
+    {
+      "name": "nextTask",
+      "project": "nextProject",
+      "description": "second LoadSystemTask prev project",
+      "acceptableDeviation": 3.3,
+      "dueHour": 17,
+      "dueMinute": 10,
+      "startHour": 3,
+      "startMinute": 12,
+      "endHour": null,
+      "endMinute": null,
+      "replaces": null,
+      "previousTasks": [["previousProject", "previousTask"]],
+      "users": [
+        {
+          "user": "SamHa",
+          "role": "JAVAPROGRAMMER"
+        }
+      ],
+      "roles": [
+        "JAVAPROGRAMMER"
+      ]
+    }],
+  "systemHour": 15,
+  "systemMinute": 10
+}
