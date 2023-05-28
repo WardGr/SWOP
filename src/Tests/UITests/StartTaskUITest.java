@@ -439,7 +439,7 @@ public class StartTaskUITest {
         out.reset();
 
         // Testing no confirm
-        System.setIn(new ByteArrayInputStream("Project 1\nTask 1\npython programmer\ny\nn\n".getBytes()));
+        System.setIn(new ByteArrayInputStream("Project 1\nTask 1\npython programmer\ny\nn\nBACK\n".getBytes()));
         startTaskUI.startTask();
         assertEquals(
                 """
@@ -473,6 +473,11 @@ public class StartTaskUITest {
                         Confirm you want to stop pending for task Task 1 and start working on task Task 1? (y/n)
                                                 
                         ERROR: Starting of the task needs confirmation and isn't confirmed
+                        ***** LIST OF AVAILABLE OR PENDING TASKS *****
+                         - Task: Task 1, belonging to Project: Project 1
+                                                
+                        Please give the project name you want to start working in:
+                        Cancelled starting task
                         """.replaceAll("\\n|\\r\\n", System.getProperty("line.separator")),
                 out.toString().replaceAll("\\n|\\r\\n", System.getProperty("line.separator")));
         out.reset();
