@@ -86,17 +86,6 @@ public class TaskManSystem implements TaskManSystemData {
     }
 
     /**
-     * @return List of all project names, as strings
-     */
-    public List<String> getProjectNames() {
-        List<String> names = new LinkedList<>();
-        for (Project project : getProjects()) {
-            names.add(project.getName());
-        }
-        return names;
-    }
-
-    /**
      * Returns an immutable project proxy of the project with the given projectname, if it exists in the current system
      *
      * @param projectName Name of the project

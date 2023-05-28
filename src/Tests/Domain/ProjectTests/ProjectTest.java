@@ -49,8 +49,8 @@ public class ProjectTest {
         assertEquals(new Time(2), testProject.getCreationTime());
         assertEquals(new Time(5), testProject.getDueTime());
 
-        assertEquals(0, testProject.getActiveTasksNames().size());
-        assertEquals(0, testProject.getReplacedTasksNames().size());
+        assertEquals(0, testProject.getTasksData().size());
+        assertEquals(0, testProject.getReplacedTasksData().size());
         assertEquals(ProjectStatus.ONGOING, testProject.getStatus());
         assertThrows(TaskNotFoundException.class, () -> testProject.getTaskData("Test"));
 
@@ -60,13 +60,13 @@ public class ProjectTest {
     @Test
     public void testAddTask() throws InvalidTimeException, TaskNameAlreadyInUseException, TaskNotFoundException, IllegalTaskRolesException, ProjectNotOngoingException, IncorrectTaskStatusException, LoopDependencyGraphException {
         project1.addNewTask("Task", "", new Time(5), 0.5, List.of(Role.SYSADMIN), new HashSet<>(), new HashSet<>());
-        assertTrue(project1.getActiveTasksNames().contains("Task"));
+        assertTrue(project1.getTasksData().stream().map(TaskData::getName).toList().contains("Task"));
 
         assertThrows(TaskNameAlreadyInUseException.class, () -> project1.addNewTask("Task", "", new Time(0), 0, List.of(Role.SYSADMIN), new HashSet<>(), new HashSet<>()));
 
         assertThrows(TaskNotFoundException.class, () -> project1.deleteTask("Test"));
         project1.deleteTask("Task");
-        assertFalse(project1.getActiveTasksNames().contains("Task"));
+        assertFalse(project1.getTasksData().stream().map(TaskData::getName).toList().contains("Task"));
     }
 
     @Test
@@ -74,8 +74,8 @@ public class ProjectTest {
         assertThrows(TaskNotFoundException.class, () -> project1.deleteTask("test"));
 
         project1.deleteTask("Task1");
-        assertFalse(project1.getActiveTasksNames().contains("Task1"));
-        assertEquals(0, project1.getReplacedTasksNames().size());
+        assertFalse(project1.getTasksData().stream().map(TaskData::getName).toList().contains("Task1"));
+        assertEquals(0, project1.getReplacedTasksData().size());
     }
 
     @Test
@@ -163,10 +163,10 @@ public class ProjectTest {
         project1.replaceTask("Replace", "", new Time(5), 0, "Task1");
 
 
-        assertTrue(project1.getReplacedTasksNames().contains("Task1"));
-        assertTrue(project1.getActiveTasksNames().contains("Replace"));
-        assertFalse(project1.getReplacedTasksNames().contains("Replace"));
-        assertFalse(project1.getActiveTasksNames().contains("Task1"));
+        assertTrue(project1.getReplacedTasksData().stream().map(TaskData::getName).toList().contains("Task1"));
+        assertTrue(project1.getTasksData().stream().map(TaskData::getName).toList().contains("Replace"));
+        assertFalse(project1.getReplacedTasksData().stream().map(TaskData::getName).toList().contains("Replace"));
+        assertFalse(project1.getTasksData().stream().map(TaskData::getName).toList().contains("Task1"));
         assertEquals(ProjectStatus.ONGOING, project1.getStatus());
 
         project1.deleteTask("Task3");
@@ -178,8 +178,8 @@ public class ProjectTest {
 
         project1.deleteTask("Replace");
 
-        assertTrue(project1.getActiveTasksNames().contains("Task1"));
-        assertFalse(project1.getReplacedTasksNames().contains("Task1"));
+        assertTrue(project1.getTasksData().stream().map(TaskData::getName).toList().contains("Task1"));
+        assertFalse(project1.getReplacedTasksData().stream().map(TaskData::getName).toList().contains("Task1"));
     }
 
     @Test
@@ -194,8 +194,8 @@ public class ProjectTest {
         assertEquals(ProjectStatus.FINISHED, project1.getStatus());
 
         project1.clearTasks();
-        assertEquals(0, project1.getActiveTasksNames().size());
-        assertEquals(0, project1.getReplacedTasksNames().size());
+        assertEquals(0, project1.getTasksData().size());
+        assertEquals(0, project1.getReplacedTasksData().size());
         assertEquals(ProjectStatus.ONGOING, project1.getStatus());
 
     }

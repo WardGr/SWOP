@@ -79,17 +79,6 @@ public class Project implements ProjectData {
         return List.copyOf(tasks);
     }
 
-    /**
-     * @return A list of names of tasks that are currently not active (= not replaced) in this project
-     */
-    public List<String> getActiveTasksNames() {
-        List<String> names = new LinkedList<>();
-        for (Task task : getTasks()) {
-            names.add(task.getName());
-        }
-        return names;
-    }
-
     @Override
     public List<TaskData> getTasksData() {
         return getTasks().stream().map(Task::getTaskData).toList();
@@ -98,17 +87,6 @@ public class Project implements ProjectData {
     @Override
     public List<TaskData> getReplacedTasksData() {
         return getReplacedTasks().stream().map(Task::getTaskData).toList();
-    }
-
-    /**
-     * @return A list of names of tasks that are replaced in this project
-     */
-    public List<String> getReplacedTasksNames() {
-        List<String> names = new LinkedList<>();
-        for (Task task : getReplacedTasks()) {
-            names.add(task.getName());
-        }
-        return names;
     }
 
     /**

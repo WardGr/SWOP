@@ -7,6 +7,7 @@ import Domain.DataClasses.Tuple;
 import Domain.Project.ProjectNameAlreadyInUseException;
 import Domain.Project.ProjectNotOngoingException;
 import Domain.Project.TaskNotFoundException;
+import Domain.Project.ProjectData;
 import Domain.Task.*;
 import Domain.Task.IncorrectTaskStatusException;
 import Domain.Task.LoopDependencyGraphException;
@@ -52,10 +53,10 @@ public class TaskManSystemTest {
     public void testCreateProject() throws ProjectNotFoundException, InvalidTimeException, ProjectNameAlreadyInUseException, DueBeforeSystemTimeException {
         assertThrows(ProjectNameAlreadyInUseException.class, () -> taskManSystem.createProject("New Project", "", new Time(100)));
         assertEquals("New Project", taskManSystem.getProjectData("New Project").getName());
-        assertEquals(List.of("New Project", "Second Project"), taskManSystem.getProjectNames());
+        assertEquals(List.of("New Project", "Second Project"), taskManSystem.getProjectsData().stream().map(ProjectData::getName).toList());
 
         taskManSystem.createProject("Third Project", "", new Time(20));
-        assertEquals(List.of("New Project", "Second Project", "Third Project"), taskManSystem.getProjectNames());
+        assertEquals(List.of("New Project", "Second Project", "Third Project"), taskManSystem.getProjectsData().stream().map(ProjectData::getName).toList());
 
         assertThrows(DueBeforeSystemTimeException.class, () -> taskManSystem.createProject("", "", new Time(0)));
     }
@@ -71,7 +72,7 @@ public class TaskManSystemTest {
     public void testGettersInitial() throws InvalidTimeException {
         assertNotNull(taskManSystem.getTaskManSystemData());
         assertEquals(new Time(10), taskManSystem.getSystemTime());
-        assertEquals(List.of("New Project", "Second Project"), taskManSystem.getProjectNames());
+        assertEquals(List.of("New Project", "Second Project"), taskManSystem.getProjectsData().stream().map(ProjectData::getName).toList());
 
         // getProjectData
         assertThrows(ProjectNotFoundException.class, () -> taskManSystem.getProjectData(""));
@@ -215,7 +216,7 @@ public class TaskManSystemTest {
     @After
     public void testReset() throws InvalidTimeException {
         taskManSystem.reset();
-        assertEquals(List.of(), taskManSystem.getProjectNames());
+        assertEquals(List.of(), taskManSystem.getProjectsData().stream().map(ProjectData::getName).toList());
         assertEquals(new Time(0), taskManSystem.getSystemTime());
     }
 }

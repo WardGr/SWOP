@@ -33,7 +33,7 @@ public class ProjectDataTest {
         assertEquals(new Time(13), projectData.getCreationTime());
         assertEquals(new Time(20), projectData.getDueTime());
         assertEquals(3, projectData.getActiveTasksNames().size());
-        assertEquals(0, projectData.getReplacedTasksNames().size());
+        assertEquals(0, projectData.getReplacedTasksData().size());
 
         Set javaRoles = new HashSet();
         javaRoles.add(Role.JAVAPROGRAMMER);
@@ -50,7 +50,7 @@ public class ProjectDataTest {
 
         assertEquals(ProjectStatus.ONGOING, projectData.getStatus());
         assertEquals(3, projectData.getActiveTasksNames().size());
-        assertEquals(0, projectData.getReplacedTasksNames().size());
+        assertEquals(0, projectData.getReplacedTasksData().size());
 
         omer.startTask("Brew beer", new Time(17), java, Role.JAVAPROGRAMMER);
         omer.startTask("Brew beer", new Time(17), python, Role.PYTHONPROGRAMMER);
@@ -58,7 +58,7 @@ public class ProjectDataTest {
 
         assertEquals(ProjectStatus.ONGOING, projectData.getStatus());
         assertEquals(3, projectData.getActiveTasksNames().size());
-        assertEquals(0, projectData.getReplacedTasksNames().size());
+        assertEquals(0, projectData.getReplacedTasksData().size());
 
         omer.startTask("Sell beer", new Time(19), java, Role.JAVAPROGRAMMER);
         omer.startTask("Sell beer", new Time(19), python, Role.PYTHONPROGRAMMER);
@@ -66,7 +66,7 @@ public class ProjectDataTest {
 
         assertEquals(ProjectStatus.FINISHED, projectData.getStatus());
         assertEquals(3, projectData.getActiveTasksNames().size());
-        assertEquals(0, projectData.getReplacedTasksNames().size());
+        assertEquals(0, projectData.getReplacedTasksData().size());
 
 
         // Testing with replaces
@@ -84,19 +84,19 @@ public class ProjectDataTest {
         assertEquals(new Time(2), projectDataDuvel.getCreationTime());
         assertEquals(new Time(50), projectDataDuvel.getDueTime());
         assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
-        assertEquals(0, projectDataDuvel.getReplacedTasksNames().size());
+        assertEquals(0, projectDataDuvel.getReplacedTasksData().size());
 
         Duvel.startTask("Hire destiller", new Time(14), java, Role.JAVAPROGRAMMER);
         Duvel.failTask("Hire destiller", java, new Time(15));
         Duvel.replaceTask("Steal destiller", "Get chouffe destiller to work for us", new Time(3), .1, "Hire destiller");
 
         assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
-        assertEquals(1, projectDataDuvel.getReplacedTasksNames().size());
+        assertEquals(1, projectDataDuvel.getReplacedTasksData().size());
 
 
-        assertTrue(projectDataDuvel.getActiveTasksNames().contains("Steal destiller"));
-        assertFalse(projectDataDuvel.getActiveTasksNames().contains("Hire destiller"));
-        assertTrue(projectDataDuvel.getReplacedTasksNames().contains("Hire destiller"));
+        assertTrue(projectDataDuvel.getTasksData().stream().map(TaskData::getName).toList().contains("Steal destiller"));
+        assertFalse(projectDataDuvel.getTasksData().stream().map(TaskData::getName).toList().contains("Hire destiller"));
+        assertTrue(projectDataDuvel.getReplacedTasksData().stream().map(TaskData::getName).toList().contains("Hire destiller"));
 
         assertEquals(ProjectStatus.ONGOING, projectDataDuvel.getStatus());
 
@@ -104,14 +104,14 @@ public class ProjectDataTest {
         Duvel.finishTask("Steal destiller", java, new Time(19));
 
         assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
-        assertEquals(1, projectDataDuvel.getReplacedTasksNames().size());
+        assertEquals(1, projectDataDuvel.getReplacedTasksData().size());
         assertEquals(ProjectStatus.ONGOING, projectDataDuvel.getStatus());
 
         Duvel.startTask("Distill beer", new Time(19), java, Role.JAVAPROGRAMMER);
         Duvel.finishTask("Distill beer", java, new Time(40));
 
         assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
-        assertEquals(1, projectDataDuvel.getReplacedTasksNames().size());
+        assertEquals(1, projectDataDuvel.getReplacedTasksData().size());
         assertEquals(ProjectStatus.ONGOING, projectDataDuvel.getStatus());
 
         Duvel.startTask("Bottle beer", new Time(40), java, Role.JAVAPROGRAMMER);
@@ -122,13 +122,13 @@ public class ProjectDataTest {
         Duvel.finishTask("Bottle beer 2", java, new Time(50));
 
         assertEquals(3, projectDataDuvel.getActiveTasksNames().size());
-        assertEquals(2, projectDataDuvel.getReplacedTasksNames().size());
+        assertEquals(2, projectDataDuvel.getReplacedTasksData().size());
         assertEquals(ProjectStatus.FINISHED, projectDataDuvel.getStatus());
 
-        assertTrue(projectDataDuvel.getActiveTasksNames().contains("Bottle beer 2"));
-        assertFalse(projectDataDuvel.getActiveTasksNames().contains("Bottle beer"));
-        assertTrue(projectDataDuvel.getReplacedTasksNames().contains("Bottle beer"));
-        assertFalse(projectDataDuvel.getReplacedTasksNames().contains("Bottle beer 2"));
+        assertTrue(projectDataDuvel.getTasksData().stream().map(TaskData::getName).toList().contains("Bottle beer 2"));
+        assertFalse(projectDataDuvel.getTasksData().stream().map(TaskData::getName).toList().contains("Bottle beer"));
+        assertTrue(projectDataDuvel.getReplacedTasksData().stream().map(TaskData::getName).toList().contains("Bottle beer"));
+        assertFalse(projectDataDuvel.getReplacedTasksData().stream().map(TaskData::getName).toList().contains("Bottle beer 2"));
 
          */
     }
