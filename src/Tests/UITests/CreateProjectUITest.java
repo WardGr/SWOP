@@ -5,7 +5,7 @@ import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;
 import Domain.User.User;
 import UserInterface.ProjectUIs.CreateProjectUI;
-import Application.ProjectControllers.CreateProjectController;
+import Application.Controllers.ProjectControllers.CreateProjectController;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
 import Domain.DataClasses.Time;

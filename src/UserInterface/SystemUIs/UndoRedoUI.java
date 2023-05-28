@@ -1,6 +1,6 @@
 package UserInterface.SystemUIs;
 
-import Application.SystemControllers.UndoRedoController;
+import Application.Controllers.SystemControllers.UndoRedoController;
 import Application.Command.CommandData;
 import Application.Command.UndoNotPossibleException;
 import Application.Command.EmptyCommandStackException;

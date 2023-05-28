@@ -7,7 +7,7 @@ import Domain.DataClasses.Time;
 import Domain.DataClasses.Tuple;
 import org.junit.Before;
 import Application.Session.*;
-import Application.SystemControllers.UndoRedoController;
+import Application.Controllers.SystemControllers.UndoRedoController;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.User;
 import Domain.User.Role;

@@ -1,6 +1,6 @@
 package UserInterface.ProjectUIs;
 
-import Application.ProjectControllers.CreateProjectController;
+import Application.Controllers.ProjectControllers.CreateProjectController;
 import Application.IncorrectPermissionException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;

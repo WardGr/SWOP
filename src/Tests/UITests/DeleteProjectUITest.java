@@ -2,12 +2,10 @@ package Tests.UITests;
 
 import Application.IncorrectPermissionException;
 import Application.Command.CommandManager;
-import Application.ProjectControllers.DeleteProjectController;
+import Application.Controllers.ProjectControllers.DeleteProjectController;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;
 import Domain.User.User;
-import UserInterface.ProjectUIs.CreateProjectUI;
-import Application.ProjectControllers.CreateProjectController;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
 import Domain.DataClasses.Time;

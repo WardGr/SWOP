@@ -1,7 +1,7 @@
 package UserInterface.TaskUIs;
 
-import Application.TaskControllers.DeleteTaskController;
-import Application.TaskControllers.UnconfirmedActionException;
+import Application.Controllers.TaskControllers.DeleteTaskController;
+import Application.Controllers.TaskControllers.UnconfirmedActionException;
 import Application.IncorrectPermissionException;
 import Domain.Project.ProjectData;
 import Domain.Project.TaskNotFoundException;

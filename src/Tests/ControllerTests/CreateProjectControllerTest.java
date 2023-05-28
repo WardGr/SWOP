@@ -2,7 +2,7 @@ package Tests.ControllerTests;
 
 import Application.Command.CommandManager;
 import Application.IncorrectPermissionException;
-import Application.ProjectControllers.CreateProjectController;
+import Application.Controllers.ProjectControllers.CreateProjectController;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
 import Domain.DataClasses.Time;

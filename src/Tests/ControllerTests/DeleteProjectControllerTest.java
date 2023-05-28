@@ -2,12 +2,10 @@ package Tests.ControllerTests;
 
 import Application.Command.CommandManager;
 import Application.IncorrectPermissionException;
-import Application.ProjectControllers.DeleteProjectController;
+import Application.Controllers.ProjectControllers.DeleteProjectController;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
-import Application.TaskControllers.DeleteTaskController;
 import Domain.Project.ProjectData;
-import Domain.Task.Task;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;
 import Domain.User.User;
@@ -15,7 +13,6 @@ import Domain.DataClasses.Time;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;

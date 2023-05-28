@@ -3,31 +3,19 @@ package Tests.ControllerTests;
 import Application.Command.CommandManager;
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Application.TaskControllers.EndTaskController;
-import Application.TaskControllers.NoCurrentTaskException;
+import Application.Controllers.TaskControllers.EndTaskController;
+import Application.Controllers.TaskControllers.NoCurrentTaskException;
 import Domain.DataClasses.Time;
 import Application.Session.Session;
 
 
-import Domain.DataClasses.EndTimeBeforeStartTimeException;
-import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Tuple;
-import Domain.Project.ProjectNameAlreadyInUseException;
-import Domain.Project.ProjectNotOngoingException;
 import Domain.Project.ProjectStatus;
-import Domain.Project.TaskNotFoundException;
 import Domain.Task.*;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;
 import Domain.User.User;
 
-import Domain.Task.IncorrectTaskStatusException;
-import Domain.Task.LoopDependencyGraphException;
-import Domain.TaskManSystem.DueBeforeSystemTimeException;
-import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
-import Domain.TaskManSystem.ProjectNotFoundException;
-import Domain.User.IncorrectUserException;
-import Domain.User.UserAlreadyAssignedToTaskException;
 import org.junit.Before;
 import org.junit.Test;
 

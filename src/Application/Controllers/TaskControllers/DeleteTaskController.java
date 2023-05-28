@@ -1,4 +1,4 @@
-package Application.TaskControllers;
+package Application.Controllers.TaskControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;

@@ -2,7 +2,7 @@ package Tests.UITests;
 
 import Application.Session.Session;
 import Application.Session.SessionProxy;
-import Application.TaskControllers.UpdateDependenciesController;
+import Application.Controllers.TaskControllers.UpdateDependenciesController;
 import Application.Command.CommandManager;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.DataClasses.InvalidTimeException;

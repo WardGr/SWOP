@@ -1,6 +1,6 @@
 package Tests.UITests;
 
-import Application.TaskControllers.EndTaskController;
+import Application.Controllers.TaskControllers.EndTaskController;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
 import Application.Command.CommandManager;

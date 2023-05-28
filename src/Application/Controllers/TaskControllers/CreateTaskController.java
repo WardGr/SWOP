@@ -1,10 +1,9 @@
-package Application.TaskControllers;
+package Application.Controllers.TaskControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
 import Application.Command.CommandInterface;
 import Application.Command.TaskCommands.CreateTaskCommand;
-import Application.Command.TaskCommands.DeleteTaskCommand;
 import Application.Command.TaskCommands.ReplaceTaskCommand;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;
@@ -15,7 +14,6 @@ import Domain.Project.TaskNotFoundException;
 import Domain.Task.*;
 import Domain.Task.IncorrectTaskStatusException;
 import Domain.Task.LoopDependencyGraphException;
-import Domain.Task.Status;
 import Domain.TaskManSystem.ProjectNotFoundException;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.TaskManSystem.TaskManSystemData;

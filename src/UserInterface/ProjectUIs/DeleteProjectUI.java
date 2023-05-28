@@ -1,6 +1,6 @@
 package UserInterface.ProjectUIs;
 
-import Application.ProjectControllers.DeleteProjectController;
+import Application.Controllers.ProjectControllers.DeleteProjectController;
 import Application.IncorrectPermissionException;
 import Domain.Project.ProjectData;
 import Domain.TaskManSystem.ProjectNotFoundException;

@@ -4,7 +4,7 @@ import Application.*;
 import Application.Command.CommandManager;
 import Application.Session.Session;
 import Application.Session.SessionProxy;
-import Application.TaskControllers.UpdateDependenciesController;
+import Application.Controllers.TaskControllers.UpdateDependenciesController;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;

@@ -1,4 +1,4 @@
-package Application.ProjectControllers;
+package Application.Controllers.ProjectControllers;
 
 import Application.Command.CommandInterface;
 import Application.Command.ProjectCommands.CreateProjectCommand;

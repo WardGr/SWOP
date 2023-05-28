@@ -1,6 +1,6 @@
 package UserInterface.SystemUIs;
 
-import Application.SystemControllers.AdvanceTimeController;
+import Application.Controllers.SystemControllers.AdvanceTimeController;
 import Application.IncorrectPermissionException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.TaskManSystem.NewTimeBeforeSystemTimeException;
@@ -10,7 +10,7 @@ import Domain.DataClasses.Time;
 import java.util.Scanner;
 
 /**
- * Handles user input for the advancetime use-case, requests necessary domain-level information from the Application.SystemControllers.AdvanceTimeController
+ * Handles user input for the advancetime use-case, requests necessary domain-level information from the Application.Controllers.ProjectControllers.SystemControllers.AdvanceTimeController
  */
 public class AdvanceTimeUI {
 

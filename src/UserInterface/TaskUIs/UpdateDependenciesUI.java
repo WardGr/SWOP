@@ -1,7 +1,7 @@
 package UserInterface.TaskUIs;
 
 import Application.IncorrectPermissionException;
-import Application.TaskControllers.UpdateDependenciesController;
+import Application.Controllers.TaskControllers.UpdateDependenciesController;
 import Domain.DataClasses.Tuple;
 import Domain.Project.ProjectData;
 import Domain.Project.TaskNotFoundException;

@@ -1,6 +1,6 @@
 package Tests.ControllerTests;
 
-import Application.SystemControllers.AdvanceTimeController;
+import Application.Controllers.SystemControllers.AdvanceTimeController;
 import Application.IncorrectPermissionException;
 import Application.Session.Session;
 import Application.Session.SessionProxy;

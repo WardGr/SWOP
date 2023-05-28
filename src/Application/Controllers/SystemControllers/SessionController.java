@@ -1,4 +1,4 @@
-package Application.SystemControllers;
+package Application.Controllers.SystemControllers;
 
 import Application.Session.LoginException;
 import Application.Session.Session;

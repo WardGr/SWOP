@@ -1,4 +1,4 @@
-package Application.SystemControllers;
+package Application.Controllers.SystemControllers;
 
 import Application.Command.LoadSystemCommands.InvalidFileException;
 import Application.IncorrectPermissionException;

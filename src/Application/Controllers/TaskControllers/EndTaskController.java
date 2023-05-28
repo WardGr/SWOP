@@ -1,4 +1,4 @@
-package Application.TaskControllers;
+package Application.Controllers.TaskControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
@@ -12,7 +12,6 @@ import Domain.Task.IncorrectTaskStatusException;
 import Domain.TaskManSystem.ProjectNotFoundException;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.TaskManSystem.TaskManSystemData;
-import Domain.Task.Status;
 import Domain.Task.TaskData;
 import Domain.User.IncorrectUserException;
 import Domain.User.Role;

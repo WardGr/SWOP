@@ -1,4 +1,4 @@
-package Application.ProjectControllers;
+package Application.Controllers.ProjectControllers;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;

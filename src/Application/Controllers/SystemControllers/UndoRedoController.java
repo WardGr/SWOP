@@ -1,4 +1,4 @@
-package Application.SystemControllers;
+package Application.Controllers.SystemControllers;
 import Application.Session.SessionProxy;
 import Application.Command.CommandData;
 import Application.Command.CommandInterface;

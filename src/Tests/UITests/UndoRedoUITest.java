@@ -2,7 +2,7 @@ package Tests.UITests;
 
 import Application.Session.Session;
 import Application.Session.SessionProxy;
-import Application.SystemControllers.UndoRedoController;
+import Application.Controllers.SystemControllers.UndoRedoController;
 import Application.Command.AdvanceTimeCommands.SetNewTimeCommand;
 import Application.Command.CommandManager;
 import Application.Command.EmptyCommandStackException;

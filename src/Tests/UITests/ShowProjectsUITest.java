@@ -2,7 +2,7 @@ package Tests.UITests;
 
 import Application.Session.Session;
 import Application.Session.SessionProxy;
-import Application.ProjectControllers.ShowProjectsController;
+import Application.Controllers.ProjectControllers.ShowProjectsController;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.DataClasses.InvalidTimeException;
 import Domain.DataClasses.Time;

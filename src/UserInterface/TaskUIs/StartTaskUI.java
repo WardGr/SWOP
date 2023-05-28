@@ -1,8 +1,8 @@
 package UserInterface.TaskUIs;
 
 import Application.IncorrectPermissionException;
-import Application.TaskControllers.StartTaskController;
-import Application.TaskControllers.UnconfirmedActionException;
+import Application.Controllers.TaskControllers.StartTaskController;
+import Application.Controllers.TaskControllers.UnconfirmedActionException;
 import Domain.Project.ProjectData;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.IncorrectTaskStatusException;

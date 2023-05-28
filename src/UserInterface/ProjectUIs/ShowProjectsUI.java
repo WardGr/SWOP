@@ -1,7 +1,7 @@
 package UserInterface.ProjectUIs;
 
 import Application.IncorrectPermissionException;
-import Application.ProjectControllers.ShowProjectsController;
+import Application.Controllers.ProjectControllers.ShowProjectsController;
 import Domain.Project.ProjectData;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.IncorrectTaskStatusException;
@@ -13,7 +13,7 @@ import Domain.User.Role;
 import java.util.Scanner;
 
 /**
- * Handles user input for the showprojects use-case, requests necessary domain-level information from the Application.ProjectControllers.ShowProjectsController
+ * Handles user input for the showprojects use-case, requests necessary domain-level information from the Application.Controllers.ProjectControllers.ShowProjectsController
  */
 public class ShowProjectsUI {
 

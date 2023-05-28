@@ -2,9 +2,8 @@ package Tests.ControllerTests;
 
 import Application.IncorrectPermissionException;
 import Application.Session.SessionProxy;
-import Application.TaskControllers.CreateTaskController;
+import Application.Controllers.TaskControllers.CreateTaskController;
 import Application.Command.CommandManager;
-import Domain.Task.Task;
 import Domain.Task.TaskData;
 import Domain.TaskManSystem.TaskManSystem;
 import Domain.User.Role;

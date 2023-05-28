@@ -1,8 +1,8 @@
 package UserInterface.TaskUIs;
 
-import Application.TaskControllers.EndTaskController;
+import Application.Controllers.TaskControllers.EndTaskController;
 import Application.IncorrectPermissionException;
-import Application.TaskControllers.NoCurrentTaskException;
+import Application.Controllers.TaskControllers.NoCurrentTaskException;
 import Domain.DataClasses.EndTimeBeforeStartTimeException;
 import Domain.Project.TaskNotFoundException;
 import Domain.Task.IncorrectTaskStatusException;

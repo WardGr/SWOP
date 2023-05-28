@@ -1,6 +1,6 @@
 package UserInterface.SystemUIs;
 
-import Application.SystemControllers.SessionController;
+import Application.Controllers.SystemControllers.SessionController;
 import Application.Session.LoginException;
 import Domain.User.Role;
 
@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * Handles user input for the login and logout use-cases, requests necessary domain-level information from the Application.SystemControllers.SessionController
+ * Handles user input for the login and logout use-cases, requests necessary domain-level information from the Application.Controllers.ProjectControllers.SystemControllers.SessionController
  */
 public class SessionUI {
 

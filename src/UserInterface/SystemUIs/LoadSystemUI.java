@@ -2,13 +2,13 @@ package UserInterface.SystemUIs;
 
 import Application.IncorrectPermissionException;
 import Application.Command.LoadSystemCommands.InvalidFileException;
-import Application.SystemControllers.LoadSystemController;
+import Application.Controllers.SystemControllers.LoadSystemController;
 import Domain.User.Role;
 
 import java.util.Scanner;
 
 /**
- * Handles user input for the loadsystem use-case, requests necessary domain-level information from the Application.SystemControllers.LoadSystemController
+ * Handles user input for the loadsystem use-case, requests necessary domain-level information from the Application.Controllers.ProjectControllers.SystemControllers.LoadSystemController
  */
 public class LoadSystemUI {
     private final LoadSystemController controller;
