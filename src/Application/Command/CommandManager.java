@@ -14,71 +14,31 @@ package Application.Command;
  * manages the undo and redo functionality and the command history
  */
 public class CommandManager implements CommandInterface {
-
-    private final Stack<Tuple<Command, User>> executedCommandStack = new Stack<>();
-    private final Stack<Tuple<Command,User>> undoneCommandStack = new Stack<>();
-
+    private Node currNode = null;
     public CommandManager() {}
-
-    private Stack<Tuple<Command,User>> getExecutedStack() {
-        return executedCommandStack;
-    }
-    private Stack<Tuple<Command,User>> getUndoneStack() {
-        return undoneCommandStack;
-    }
 
 
     private void addLastExecutedCommand(Command command, User executingUser){
-        getExecutedStack().push(new Tuple<>(command, executingUser));
-    }
-
-    private void trimExecutedCommandList(){
-        while(getExecutedStack().size() > 10){
-            getExecutedStack().remove(0);
+        Node newNode = new Node(command, executingUser);
+        if (currNode == null) {
+            currNode = newNode;
+        } else {
+            currNode.next = newNode;
+            newNode.prev = currNode;
+            currNode = newNode;
         }
     }
 
     private Command getLastExecutedCommand(){
-        if (getExecutedStack().empty()){
-            return null;
-        }
-        Tuple<Command,User> command = getExecutedStack().peek();
-        return command.getFirst();
+        return currNode.getcommand();
     }
 
     private User getUserLastExecutedCommand(){
-        Tuple<Command,User> command = getExecutedStack().peek();
-        return command.getSecond();
-    }
-
-    private void removeLastExecutedCommand(){
-        getExecutedStack().pop();
-    }
-
-
-    private void addUndoneCommand(Command command, User executingUser){
-        getUndoneStack().push(new Tuple<>(command, executingUser));
-    }
-
-    private Command getLastUndoneCommand(){
-        if (getUndoneStack().empty()){
-            return null;
-        }
-        Tuple<Command,User> command = getUndoneStack().peek();
-        return command.getFirst();
+        return currNode.getUser();
     }
 
     private User getUserLastUndoneCommand(){
-        Tuple<Command,User> command = getUndoneStack().peek();
-        return command.getSecond();
-    }
-
-    private void removeLastUndoneCommand(){
-        getUndoneStack().pop();
-    }
-
-    private void clearUndoneCommands(){
-        getUndoneStack().clear();
+        return currNode.getNext().getUser();
     }
 
 
@@ -90,8 +50,6 @@ public class CommandManager implements CommandInterface {
      */
     public void addExecutedCommand(Command command, User executingUser) {
         addLastExecutedCommand(command, executingUser);
-        trimExecutedCommandList();
-        clearUndoneCommands();
     }
 
     /**
@@ -103,16 +61,18 @@ public class CommandManager implements CommandInterface {
      * @throws UndoNotPossibleException     If the last executed command cannot be undone
      */
     public void undoLastCommand(User currentUser) throws EmptyCommandStackException, IncorrectUserException, UndoNotPossibleException {
-        if (getExecutedStack().empty()) {
-            throw new EmptyCommandStackException("There are no executed actions to undo");
-        }
-        if (getUserLastExecutedCommand() != currentUser &&
+        if (currNode == null || currNode.getPrev() == null) {
+            throw new EmptyCommandStackException("There are no actions to undo");
+        } else if (getUserLastExecutedCommand() != currentUser &&
                 !currentUser.getRoles().contains(Role.PROJECTMANAGER)) {
-            throw new IncorrectUserException("The current user is not allowed to undo the last executed action");
+            throw new IncorrectUserException("The current user is not allowed to undo the last action");
         }
-        getLastExecutedCommand().undo();
-        addUndoneCommand(getLastExecutedCommand(), getUserLastExecutedCommand());
-        removeLastExecutedCommand();
+        try{
+            getLastExecutedCommand().undo();
+            currNode = currNode.getPrev();
+        } catch (Exception e) {
+            throw new UndoNotPossibleException();
+        }
     }
 
     /**
@@ -123,29 +83,32 @@ public class CommandManager implements CommandInterface {
      * @throws IncorrectUserException       If the current user is not the user that executed the last command and is not a project manager
      */
     public void redoLast(User currentUser) throws EmptyCommandStackException, IncorrectUserException {
-        if (getUndoneStack().empty()) {
-            throw new EmptyCommandStackException("There are no undone actions to redo");
-        }
-        if (getUserLastUndoneCommand() != currentUser &&
+        if (currNode == null || currNode.getNext() == null) {
+            throw new EmptyCommandStackException("There are no actions to redo");
+        } else if (getUserLastUndoneCommand() != currentUser &&
                 !currentUser.getRoles().contains(Role.PROJECTMANAGER)) {
-            throw new IncorrectUserException("The current user is not allowed to redo the last undone action");
+            throw new IncorrectUserException("The current user is not allowed to redo the last action");
         }
         try{
-            getLastUndoneCommand().execute();
+            currNode = currNode.getNext();
+            getLastExecutedCommand().execute();
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new EmptyCommandStackException("There are no actions to redo");
         }
-        addLastExecutedCommand(getLastUndoneCommand(), getUserLastUndoneCommand());
-        removeLastUndoneCommand();
     }
 
     /**
      * @return a list of tuples containing all the executed commands and the username of the user that executed the command, in order of execution
      */
     public List<Tuple<CommandData,String>> getExecutedCommands(){
+        if (currNode == null){
+            return new LinkedList<>();
+        }
+        Node curr = currNode;
         List<Tuple<CommandData,String>> prevCmdList = new LinkedList<>();
-        for (Tuple<Command,User> prevCmd : getExecutedStack()){
-            prevCmdList.add(new Tuple<>(prevCmd.getFirst().getCommandData(), prevCmd.getSecond().getUsername()));
+        while (curr.getPrev() != null){
+            prevCmdList.add(new Tuple<>(curr.getcommand().getCommandData(), curr.getUser().getUsername()));
+            curr = curr.getPrev();
         }
         return prevCmdList;
     }
@@ -154,11 +117,16 @@ public class CommandManager implements CommandInterface {
      * @return a list of tuples containing all the undone commands and the username of the user that executed the command, in order of undoing
      */
     public List<Tuple<CommandData,String>> getUndoneCommands() {
-        List<Tuple<CommandData, String>> undoneCmdList = new LinkedList<>();
-        for (Tuple<Command,User> undoneCmd : getUndoneStack()){
-            undoneCmdList.add(new Tuple<>(undoneCmd.getFirst().getCommandData(), undoneCmd.getSecond().getUsername()));
+        if (currNode == null || currNode.getNext() == null){
+            return new LinkedList<>();
         }
-        return undoneCmdList;
+        Node curr = currNode.getNext();
+        List<Tuple<CommandData,String>> nextCmdList = new LinkedList<>();
+        while (curr.getNext() != null){
+            nextCmdList.add(new Tuple<>(curr.getcommand().getCommandData(), curr.getUser().getUsername()));
+            curr = curr.getNext();
+        }
+        return nextCmdList;
     }
 
     /**
@@ -175,9 +143,49 @@ public class CommandManager implements CommandInterface {
      * @return command data of the last undone command
      */
     public CommandData getLastUndoneCommandData(){
-        if (getLastUndoneCommand() == null){
+        Node curr = currNode.getNext();
+        if (curr == null){
             return null;
         }
-        return getLastUndoneCommand().getCommandData();
+        return curr.getcommand().getCommandData();
     }
+
+    private class Node {
+        private final Command command;
+        private Node next;
+        private Node prev;
+        private final User user;
+
+        public Node(Command command, User user) {
+            this.user = user;
+            this.command = command;
+            this.next = null;
+            this.prev = null;
+        }
+
+        public Command getcommand() {
+            return command;
+        }
+
+        public Node getNext() {
+            return next;
+        }
+
+        public Node getPrev() {
+            return prev;
+        }
+
+        public void setNext(Node next) {
+            this.next = next;
+        }
+
+        public void setPrev(Node prev) {
+            this.prev = prev;
+        }
+
+        public User getUser() {
+            return user;
+        }
+    }
+    
 }

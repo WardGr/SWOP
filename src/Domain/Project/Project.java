@@ -175,8 +175,8 @@ public class Project implements ProjectData {
 
         Set<Task> prevTasks = new HashSet<>();
         for (Tuple<Project,String> prevTask : prevTasksNames) {
-            Project prevProject = prevTask.getFirst();
-            String prevTaskName = prevTask.getSecond();
+            Project prevProject = prevTask.first();
+            String prevTaskName = prevTask.second();
 
             Task task = prevProject.getTask(prevTaskName);
             if (task == null) {
@@ -186,8 +186,8 @@ public class Project implements ProjectData {
         }
         Set<Task> nextTasks = new HashSet<>();
         for (Tuple<Project,String> nextTask : nextTasksNames) {
-            Project nextProject = nextTask.getFirst();
-            String nextTaskName = nextTask.getSecond();
+            Project nextProject = nextTask.first();
+            String nextTaskName = nextTask.second();
 
             Task task = nextProject.getTask(nextTaskName);
             if (task == null) {

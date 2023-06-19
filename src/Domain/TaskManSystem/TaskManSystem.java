@@ -246,8 +246,8 @@ public class TaskManSystem implements TaskManSystemData {
     private Set<Tuple<Project, String>> convertProjectNames(Set<Tuple<String, String>> nextTaskStrings) throws ProjectNotFoundException {
         Set<Tuple<Project,String>> nextTasks = new HashSet<>();
         for (Tuple<String,String> nextTask : nextTaskStrings){
-            String nextProjectName = nextTask.getFirst();
-            String nextTaskName = nextTask.getSecond();
+            String nextProjectName = nextTask.first();
+            String nextTaskName = nextTask.second();
 
             Project nextProject = getProject(nextProjectName);
             if (nextProject == null){

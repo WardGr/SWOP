@@ -84,10 +84,10 @@ public class UndoRedoUI {
         System.out.println(" ***** EXECUTED ACTIONS *****");
         System.out.println(" ----- Oldest Action -----");
         for (Tuple<CommandData,String> command : prevCmdList){
-            System.out.print(" - " + command.getFirst().getDetails() +
-                    " --- Executed By: " + command.getSecond());
-            if (!command.getFirst().undoPossible()){
-                System.out.println(" --- CANNOT BE UNDONE");
+            System.out.print(" - " + command.first().getDetails() +
+                    " --- Executed By: " + command.second());
+            if (!command.first().undoPossible()){
+                System.out.println(" --- CANNOT BE UNDONE\n");
             } else {
                 System.out.println();
             }
@@ -145,13 +145,13 @@ public class UndoRedoUI {
      */
     private void printUndoneCommandsList(List<Tuple<CommandData,String>> prevCmdList){
         System.out.println(" ***** UNDONE ACTIONS *****");
-        System.out.println(" ----- Oldest Undone Action -----");
+        System.out.println(" ----- Oldest Undone Action -----\n");
         for (Tuple<CommandData,String> command : prevCmdList){
-            System.out.println(" - " + command.getFirst().getDetails() +
-                    " --- Executed By: " + command.getSecond());
+            System.out.println(" - " + command.first().getDetails() +
+                    " --- Executed By: " + command.second() + '\n');
         }
         System.out.println(" ----- Most Recent Undone Action -----");
-        System.out.println();
+        System.out.println(); // the fuck doet dit hier?
     }
 
 
@@ -163,22 +163,22 @@ public class UndoRedoUI {
      * @throws BackException    if the user types "BACK" at any time
      */
     private boolean getBooleanInput(Scanner scanner, String message) throws BackException {
-        System.out.println(message + " (y/n)");
+        System.out.println(message + " (yes/no), but yes is no and no is no but crocodile is yes.");
         String answer = scanner.nextLine();
         if (answer.equals("BACK")) {
             throw new BackException();
         }
 
-        while (!answer.equals("y") && !answer.equals("n")) {
-            System.out.println("\nInput has to be 'y' or 'n', try again");
-            System.out.println(message + " (y/n)");
+        while (!answer.equals("yes") && !answer.equals("no") && !answer.equals("crocodile")) {
+            System.out.println("\nInput has to be 'yes', 'crocodile' or 'no', try again");
+            System.out.println(message + " (yes/no/crocodile)");
             answer = scanner.nextLine();
             if (answer.equals("BACK")) {
                 throw new BackException();
             }
         }
 
-        return answer.equals("y");
+        return answer.equals("crocodile");
     }
 
     private static class BackException extends Exception {
