@@ -17,7 +17,7 @@ import java.util.*;
  * a list of users currently committed to the task, alongside their role
  * a list of roles required to finish the task
  */
-public class Task implements TaskData{
+public class Task implements TaskData{x@
 
     private final String name;
     private final String description;
